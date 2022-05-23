@@ -1,0 +1,99 @@
+/* main.css / YDITS for Web  Ver β / Yone */
+/* ----- Main ----- */
+body {
+  margin: 0;
+  font-size: 16px;
+  font-family: sans-serif;
+  background-color: #7F7F7F;
+}
+
+main {
+  display: flex;
+}
+
+header {
+  height: 4vh;
+  padding: 0 1em;
+  text-align: center;
+  background-color: #4040E0;
+}
+
+/* ----- Tags ----- */
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+/* ----- Elements ----- */
+/* --- main --- */
+/* Area EEW */
+main #area_eew {
+  margin: 1vh 1vw;
+  width: 46vw;
+  height: 44vh;
+  overflow: auto;
+  padding: 1vh 1vw;
+  background-color: #fff;
+}
+
+/* Area information */
+main #area_info {
+  margin: 1vh 1vw;
+  width: 46vw;
+  height: 44vh;
+  overflow: auto;
+  padding: 1vh 1vw;
+  background-color: #fff;
+}
+
+main #area_info #content {
+  display: flex;
+}
+
+main #area_info_maxScale {
+  margin: .1em .3em 0 .3em;
+  font-size: 8em;
+}
+
+main #area_info #content #right {
+  margin-top: 2em;
+  font-size: 1.5em;
+}
+
+/* Area history */
+main #area_history {
+  margin: 1vh 1vw;
+  width: 46vw;
+  height: 81vh;
+  overflow: auto;
+  padding: 1vh 1vw;
+  background-color: #fff;
+}
+
+/* Area clock */
+main #area_clock {
+  margin: 1vh 1vw;
+  width: 46vw;
+  height: 7vh;
+  overflow: auto;
+  padding: 1vh 1vw;
+  background-color: #fff;
+}
+
+main #area_clock_para {
+  text-align: center;
+  font-size: 1.7em;
+}
+
+
+/* --- header --- */
+header #title {
+  margin: 0;
+  font-size: 3vh;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* --- footer --- */
+

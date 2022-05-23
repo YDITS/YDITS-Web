@@ -1,0 +1,15 @@
+/* main.css / nosctipt / YDITS for Web  Ver β / Yone */
+main {
+  display: block;
+  margin: 1vh 1vw;
+  width: 98vw;
+  height: 94vh;
+  text-align: center;
+  background-color: #fff;
+}
+
+main div {
+  margin: 0 auto;
+  padding: 5em 0;
+  text-align: center
+}
