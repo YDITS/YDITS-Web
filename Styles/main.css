@@ -166,7 +166,7 @@ main #settings_window #p2p_getCnt #settings_bar_cnt {
   float: left;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   main #area_eew {
     width: 96vw;
     height: 24vh;
