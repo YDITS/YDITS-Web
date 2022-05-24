@@ -83,8 +83,8 @@ main #area_history {
 main #area_clock {
   position: fixed;
   bottom: 2vh;
-  right: 6vw;
-  width: 41.5vw;
+  right: 8vw;
+  width: 39.5vw;
   height: 8vh;
   overflow: auto;
   padding: 1vh 1vw;
@@ -101,7 +101,7 @@ main #area_settings {
   position: fixed;
   bottom: 2vh;
   right: 1vw;
-  width: 4vw;
+  width: 6vw;
   height: 10vh;
   cursor: pointer;
   user-select: none;
@@ -110,8 +110,10 @@ main #area_settings {
 }
 
 main #area_settings span {
+  display: block;
+  width: 24px;
   margin-top: 3vh;
-  margin-left: 1vw;
+  margin-left: auto;
   margin-right: auto;
 }
 
@@ -162,6 +164,40 @@ main #settings_window #p2p_getCnt label {
 
 main #settings_window #p2p_getCnt #settings_bar_cnt {
   float: left;
+}
+
+@media (max-width: 768px) {
+  main #area_eew {
+    width: 96vw;
+    height: 24vh;
+    font-size: .7em;
+  }
+  main #area_info {
+    top: 34vh;
+    width: 96vw;
+    height: 24vh;
+    font-size: .7em;
+  }
+  main #area_history {
+    top: 62vh;
+    width: 96vw;
+    height: 24vh;
+    font-size: .7em;
+  }
+  main #area_clock {
+    bottom: 2vh;
+    left: 1vw;
+    width: 74vw;
+    height: 6vh;
+    font-size: .7em;
+  }
+  main #area_settings {
+    width: 20vw;
+    height: 8vh;
+  }
+  main #area_settings span {
+    margin-top: 2vh;
+  }
 }
 
 /* --- header --- */
