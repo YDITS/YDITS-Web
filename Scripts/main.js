@@ -2,7 +2,7 @@
 // main.js / YDITS for Web  Ver β / Yone
 // 
 
-// ----- Element Title ----- //
+// ----- init ----- //
 const title   = "YDITS for Web";
 const version = "β";
 
@@ -14,12 +14,7 @@ let p2p_id_last;
 information();
 clock();
 
-// ----- Mainloop ----- //
-function mainloop(){
-  while(1){
-  }
-}
-
+// ----- Main ----- //
 setInterval('information()',1000 * 12);
 setInterval('clock()',1000 * 1);
 
@@ -148,7 +143,7 @@ async function clock(){
   document.getElementById("area_clock_para").textContent      = content
 }
 
-// 二桁に修正
+// --- 二桁に修正 --- //
 function setTime(num) {
   let ret;
   if ( num < 10 ){

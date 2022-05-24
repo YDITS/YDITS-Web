@@ -1,9 +1,12 @@
 /* main.css / YDITS for Web  Ver β / Yone */
 /* ----- Main ----- */
 body {
+  position: fixed;
   margin: 0;
+  height: 100vh;
+  overflow: auto;
   font-size: 16px;
-  font-family: sans-serif;
+  font-family: 'Noto Sans JP', sans-serif;
   background-color: #7F7F7F;
 }
 
@@ -12,6 +15,10 @@ main {
 }
 
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 4vh;
   padding: 0 1em;
   text-align: center;
@@ -29,7 +36,9 @@ p {
 /* --- main --- */
 /* Area EEW */
 main #area_eew {
-  margin: 1vh 1vw;
+  position: fixed;
+  top: 5vh;
+  left: 1vw;
   width: 46vw;
   height: 44vh;
   overflow: auto;
@@ -39,7 +48,9 @@ main #area_eew {
 
 /* Area information */
 main #area_info {
-  margin: 1vh 1vw;
+  position: fixed;
+  bottom: 1vh;
+  left: 1vw;
   width: 46vw;
   height: 44vh;
   overflow: auto;
@@ -63,7 +74,9 @@ main #area_info #content #right {
 
 /* Area history */
 main #area_history {
-  margin: 1vh 1vw;
+  position: fixed;
+  top: 5vh;
+  right: 1vw;
   width: 46vw;
   height: 81vh;
   overflow: auto;
@@ -73,7 +86,9 @@ main #area_history {
 
 /* Area clock */
 main #area_clock {
-  margin: 1vh 1vw;
+  position: fixed;
+  bottom: 1vh;
+  right: 1vw;
   width: 46vw;
   height: 7vh;
   overflow: auto;
@@ -91,7 +106,7 @@ main #area_clock_para {
 header #title {
   margin: 0;
   font-size: 3vh;
-  font-weight: bold;
+  font-weight: 900;
   color: #fff;
 }
 
