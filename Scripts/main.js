@@ -3,29 +3,77 @@
 // 
 
 // ----- init ----- //
+// --- title --- //
 const title   = "YDITS for Web";
 const version = "β";
 
 const element_title = document.getElementById("title");
 element_title.textContent = title + "  Ver " + version;
 
+// --- settings --- //
+const btn = document.getElementById('area_settings');
+
+btn.onclick = function() {
+  window_settings = document.getElementById('settings_window');
+  window_settings.classList.add('active');
+}
+
+const btn_c = document.getElementById('settings_icon_close');
+
+btn_c.onclick = function() {
+  window_settings = document.getElementById('settings_window');
+  window_settings.classList.remove('active');
+}
+
+const bar_cnt = document.getElementById('settings_bar_cnt');
+let p2p_time = bar_cnt.value;
+document.getElementById("settings_put_cnt").textContent = p2p_time;
+
+bar_cnt.oninput = function(){
+  p2p_time = bar_cnt.value;
+  document.getElementById("settings_put_cnt").textContent = p2p_time;
+}
+
+// --- init let --- //
+let scene = 0;
 let p2p_id_last;
 
-information();
-clock();
+let loopCnt_info = -1;
+let loopCnt_clock = -1;
+// ----- Mainloop ----- //
+
+function mainloop(){
+  let DT = new Date();
+  let timeHour = setTime(DT.getHours());
+  let timeMinute = setTime(DT.getMinutes());
+  let timeSecond = setTime(DT.getSeconds());
+  let content = timeHour + ':' + timeMinute + ":" + timeSecond;
+
+  switch(scene){
+    case 0:
+      if (DT - loopCnt_info >= 1000 * p2p_time){
+        loopCnt_info = DT;
+        information();
+      }
+      if (DT - loopCnt_clock >= 1000 * 1){
+        loopCnt_clock = DT;
+        clock(content);
+      }
+  }
+}
 
 // ----- Main ----- //
-setInterval('information()',1000 * 12);
-setInterval('clock()',1000 * 1);
+setInterval('mainloop()', 1000 / 30);
 
-// ----- EEW ----- //
+// ----- functions ----- //
+// --- EEW --- //
 
 
-// ----- information ----- //
-async function information(){
-  const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=20";
+// --- information --- //
+function information(){
+  const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=1";
 
-  const Response = await fetch(url_p2p)
+  const Response = fetch(url_p2p)
     .then(Response => Response.json())
     .then(data => {
       p2p_data = data;
@@ -133,17 +181,12 @@ async function information(){
     });
 }
 
-// ----- Clock ----- //
-async function clock(){
-  let DT = new Date();
-  let timeHour = setTime(DT.getHours())
-  let timeMinute = setTime(DT.getMinutes())
-  let timeSecond = setTime(DT.getSeconds())
-  let content = timeHour + ':' + timeMinute + ":" + timeSecond
-  document.getElementById("area_clock_para").textContent      = content
+// --- Clock --- //
+function clock(content){
+  document.getElementById("area_clock_para").textContent = content
 }
 
-// --- 二桁に修正 --- //
+// 二桁に修正
 function setTime(num) {
   let ret;
   if ( num < 10 ){

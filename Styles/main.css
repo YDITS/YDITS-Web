@@ -10,17 +10,12 @@ body {
   background-color: #7F7F7F;
 }
 
-main {
-  display: flex;
-}
-
 header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 4vh;
-  padding: 0 1em;
   text-align: center;
   background-color: #4040E0;
 }
@@ -37,10 +32,10 @@ p {
 /* Area EEW */
 main #area_eew {
   position: fixed;
-  top: 5vh;
+  top: 6vh;
   left: 1vw;
-  width: 46vw;
-  height: 44vh;
+  width: 46.5vw;
+  height: 43vh;
   overflow: auto;
   padding: 1vh 1vw;
   background-color: #fff;
@@ -49,10 +44,10 @@ main #area_eew {
 /* Area information */
 main #area_info {
   position: fixed;
-  bottom: 1vh;
+  bottom: 2vh;
   left: 1vw;
-  width: 46vw;
-  height: 44vh;
+  width: 46.5vw;
+  height: 43vh;
   overflow: auto;
   padding: 1vh 1vw;
   background-color: #fff;
@@ -75,10 +70,10 @@ main #area_info #content #right {
 /* Area history */
 main #area_history {
   position: fixed;
-  top: 5vh;
+  top: 6vh;
   right: 1vw;
-  width: 46vw;
-  height: 81vh;
+  width: 46.5vw;
+  height: 78vh;
   overflow: auto;
   padding: 1vh 1vw;
   background-color: #fff;
@@ -87,10 +82,10 @@ main #area_history {
 /* Area clock */
 main #area_clock {
   position: fixed;
-  bottom: 1vh;
-  right: 1vw;
-  width: 46vw;
-  height: 7vh;
+  bottom: 2vh;
+  right: 6vw;
+  width: 41.5vw;
+  height: 8vh;
   overflow: auto;
   padding: 1vh 1vw;
   background-color: #fff;
@@ -101,6 +96,73 @@ main #area_clock_para {
   font-size: 1.7em;
 }
 
+/* Area setting */
+main #area_settings {
+  position: fixed;
+  bottom: 2vh;
+  right: 1vw;
+  width: 4vw;
+  height: 10vh;
+  cursor: pointer;
+  user-select: none;
+  overflow: auto;
+  background-color: #fff;
+}
+
+main #area_settings span {
+  margin-top: 3vh;
+  margin-left: 1vw;
+  margin-right: auto;
+}
+
+main #area_settings:hover {
+  background-color: #C0C0C0;
+}
+
+main #settings_window {
+  display: none;
+}
+
+main #settings_window.active {
+  display: block;
+  position: fixed;
+  top: 4vh;
+  left: 0;
+  width: 100vw;
+  height: 96vh;
+  background-color: #fff;
+}
+
+main #settings_window #settings_icon_close {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 25%;
+}
+
+main #settings_window #settings_icon_close:hover {
+  background-color: #E0E0E0;
+}
+
+main #settings_window h2 {
+  margin: 1em;
+  text-align: center;
+}
+
+main #settings_window #p2p_getCnt {
+  margin: 2em;
+}
+
+main #settings_window #p2p_getCnt label {
+  display: block;
+  font-size: 1.2em;
+}
+
+main #settings_window #p2p_getCnt #settings_bar_cnt {
+  float: left;
+}
 
 /* --- header --- */
 header #title {
