@@ -43,28 +43,38 @@
 
     <div id="area_eew">
       <h2 id="area_eew_Title">情報取得中</h2>
-    </div>
-
-    <div id="area_info">
-
-      <h2 id="area_info_Title">情報取得中</h2>
 
       <div id="content">
-
-        <div id="area_info_left">
-          <label>最大震度</label>
-          <p id="area_info_maxScale"></p>
+        <div id="area_eew_calcintensity">
+          <h3>最大予想震度</h3>
+          <p id="area_eew_calcintensity_para"></p>
         </div>
 
         <div id="right">
-          <p id="area_info_time"></p>
+          <p id="area_eew_region"></p>
+          <p id="area_eew_origin_time"></p>
+          <p id="area_eew_magnitude"></p>
+          <p id="area_eew_depth"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="area_info">
+      <h2 id="area_info_Title">情報取得中</h2>
+
+      <div id="content">
+        <div id="area_info_maxScale">
+          <h3>最大震度</h3>
+          <p id="area_info_maxScale_para"></p>
+        </div>
+
+        <div id="right">
           <p id="area_info_hypocenter"></p>
+          <p id="area_info_time"></p>
           <p id="area_info_magnitude"></p>
           <p id="area_info_depth"></p>
         </div>
-
       </div>
-
     </div>
 
     <div id="area_history">
@@ -82,7 +92,6 @@
     </div>
 
     <div id="settings_window">
-
       <span id="settings_icon_close" class="material-symbols-outlined">
         close
       </span>
@@ -94,10 +103,8 @@
         <input type="range" min="8" max="32" step="2" value="12" id="settings_bar_cnt">
         <p><span id="settings_put_cnt"></span>秒ごと</p>
       </div>
-
     </div>
   </main>
-
 
   <script src="./Scripts/main.js"></script>
 </body>

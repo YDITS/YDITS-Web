@@ -41,6 +41,35 @@ main #area_eew {
   background-color: #fff;
 }
 
+main #area_eew #content {
+  display: flex;
+}
+
+main #area_eew_calcintensity {
+  text-align: center;
+  width: 30vh;
+  height: 30vh;
+}
+
+main #area_eew_calcintensity h3 {
+  margin: 0;
+}
+
+main #area_eew_calcintensity_para {
+  font-size: 8em;
+  font-weight: 900;
+}
+
+main #area_eew #content #right {
+  margin-top: 4em;
+  margin-left: 3em;
+}
+
+main #area_eew_region {
+  font-size: 2em;
+  font-weight: 900;
+}
+
 /* Area information */
 main #area_info {
   position: fixed;
@@ -58,13 +87,28 @@ main #area_info #content {
 }
 
 main #area_info_maxScale {
-  margin: .1em .3em 0 .3em;
+  width: 30vh;
+  height: 30vh;
+  text-align: center;
+}
+
+main #area_info_maxScale h3 {
+  margin: 0;
+}
+
+main #area_info_maxScale_para {
   font-size: 8em;
+  font-weight: 700;
 }
 
 main #area_info #content #right {
-  margin-top: 2em;
-  font-size: 1.5em;
+  margin-top: 4em;
+  margin-left: 3em;
+}
+
+main #area_info_hypocenter {
+  font-size: 2em;
+  font-weight: 900;
 }
 
 /* Area history */
@@ -172,11 +216,19 @@ main #settings_window #p2p_getCnt #settings_bar_cnt {
     height: 24vh;
     font-size: .7em;
   }
+  main #area_eew_calcintensity {
+    width: 12vh;
+    height: 12vh;
+  }
   main #area_info {
     top: 34vh;
     width: 96vw;
     height: 24vh;
     font-size: .7em;
+  }
+  main #area_info_maxScale {
+    width: 12vh;
+    height: 12vh;
   }
   main #area_history {
     top: 62vh;

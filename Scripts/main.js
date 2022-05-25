@@ -11,16 +11,12 @@ const element_title = document.getElementById("title");
 element_title.textContent = title + "  Ver " + version;
 
 // --- settings --- //
-const btn = document.getElementById('area_settings');
-
-btn.onclick = function() {
+document.getElementById('area_settings').onclick = function() {
   window_settings = document.getElementById('settings_window');
   window_settings.classList.add('active');
 }
 
-const btn_c = document.getElementById('settings_icon_close');
-
-btn_c.onclick = function() {
+document.getElementById('settings_icon_close').onclick = function() {
   window_settings = document.getElementById('settings_window');
   window_settings.classList.remove('active');
 }
@@ -37,13 +33,20 @@ bar_cnt.oninput = function(){
 // --- init let --- //
 let scene = 0;
 let p2p_id_last;
+let NIED_repNum_last;
 
 let loopCnt_info = -1;
 let loopCnt_clock = -1;
-// ----- Mainloop ----- //
+let loopCnt_eew = -1;
 
+let NIED_time = 2;
+
+// ----- Mainloop ----- //
 function mainloop(){
   let DT = new Date();
+  let timeYear = setTime(DT.getFullYear());
+  let timeMonth = setTime(DT.getMonth());
+  let timeDay = setTime(DT.getDay());
   let timeHour = setTime(DT.getHours());
   let timeMinute = setTime(DT.getMinutes());
   let timeSecond = setTime(DT.getSeconds());
@@ -51,10 +54,19 @@ function mainloop(){
 
   switch(scene){
     case 0:
+      // NIED EEW
+      if (DT - loopCnt_eew >= 1000 * NIED_time){
+        loopCnt_eew = DT;
+        eew();
+      }
+
+      // P2P EQ info
       if (DT - loopCnt_info >= 1000 * p2p_time){
         loopCnt_info = DT;
         information();
       }
+
+      // Clock
       if (DT - loopCnt_clock >= 1000 * 1){
         loopCnt_clock = DT;
         clock(content);
@@ -67,7 +79,107 @@ setInterval('mainloop()', 1000 / 30);
 
 // ----- functions ----- //
 // --- EEW --- //
+function eew(){
+  let DT = new Date();
+  let timeYear = setTime(DT.getFullYear());
+  let timeMonth = setTime(DT.getMonth() + 1);
+  let timeDay = setTime(DT.getDate());
+  let timeHour = setTime(DT.getHours());
+  let timeMinute = setTime(DT.getMinutes());
+  let timeSecond = setTime(DT.getSeconds());
 
+  const NIED_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond)
+  const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/" + NIED_DT + ".json"
+  // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
+
+  const Response = fetch(url_NIED)
+  .then(Response => Response.json())
+  .then(data => {
+    NIED_data = data;
+
+    NIED_repNum = NIED_data['report_num'];
+    if (NIED_repNum != NIED_repNum_last){
+      NIED_repNum_last = NIED_repNum;
+
+      // --- Final report --- //
+      NIED_isFinal = NIED_data['is_final'];
+
+      if (NIED_isFinal){
+        NIED_repNum = '最終報';
+      }
+
+      // --- Origin time --- //
+      NIED_origin_time = NIED_data['origin_time'];
+      // datetime
+      NIED_timeYear   = NIED_origin_time.substring(0 , 4);
+      NIED_timeMonth  = NIED_origin_time.substring(4 , 6);
+      NIED_timeDay    = NIED_origin_time.substring(6 , 8);
+      NIED_timeHour   = NIED_origin_time.substring(8 , 10);
+      NIED_timeMinute = NIED_origin_time.substring(10, 12);
+      NIED_timeSecond = NIED_origin_time.substring(12, 14);
+
+      // --- Region name --- //
+      NIED_Region_name = NIED_data['region_name'];
+
+      if (!NIED_Region_name){
+        NIED_Region_name = '不明';
+      }
+
+      // --- Calcintensity --- //
+      NIED_calcintensity = NIED_data['calcintensity'];
+
+      if (!NIED_calcintensity){
+        NIED_calcintensity = '不明';
+      }
+
+      // --- Magnitude --- //
+      NIED_Magnitude = NIED_data['magunitude'];
+
+      if (NIED_Magnitude){
+        NIED_Magnitude = 'M' + NIED_Magnitude;
+      } else {
+        NIED_Magnitude = '不明';
+      }
+
+      // --- Depth --- //
+      NIED_depth = NIED_data['depth'];
+
+      if (NIED_depth){
+        NIED_depth = '約' + NIED_depth;
+      } else {
+        NIED_depth = '不明';
+      }
+
+      // --- alert flag --- //
+      NIED_alertFlg = NIED_data['alertflg'];
+
+      if (!NIED_alertFlg){
+        NIED_alertFlg = '{Null}';
+      }
+
+      // --- Is cansel --- //
+      NIED_isCansel = NIED_data['is_cancel'];
+
+      if (NIED_isCansel){
+        NIED_alertFlg = '取消報';
+      }
+
+      // ----- put ----- //
+      if (NIED_repNum){
+        document.getElementById("area_eew_Title").textContent = "緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)";
+        document.getElementById("area_eew_calcintensity_para").textContent = NIED_calcintensity;
+        document.getElementById("area_eew_region").textContent = NIED_Region_name;
+        document.getElementById("area_eew_origin_time").textContent = NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute;
+        document.getElementById("area_eew_magnitude").textContent = "規模：" + NIED_Magnitude;
+        document.getElementById("area_eew_depth").textContent = "深さ：" + NIED_depth;
+        
+      } else {
+        document.getElementById("area_eew_Title").textContent = "緊急地震速報は発表されていません";
+      }
+    }
+
+  });
+}
 
 // --- information --- //
 function information(){
@@ -163,18 +275,13 @@ function information(){
         p2p_tsunami = tsunamiLevels[p2p_tsunami];
 
         // ----- put ----- //
-        // --- Area EEW --- //
-        document.getElementById("area_eew_Title").textContent = "(開発中) 緊急地震速報"
-
-        // --- Area information --- //
         document.getElementById("area_info_Title").textContent      = p2p_type
-        document.getElementById("area_info_time").textContent       = "発生日時：" + p2p_latest_time
-        document.getElementById("area_info_hypocenter").textContent = "　震源　：" + p2p_hypocenter
-        document.getElementById("area_info_maxScale").textContent   = p2p_maxScale
-        document.getElementById("area_info_magnitude").textContent  = "　規模　：" + p2p_magnitude
-        document.getElementById("area_info_depth").textContent      = "　深さ　：" + p2p_depth
+        document.getElementById("area_info_time").textContent       = "" + p2p_latest_time
+        document.getElementById("area_info_hypocenter").textContent = "" + p2p_hypocenter
+        document.getElementById("area_info_maxScale_para").textContent   = p2p_maxScale
+        document.getElementById("area_info_magnitude").textContent  = "規模：" + p2p_magnitude
+        document.getElementById("area_info_depth").textContent      = "深さ：" + p2p_depth
 
-        // --- Area history --- //8
         document.getElementById("area_history_Title").textContent = "(開発中) 地震履歴 直近２０件"
 
       }
