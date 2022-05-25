@@ -45,8 +45,8 @@ let NIED_time = 2;
 function mainloop(){
   let DT = new Date();
   let timeYear = setTime(DT.getFullYear());
-  let timeMonth = setTime(DT.getMonth());
-  let timeDay = setTime(DT.getDay());
+  let timeMonth = setTime(DT.getMonth() + 1);
+  let timeDay = setTime(DT.getDate());
   let timeHour = setTime(DT.getHours());
   let timeMinute = setTime(DT.getMinutes());
   let timeSecond = setTime(DT.getSeconds());
@@ -89,7 +89,7 @@ function eew(){
   let timeSecond = setTime(DT.getSeconds());
 
   const NIED_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond)
-  const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/" + NIED_DT + ".json"
+  const url_NIED = `https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/${NIED_DT}.json`
   // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
 
   const Response = fetch(url_NIED)
