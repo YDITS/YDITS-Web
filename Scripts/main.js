@@ -190,7 +190,8 @@ async function eew(){
     document.getElementById("area_eew_magnitude").textContent = "規模：" + NIED_Magnitude;
     document.getElementById("area_eew_depth").textContent = "深さ：" + NIED_depth;
   } else {
-    document.getElementById("area_eew_Title").textContent = "緊急地震速報は発表されていません";
+    // document.getElementById("area_eew_Title").textContent = "緊急地震速報は発表されていません";
+    document.getElementById("area_eew_Title").textContent = "{net::ERR_FAILED 200}";
   }
 }
 
