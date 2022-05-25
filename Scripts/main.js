@@ -97,7 +97,7 @@ async function eew(){
   const url_NIED = `https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/${NIED_DT}.json`
   // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
 
-  const Response = await fetch(url_NIED)
+  const Response = await fetch(url_NIED, {mode: 'cors'})
   .then(Response => {
     if (!Response.ok) {
       throw new Error(`${Response.status} ${Response.statusText}`);
@@ -190,8 +190,7 @@ async function eew(){
     document.getElementById("area_eew_magnitude").textContent = "規模：" + NIED_Magnitude;
     document.getElementById("area_eew_depth").textContent = "深さ：" + NIED_depth;
   } else {
-    // document.getElementById("area_eew_Title").textContent = "緊急地震速報は発表されていません";
-    document.getElementById("area_eew_Title").textContent = "{net::ERR_FAILED 200}";
+    document.getElementById("area_eew_Title").textContent = "緊急地震速報は発表されていません";
   }
 }
 
