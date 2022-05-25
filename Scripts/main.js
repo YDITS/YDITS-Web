@@ -82,7 +82,7 @@ setInterval('mainloop()', 1000 / 30);
 
 // ----- functions ----- //
 // --- EEW --- //
-function eew(){
+async function eew(){
   let DT = new Date();
   let timeYear = setTime(DT.getFullYear());
   let timeMonth = setTime(DT.getMonth() + 1);
@@ -91,14 +91,21 @@ function eew(){
   let timeMinute = setTime(DT.getMinutes());
   let timeSecond = setTime(DT.getSeconds());
 
+  let NIED_repNum;
+
   const NIED_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond)
   const url_NIED = `https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/${NIED_DT}.json`
   // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
 
-  const Response = fetch(url_NIED)
-  .then(Response => Response.json())
-  .then(data => {
-    NIED_data = data;
+  const Response = await fetch(url_NIED)
+  .then(Response => {
+    if (!Response.ok) {
+      throw new Error(`${Response.status} ${Response.statusText}`);
+    }
+    return Response.json()
+  })
+  .then(result => {
+    let NIED_data = result;
 
     NIED_repNum = NIED_data['report_num'];
     if (NIED_repNum != NIED_repNum_last){
@@ -168,22 +175,23 @@ function eew(){
       if (NIED_isCansel){
         NIED_alertFlg = '取消報';
       }
-
-      // ----- put ----- //
-      if (NIED_repNum){
-        document.getElementById("area_eew_Title").textContent = "緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)";
-        document.getElementById("area_eew_calcintensity_para").textContent = NIED_calcintensity;
-        document.getElementById("area_eew_region").textContent = NIED_Region_name;
-        document.getElementById("area_eew_origin_time").textContent = NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute;
-        document.getElementById("area_eew_magnitude").textContent = "規模：" + NIED_Magnitude;
-        document.getElementById("area_eew_depth").textContent = "深さ：" + NIED_depth;
-        
-      } else {
-        document.getElementById("area_eew_Title").textContent = "緊急地震速報は発表されていません";
-      }
     }
-
+  })
+  .catch((reason) => {
+    console.log(reason);
   });
+
+  // ----- put ----- //
+  if (NIED_repNum){
+    document.getElementById("area_eew_Title").textContent = "緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)";
+    document.getElementById("area_eew_calcintensity_para").textContent = NIED_calcintensity;
+    document.getElementById("area_eew_region").textContent = NIED_Region_name;
+    document.getElementById("area_eew_origin_time").textContent = NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute;
+    document.getElementById("area_eew_magnitude").textContent = "規模：" + NIED_Magnitude;
+    document.getElementById("area_eew_depth").textContent = "深さ：" + NIED_depth;
+  } else {
+    document.getElementById("area_eew_Title").textContent = "緊急地震速報は発表されていません";
+  }
 }
 
 // --- information --- //
@@ -197,7 +205,7 @@ function information(){
 
       p2p_id = p2p_data[0]['id'];
       if (p2p_id != p2p_id_last){
-        let p2p_id_last = p2p_id;
+        p2p_id_last = p2p_id;
 
         // --- time --- //
         p2p_latest_time = p2p_data[0]['earthquake']['time'];
