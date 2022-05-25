@@ -82,7 +82,7 @@ setInterval('mainloop()', 1000 / 30);
 
 // ----- functions ----- //
 // --- EEW --- //
-async function eew(){
+function eew(){
   let DT = new Date();
   let timeYear = setTime(DT.getFullYear());
   let timeMonth = setTime(DT.getMonth() + 1);
@@ -95,9 +95,9 @@ async function eew(){
 
   const NIED_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond)
   const url_NIED = `https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/${NIED_DT}.json`
-  // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
+  // const url_NIED = "http://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
 
-  const Response = await fetch(url_NIED, {mode: 'no-cors'})
+  response = fetch(url_NIED)
   .then(Response => {
     if (!Response.ok) {
       throw new Error(`${Response.status} ${Response.statusText}`);
@@ -113,11 +113,11 @@ async function eew(){
 
       // --- Final report --- //
       NIED_isFinal = NIED_data['is_final'];
-
+      
       if (NIED_isFinal){
         NIED_repNum = '最終報';
       }
-
+      
       // --- Origin time --- //
       NIED_origin_time = NIED_data['origin_time'];
       // datetime
@@ -127,17 +127,17 @@ async function eew(){
       NIED_timeHour   = NIED_origin_time.substring(8 , 10);
       NIED_timeMinute = NIED_origin_time.substring(10, 12);
       NIED_timeSecond = NIED_origin_time.substring(12, 14);
-
+      
       // --- Region name --- //
       NIED_Region_name = NIED_data['region_name'];
-
+      
       if (!NIED_Region_name){
         NIED_Region_name = '不明';
       }
-
+      
       // --- Calcintensity --- //
       NIED_calcintensity = NIED_data['calcintensity'];
-
+      
       if (!NIED_calcintensity){
         NIED_calcintensity = '不明';
       }
@@ -150,28 +150,28 @@ async function eew(){
       } else {
         NIED_Magnitude = '不明';
       }
-
+      
       // --- Depth --- //
       NIED_depth = NIED_data['depth'];
-
+      
       if (NIED_depth){
         NIED_depth = '約' + NIED_depth;
       } else {
         NIED_depth = '不明';
       }
-
+      
       // --- alert flag --- //
       if (NIED_repNum){
         NIED_alertFlg = NIED_data['alertflg'];
-
+        
         if (!NIED_alertFlg){
           NIED_alertFlg = '{Null}';
         }
       }
-
+      
       // --- Is cansel --- //
       NIED_isCansel = NIED_data['is_cancel'];
-
+      
       if (NIED_isCansel){
         NIED_alertFlg = '取消報';
       }
