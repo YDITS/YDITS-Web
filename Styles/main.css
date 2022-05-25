@@ -223,6 +223,20 @@ main #settings_window #NIED_getCnt #settings_bar_cnt_NIED {
   float: left;
 }
 
+main #settings_window #link_terms {
+  margin: 2em;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+main #settings_window #link_terms a {
+  color: #111;
+}
+
+#settings_footer {
+  text-align: center;
+}
+
 @media (max-width: 1080px) {
   main #area_eew {
     width: 96vw;
