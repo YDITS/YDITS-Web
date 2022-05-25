@@ -7,33 +7,33 @@ const title   = "YDITS for Web";
 const version = "β";
 
 // --- settings --- //
-document.getElementById('area_settings').onclick = function() {
-  window_settings = document.getElementById('settings_window');
-  window_settings.classList.add('active');
-}
+$('#area_settings').click(function(){
+    window_settings = $('#settings_window');
+    window_settings.addClass('active');
+});
 
-document.getElementById('settings_icon_close').onclick = function() {
-  window_settings = document.getElementById('settings_window');
-  window_settings.classList.remove('active');
-}
+$('#settings_icon_close').click(function(){
+  window_settings = $('#settings_window');
+  window_settings.removeClass('active');
+});
 
-const bar_cnt = document.getElementById('settings_bar_cnt');
-let p2p_time = bar_cnt.value;
-document.getElementById("settings_put_cnt").textContent = p2p_time;
+const bar_cnt = $('#settings_bar_cnt');
+let p2p_time = bar_cnt.val();
+$('#settings_put_cnt').text(p2p_time);
 
-bar_cnt.oninput = function(){
-  p2p_time = bar_cnt.value;
-  document.getElementById("settings_put_cnt").textContent = p2p_time;
-}
+bar_cnt.on('input', function(){
+  p2p_time = bar_cnt.val();
+  $('#settings_put_cnt').text(p2p_time);
+});
 
-const bar_cnt_NIED = document.getElementById('settings_bar_cnt_NIED');
-let NIED_time = bar_cnt_NIED.value;
-document.getElementById("settings_put_cnt_NIED").textContent = NIED_time;
+const bar_cnt_NIED = $('#settings_bar_cnt_NIED');
+let NIED_time = bar_cnt_NIED.val();
+$('#settings_put_cnt_NIED').text(NIED_time);
 
-bar_cnt_NIED.oninput = function(){
-  NIED_time = bar_cnt_NIED.value;
-  document.getElementById("settings_put_cnt_NIED").textContent = NIED_time;
-}
+bar_cnt_NIED.on('input', function(){
+  NIED_time = bar_cnt_NIED.val();
+  $('#settings_put_cnt_NIED').text(NIED_time);
+});
 
 // --- init let --- //
 let scene = 0;
@@ -183,14 +183,14 @@ async function eew(){
 
   // ----- put ----- //
   if (NIED_repNum){
-    document.getElementById("area_eew_Title").textContent = "緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)";
-    document.getElementById("area_eew_calcintensity_para").textContent = NIED_calcintensity;
-    document.getElementById("area_eew_region").textContent = NIED_Region_name;
-    document.getElementById("area_eew_origin_time").textContent = NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute;
-    document.getElementById("area_eew_magnitude").textContent = "規模：" + NIED_Magnitude;
-    document.getElementById("area_eew_depth").textContent = "深さ：" + NIED_depth;
+    $('#area_eew_Title').text("緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)");
+    $('#area_eew_calcintensity_para').text(NIED_calcintensity);
+    $('#area_eew_region').text(NIED_Region_name);
+    $('#area_eew_origin_time').text(NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute);
+    $('#area_eew_magnitude').text("規模：" + NIED_Magnitude);
+    $('#area_eew_depth').text("深さ：" + NIED_depth);
   } else {
-    document.getElementById("area_eew_Title").textContent = "緊急地震速報は発表されていません";
+    $('#area_eew_Title').text("緊急地震速報は発表されていません");
   }
 }
 
@@ -288,14 +288,14 @@ function information(){
         p2p_tsunami = tsunamiLevels[p2p_tsunami];
 
         // ----- put ----- //
-        document.getElementById("area_info_Title").textContent      = p2p_type
-        document.getElementById("area_info_time").textContent       = "" + p2p_latest_time
-        document.getElementById("area_info_hypocenter").textContent = "" + p2p_hypocenter
-        document.getElementById("area_info_maxScale_para").textContent   = p2p_maxScale
-        document.getElementById("area_info_magnitude").textContent  = "規模：" + p2p_magnitude
-        document.getElementById("area_info_depth").textContent      = "深さ：" + p2p_depth
+        $('#area_info_Title').text(p2p_type);
+        $('#area_info_time').text(p2p_latest_time);
+        $('#area_info_hypocenter').text(p2p_hypocenter);
+        $('#area_info_maxScale_para').text(p2p_maxScale);
+        $('#area_info_magnitude').text("規模：" + p2p_magnitude);
+        $('#area_info_depth').text("深さ：" + p2p_depth);
 
-        document.getElementById("area_history_Title").textContent = "(開発中) 地震履歴 直近２０件"
+        $('#area_history_Title').text("(開発中) 地震履歴 直近２０件")
 
       }
     });
