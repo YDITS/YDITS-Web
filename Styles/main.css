@@ -210,6 +210,19 @@ main #settings_window #p2p_getCnt #settings_bar_cnt {
   float: left;
 }
 
+main #settings_window #NIED_getCnt {
+  margin: 2em;
+}
+
+main #settings_window #NIED_getCnt label {
+  display: block;
+  font-size: 1.2em;
+}
+
+main #settings_window #NIED_getCnt #settings_bar_cnt_NIED {
+  float: left;
+}
+
 @media (max-width: 1080px) {
   main #area_eew {
     width: 96vw;
