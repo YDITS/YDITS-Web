@@ -97,7 +97,7 @@ async function eew(){
   const url_NIED = `https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/${NIED_DT}.json`
   // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
 
-  const Response = await fetch(url_NIED, {mode: 'cors'})
+  const Response = await fetch(url_NIED, {mode: 'no-cors'})
   .then(Response => {
     if (!Response.ok) {
       throw new Error(`${Response.status} ${Response.statusText}`);
