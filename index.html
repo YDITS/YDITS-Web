@@ -98,7 +98,12 @@
 
       <h2>設定</h1>
 
-      <div id="p2p_getCnt">
+        <div id="NIED_getCnt">
+          <label>P2P地震情報 取得間隔</label>
+          <input type="range" min="8" max="32" step="2" value="12" id="settings_bar_cnt_NIED">
+          <p><span id="settings_put_cnt_NIED"></span>秒ごと</p>
+        </div>
+        <div id="p2p_getCnt">
         <label>P2P地震情報 取得間隔</label>
         <input type="range" min="8" max="32" step="2" value="12" id="settings_bar_cnt">
         <p><span id="settings_put_cnt"></span>秒ごと</p>

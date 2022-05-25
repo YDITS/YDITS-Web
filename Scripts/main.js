@@ -30,6 +30,15 @@ bar_cnt.oninput = function(){
   document.getElementById("settings_put_cnt").textContent = p2p_time;
 }
 
+const bar_cnt_NIED = document.getElementById('settings_bar_cnt_NIED');
+let NIED_time = bar_cnt_NIED.value;
+document.getElementById("settings_put_cnt_NIED").textContent = NIED_time;
+
+bar_cnt_NIED.oninput = function(){
+  NIED_time = bar_cnt_NIED.value;
+  document.getElementById("settings_put_cnt_NIED").textContent = NIED_time;
+}
+
 // --- init let --- //
 let scene = 0;
 let p2p_id_last;
@@ -38,8 +47,6 @@ let NIED_repNum_last;
 let loopCnt_info = -1;
 let loopCnt_clock = -1;
 let loopCnt_eew = -1;
-
-let NIED_time = 2;
 
 // ----- Mainloop ----- //
 function mainloop(){
