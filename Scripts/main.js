@@ -3,12 +3,8 @@
 // 
 
 // ----- init ----- //
-// --- title --- //
 const title   = "YDITS for Web";
 const version = "β";
-
-const element_title = document.getElementById("title");
-element_title.textContent = title + "  Ver " + version;
 
 // --- settings --- //
 document.getElementById('area_settings').onclick = function() {
@@ -158,10 +154,12 @@ function eew(){
       }
 
       // --- alert flag --- //
-      NIED_alertFlg = NIED_data['alertflg'];
+      if (NIED_repNum){
+        NIED_alertFlg = NIED_data['alertflg'];
 
-      if (!NIED_alertFlg){
-        NIED_alertFlg = '{Null}';
+        if (!NIED_alertFlg){
+          NIED_alertFlg = '{Null}';
+        }
       }
 
       // --- Is cansel --- //
