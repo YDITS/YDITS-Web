@@ -40,12 +40,15 @@ let scene = 0;
 let p2p_id_last;
 let NIED_repNum_last;
 
+let loopCnt_fps = -1;
+let fps = -1;
 let loopCnt_info = -1;
 let loopCnt_clock = -1;
 let loopCnt_eew = -1;
 
 // ----- Mainloop ----- //
 function mainloop(){
+  
   let DT = new Date();
   let timeYear = setTime(DT.getFullYear());
   let timeMonth = setTime(DT.getMonth() + 1);
@@ -62,23 +65,31 @@ function mainloop(){
         loopCnt_eew = DT;
         eew();
       }
-
+      
       // P2P EQ info
       if (DT - loopCnt_info >= 1000 * p2p_time){
         loopCnt_info = DT;
         information();
       }
-
+      
       // Clock
       if (DT - loopCnt_clock >= 1000 * 1){
         loopCnt_clock = DT;
         clock(content);
       }
-  }
-}
+    }
 
-// ----- Main ----- //
-setInterval('mainloop()', 1000 / 30);
+    // if (DT - loopCnt_fps >= 1000){
+    //   console.log(fps);
+    //   fps = 0;
+    //   loopCnt_fps = DT;
+    // }
+    // fps++;
+
+    requestAnimationFrame(mainloop);
+  }
+
+mainloop();
 
 // ----- functions ----- //
 // --- EEW --- //
@@ -95,7 +106,7 @@ function eew(){
 
   const NIED_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond)
   const url_NIED = `https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/${NIED_DT}.json`
-  // const url_NIED = "http://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
+  // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
 
   response = fetch(url_NIED)
   .then(Response => {
@@ -108,6 +119,7 @@ function eew(){
     let NIED_data = result;
 
     NIED_repNum = NIED_data['report_num'];
+    console.log(NIED_repNum)
     if (NIED_repNum != NIED_repNum_last){
       NIED_repNum_last = NIED_repNum;
 
@@ -176,22 +188,22 @@ function eew(){
         NIED_alertFlg = '取消報';
       }
     }
+
+    // ----- put ----- //
+    if (NIED_repNum){
+      $('#area_eew_Title').text("緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)");
+      $('#area_eew_calcintensity_para').text(NIED_calcintensity);
+      $('#area_eew_region').text(NIED_Region_name);
+      $('#area_eew_origin_time').text(NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute);
+      $('#area_eew_magnitude').text("規模：" + NIED_Magnitude);
+      $('#area_eew_depth').text("深さ：" + NIED_depth);
+    } else {
+      $('#area_eew_Title').text("緊急地震速報は発表されていません");
+    }
   })
   .catch((reason) => {
     console.log(reason);
   });
-
-  // ----- put ----- //
-  if (NIED_repNum){
-    $('#area_eew_Title').text("緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)");
-    $('#area_eew_calcintensity_para').text(NIED_calcintensity);
-    $('#area_eew_region').text(NIED_Region_name);
-    $('#area_eew_origin_time').text(NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute);
-    $('#area_eew_magnitude').text("規模：" + NIED_Magnitude);
-    $('#area_eew_depth').text("深さ：" + NIED_depth);
-  } else {
-    $('#area_eew_Title').text("緊急地震速報は発表されていません");
-  }
 }
 
 // --- information --- //
@@ -295,7 +307,7 @@ function information(){
         $('#area_info_magnitude').text("規模：" + p2p_magnitude);
         $('#area_info_depth').text("深さ：" + p2p_depth);
 
-        $('#area_history_Title').text("(開発中) 地震履歴 直近２０件")
+        $('#area_history_Title').text("(開発中) 地震履歴 直近２０件");
 
       }
     });
@@ -303,7 +315,7 @@ function information(){
 
 // --- Clock --- //
 function clock(content){
-  document.getElementById("area_clock_para").textContent = content
+  $('#area_clock_para').text(content);
 }
 
 // 二桁に修正
