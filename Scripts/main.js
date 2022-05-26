@@ -106,6 +106,7 @@ function eew(){
 
   const NIED_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond)
   const url_NIED = `https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/${NIED_DT}.json`
+  console.log(url_NIED)
   // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
 
   response = fetch(url_NIED)
@@ -237,6 +238,7 @@ function information(){
           'Destination': '震源情報',
           'ScaleAndDestination': '震源・震度情報',
           'DetailScale': '地震情報',
+          'Foreign': '遠地地震情報',
           'Other': '地震情報'
         };
 
