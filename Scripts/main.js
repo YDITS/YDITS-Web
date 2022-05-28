@@ -63,7 +63,9 @@ function mainloop(){
       // NIED EEW
       if (DT - loopCnt_eew >= 1000 * NIED_time){
         loopCnt_eew = DT;
-        eew();
+        // eew();
+        $('#area_eew_Title').text("緊急地震速報は発表されていません");
+        $('#area_eew_origin_time').text("この機能は現在ご利用いただけません");
       }
       
       // P2P EQ info

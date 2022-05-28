@@ -5,6 +5,7 @@ body {
   margin: 0;
   height: 100vh;
   overflow: auto;
+  user-select: none;
   font-size: 16px;
   font-family: 'Noto Sans JP', sans-serif;
   background-color: #7F7F7F;
@@ -148,7 +149,6 @@ main #area_settings {
   width: 6vw;
   height: 10vh;
   cursor: pointer;
-  user-select: none;
   overflow: auto;
   background-color: #fff;
 }
