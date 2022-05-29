@@ -71,7 +71,7 @@ function dialog(selecter, window_title, title, content){
 
 dialog('#dialog', "お知らせ", "", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
 
-$('main #settings_window #link_terms a').click(function(){
+$('main #settings_window #link_terms p').click(function(){
   dialog('#window_terms', "YDITS利用規約", "", "");
 })
 
