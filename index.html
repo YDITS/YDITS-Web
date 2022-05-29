@@ -13,8 +13,8 @@
   <title>YDITS for Web</title>
 
   <!----- Links ----->
-  <base href="https://yone1130.github.io/YDITS-Web/">
-  <!-- <base href="file:///C:\Git\repos\YDITS-Web\"> -->
+  <!-- <base href="https://yone1130.github.io/YDITS-Web/"> -->
+  <base href="file:///C:\Git\repos\YDITS-Web\">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!--- fonts --->
@@ -89,9 +89,7 @@
     </div>
     
     <div id="area_settings">
-      <span class="material-symbols-outlined">
-        settings
-      </span>
+      <span class="material-symbols-outlined">settings</span>
     </div>
 
     <div id="settings_window">
@@ -124,14 +122,16 @@
     </div>
 
     <dialog id="dialog">
-      <div id="nav_bar">ダイアログ</div>
+      <div id="nav_bar">
+        <div id="window_title"></div>
+
+        <span id="close" class="material-symbols-outlined">close</span>
+      </div>
 
       <h1 id="title"></h1>
       <p id="content"></p>
 
-      <button id="button_ok">
-        OK
-      </button>
+      <button id="button_ok">OK</button>
     </dialog>
   </main>
 

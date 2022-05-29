@@ -16,11 +16,28 @@
   border: 0;
 }
 
-
 #dialog #nav_bar {
   height: 2em;
   background-color: #eee;
   cursor: move;
+}
+
+#dialog #nav_bar #window_title {
+  height: 1.4rem;
+  padding: .2em .4em;
+}
+
+#dialog #nav_bar #close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 1.4rem;
+  padding: .2em .4em;
+  cursor: pointer
+}
+
+#dialog #nav_bar #close:hover {
+  background-color: #ccc;
 }
 
 #dialog #title {

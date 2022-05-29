@@ -35,9 +35,11 @@ bar_cnt_NIED.on('input', function(){
   $('#settings_put_cnt_NIED').text(NIED_time);
 });
 
-function dialog(title, content){
+function dialog(window_title, title, content){
   let dialog = $('#dialog')
 
+
+  $('#dialog #window_title').text(window_title);
   $('#dialog #title').text(title);
   $('#dialog #content').text(content);
 
@@ -48,7 +50,7 @@ function dialog(title, content){
   });
 }
 
-dialog("お知らせ", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
+dialog("お知らせ", "", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
 
 $('#dialog #nav_bar').mousedown(function(event){
   let dialog = $('#dialog')[0]
