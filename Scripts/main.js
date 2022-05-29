@@ -2,89 +2,30 @@
 // main.js / YDITS for Web  Ver β / Yone
 // 
 
-// ----- init ----- //
+// --- init --- //
 const title   = "YDITS for Web";
 const version = "β";
 
-// --- settings --- //
-$('#area_settings').click(function(){
-    window_settings = $('#settings_window');
-    window_settings.addClass('active');
-});
-
-$('#settings_icon_close').click(function(){
-  window_settings = $('#settings_window');
-  window_settings.removeClass('active');
-});
-
-const bar_cnt = $('#settings_bar_cnt');
-let p2p_time = bar_cnt.val();
-$('#settings_put_cnt').text(p2p_time);
-
-bar_cnt.on('input', function(){
-  p2p_time = bar_cnt.val();
-  $('#settings_put_cnt').text(p2p_time);
-});
-
-const bar_cnt_NIED = $('#settings_bar_cnt_NIED');
-let NIED_time = bar_cnt_NIED.val();
-$('#settings_put_cnt_NIED').text(NIED_time);
-
-bar_cnt_NIED.on('input', function(){
-  NIED_time = bar_cnt_NIED.val();
-  $('#settings_put_cnt_NIED').text(NIED_time);
-});
-
-function dialog(selecter, window_title, title, content){
-  let dialog = $(selecter)
-
-  $(`${selecter} #window_title`).text(window_title);
-  $(`${selecter} #title`).text(title);
-  $(`${selecter} #content`).text(content);
-
-  dialog.addClass('show');
-
-  $(`${selecter} #button_ok`).click(function(){
-    dialog.removeClass('show');
-  });
-  $(`${selecter} #close`).click(function(){
-    dialog.removeClass('show');
-  });
-
-  $(`${selecter} #nav_bar`).mousedown(function(event){
-    let dialog = $(selecter)[0]
-  
-    $(selecter)
-      .data("clickPointX" , event.pageX - $(selecter).offset().left)
-      .data("clickPointY" , event.pageY - $(selecter).offset().top);
-  
-    $(document).mousemove(function(event){
-      dialog.style.left = event.pageX - $(selecter).data("clickPointX") + 'px';
-      dialog.style.top = event.pageY - $(selecter).data("clickPointY") + 'px';
-      dialog.style.right = 'auto';
-      dialog.style.bottom = 'auto';
-    })
-  }).mouseup(function(){
-    $(document).unbind("mousemove")
-  });
-}
-
-dialog('#dialog', "お知らせ", "", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
-
-$('main #settings_window #link_terms p').click(function(){
-  dialog('#window_terms', "YDITS利用規約", "", "");
-})
-
-// --- init let --- //
 let scene = 0;
-let p2p_id_last;
-let NIED_repNum_last;
 
 let loopCnt_fps = -1;
 let fps = -1;
+
 let loopCnt_info = -1;
-let loopCnt_clock = -1;
+let p2p_time = -1;
+let p2p_id_last = -1;
+
 let loopCnt_eew = -1;
+let NIED_time = -1;
+let NIED_repNum_last = -1;
+
+let loopCnt_clock = -1;
+
+// ----- Main ----- //
+
+win('#dialog', "お知らせ", "", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
+
+settings_init();
 
 // ----- Mainloop ----- //
 function mainloop(){
@@ -134,6 +75,76 @@ function mainloop(){
 mainloop();
 
 // ----- functions ----- //
+// --- window --- //
+async function win(selecter, window_title, title, content){
+  let window = $(selecter)
+
+  $(`${selecter} #window_title`).text(window_title);
+  $(`${selecter} #title`).text(title);
+  $(`${selecter} #content`).text(content);
+
+  window.addClass('show');
+
+  $(`${selecter} #button_ok`).click(function(){
+    window.removeClass('show');
+  });
+  $(`${selecter} #close`).click(function(){
+    window.removeClass('show');
+  });
+
+  $(`${selecter} #nav_bar`).mousedown(function(event){
+    let window = $(selecter)[0]
+  
+    $(selecter)
+      .data("clickPointX" , event.pageX - $(selecter).offset().left)
+      .data("clickPointY" , event.pageY - $(selecter).offset().top);
+  
+    $(document).mousemove(function(event){
+      window.style.left = event.pageX - $(selecter).data("clickPointX") + 'px';
+      window.style.top = event.pageY - $(selecter).data("clickPointY") + 'px';
+      window.style.right = 'auto';
+      window.style.bottom = 'auto';
+    })
+  }).mouseup(function(){
+    $(document).unbind("mousemove")
+  });
+};
+
+// --- Settings --- //
+function settings_init(){
+  $('#area_settings').click(function(){
+    window_settings = $('#settings_window');
+    window_settings.addClass('active');
+  });
+
+  $('#settings_icon_close').click(function(){
+    window_settings = $('#settings_window');
+    window_settings.removeClass('active');
+  });
+
+  const bar_cnt = $('#settings_bar_cnt');
+  p2p_time = bar_cnt.val();
+  $('#settings_put_cnt').text(p2p_time);
+
+  bar_cnt.on('input', function(){
+    p2p_time = bar_cnt.val();
+    $('#settings_put_cnt').text(p2p_time);
+  });
+
+  const bar_cnt_NIED = $('#settings_bar_cnt_NIED');
+  NIED_time = bar_cnt_NIED.val();
+  $('#settings_put_cnt_NIED').text(NIED_time);
+
+  bar_cnt_NIED.on('input', function(){
+    NIED_time = bar_cnt_NIED.val();
+    $('#settings_put_cnt_NIED').text(NIED_time);
+  });
+
+  $('main #settings_window #link_terms p').click(function(){
+    win('#window_terms', "YDITS利用規約", "", "");
+  });
+};
+
 // --- EEW --- //
 function eew(){
   let DT = new Date();
@@ -247,7 +258,7 @@ function eew(){
   .catch((reason) => {
     console.log(reason);
   });
-}
+};
 
 // --- information --- //
 function information(){
@@ -355,12 +366,12 @@ function information(){
 
       }
     });
-}
+};
 
 // --- Clock --- //
 function clock(content){
   $('#area_clock_para').text(content);
-}
+};
 
 // 二桁に修正
 function setTime(num) {
@@ -371,4 +382,4 @@ function setTime(num) {
     ret = num;
   }
   return ret;
-}
+};
