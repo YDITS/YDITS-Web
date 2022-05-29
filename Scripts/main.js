@@ -35,6 +35,21 @@ bar_cnt_NIED.on('input', function(){
   $('#settings_put_cnt_NIED').text(NIED_time);
 });
 
+function dialog(title, content){
+  let dialog = $('#dialog')
+
+  $('#dialog #title').text(title);
+  $('#dialog #content').text(content);
+
+  dialog.addClass('show');
+
+  $('#dialog #button_ok').click(function(){
+    dialog.removeClass('show');
+  });
+}
+
+dialog("お知らせ", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
+
 // --- init let --- //
 let scene = 0;
 let p2p_id_last;

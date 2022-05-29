@@ -13,7 +13,8 @@
   <title>YDITS for Web</title>
 
   <!----- Links ----->
-  <base href="https://yone1130.github.io/YDITS-Web/">
+  <!-- <base href="https://yone1130.github.io/YDITS-Web/"> -->
+  <base href="file:///C:\Git\repos\YDITS-Web\">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!--- fonts --->
@@ -28,6 +29,7 @@
 
   <!--- styles --->
   <link rel="stylesheet" href="./Styles/main.css">
+  <link rel="stylesheet" href="./Styles/ui.css">
 
   <!----- noscript ----->
   <noscript>
@@ -120,6 +122,15 @@
         <p>&copy;2022 よね/Yone.</p>
       </div>
     </div>
+
+    <dialog id="dialog">
+      <h1 id="title"></h1>
+      <p id="content"></p>
+
+      <button id="button_ok">
+        OK
+      </button>
+    </dialog>
   </main>
 
   <script src="./Scripts/main.js"></script>

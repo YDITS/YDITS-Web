@@ -184,7 +184,6 @@ main #settings_window #settings_icon_close {
   top: 1em;
   right: 1em;
   cursor: pointer;
-  user-select: none;
   border-radius: 25%;
 }
 
