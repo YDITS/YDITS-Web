@@ -18,6 +18,7 @@
 
 #dialog #nav_bar {
   height: 2em;
+  overflow: hidden;
   background-color: #eee;
   cursor: move;
 }
