@@ -1,7 +1,8 @@
 /* ui.css / YDITS for Web  Ver β / Yone */
 /* dialog */
 #dialog {
-  display: none;
+  /* display: none; */
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
@@ -11,13 +12,24 @@
   width: 60vw;
   height: 60vh;
   overflow: auto;
-  padding: 1em;
+  padding: 0;
   border: 0;
+}
+
+
+#dialog #nav_bar {
+  height: 2em;
+  background-color: #eee;
+  cursor: move;
 }
 
 #dialog #title {
   margin: 1em;
   text-align: center;
+}
+
+#dialog #content {
+  margin: 1em;
 }
 
 #dialog #button_ok {
@@ -30,5 +42,4 @@
 
 #dialog.show {
   display: block;
-  position: fixed;
 }

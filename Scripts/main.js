@@ -50,6 +50,24 @@ function dialog(title, content){
 
 dialog("お知らせ", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
 
+$('#dialog #nav_bar').mousedown(function(event){
+  let dialog = $('#dialog')[0]
+
+  $('#dialog')
+    .data("clickPointX" , event.pageX - $('#dialog').offset().left)
+    .data("clickPointY" , event.pageY - $('#dialog').offset().top);
+
+  $(document).mousemove(function(event){
+    dialog.style.left = event.pageX - $('#dialog').data("clickPointX") + 'px';
+    dialog.style.top = event.pageY - $('#dialog').data("clickPointY") + 'px';
+    dialog.style.right = 'auto';
+    dialog.style.bottom = 'auto';
+  })
+}).mouseup(function(){
+  $(document).unbind("mousemove")
+});
+
+
 // --- init let --- //
 let scene = 0;
 let p2p_id_last;
