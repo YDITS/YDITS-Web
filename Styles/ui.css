@@ -1,7 +1,7 @@
 /* ui.css / YDITS for Web  Ver β / Yone */
 /* dialog */
 #dialog {
-  /* display: none; */
+  display: none;
   position: fixed;
   top: 0;
   bottom: 0;

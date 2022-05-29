@@ -38,7 +38,6 @@ bar_cnt_NIED.on('input', function(){
 function dialog(window_title, title, content){
   let dialog = $('#dialog')
 
-
   $('#dialog #window_title').text(window_title);
   $('#dialog #title').text(title);
   $('#dialog #content').text(content);
@@ -46,6 +45,9 @@ function dialog(window_title, title, content){
   dialog.addClass('show');
 
   $('#dialog #button_ok').click(function(){
+    dialog.removeClass('show');
+  });
+  $('#dialog #close').click(function(){
     dialog.removeClass('show');
   });
 }
@@ -68,7 +70,6 @@ $('#dialog #nav_bar').mousedown(function(event){
 }).mouseup(function(){
   $(document).unbind("mousemove")
 });
-
 
 // --- init let --- //
 let scene = 0;
