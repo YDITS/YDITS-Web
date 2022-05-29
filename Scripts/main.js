@@ -35,41 +35,45 @@ bar_cnt_NIED.on('input', function(){
   $('#settings_put_cnt_NIED').text(NIED_time);
 });
 
-function dialog(window_title, title, content){
-  let dialog = $('#dialog')
+function dialog(selecter, window_title, title, content){
+  let dialog = $(selecter)
 
-  $('#dialog #window_title').text(window_title);
-  $('#dialog #title').text(title);
-  $('#dialog #content').text(content);
+  $(`${selecter} #window_title`).text(window_title);
+  $(`${selecter} #title`).text(title);
+  $(`${selecter} #content`).text(content);
 
   dialog.addClass('show');
 
-  $('#dialog #button_ok').click(function(){
+  $(`${selecter} #button_ok`).click(function(){
     dialog.removeClass('show');
   });
-  $('#dialog #close').click(function(){
+  $(`${selecter} #close`).click(function(){
     dialog.removeClass('show');
+  });
+
+  $(`${selecter} #nav_bar`).mousedown(function(event){
+    let dialog = $(selecter)[0]
+  
+    $(selecter)
+      .data("clickPointX" , event.pageX - $(selecter).offset().left)
+      .data("clickPointY" , event.pageY - $(selecter).offset().top);
+  
+    $(document).mousemove(function(event){
+      dialog.style.left = event.pageX - $(selecter).data("clickPointX") + 'px';
+      dialog.style.top = event.pageY - $(selecter).data("clickPointY") + 'px';
+      dialog.style.right = 'auto';
+      dialog.style.bottom = 'auto';
+    })
+  }).mouseup(function(){
+    $(document).unbind("mousemove")
   });
 }
 
-dialog("お知らせ", "", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
+dialog('#dialog', "お知らせ", "", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
 
-$('#dialog #nav_bar').mousedown(function(event){
-  let dialog = $('#dialog')[0]
-
-  $('#dialog')
-    .data("clickPointX" , event.pageX - $('#dialog').offset().left)
-    .data("clickPointY" , event.pageY - $('#dialog').offset().top);
-
-  $(document).mousemove(function(event){
-    dialog.style.left = event.pageX - $('#dialog').data("clickPointX") + 'px';
-    dialog.style.top = event.pageY - $('#dialog').data("clickPointY") + 'px';
-    dialog.style.right = 'auto';
-    dialog.style.bottom = 'auto';
-  })
-}).mouseup(function(){
-  $(document).unbind("mousemove")
-});
+$('main #settings_window #link_terms a').click(function(){
+  dialog('#window_terms', "YDITS利用規約", "", "");
+})
 
 // --- init let --- //
 let scene = 0;
