@@ -228,7 +228,7 @@ main #settings_window #link_terms {
   font-size: 1.2em;
 }
 
-main #settings_window #link_terms a {
+main #settings_window #link_terms p {
   text-decoration: underline;
   color: #111;
   cursor: pointer;
