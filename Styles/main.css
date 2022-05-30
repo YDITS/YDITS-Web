@@ -238,6 +238,17 @@ main #settings_window #link_terms p {
   text-align: center;
 }
 
+/* dialog */
+#dialog #link_terms {
+  margin: 1em;
+}
+
+#dialog .link {
+  text-decoration: underline;
+  color: #11f;
+  cursor: pointer;
+}
+
 /* Window terms */
 #window_terms {
   display: none;
@@ -253,6 +264,7 @@ main #settings_window #link_terms p {
   overflow: auto;
   padding: 0;
   border: 0;
+  z-index: 1;
 }
 
 #window_terms #nav_bar {

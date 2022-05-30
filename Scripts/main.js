@@ -23,7 +23,11 @@ let loopCnt_clock = -1;
 
 // ----- Main ----- //
 
-win('#dialog', "お知らせ", "", "現在, 緊急地震速報の機能はご利用いただけませんのでご注意ください。");
+win('#dialog', "お知らせ", "", "また, 現在緊急地震速報の機能はご利用いただけませんのでご注意ください。");
+
+$('main #dialog #link_terms .link').click(function(){
+  win('#window_terms', "YDITS利用規約", "", "");
+});
 
 settings_init();
 
