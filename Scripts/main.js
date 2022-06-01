@@ -23,11 +23,40 @@ let loopCnt_clock = -1;
 
 // ----- Main ----- //
 
-win('#dialog', "お知らせ", "", "また, 現在緊急地震速報の機能はご利用いただけませんのでご注意ください。");
+win('window_info', "お知らせ");
 
-$('main #dialog #link_terms .link').click(function(){
-  win('#window_terms', "YDITS利用規約", "", "");
-});
+$('#window_info .content').html(`
+  <p>
+    ご利用前に必ず
+    <a href='https://yone1130.github.io/site/YDITS/terms/' target='_brank'>
+      YDITS利用規約
+    </a>
+    をご確認ください。
+  </p>
+  <p>
+    また、現在 緊急地震速報の機能はご利用いただけませんのでご注意ください。
+  </p>
+  <button class="button_ok">OK</button>
+`)
+
+$('#window_info .content .button_ok').click(function(){
+  $(`#window_info`).remove()
+})
+
+$('#window_info .content').css({
+  'padding': '1em'
+})
+
+$('#window_info .content p').css({
+  'margin-bottom': '.5em'
+})
+
+$('#window_info .content .button_ok').css({
+  'position': 'absolute',
+  'bottom': '2em',
+  'right': '2em',
+  'width': '10em'
+})
 
 settings_init();
 
@@ -80,34 +109,40 @@ mainloop();
 
 // ----- functions ----- //
 // --- window --- //
-async function win(selecter, window_title, title, content){
-  let window = $(selecter)
-
-  $(`${selecter} #window_title`).text(window_title);
-  $(`${selecter} #title`).text(title);
-  $(`${selecter} #content`).text(content);
-
-  window.addClass('show');
-
-  $(`${selecter} #button_ok`).click(function(){
-    window.removeClass('show');
-  });
-  $(`${selecter} #close`).click(function(){
-    window.removeClass('show');
-  });
-
-  $(`${selecter} #nav_bar`).mousedown(function(event){
-    let window = $(selecter)[0]
+function win(winId, winTitle){
   
-    $(selecter)
-      .data("clickPointX" , event.pageX - $(selecter).offset().left)
-      .data("clickPointY" , event.pageY - $(selecter).offset().top);
+  let newHTML = `
+  <dialog class="window" id=${winId}>
+    <div class="navBar">
+      <p class="title"></p>
+      <span class="close material-symbols-outlined">close</span>
+    </div>
+  
+    <div class="content">
+    </div>
+  </dialog>
+  `
+
+  document.body.innerHTML += newHTML
+
+  $(`#${winId} .navBar .title`).text(winTitle);
+
+  $(`#${winId} .navBar .close`).click(function(){
+    $(`#${winId}`).remove()
+  })
+
+  $(`#${winId} .navBar`).mousedown(function(event){
+    let win = $(`#${winId}`)[0]
+  
+    $(`#${winId}`)
+      .data("clickPointX" , event.pageX - $(`#${winId}`).offset().left)
+      .data("clickPointY" , event.pageY - $(`#${winId}`).offset().top);
   
     $(document).mousemove(function(event){
-      window.style.left = event.pageX - $(selecter).data("clickPointX") + 'px';
-      window.style.top = event.pageY - $(selecter).data("clickPointY") + 'px';
-      window.style.right = 'auto';
-      window.style.bottom = 'auto';
+      win.style.left = event.pageX - $(`#${winId}`).data("clickPointX") + 'px';
+      win.style.top = event.pageY - $(`#${winId}`).data("clickPointY") + 'px';
+      win.style.right = 'auto';
+      win.style.bottom = 'auto';
     })
   }).mouseup(function(){
     $(document).unbind("mousemove")
@@ -142,10 +177,6 @@ function settings_init(){
   bar_cnt_NIED.on('input', function(){
     NIED_time = bar_cnt_NIED.val();
     $('#settings_put_cnt_NIED').text(NIED_time);
-  });
-
-  $('main #settings_window #link_terms p').click(function(){
-    win('#window_terms', "YDITS利用規約", "", "");
   });
 };
 

@@ -1,7 +1,7 @@
 /* ui.css / YDITS for Web  Ver β / Yone */
 /* dialog */
-#dialog {
-  display: none;
+.window {
+  display: block;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -11,53 +11,39 @@
   box-shadow: 0 0 10px 10px rgba(0, 0, 0, .5);
   width: 70vw;
   height: 70vh;
-  overflow: auto;
+  overflow: hidden;
   padding: 0;
   border: 0;
+  background-color: #fff;
 }
 
-#dialog #nav_bar {
+.window .navBar {
   height: 2em;
   overflow: hidden;
   background-color: #eee;
   cursor: move;
 }
 
-#dialog #nav_bar #window_title {
+.window .navBar .title {
   height: 1.4rem;
+  overflow: hidden;
   padding: .2em .4em;
 }
 
-#dialog #nav_bar #close {
+.window .navBar .close {
   position: absolute;
   top: 0;
   right: 0;
   height: 1.4rem;
+  overflow: hidden;
   padding: .2em .4em;
   cursor: pointer
 }
 
-#dialog #nav_bar #close:hover {
+.window .navBar .close:hover {
   background-color: #ccc;
 }
 
-#dialog #title {
-  margin: 1em;
-  text-align: center;
-}
-
-#dialog #content {
-  margin: 1em;
-}
-
-#dialog #button_ok {
-  position: absolute;
-  bottom: 2em;
-  right: 2em;
-  width: 10em;
-  cursor: pointer;
-}
-
-#dialog.show {
-  display: block;
+.window .content {
+  overflow: auto;
 }

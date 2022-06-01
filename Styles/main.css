@@ -222,99 +222,16 @@ main #settings_window #NIED_getCnt #settings_bar_cnt_NIED {
   float: left;
 }
 
-main #settings_window #link_terms {
+main #settings_window .link_terms {
+  display: block;
   margin: 2em;
   text-align: center;
   font-size: 1.2em;
-}
-
-main #settings_window #link_terms p {
-  text-decoration: underline;
   color: #111;
-  cursor: pointer;
 }
 
 #settings_footer {
   text-align: center;
-}
-
-/* dialog */
-#dialog #link_terms {
-  margin: 1em;
-}
-
-#dialog .link {
-  text-decoration: underline;
-  color: #11f;
-  cursor: pointer;
-}
-
-/* Window terms */
-#window_terms {
-  display: none;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  border-radius: .8em;
-  box-shadow: 0 0 10px 10px rgba(0, 0, 0, .5);
-  width: 85vw;
-  height: 85vh;
-  overflow: auto;
-  padding: 0;
-  border: 0;
-  z-index: 1;
-}
-
-#window_terms #nav_bar {
-  height: 2em;
-  background-color: #eee;
-  cursor: move;
-}
-
-#window_terms #nav_bar #window_title {
-  height: 1.4rem;
-  padding: .2em .4em;
-}
-
-#window_terms #nav_bar #close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 1.4rem;
-  padding: .2em .4em;
-  cursor: pointer
-}
-
-#window_terms #nav_bar #close:hover {
-  background-color: #ccc;
-}
-
-#window_terms #title {
-  margin: 1em;
-  text-align: center;
-}
-
-#window_terms #content {
-  margin: 1em;
-}
-
-#window_terms #button_ok {
-  position: absolute;
-  bottom: 2em;
-  right: 2em;
-  width: 10em;
-  cursor: pointer;
-}
-
-#window_terms iframe {
-  width: 84.5vw;
-  height: 78vh;
-}
-
-#window_terms.show {
-  display: block;
 }
 
 @media (max-width: 1080px) {
