@@ -39,7 +39,7 @@ $('#window_info .content').html(`
   <button class="button_ok">OK</button>
 `)
 
-$('#window_info .content .button_ok').click(function(){
+$(document).on('click', '#window_info .content .button_ok', function(){
   $(`#window_info`).remove()
 })
 
@@ -127,36 +127,36 @@ function win(winId, winTitle){
 
   $(`#${winId} .navBar .title`).text(winTitle);
 
-  $(`#${winId} .navBar .close`).click(function(){
+  $(document).on('click', `#${winId} .navBar .close`, function(){
     $(`#${winId}`).remove()
   })
 
-  $(`#${winId} .navBar`).mousedown(function(event){
+  $(document).on('mousedown', `#${winId} .navBar`, function(event){
     let win = $(`#${winId}`)[0]
   
     $(`#${winId}`)
       .data("clickPointX" , event.pageX - $(`#${winId}`).offset().left)
       .data("clickPointY" , event.pageY - $(`#${winId}`).offset().top);
   
-    $(document).mousemove(function(event){
+    $(document).mousemove(`#${winId}`, function(event){
       win.style.left = event.pageX - $(`#${winId}`).data("clickPointX") + 'px';
       win.style.top = event.pageY - $(`#${winId}`).data("clickPointY") + 'px';
       win.style.right = 'auto';
       win.style.bottom = 'auto';
     })
-  }).mouseup(function(){
+  }).on('mouseup', `#${winId} .navBar`, function(){
     $(document).unbind("mousemove")
   });
 };
 
 // --- Settings --- //
 function settings_init(){
-  $('#area_settings').click(function(){
+  $(document).on('click', '#area_settings', function(){
     window_settings = $('#settings_window');
     window_settings.addClass('active');
   });
 
-  $('#settings_icon_close').click(function(){
+  $(document).on('click', '#settings_icon_close', function(){
     window_settings = $('#settings_window');
     window_settings.removeClass('active');
   });
@@ -379,12 +379,12 @@ function information(){
         p2p_tsunami = p2p_data[0]['earthquake']['domesticTsunami'];
 
         tsunamiLevels = {
-          'None': 'この地震による津波の心配はありません。',
+          'None': '津波の心配はありません。',
           'Unknown': '津波の影響は不明です。',
           'Checking': '津波の影響を現在調査中です。',
           'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
-          'Watch': 'この地震で津波注意報が発表されています。',
-          'Warning': 'この地震で津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
+          'Watch': '津波注意報が発表されています。',
+          'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
         };
 
         p2p_tsunami = tsunamiLevels[p2p_tsunami];
@@ -396,6 +396,7 @@ function information(){
         $('#area_info_maxScale_para').text(p2p_maxScale);
         $('#area_info_magnitude').text("規模：" + p2p_magnitude);
         $('#area_info_depth').text("深さ：" + p2p_depth);
+        $('#area_info_tsunami').text(p2p_tsunami);
 
         $('#area_history_Title').text("(開発中) 地震履歴 直近２０件");
 
