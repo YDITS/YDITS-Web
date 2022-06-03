@@ -1,4 +1,5 @@
 /* main.css / YDITS for Web  Ver β / Yone */
+@charset "UTF-8";
 /* ----- Main ----- */
 body {
   position: fixed;
@@ -31,7 +32,7 @@ p {
 /* ----- Elements ----- */
 /* --- main --- */
 /* Area EEW */
-main #area_eew {
+#area_eew {
   position: fixed;
   top: 6vh;
   left: 1vw;
@@ -42,37 +43,37 @@ main #area_eew {
   background-color: #fff;
 }
 
-main #area_eew #content {
+#area_eew .content {
   display: flex;
 }
 
-main #area_eew_calcintensity {
+#area_eew .calcintensity {
   text-align: center;
   width: 30vh;
   height: 30vh;
 }
 
-main #area_eew_calcintensity h3 {
+#area_eew .calcintensity h3 {
   margin: 0;
 }
 
-main #area_eew_calcintensity_para {
+#area_eew .calcintensity_para {
   font-size: 8em;
   font-weight: 900;
 }
 
-main #area_eew #content #right {
+#area_eew .content .right {
   margin-top: 4em;
   margin-left: 3em;
 }
 
-main #area_eew_region {
+#area_eew .region {
   font-size: 2em;
   font-weight: 900;
 }
 
 /* Area information */
-main #area_info {
+#area_info {
   position: fixed;
   bottom: 2vh;
   left: 1vw;
@@ -83,37 +84,37 @@ main #area_info {
   background-color: #fff;
 }
 
-main #area_info #content {
+#area_info .content {
   display: flex;
 }
 
-main #area_info_maxScale {
+#area_info .maxScale {
   width: 30vh;
   height: 30vh;
   text-align: center;
 }
 
-main #area_info_maxScale h3 {
+#area_info .maxScale h3 {
   margin: 0;
 }
 
-main #area_info_maxScale_para {
+#area_info .maxScale .para {
   font-size: 8em;
   font-weight: 700;
 }
 
-main #area_info #content #right {
+#area_info .content .right {
   margin-top: 4em;
   margin-left: 3em;
 }
 
-main #area_info_hypocenter {
+#area_info .hypocenter {
   font-size: 2em;
   font-weight: 900;
 }
 
 /* Area history */
-main #area_history {
+#area_history {
   position: fixed;
   top: 6vh;
   right: 1vw;
@@ -125,7 +126,7 @@ main #area_history {
 }
 
 /* Area clock */
-main #area_clock {
+#area_clock {
   position: fixed;
   bottom: 2vh;
   right: 8vw;
@@ -136,13 +137,13 @@ main #area_clock {
   background-color: #fff;
 }
 
-main #area_clock_para {
+#area_clock .para {
   text-align: center;
   font-size: 1.7em;
 }
 
 /* Area setting */
-main #area_settings {
+#area_settings {
   position: fixed;
   bottom: 2vh;
   right: 1vw;
@@ -153,7 +154,7 @@ main #area_settings {
   background-color: #fff;
 }
 
-main #area_settings span {
+#area_settings span {
   display: block;
   width: 24px;
   margin-top: 3vh;
@@ -161,15 +162,15 @@ main #area_settings span {
   margin-right: auto;
 }
 
-main #area_settings:hover {
+#area_settings:hover {
   background-color: #C0C0C0;
 }
 
-main #settings_window {
+#settings_window {
   display: none;
 }
 
-main #settings_window.active {
+#settings_window.active {
   display: block;
   position: fixed;
   top: 4vh;
@@ -179,7 +180,7 @@ main #settings_window.active {
   background-color: #fff;
 }
 
-main #settings_window #settings_icon_close {
+#settings_window .icon-close {
   position: absolute;
   top: 1em;
   right: 1em;
@@ -187,42 +188,33 @@ main #settings_window #settings_icon_close {
   border-radius: 25%;
 }
 
-main #settings_window #settings_icon_close:hover {
+#settings_window .icon-close:hover {
   background-color: #E0E0E0;
 }
 
-main #settings_window h2 {
+#settings_window h2 {
   margin: 1em;
   text-align: center;
 }
 
-main #settings_window #p2p_getCnt {
+#settings_window .getCnt {
   margin: 2em;
 }
 
-main #settings_window #p2p_getCnt label {
+#settings_window .getCnt label {
   display: block;
   font-size: 1.2em;
 }
 
-main #settings_window #p2p_getCnt #settings_bar_cnt {
+#settings_window .getCnt #settings_bar_cnt {
   float: left;
 }
 
-main #settings_window #NIED_getCnt {
-  margin: 2em;
-}
-
-main #settings_window #NIED_getCnt label {
-  display: block;
-  font-size: 1.2em;
-}
-
-main #settings_window #NIED_getCnt #settings_bar_cnt_NIED {
+#settings_window .getCnt #settings_bar_cnt_NIED {
   float: left;
 }
 
-main #settings_window .link_terms {
+#settings_window .link_terms {
   display: block;
   margin: 2em;
   text-align: center;
@@ -230,59 +222,56 @@ main #settings_window .link_terms {
   color: #111;
 }
 
-#settings_footer {
+#settings_window .footer {
   text-align: center;
 }
 
 @media (max-width: 1080px) {
-  main #area_eew {
+  #area_eew {
     width: 96vw;
     height: 24vh;
     font-size: .7em;
   }
-  main #area_eew_calcintensity {
+  #area_eew_calcintensity {
     width: 12vh;
     height: 12vh;
   }
-  main #area_info {
+  #area_info {
     top: 34vh;
     width: 96vw;
     height: 24vh;
     font-size: .7em;
   }
-  main #area_info_maxScale {
+  #area_info_maxScale {
     width: 12vh;
     height: 12vh;
   }
-  main #area_history {
+  #area_history {
     top: 62vh;
     width: 96vw;
     height: 24vh;
     font-size: .7em;
   }
-  main #area_clock {
+  #area_clock {
     bottom: 2vh;
     left: 1vw;
     width: 74vw;
     height: 6vh;
     font-size: .7em;
   }
-  main #area_settings {
+  #area_settings {
     width: 20vw;
     height: 8vh;
   }
-  main #area_settings span {
+  #area_settings span {
     margin-top: 2vh;
   }
 }
 
 /* --- header --- */
-header #title {
+header .title {
   margin: 0;
   font-size: 3vh;
   font-weight: 900;
   color: #fff;
 }
-
-/* --- footer --- */
-

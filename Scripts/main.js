@@ -78,8 +78,8 @@ function mainloop(){
       if (DT - loopCnt_eew >= 1000 * NIED_time){
         loopCnt_eew = DT;
         // eew();
-        $('#area_eew_Title').text("緊急地震速報は発表されていません");
-        $('#area_eew_origin_time').text("この機能は現在ご利用いただけません");
+        $('#area_eew .title').text("緊急地震速報は発表されていません");
+        $('#area_eew .origin_time').text("この機能は現在ご利用いただけません");
       }
       
       // P2P EQ info
@@ -156,7 +156,7 @@ function settings_init(){
     window_settings.addClass('active');
   });
 
-  $(document).on('click', '#settings_icon_close', function(){
+  $(document).on('click', '#settings_window .icon-close', function(){
     window_settings = $('#settings_window');
     window_settings.removeClass('active');
   });
@@ -280,14 +280,14 @@ function eew(){
 
     // ----- put ----- //
     if (NIED_repNum){
-      $('#area_eew_Title').text("緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)");
-      $('#area_eew_calcintensity_para').text(NIED_calcintensity);
-      $('#area_eew_region').text(NIED_Region_name);
-      $('#area_eew_origin_time').text(NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute);
-      $('#area_eew_magnitude').text("規模：" + NIED_Magnitude);
-      $('#area_eew_depth').text("深さ：" + NIED_depth);
+      $('#area_eew .title').text("緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)");
+      $('#area_eew .calcintensity_para').text(NIED_calcintensity);
+      $('#area_eew .region').text(NIED_Region_name);
+      $('#area_eew .origin_time').text(NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute);
+      $('#area_eew .magnitude').text("規模：" + NIED_Magnitude);
+      $('#area_eew .depth').text("深さ：" + NIED_depth);
     } else {
-      $('#area_eew_Title').text("緊急地震速報は発表されていません");
+      $('#area_eew .title').text("緊急地震速報は発表されていません");
     }
   })
   .catch((reason) => {
@@ -390,15 +390,15 @@ function information(){
         p2p_tsunami = tsunamiLevels[p2p_tsunami];
 
         // ----- put ----- //
-        $('#area_info_Title').text(p2p_type);
-        $('#area_info_time').text(p2p_latest_time);
-        $('#area_info_hypocenter').text(p2p_hypocenter);
-        $('#area_info_maxScale_para').text(p2p_maxScale);
-        $('#area_info_magnitude').text("規模：" + p2p_magnitude);
-        $('#area_info_depth').text("深さ：" + p2p_depth);
-        $('#area_info_tsunami').text(p2p_tsunami);
+        $('#area_info .title').text(p2p_type);
+        $('#area_info .time').text(p2p_latest_time);
+        $('#area_info .hypocenter').text(p2p_hypocenter);
+        $('#area_info .maxScale .para').text(p2p_maxScale);
+        $('#area_info .magnitude').text("規模：" + p2p_magnitude);
+        $('#area_info .depth').text("深さ：" + p2p_depth);
+        $('#area_info .tsunami').text(p2p_tsunami);
 
-        $('#area_history_Title').text("(開発中) 地震履歴 直近２０件");
+        $('#area_history .title').text("(開発中) 地震履歴 直近２０件");
 
       }
     });
@@ -406,7 +406,7 @@ function information(){
 
 // --- Clock --- //
 function clock(content){
-  $('#area_clock_para').text(content);
+  $('#area_clock .para').text(content);
 };
 
 // 二桁に修正

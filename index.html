@@ -5,10 +5,9 @@
   <meta charset="UTF-8">
 
   <!----- meta ----->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="よね/Yone">
-  <meta name="description" content="YDITS for Web  Ver β">
+  <meta name="description" content="YDITS for Web">
   <meta name="generator" content="Microsoft Visual Studio Code">
   <title>YDITS for Web</title>
 
@@ -39,54 +38,54 @@
 
 <body>
   <header>
-    <p id="title">YDITS for Web</p>
+    <p class="title">YDITS for Web</p>
   </header>
 
   <main>
 
     <div id="area_eew">
-      <h2 id="area_eew_Title">情報取得中</h2>
+      <h2 class="title">情報取得中</h2>
 
-      <div id="content">
-        <div id="area_eew_calcintensity">
+      <div class="content">
+        <div class="calcintensity">
           <h3>最大予想震度</h3>
-          <p id="area_eew_calcintensity_para"></p>
+          <p class="calcintensity_para"></p>
         </div>
 
-        <div id="right">
-          <p id="area_eew_region"></p>
-          <p id="area_eew_origin_time"></p>
-          <p id="area_eew_magnitude"></p>
-          <p id="area_eew_depth"></p>
+        <div class="right">
+          <p class="region"></p>
+          <p class="origin_time"></p>
+          <p class="magnitude"></p>
+          <p class="depth"></p>
         </div>
       </div>
     </div>
 
     <div id="area_info">
-      <h2 id="area_info_Title">情報取得中</h2>
+      <h2 class="title">情報取得中</h2>
 
-      <div id="content">
-        <div id="area_info_maxScale">
+      <div class="content">
+        <div class="maxScale">
           <h3>最大震度</h3>
-          <p id="area_info_maxScale_para"></p>
+          <p class="para"></p>
         </div>
 
-        <div id="right">
-          <p id="area_info_hypocenter"></p>
-          <p id="area_info_time"></p>
-          <p id="area_info_magnitude"></p>
-          <p id="area_info_depth"></p>
-          <p id="area_info_tsunami"></p>
+        <div class="right">
+          <p class="hypocenter"></p>
+          <p class="time"></p>
+          <p class="magnitude"></p>
+          <p class="depth"></p>
+          <p class="tsunami"></p>
         </div>
       </div>
     </div>
 
     <div id="area_history">
-      <h2 id="area_history_Title">情報取得中</h2>
+      <h2 class="title">情報取得中</h2>
     </div>
 
     <div id="area_clock">
-      <p id="area_clock_para">情報取得中</p>
+      <p class="para">情報取得中</p>
     </div>
     
     <div id="area_settings">
@@ -94,19 +93,19 @@
     </div>
 
     <div id="settings_window">
-      <span id="settings_icon_close" class="material-symbols-outlined">
+      <span class="material-symbols-outlined icon-close">
         close
       </span>
 
       <h2>設定</h1>
 
-      <div id="NIED_getCnt">
+      <div class="getCnt">
         <label>NIED 緊急地震速報 取得間隔</label>
         <input type="range" min="1" max="8" step="1" value="2" id="settings_bar_cnt_NIED">
         <p><span id="settings_put_cnt_NIED"></span>秒ごと</p>
       </div>
 
-      <div id="p2p_getCnt">
+      <div class="getCnt">
         <label>P2P地震情報 取得間隔</label>
         <input type="range" min="8" max="32" step="2" value="12" id="settings_bar_cnt">
         <p><span id="settings_put_cnt"></span>秒ごと</p>
@@ -116,8 +115,7 @@
         利用規約
       </a>
 
-      <div id="settings_footer">
-        <p></p>
+      <div class="footer">
         <p>&copy;2022 よね/Yone.</p>
       </div>
     </div>
