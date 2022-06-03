@@ -25,6 +25,46 @@ let loopCnt_clock = -1;
 
 win('window_info', "お知らせ");
 
+$(document).off('click', '#window_info .navBar .close')
+
+$(document).on('click', '#window_info .navBar .close', function(){
+  if(document.getElementById('window_warn') == null){
+    win('window_warn', "エラー")
+
+    $('#window_warn .content').html(`
+      <p>
+        このウィンドウはクローズできません。
+      </p>
+      <button class="button_close">閉じる</button>
+    `)
+
+    $('#window_warn').css({
+      'width': '30vw',
+      'height': '30vh'
+    })
+
+    $('#window_warn .content').css({
+      'padding': '1em'
+    })
+    
+    $('#window_warn .content p').css({
+      'margin-bottom': '.5em'
+    })
+
+    $('#window_warn .content .button_close').css({
+      'position': 'absolute',
+      'bottom': '2em',
+      'right': '2em',
+      'width': '10em',
+      'height': '1.8em'
+    })
+
+    $(document).on('click', '#window_warn .content .button_close', function(){
+      $(`#window_warn`).remove()
+    })
+  }
+})
+
 $('#window_info .content').html(`
   <p>
     ご利用前に必ず
@@ -33,14 +73,29 @@ $('#window_info .content').html(`
     </a>
     をご確認ください。
   </p>
-  <p>
-    また、現在 緊急地震速報の機能はご利用いただけませんのでご注意ください。
-  </p>
-  <button class="button_ok">OK</button>
+  <button class="button_next">次へ</button>
 `)
 
-$(document).on('click', '#window_info .content .button_ok', function(){
-  $(`#window_info`).remove()
+$(document).on('click', '#window_info .content .button_next', function(){
+  $('#window_info .content').html(`
+    <p>
+      現在 緊急地震速報の機能はご利用いただけませんのでご注意ください。
+    </p>
+    <button class="button_ok">OK</button>
+  `)
+
+  $('#window_info .content .button_ok').css({
+    'position': 'absolute',
+    'bottom': '2em',
+    'right': '2em',
+    'width': '10em',
+    'height': '1.8em'
+  })
+
+  $(document).on('click', '#window_info .content .button_ok', function(){
+    $(`#window_warn`).remove()
+    $(`#window_info`).remove()
+  })
 })
 
 $('#window_info .content').css({
@@ -51,11 +106,12 @@ $('#window_info .content p').css({
   'margin-bottom': '.5em'
 })
 
-$('#window_info .content .button_ok').css({
+$('#window_info .content .button_next').css({
   'position': 'absolute',
   'bottom': '2em',
   'right': '2em',
-  'width': '10em'
+  'width': '10em',
+  'height': '1.8em'
 })
 
 settings_init();
