@@ -9,7 +9,7 @@ body {
   user-select: none;
   font-size: 16px;
   font-family: 'Noto Sans JP', sans-serif;
-  background-color: #7F7F7F;
+  background-color: #7f7f7f;
 }
 
 header {
@@ -19,7 +19,7 @@ header {
   width: 100vw;
   height: 4vh;
   text-align: center;
-  background-color: #4040E0;
+  background-color: #4040e0;
 }
 
 /* ----- Tags ----- */
