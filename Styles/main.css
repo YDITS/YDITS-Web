@@ -9,7 +9,7 @@ body {
   user-select: none;
   font-size: 16px;
   font-family: 'Noto Sans JP', sans-serif;
-  background-color: #7f7f7f;
+  background-color: #fff;
 }
 
 header {
@@ -18,8 +18,9 @@ header {
   left: 0;
   width: 100vw;
   height: 4vh;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
   text-align: center;
-  background-color: #4040e0;
+  background-color: #fff;
 }
 
 /* ----- Tags ----- */
@@ -38,6 +39,7 @@ p {
   left: 1vw;
   width: 46.5vw;
   height: 43vh;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
   overflow: auto;
   padding: 1vh 1vw;
   background-color: #fff;
@@ -79,6 +81,7 @@ p {
   left: 1vw;
   width: 46.5vw;
   height: 43vh;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
   overflow: auto;
   padding: 1vh 1vw;
   background-color: #fff;
@@ -120,6 +123,7 @@ p {
   right: 1vw;
   width: 46.5vw;
   height: 78vh;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
   overflow: auto;
   padding: 1vh 1vw;
   background-color: #fff;
@@ -132,6 +136,7 @@ p {
   right: 8vw;
   width: 39.5vw;
   height: 8vh;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
   overflow: auto;
   padding: 1vh 1vw;
   background-color: #fff;
@@ -149,6 +154,7 @@ p {
   right: 1vw;
   width: 6vw;
   height: 10vh;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
   cursor: pointer;
   overflow: auto;
   background-color: #fff;
@@ -273,5 +279,5 @@ header .title {
   margin: 0;
   font-size: 3vh;
   font-weight: 900;
-  color: #fff;
+  color: #111;
 }

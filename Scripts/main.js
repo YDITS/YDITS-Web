@@ -28,41 +28,7 @@ win('window_info', "お知らせ");
 $(document).off('click', '#window_info .navBar .close')
 
 $(document).on('click', '#window_info .navBar .close', function(){
-  if(document.getElementById('window_warn') == null){
-    win('window_warn', "エラー")
-
-    $('#window_warn .content').html(`
-      <p>
-        このウィンドウはクローズできません。
-      </p>
-      <button class="button_close">閉じる</button>
-    `)
-
-    $('#window_warn').css({
-      'width': '30vw',
-      'height': '30vh'
-    })
-
-    $('#window_warn .content').css({
-      'padding': '1em'
-    })
-    
-    $('#window_warn .content p').css({
-      'margin-bottom': '.5em'
-    })
-
-    $('#window_warn .content .button_close').css({
-      'position': 'absolute',
-      'bottom': '2em',
-      'right': '2em',
-      'width': '10em',
-      'height': '1.8em'
-    })
-
-    $(document).on('click', '#window_warn .content .button_close', function(){
-      $(`#window_warn`).remove()
-    })
-  }
+  $(`#window_info`).remove();
 })
 
 $('#window_info .content').html(`
