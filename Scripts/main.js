@@ -1,51 +1,44 @@
-// 
-// main.js / YDITS for Web  Ver β / Yone
-// 
+//
+// main.js / xxx / Yone
+//
 
-// --- init --- //
-const title   = "YDITS for Web";
-const version = "β";
+const name_project = "YDITS for Web";
+const ver_project = 0x010000;
 
 let scene = 0;
 
+let programCnt = -1;
+
 let loopCnt_fps = -1;
-let fps = -1;
+let fps         = -1;
 
-let loopCnt_info = -1;
-let p2p_time = -1;
-let p2p_id_last = -1;
-
-let loopCnt_eew = -1;
-let NIED_time = -1;
+let loopCnt_info     = -1;
+let p2p_time         = -1;
+let p2p_id_last      = -1;
+let loopCnt_eew      = -1;
+let NIED_time        = -1;
 let NIED_repNum_last = -1;
+let loopCnt_clock    = -1;
 
-let loopCnt_clock = -1;
+window.onload = function(){
+  page_init();
 
-// ----- Main ----- //
+  win('window_info', "お知らせ");
 
-win('window_info', "お知らせ");
+  $(document).on('click', '#window_info .navBar .close', function(){
+    $(`#window_info`).remove();
+  })
 
-$(document).off('click', '#window_info .navBar .close')
-
-$(document).on('click', '#window_info .navBar .close', function(){
-  $(`#window_info`).remove();
-})
-
-$('#window_info .content').html(`
-  <p>
-    ご利用前に必ず
-    <a href='https://yone1130.github.io/site/YDITS/terms/' target='_brank'>
-      YDITS利用規約
-    </a>
-    をご確認ください。
-  </p>
-  <button class="button_next">次へ</button>
-`)
-
-$(document).on('click', '#window_info .content .button_next', function(){
   $('#window_info .content').html(`
     <p>
-      現在 緊急地震速報の機能はご利用いただけませんのでご注意ください。
+      ご利用前に必ず
+      <a href='https://yone1130.github.io/site/YDITS/terms/' target='_brank'>
+        YDITS利用規約
+      </a>
+      をご確認ください。
+    </p>
+    <p>
+      また、現在 緊急地震速報と地震履歴の機能はご利用いただけませんのでご注意ください。
     </p>
     <button class="button_ok">OK</button>
   `)
@@ -59,32 +52,21 @@ $(document).on('click', '#window_info .content .button_next', function(){
   })
 
   $(document).on('click', '#window_info .content .button_ok', function(){
-    $(`#window_warn`).remove()
     $(`#window_info`).remove()
   })
-})
 
-$('#window_info .content').css({
-  'padding': '1em'
-})
+  $('#window_info .content').css({
+    'padding': '1em'
+  })
 
-$('#window_info .content p').css({
-  'margin-bottom': '.5em'
-})
-
-$('#window_info .content .button_next').css({
-  'position': 'absolute',
-  'bottom': '2em',
-  'right': '2em',
-  'width': '10em',
-  'height': '1.8em'
-})
-
-settings_init();
+  $('#window_info .content p').css({
+    'margin-bottom': '.5em'
+  })
+}
 
 // ----- Mainloop ----- //
 function mainloop(){
-  
+
   let DT = new Date();
   let timeYear = setTime(DT.getFullYear());
   let timeMonth = setTime(DT.getMonth() + 1);
@@ -100,8 +82,8 @@ function mainloop(){
       if (DT - loopCnt_eew >= 1000 * NIED_time){
         loopCnt_eew = DT;
         // eew();
-        $('#area_eew .title').text("緊急地震速報は発表されていません");
-        $('#area_eew .origin_time').text("この機能は現在ご利用いただけません");
+        $('#eew .info').text("緊急地震速報は発表されていません");
+        $('#eew .origin_time').text("この機能は現在ご利用いただけません");
       }
       
       // P2P EQ info
@@ -117,20 +99,30 @@ function mainloop(){
       }
     }
 
-    // if (DT - loopCnt_fps >= 1000){
-    //   console.log(fps);
-    //   fps = 0;
-    //   loopCnt_fps = DT;
-    // }
-    // fps++;
-
-    requestAnimationFrame(mainloop);
+  switch (scene) {
+    case 0:
+      
+      break;
+  
+    default:
+      break;
   }
+
+  requestAnimationFrame(mainloop);
+}
 
 mainloop();
 
-// ----- functions ----- //
-// --- window --- //
+// ----- Page ----- //
+function page_init(){
+  $('header .title').text(name_project)
+
+  settings_init();
+
+  select_init();
+}
+
+// --- Window --- //
 function win(winId, winTitle){
   
   let newHTML = `
@@ -173,36 +165,57 @@ function win(winId, winTitle){
 
 // --- Settings --- //
 function settings_init(){
-  $(document).on('click', '#area_settings', function(){
+  $(document).on('click', '#btn_settings', function(){
     window_settings = $('#settings_window');
-    window_settings.addClass('active');
+    window_settings.toggleClass('active');
   });
 
-  $(document).on('click', '#settings_window .icon-close', function(){
+  $(document).on('click', '#settings_window .close', function(){
     window_settings = $('#settings_window');
     window_settings.removeClass('active');
   });
 
-  const bar_cnt = $('#settings_bar_cnt');
-  p2p_time = bar_cnt.val();
+  p2p_time = $('#settings_bar_cnt').val();
   $('#settings_put_cnt').text(p2p_time);
 
-  bar_cnt.on('input', function(){
-    p2p_time = bar_cnt.val();
+  $(document).on('input', '#settings_bar_cnt', function(){
+    p2p_time = $('#settings_bar_cnt').val();
     $('#settings_put_cnt').text(p2p_time);
   });
 
-  const bar_cnt_NIED = $('#settings_bar_cnt_NIED');
-  NIED_time = bar_cnt_NIED.val();
+  NIED_time = $('#settings_bar_cnt_NIED').val();
   $('#settings_put_cnt_NIED').text(NIED_time);
 
-  bar_cnt_NIED.on('input', function(){
-    NIED_time = bar_cnt_NIED.val();
+  $(document).on('input', '#settings_bar_cnt_NIED', function(){
+    NIED_time = $('#settings_bar_cnt_NIED').val();
     $('#settings_put_cnt_NIED').text(NIED_time);
   });
 };
 
-// --- EEW --- //
+// ----- select ----- //
+function select_init(){
+  $('#eew').addClass('active');
+
+  $(document).on('click', '#btn_eew', function(){
+    reset_show();
+    $('#eew').addClass('active');
+    console.log('A')
+  })
+  $(document).on('click', '#btn_info', function(){
+    reset_show();
+    $('#earthquake_info').addClass('active');
+  })
+  $(document).on('click', '#btn_history', function(){
+    reset_show();
+    $('#earthquake_history').addClass('active');
+  })
+}
+
+function reset_show(){
+  $('main>.content').removeClass('active');
+}
+
+// ----- EEW ----- //
 function eew(){
   let DT = new Date();
   let timeYear = setTime(DT.getFullYear());
@@ -302,14 +315,14 @@ function eew(){
 
     // ----- put ----- //
     if (NIED_repNum){
-      $('#area_eew .title').text("緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)");
-      $('#area_eew .calcintensity_para').text(NIED_calcintensity);
-      $('#area_eew .region').text(NIED_Region_name);
-      $('#area_eew .origin_time').text(NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute);
-      $('#area_eew .magnitude').text("規模：" + NIED_Magnitude);
-      $('#area_eew .depth').text("深さ：" + NIED_depth);
+      $('#eew .info').text("緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)");
+      $('#eew .calcintensity_para').text(NIED_calcintensity);
+      $('#eew .region').text(NIED_Region_name);
+      $('#eew .origin_time').text(NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute);
+      $('#eew .magnitude').text("規模：" + NIED_Magnitude);
+      $('#eew .depth').text("深さ：" + NIED_depth);
     } else {
-      $('#area_eew .title').text("緊急地震速報は発表されていません");
+      $('#eew .info').text("緊急地震速報は発表されていません");
     }
   })
   .catch((reason) => {
@@ -317,7 +330,7 @@ function eew(){
   });
 };
 
-// --- information --- //
+// ----- information ----- //
 function information(){
   const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=1";
 
@@ -347,7 +360,7 @@ function information(){
           'ScalePrompt': '震度速報',
           'Destination': '震源情報',
           'ScaleAndDestination': '震源・震度情報',
-          'DetailScale': '地震情報',
+          'DetailScale': '各地の震度情報',
           'Foreign': '遠地地震情報',
           'Other': '地震情報'
         };
@@ -412,15 +425,15 @@ function information(){
         p2p_tsunami = tsunamiLevels[p2p_tsunami];
 
         // ----- put ----- //
-        $('#area_info .title').text(p2p_type);
-        $('#area_info .time').text(p2p_latest_time);
-        $('#area_info .hypocenter').text(p2p_hypocenter);
-        $('#area_info .maxScale .para').text(p2p_maxScale);
-        $('#area_info .magnitude').text("規模：" + p2p_magnitude);
-        $('#area_info .depth').text("深さ：" + p2p_depth);
-        $('#area_info .tsunami').text(p2p_tsunami);
+        $('#earthquake_info .info').text(p2p_type);
+        $('#earthquake_info .time').text(p2p_latest_time);
+        $('#earthquake_info .hypocenter').text(p2p_hypocenter);
+        $('#earthquake_info .maxScale .para').text(p2p_maxScale);
+        $('#earthquake_info .magnitude').text("規模：" + p2p_magnitude);
+        $('#earthquake_info .depth').text("深さ：" + p2p_depth);
+        $('#earthquake_info .tsunami').text(p2p_tsunami);
 
-        $('#area_history .title').text("(開発中) 地震履歴 直近２０件");
+        $('#earthquake_history .info').text("この機能は現在ご利用いただけません");
 
       }
     });

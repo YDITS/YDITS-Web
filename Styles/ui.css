@@ -8,6 +8,7 @@
   bottom: 0;
   left: 0;
   right: 0;
+  margin: auto;
   border-radius: .8em;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, .5);
   width: 70vw;
