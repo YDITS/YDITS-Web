@@ -120,9 +120,6 @@ function page_init(){
   settings_init();
 
   select_init();
-
-  const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
-  p2p_sound.play();
 }
 
 // --- Window --- //
@@ -193,6 +190,12 @@ function settings_init(){
     EEW_time = $('#settings_bar_cnt_NIED').val();
     $('#settings_put_cnt_NIED').text(EEW_time);
   });
+
+  $(document).on('click', '#btn_earthquake_info_chk_sound', function(){
+    // const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
+    const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
+    p2p_sound.play();
+  });
 };
 
 // ----- select ----- //
@@ -231,12 +234,12 @@ function eew(){
   let EEW_repNum;
 
   const EEW_Date = String(timeYear) + String((timeMonth)) + String(timeDay);
-  const EEW_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond)
-  // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`
-  const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json"
-  // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
+  const EEW_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond);
+  // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
+  const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";
+  // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";
 
-  console.log(url_EEW)
+  console.log(url_EEW);
 
   response = fetch(url_EEW)
   .then(Response => {
@@ -244,6 +247,7 @@ function eew(){
       throw new Error(`${Response.status} ${Response.statusText}`);
     }
     return Response.json()
+    console.log('Got EEW data')
   })
   .then(result => {
 
@@ -368,6 +372,10 @@ function information(){
       p2p_id = p2p_data[0]['id'];
       if (p2p_id != p2p_id_last){
         p2p_id_last = p2p_id;
+
+        // const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
+        const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
+        p2p_sound.play();
 
         // --- time --- //
         p2p_latest_time = p2p_data[0]['earthquake']['time'];

@@ -100,6 +100,11 @@ main>.content {
   font-size: 1.2em;
 }
 
+#btn_earthquake_info_chk_sound {
+  margin: 4em 0;
+  height: 2em;
+}
+
 #settings_window .getCnt #settings_bar_cnt {
   float: left;
 }
