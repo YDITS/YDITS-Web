@@ -1,5 +1,5 @@
 //
-// main.js / xxx / Yone
+// main.js / YDITS for Web  Ver 1.0.0 / Yone
 //
 
 const name_project = "YDITS for Web";
@@ -16,8 +16,8 @@ let loopCnt_info     = -1;
 let p2p_time         = -1;
 let p2p_id_last      = -1;
 let loopCnt_eew      = -1;
-let NIED_time        = -1;
-let NIED_repNum_last = -1;
+let EEW_time        = -1;
+let EEW_repNum_last = -1;
 let loopCnt_clock    = -1;
 
 window.onload = function(){
@@ -78,12 +78,12 @@ function mainloop(){
 
   switch(scene){
     case 0:
-      // NIED EEW
-      if (DT - loopCnt_eew >= 1000 * NIED_time){
+      // EEW EEW
+      if (DT - loopCnt_eew >= 1000 * EEW_time){
         loopCnt_eew = DT;
-        // eew();
-        $('#eew .info').text("緊急地震速報は発表されていません");
-        $('#eew .origin_time').text("この機能は現在ご利用いただけません");
+        eew();
+        // $('#eew .info').text("緊急地震速報は発表されていません");
+        // $('#eew .origin_time').text("この機能は現在ご利用いただけません");
       }
       
       // P2P EQ info
@@ -120,6 +120,9 @@ function page_init(){
   settings_init();
 
   select_init();
+
+  const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
+  p2p_sound.play();
 }
 
 // --- Window --- //
@@ -183,12 +186,12 @@ function settings_init(){
     $('#settings_put_cnt').text(p2p_time);
   });
 
-  NIED_time = $('#settings_bar_cnt_NIED').val();
-  $('#settings_put_cnt_NIED').text(NIED_time);
+  EEW_time = $('#settings_bar_cnt_NIED').val();
+  $('#settings_put_cnt_NIED').text(EEW_time);
 
   $(document).on('input', '#settings_bar_cnt_NIED', function(){
-    NIED_time = $('#settings_bar_cnt_NIED').val();
-    $('#settings_put_cnt_NIED').text(NIED_time);
+    EEW_time = $('#settings_bar_cnt_NIED').val();
+    $('#settings_put_cnt_NIED').text(EEW_time);
   });
 };
 
@@ -225,14 +228,17 @@ function eew(){
   let timeMinute = setTime(DT.getMinutes());
   let timeSecond = setTime(DT.getSeconds());
 
-  let NIED_repNum;
+  let EEW_repNum;
 
-  const NIED_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond)
-  const url_NIED = `https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/${NIED_DT}.json`
-  console.log(url_NIED)
+  const EEW_Date = String(timeYear) + String((timeMonth)) + String(timeDay);
+  const EEW_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond)
+  // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`
+  const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json"
   // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json"
 
-  response = fetch(url_NIED)
+  console.log(url_EEW)
+
+  response = fetch(url_EEW)
   .then(Response => {
     if (!Response.ok) {
       throw new Error(`${Response.status} ${Response.statusText}`);
@@ -240,93 +246,113 @@ function eew(){
     return Response.json()
   })
   .then(result => {
-    let NIED_data = result;
 
-    NIED_repNum = NIED_data['report_num'];
-    console.log(NIED_repNum)
-    if (NIED_repNum != NIED_repNum_last){
-      NIED_repNum_last = NIED_repNum;
+    
+    let EEW_data = result;
+    
+    EEW_repNum = EEW_data["hypoInfo"]["items"][0]["reportNum"];
+    console.log(EEW_repNum)
+    if (EEW_repNum != EEW_repNum_last){
+      EEW_repNum_last = EEW_repNum;
 
       // --- Final report --- //
-      NIED_isFinal = NIED_data['is_final'];
+      EEW_isFinal = EEW_data["hypoInfo"]["items"][0]["isFinal"];
       
-      if (NIED_isFinal){
-        NIED_repNum = '最終報';
+      if (EEW_isFinal){
+        EEW_repNum = '最終報';
       }
       
       // --- Origin time --- //
-      NIED_origin_time = NIED_data['origin_time'];
+      EEW_origin_time = new Date(Date.parse(EEW_data["hypoInfo"]["items"][0]["originTime"]));
       // datetime
-      NIED_timeYear   = NIED_origin_time.substring(0 , 4);
-      NIED_timeMonth  = NIED_origin_time.substring(4 , 6);
-      NIED_timeDay    = NIED_origin_time.substring(6 , 8);
-      NIED_timeHour   = NIED_origin_time.substring(8 , 10);
-      NIED_timeMinute = NIED_origin_time.substring(10, 12);
-      NIED_timeSecond = NIED_origin_time.substring(12, 14);
+      EEW_timeYear   = EEW_origin_time.substring(0 , 4);
+      EEW_timeMonth  = EEW_origin_time.substring(4 , 6);
+      EEW_timeDay    = EEW_origin_time.substring(6 , 8);
+      EEW_timeHour   = EEW_origin_time.substring(8 , 10);
+      EEW_timeMinute = EEW_origin_time.substring(10, 12);
+      EEW_timeSecond = EEW_origin_time.substring(12, 14);
       
       // --- Region name --- //
-      NIED_Region_name = NIED_data['region_name'];
+      EEW_Region_name = EEW_dataJson["hypoInfo"]["items"][0]["regionName"];
       
-      if (!NIED_Region_name){
-        NIED_Region_name = '不明';
+      if (!EEW_Region_name){
+        EEW_Region_name = '不明';
       }
       
       // --- Calcintensity --- //
-      NIED_calcintensity = NIED_data['calcintensity'];
+      EEW_calcintensity = EEW_data["hypoInfo"]["items"][0]["calcintensity"];
       
-      if (!NIED_calcintensity){
-        NIED_calcintensity = '不明';
+      switch (EEW_calcintensity) {
+        case '01': EEW_calcintensity = "1"; break;
+        case '02': EEW_calcintensity = "2"; break;
+        case '03': EEW_calcintensity = "3"; break;
+        case '04': EEW_calcintensity = "4"; break;
+        case '5-': EEW_calcintensity = "5-"; break;
+        case '5+': EEW_calcintensity = "5+"; break;
+        case '6-': EEW_calcintensity = "6-"; break;
+        case '6+': EEW_calcintensity = "6+"; break;
+        case '07': EEW_calcintensity = "7"; break;
+
+        default:
+          break;
+      }
+
+      if (!EEW_calcintensity){
+        EEW_calcintensity = '不明';
       }
 
       // --- Magnitude --- //
-      NIED_Magnitude = NIED_data['magunitude'];
+      EEW_Magnitude = EEW_data["hypoInfo"]["items"][0]["magnitude"];
 
-      if (NIED_Magnitude){
-        NIED_Magnitude = 'M' + NIED_Magnitude;
+      if (EEW_Magnitude){
+        EEW_Magnitude = 'M' + EEW_Magnitude;
       } else {
-        NIED_Magnitude = '不明';
+        EEW_Magnitude = '不明';
       }
       
       // --- Depth --- //
-      NIED_depth = NIED_data['depth'];
+      EEW_depth = EEW_data["hypoInfo"]["items"][0]["depth"];
       
-      if (NIED_depth){
-        NIED_depth = '約' + NIED_depth;
+      if (EEW_depth){
+        EEW_depth = '約' + EEW_depth;
       } else {
-        NIED_depth = '不明';
+        EEW_depth = '不明';
       }
       
       // --- alert flag --- //
-      if (NIED_repNum){
-        NIED_alertFlg = NIED_data['alertflg'];
+      // if (EEW_repNum){
+      //   EEW_alertFlg = EEW_data['alertflg'];
         
-        if (!NIED_alertFlg){
-          NIED_alertFlg = '{Null}';
-        }
-      }
-      
+      //   if (!EEW_alertFlg){
+      //     EEW_alertFlg = '{Null}';
+      //   }
+      // }
+
+      let EEW_alertFlg = '{Null}';
+
       // --- Is cansel --- //
-      NIED_isCansel = NIED_data['is_cancel'];
+      EEW_isCansel = EEW_data["hypoInfo"]["items"][0]['isCancel'];
       
-      if (NIED_isCansel){
-        NIED_alertFlg = '取消報';
+      if (EEW_isCansel){
+        EEW_alertFlg = '取消報';
       }
     }
 
     // ----- put ----- //
-    if (NIED_repNum){
-      $('#eew .info').text("緊急地震速報 " + NIED_alertFlg + " (第" + NIED_repNum + "報)");
-      $('#eew .calcintensity_para').text(NIED_calcintensity);
-      $('#eew .region').text(NIED_Region_name);
-      $('#eew .origin_time').text(NIED_timeYear + '/' + NIED_timeMonth + '/' + NIED_timeDay + ' ' + NIED_timeHour + ':' + NIED_timeMinute);
-      $('#eew .magnitude').text("規模：" + NIED_Magnitude);
-      $('#eew .depth').text("深さ：" + NIED_depth);
+    if (EEW_repNum != ""){
+      $('#eew .info').text("緊急地震速報 " + EEW_alertFlg + " (第" + EEW_repNum + "報)");
+      $('#eew .calcintensity_para').text(EEW_calcintensity);
+      $('#eew .region').text(EEW_Region_name);
+      $('#eew .origin_time').text(EEW_timeYear + '/' + EEW_timeMonth + '/' + EEW_timeDay + ' ' + EEW_timeHour + ':' + EEW_timeMinute);
+      $('#eew .magnitude').text("規模：" + EEW_Magnitude);
+      $('#eew .depth').text("深さ：" + EEW_depth);
     } else {
       $('#eew .info').text("緊急地震速報は発表されていません");
     }
   })
   .catch((reason) => {
-    console.log(reason);
+    console.log('A');
+    // console.log(reason);
   });
 };
 
