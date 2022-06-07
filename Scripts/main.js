@@ -20,48 +20,13 @@ let EEW_time        = -1;
 let EEW_repNum_last = -1;
 let loopCnt_clock    = -1;
 
+// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
+const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
+
 window.onload = function(){
   page_init();
 
-  win('window_info', "お知らせ");
-
-  $(document).on('click', '#window_info .navBar .close', function(){
-    $(`#window_info`).remove();
-  })
-
-  $('#window_info .content').html(`
-    <p>
-      ご利用前に必ず
-      <a href='https://yone1130.github.io/site/YDITS/terms/' target='_brank'>
-        YDITS利用規約
-      </a>
-      をご確認ください。
-    </p>
-    <p>
-      また、現在 緊急地震速報と地震履歴の機能はご利用いただけませんのでご注意ください。
-    </p>
-    <button class="button_ok">OK</button>
-  `)
-
-  $('#window_info .content .button_ok').css({
-    'position': 'absolute',
-    'bottom': '2em',
-    'right': '2em',
-    'width': '10em',
-    'height': '1.8em'
-  })
-
-  $(document).on('click', '#window_info .content .button_ok', function(){
-    $(`#window_info`).remove()
-  })
-
-  $('#window_info .content').css({
-    'padding': '1em'
-  })
-
-  $('#window_info .content p').css({
-    'margin-bottom': '.5em'
-  })
+  showInfo();
 }
 
 // ----- Mainloop ----- //
@@ -93,10 +58,10 @@ function mainloop(){
       }
       
       // Clock
-      if (DT - loopCnt_clock >= 1000 * 1){
-        loopCnt_clock = DT;
-        clock(content);
-      }
+      // if (DT - loopCnt_clock >= 1000 * 1){
+      //   loopCnt_clock = DT;
+      //   clock(content);
+      // }
     }
 
   switch (scene) {
@@ -144,23 +109,6 @@ function win(winId, winTitle){
   $(document).on('click', `#${winId} .navBar .close`, function(){
     $(`#${winId}`).remove()
   })
-
-  $(document).on('mousedown', `#${winId} .navBar`, function(event){
-    let win = $(`#${winId}`)[0]
-  
-    $(`#${winId}`)
-      .data("clickPointX" , event.pageX - $(`#${winId}`).offset().left)
-      .data("clickPointY" , event.pageY - $(`#${winId}`).offset().top);
-  
-    $(document).mousemove(`#${winId}`, function(event){
-      win.style.left = event.pageX - $(`#${winId}`).data("clickPointX") + 'px';
-      win.style.top = event.pageY - $(`#${winId}`).data("clickPointY") + 'px';
-      win.style.right = 'auto';
-      win.style.bottom = 'auto';
-    })
-  }).on('mouseup', `#${winId} .navBar`, function(){
-    $(document).unbind("mousemove")
-  });
 };
 
 // --- Settings --- //
@@ -192,8 +140,6 @@ function settings_init(){
   });
 
   $(document).on('click', '#btn_earthquake_info_chk_sound', function(){
-    // const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
-    const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
     p2p_sound.play();
   });
 };
@@ -246,12 +192,11 @@ function eew(){
     if (!Response.ok) {
       throw new Error(`${Response.status} ${Response.statusText}`);
     }
-    return Response.json()
     console.log('Got EEW data')
+    return Response.json()
   })
   .then(result => {
 
-    
     let EEW_data = result;
     
     EEW_repNum = EEW_data["hypoInfo"]["items"][0]["reportNum"];
@@ -373,8 +318,6 @@ function information(){
       if (p2p_id != p2p_id_last){
         p2p_id_last = p2p_id;
 
-        // const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
-        const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
         p2p_sound.play();
 
         // --- time --- //
@@ -475,7 +418,7 @@ function information(){
 
 // --- Clock --- //
 function clock(content){
-  $('#area_clock .para').text(content);
+  $('#clock .para').text(content);
 };
 
 // 二桁に修正
@@ -488,3 +431,46 @@ function setTime(num) {
   }
   return ret;
 };
+
+// --- Show info window --- //
+function showInfo(){
+  win('window_info', "お知らせ");
+
+  $(document).on('click', '#window_info .navBar .close', function(){
+    $(`#window_info`).remove();
+  })
+
+  $('#window_info .content').html(`
+    <p>
+      ご利用前に必ず
+      <a href='https://yone1130.github.io/site/YDITS/terms/' target='_brank'>
+        YDITS利用規約
+      </a>
+      をご確認ください。
+    </p>
+    <p>
+      また、現在 緊急地震速報と地震履歴の機能はご利用いただけませんのでご注意ください。
+    </p>
+    <button class="button_ok">OK</button>
+  `)
+
+  $('#window_info .content .button_ok').css({
+    'position': 'absolute',
+    'bottom': '2em',
+    'right': '2em',
+    'width': '10em',
+    'height': '1.8em'
+  })
+
+  $(document).on('click', '#window_info .content .button_ok', function(){
+    $(`#window_info`).remove()
+  })
+
+  $('#window_info .content').css({
+    'padding': '1em'
+  })
+
+  $('#window_info .content p').css({
+    'margin-bottom': '.5em'
+  })
+}
