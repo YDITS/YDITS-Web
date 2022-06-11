@@ -68,34 +68,17 @@ function mainloop(){
   axios.head(window.location.href).then(res => {
     gmt = new Date(res.headers.date); // Server datetime
 
+    timeYear = setTime(gmt.getFullYear());
+    timeMonth = setTime(gmt.getMonth() + 1);
+    timeDay = setTime(gmt.getDate());
+    timeHour = setTime(gmt.getHours());
+    timeMinute = setTime(gmt.getMinutes());
+    timeSecond = setTime(gmt.getSeconds());
+
     // --- debug
     // resDate = "Sat, 11 Jun 2022 13:04:46 GMT";
     // gmt = new Date(resDate); // Server datetime
   })
-  timeYear = setTime(gmt.getFullYear());
-  timeMonth = setTime(gmt.getMonth() + 1);
-  timeDay = setTime(gmt.getDate());
-  timeHour = setTime(gmt.getHours());
-  timeMinute = setTime(gmt.getMinutes());
-  timeSecond = setTime(gmt.getSeconds());
-
-  switch (timeMonth) {
-    case 'Jan': timeMonth = "01"; break;
-    case 'Feb': timeMonth = "02"; break;
-    case 'Mar': timeMonth = "03"; break;
-    case 'Apr': timeMonth = "04"; break;
-    case 'May': timeMonth = "05"; break;
-    case 'Jun': timeMonth = "06"; break;
-    case 'Jul': timeMonth = "07"; break;
-    case 'Aug': timeMonth = "08"; break;
-    case 'Sep': timeMonth = "09"; break;
-    case 'Oct': timeMonth = "10"; break;
-    case 'Nov': timeMonth = "11"; break;
-    case 'Dec': timeMonth = "12"; break;
-
-    default:
-      break;
-  }
 
   switch(scene){
     case 0:
