@@ -1,0 +1,297 @@
+/* main.css / YDITS for Web  Ver 1.0.0 / Yone */
+@charset "UTF-8";
+/* ----- Main ----- */
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}
+
+* {
+  margin: 0;
+}
+
+body {
+  background-color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+
+  user-select: none;
+}
+
+main {
+  min-height: 100vh;
+  padding: 2em 0;
+}
+
+header {
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  width: 100%;
+  height: 3em;
+}
+
+footer {
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  width: 100%;
+  height: 6em;
+  background-color: #fff;
+}
+
+a {
+  color: #4040e0;
+}
+
+/* ----- Elements ----- */
+/* --- main --- */
+main>.content {
+  display: none;
+  margin-bottom: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  width: 80%;
+  height: 24em;
+  padding: 1em;
+}
+
+#settings_window {
+  display: none;
+  position: absolute;
+  top: 4em;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  width: 90%;
+  height: 100%;
+  padding: 1em;
+  background-color: #fff;
+}
+
+#settings_window.active {
+  display: block;
+}
+
+#settings_window .close {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  border-radius: .2em;
+  cursor: pointer;
+}
+
+#settings_window .close:hover {
+  background-color: #eee;
+}
+
+#settings_window .title {
+  text-align: center;
+}
+
+#settings_window .getCnt {
+  margin: 2em;
+}
+
+#settings_window .getCnt label {
+  display: block;
+  font-size: 1.2em;
+}
+
+#btn_earthquake_info_chk_sound {
+  margin: 4em 0;
+  height: 2em;
+}
+
+#settings_window .getCnt #settings_bar_cnt {
+  float: left;
+}
+
+#settings_window .getCnt #settings_bar_cnt_NIED {
+  float: left;
+}
+
+#settings_window .link_terms {
+  display: block;
+  margin: 2em;
+  text-align: center;
+  font-size: 1.2em;
+  color: #111;
+}
+
+#select {
+  margin-bottom: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  width: 80%;
+  min-height: 4em;
+}
+
+#select ul {
+  display: flex;
+  margin: 0 4em;
+  list-style: none;
+  padding: 0;
+}
+
+#select li {
+  margin: 0 auto;
+  width: 30%;
+  height: 4em;
+  padding: 0 auto;
+  text-align: center;
+}
+
+#select li:hover {
+  background-color: #eee;
+}
+
+#select li p {
+  padding: 1.25em 0;
+}
+
+@media (max-width: 769px) {
+  main>.content {
+    font-size: .7em;
+  }
+
+  #select {
+    width: 90%;
+  }
+
+  #select ul {
+    margin: 0;
+  }
+}
+
+/* EEW */
+#eew.active {
+  display: block;
+}
+
+#eew .content {
+  display: flex;
+}
+
+#eew .calcintensity {
+  text-align: center;
+  width: 16em;
+  height: 16em;
+}
+
+#eew .calcintensity h3 {
+  margin: 0;
+}
+
+#eew .calcintensity_para {
+  font-size: 8em;
+  font-weight: 900;
+}
+
+#eew .content .right {
+  margin-top: 4em;
+  margin-left: 3em;
+}
+
+#eew .region {
+  font-size: 2em;
+  font-weight: 900;
+}
+
+/* information */
+#earthquake_info.active {
+  display: block;
+}
+
+#earthquake_info .content {
+  display: flex;
+}
+
+#earthquake_info .maxScale {
+  width: 16em;
+  height: 16em;
+  text-align: center;
+}
+
+#earthquake_info .maxScale h3 {
+  margin: 0;
+}
+
+#earthquake_info .maxScale .para {
+  font-size: 8em;
+  font-weight: 700;
+}
+
+#earthquake_info .content .right {
+  margin-top: 4em;
+  margin-left: 3em;
+}
+
+#earthquake_info .hypocenter {
+  font-size: 2em;
+  font-weight: 900;
+}
+
+/* history */
+#earthquake_history.active {
+  display: block;
+}
+
+/* --- header --- */
+header .content {
+  display: flex;
+  margin: 0 auto;
+  max-width: 1024px;
+  height: 100%;
+}
+
+header .title {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+#btn_settings {
+  position: absolute;
+  width: 6em;
+  height: 3em;
+  cursor: pointer;
+}
+
+#btn_settings:hover {
+  background-color: #eee;
+}
+
+#btn_settings span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 24px;
+  height: 24px;
+}
+
+/* --- footer --- */
+footer .content {
+  display: flex;
+  margin: 0 auto;
+  max-width: 1024px;
+  height: 100%;
+}
+
+footer .copyrights {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
