@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.0.0 / Yone
+// main.js / YDITS for Web  Ver 1.1.0 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = 0x010000;
+const ver_project = 0x010100;
 
 let scene = 0;
 
@@ -54,8 +54,8 @@ let p2p_tsunami;
 
 let loopCnt_clock    = -1;
 
-// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
 const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
+// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
 
 window.onload = function(){
   page_init();
@@ -360,6 +360,7 @@ function setEEW_DT(num){
 
 // ----- information ----- //
 function information(){
+
   const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=1";
   
   const Response = fetch(url_p2p)
@@ -455,17 +456,13 @@ function information(){
       }
 
       // ----- put ----- //
-      if (EEW_repNum != ''){
-        $('#earthquake_info .info').text(p2p_type);
-        $('#earthquake_info .hypocenter').text(p2p_hypocenter);
-        $('#earthquake_info .time').text(`発生日時：${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMonth}頃`);
-        $('#earthquake_info .maxScale .para').text(p2p_maxScale);
-        $('#earthquake_info .magnitude').text("規模：" + p2p_magnitude);
-        $('#earthquake_info .depth').text("深さ：" + p2p_depth);
-        $('#earthquake_info .tsunami').text(p2p_tsunami);
-      } else{
-        $('#earthquake_history .info').text("この機能は現在ご利用いただけません");
-      }
+      $('#earthquake_info .info').text(p2p_type);
+      $('#earthquake_info .hypocenter').text(p2p_hypocenter);
+      $('#earthquake_info .time').text(`発生日時：${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMonth}頃`);
+      $('#earthquake_info .maxScale .para').text(p2p_maxScale);
+      $('#earthquake_info .magnitude').text("規模：" + p2p_magnitude);
+      $('#earthquake_info .depth').text("深さ：" + p2p_depth);
+      $('#earthquake_info .tsunami').text(p2p_tsunami);
     });
 };
 
