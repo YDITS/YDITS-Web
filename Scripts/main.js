@@ -137,30 +137,20 @@ function win(winId, winTitle){
 
 // ---
 function getServer_DT(){
-  $.ajax({
-    type : 'HEAD',
-    url :  window.location.href,
-    cache : false
-  }).done(function(data, textStatus, xhr) {
-    try {
-      gmt = new Date(xhr.getResponseHeader("Date"));
-    } catch(e) {
-      gmt = new Date();
-    }
-  }).fail(function() {
-    gmt = new Date();
-  });
+  axios.head(window.location.href).then(res => {
+    gmt = new Date(res.headers.date); // Server datetime
 
-  // --- debug
-  // resDate = "Sat, 12 Jun 2022 01:00:02 GMT";
-  // gmt = new Date(resDate); // Server datetime
+    // --- debug
+    // resDate = "Sat, 12 Jun 2022 01:00:02 GMT";
+    // gmt = new Date(resDate); // Server datetime
 
-  timeYear = setTime(gmt.getFullYear());
-  timeMonth = setTime(gmt.getMonth() + 1);
-  timeDay = setTime(gmt.getDate());
-  timeHour = setTime(gmt.getHours());
-  timeMinute = setTime(gmt.getMinutes());
-  timeSecond = setTime(gmt.getSeconds());
+    timeYear = setTime(gmt.getFullYear());
+    timeMonth = setTime(gmt.getMonth() + 1);
+    timeDay = setTime(gmt.getDate());
+    timeHour = setTime(gmt.getHours());
+    timeMinute = setTime(gmt.getMinutes());
+    timeSecond = setTime(gmt.getSeconds());
+  })
 }
 
 // --- Settings --- //
