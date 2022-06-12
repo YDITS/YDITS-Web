@@ -137,12 +137,13 @@ function win(winId, winTitle){
 
 // ---
 function getServer_DT(){
-  axios.head(window.location.href).then(res => {
+  axios.head(`${window.location.href}?` + timestamp).then(res => {
     gmt = new Date(res.headers.date); // Server datetime
 
     // --- debug
-    // resDate = "Sat, 12 Jun 2022 01:00:02 GMT";
+    // resDate = "29 May 2022 06:56:33 GMT";
     // gmt = new Date(resDate); // Server datetime
+    // ---
 
     timeYear = setTime(gmt.getFullYear());
     timeMonth = setTime(gmt.getMonth() + 1);
@@ -213,9 +214,12 @@ function eew(){
   const EEW_Date = String(timeYear) + String(timeMonth) + String(timeDay);
   const EEW_DT = String(timeYear) + String(timeMonth) + String(timeDay) + String(timeHour) + String(timeMinute) + String(setTime(setEEW_DT(Number(timeSecond))));
   const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
+
+  // --- debug
   // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";
   // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220610/20220610100000.json";
   // const url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";
+  // ---
 
   response = fetch(url_EEW)
   .then(Response => {
