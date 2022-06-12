@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.1.0 / Yone
+// main.js / YDITS for Web  Ver 1.1.1 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = 0x010100;
+const ver_project = 0x010101;
 
 let scene = 0;
 
@@ -54,6 +54,8 @@ let p2p_tsunami;
 
 let loopCnt_clock    = -1;
 
+const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW.wav");
+// const EEW_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewEEW.wav");
 const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
 // const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
 
@@ -179,14 +181,17 @@ function settings_init(){
     $('#settings_put_cnt').text(p2p_time);
   });
 
-  EEW_time = $('#settings_bar_cnt_NIED').val();
-  $('#settings_put_cnt_NIED').text(EEW_time);
+  EEW_time = $('#settings_bar_cnt_eew').val();
+  $('#settings_put_cnt_eew').text(EEW_time);
 
-  $(document).on('input', '#settings_bar_cnt_NIED', function(){
-    EEW_time = $('#settings_bar_cnt_NIED').val();
-    $('#settings_put_cnt_NIED').text(EEW_time);
+  $(document).on('input', '#settings_bar_cnt_eew', function(){
+    EEW_time = $('#settings_bar_cnt_eew').val();
+    $('#settings_put_cnt_eew').text(EEW_time);
   });
 
+  $(document).on('click', '#btn_eew_chk_sound', function(){
+    EEW_sound.play();
+  });
   $(document).on('click', '#btn_earthquake_info_chk_sound', function(){
     p2p_sound.play();
   });
@@ -242,7 +247,9 @@ function eew(){
     // EEW_repNum_last = -2;
     if (EEW_repNum != EEW_repNum_last){
       EEW_repNum_last = EEW_repNum;
-      
+
+      EEW_sound.play();
+
       // --- Final report --- //
       EEW_isFinal = EEW_data["hypoInfo"]["items"][0]["isFinal"];
       
