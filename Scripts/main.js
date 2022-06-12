@@ -54,8 +54,8 @@ let p2p_tsunami;
 
 let loopCnt_clock    = -1;
 
-// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/preview/Sounds/gotNewInfo.wav");
-const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/preview/Sounds/gotNewInfo.wav");
+// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
+const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
 
 window.onload = function(){
   page_init();
