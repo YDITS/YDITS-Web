@@ -135,9 +135,9 @@ function win(winId, winTitle){
   })
 };
 
-// ---
+// --- Get server datetime
 function getServer_DT(){
-  axios.head(`${window.location.href}?` + timestamp).then(res => {
+  axios.head(window.location.href).then(res => {
     gmt = new Date(res.headers.date); // Server datetime
 
     // --- debug
