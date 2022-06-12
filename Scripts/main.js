@@ -12,16 +12,50 @@ let programCnt = -1;
 let loopCnt_fps = -1;
 let fps         = -1;
 
-let loopCnt_info     = -1;
-let p2p_time         = -1;
-let p2p_id_last      = -1;
-let loopCnt_eew      = -1;
-let EEW_time        = -1;
-let EEW_repNum_last = -1;
+let gmt;
+let DT;
+
+let loopCnt_getDT = -1;
+let loopCnt_info  = -1;
+let p2p_time      = -1;
+let p2p_id_last   = -1;
+let EEW_time      = -1;
+let loopCnt_eew   = -1;
+
+let timeYear;
+let timeMonth;
+let timeDay ;
+let timeHour;
+let timeMinute;
+let timeSecond;
+
+let EEW_repNum      = '';
+let EEW_repNum_last = '';
+let EEW_alertFlg    = '';
+
+let EEW_timeYear   = '';
+let EEW_timeMonth  = '';
+let EEW_timeDay    = '';
+let EEW_timeHour   = '';
+let EEW_timeMinute = '';
+
+let EEW_calcintensity = '';
+let EEW_Region_name   = '';
+let EEW_Magnitude     = '';
+let EEW_depth         = '';
+
+let p2p_type;
+let p2p_latest_time;
+let p2p_hypocenter;
+let p2p_maxScale;
+let p2p_magnitude;
+let p2p_depth;
+let p2p_tsunami;
+
 let loopCnt_clock    = -1;
 
-// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
-const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
+// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/preview/Sounds/gotNewInfo.wav");
+const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/preview/Sounds/gotNewInfo.wav");
 
 window.onload = function(){
   page_init();
@@ -32,14 +66,25 @@ window.onload = function(){
 // ----- Mainloop ----- //
 function mainloop(){
 
-  let DT = new Date();
-  let timeYear = setTime(DT.getFullYear());
-  let timeMonth = setTime(DT.getMonth() + 1);
-  let timeDay = setTime(DT.getDate());
-  let timeHour = setTime(DT.getHours());
-  let timeMinute = setTime(DT.getMinutes());
-  let timeSecond = setTime(DT.getSeconds());
-  let content = timeHour + ':' + timeMinute + ":" + timeSecond;
+  DT = new Date();
+
+  if(DT - loopCnt_getDT >= 1000 * 2){
+    loopCnt_getDT = DT;
+    axios.head(window.location.href).then(res => {
+      gmt = new Date(res.headers.date); // Server datetime
+
+      // --- debug
+      // resDate = "Sat, 12 Jun 2022 01:00:02 GMT";
+      // gmt = new Date(resDate); // Server datetime
+
+      timeYear = setTime(gmt.getFullYear());
+      timeMonth = setTime(gmt.getMonth() + 1);
+      timeDay = setTime(gmt.getDate());
+      timeHour = setTime(gmt.getHours());
+      timeMinute = setTime(gmt.getMinutes());
+      timeSecond = setTime(gmt.getSeconds());
+    })
+  }
 
   switch(scene){
     case 0:
@@ -62,16 +107,9 @@ function mainloop(){
       //   loopCnt_clock = DT;
       //   clock(content);
       // }
-    }
 
-  switch (scene) {
-    case 0:
-      
       break;
-  
-    default:
-      break;
-  }
+    }
 
   requestAnimationFrame(mainloop);
 }
@@ -89,7 +127,6 @@ function page_init(){
 
 // --- Window --- //
 function win(winId, winTitle){
-  
   let newHTML = `
   <dialog class="window" id=${winId}>
     <div class="navBar">
@@ -151,7 +188,6 @@ function select_init(){
   $(document).on('click', '#btn_eew', function(){
     reset_show();
     $('#eew').addClass('active');
-    console.log('A')
   })
   $(document).on('click', '#btn_info', function(){
     reset_show();
@@ -169,60 +205,50 @@ function reset_show(){
 
 // ----- EEW ----- //
 function eew(){
-  let DT = new Date();
-  let timeYear = setTime(DT.getFullYear());
-  let timeMonth = setTime(DT.getMonth() + 1);
-  let timeDay = setTime(DT.getDate());
-  let timeHour = setTime(DT.getHours());
-  let timeMinute = setTime(DT.getMinutes());
-  let timeSecond = setTime(DT.getSeconds());
-
-  let EEW_repNum;
-
-  const EEW_Date = String(timeYear) + String((timeMonth)) + String(timeDay);
-  const EEW_DT = String(timeYear) + String((timeMonth)) + String(timeDay) + String(timeHour) + String(timeMinute) + String(timeSecond);
-  // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
-  const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";
-  // const url_NIED = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";
-
-  console.log(url_EEW);
+  const EEW_Date = String(timeYear) + String(timeMonth) + String(timeDay);
+  const EEW_DT = String(timeYear) + String(timeMonth) + String(timeDay) + String(timeHour) + String(timeMinute) + String(setTime(setEEW_DT(Number(timeSecond))));
+  const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
+  // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";
+  // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220610/20220610100000.json";
+  // const url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";
 
   response = fetch(url_EEW)
   .then(Response => {
     if (!Response.ok) {
       throw new Error(`${Response.status} ${Response.statusText}`);
     }
-    console.log('Got EEW data')
     return Response.json()
   })
   .then(result => {
 
     let EEW_data = result;
     
+    if(EEW_data["hypoInfo"] != null){
     EEW_repNum = EEW_data["hypoInfo"]["items"][0]["reportNum"];
-    console.log(EEW_repNum)
+    // EEW_repNum_last = -2;
     if (EEW_repNum != EEW_repNum_last){
       EEW_repNum_last = EEW_repNum;
-
+      
       // --- Final report --- //
       EEW_isFinal = EEW_data["hypoInfo"]["items"][0]["isFinal"];
       
-      if (EEW_isFinal){
-        EEW_repNum = '最終報';
+      if (EEW_isFinal == 'true'){
+        EEW_repNum_p = '最終報';
+      } else {
+        EEW_repNum_p = `第${EEW_repNum}報`
       }
       
       // --- Origin time --- //
-      EEW_origin_time = new Date(Date.parse(EEW_data["hypoInfo"]["items"][0]["originTime"]));
+      EEW_origin_time = EEW_data["hypoInfo"]["items"][0]["originTime"];
       // datetime
       EEW_timeYear   = EEW_origin_time.substring(0 , 4);
-      EEW_timeMonth  = EEW_origin_time.substring(4 , 6);
-      EEW_timeDay    = EEW_origin_time.substring(6 , 8);
-      EEW_timeHour   = EEW_origin_time.substring(8 , 10);
-      EEW_timeMinute = EEW_origin_time.substring(10, 12);
-      EEW_timeSecond = EEW_origin_time.substring(12, 14);
-      
+      EEW_timeMonth  = EEW_origin_time.substring(5 , 7);
+      EEW_timeDay    = EEW_origin_time.substring(8 , 10);
+      EEW_timeHour   = EEW_origin_time.substring(11 , 13);
+      EEW_timeMinute = EEW_origin_time.substring(14, 16);
+      EEW_timeSecond = EEW_origin_time.substring(17, 19);
       // --- Region name --- //
-      EEW_Region_name = EEW_dataJson["hypoInfo"]["items"][0]["regionName"];
+      EEW_Region_name = EEW_data["hypoInfo"]["items"][0]["regionName"];
       
       if (!EEW_Region_name){
         EEW_Region_name = '不明';
@@ -241,74 +267,101 @@ function eew(){
         case '6-': EEW_calcintensity = "6-"; break;
         case '6+': EEW_calcintensity = "6+"; break;
         case '07': EEW_calcintensity = "7"; break;
-
+        
         default:
           break;
-      }
-
-      if (!EEW_calcintensity){
-        EEW_calcintensity = '不明';
-      }
-
-      // --- Magnitude --- //
-      EEW_Magnitude = EEW_data["hypoInfo"]["items"][0]["magnitude"];
-
-      if (EEW_Magnitude){
-        EEW_Magnitude = 'M' + EEW_Magnitude;
-      } else {
-        EEW_Magnitude = '不明';
-      }
-      
-      // --- Depth --- //
-      EEW_depth = EEW_data["hypoInfo"]["items"][0]["depth"];
-      
-      if (EEW_depth){
-        EEW_depth = '約' + EEW_depth;
-      } else {
-        EEW_depth = '不明';
-      }
-      
-      // --- alert flag --- //
-      // if (EEW_repNum){
-      //   EEW_alertFlg = EEW_data['alertflg'];
+        }
         
-      //   if (!EEW_alertFlg){
-      //     EEW_alertFlg = '{Null}';
-      //   }
-      // }
+        if (!EEW_calcintensity){
+          EEW_calcintensity = '不明';
+        }
+        
+        // --- Magnitude --- //
+        EEW_Magnitude = EEW_data["hypoInfo"]["items"][0]["magnitude"];
+        
+        if (EEW_Magnitude){
+          EEW_Magnitude = 'M' + EEW_Magnitude;
+        } else {
+          EEW_Magnitude = '不明';
+        }
 
-      let EEW_alertFlg = '{Null}';
+        // --- Depth --- //
+        EEW_depth = EEW_data["hypoInfo"]["items"][0]["depth"];
+        
+        if (EEW_depth){
+          EEW_depth = '約' + EEW_depth;
+        } else {
+          EEW_depth = '不明';
+        }
+        
+        // --- alert flag --- //
+        // if (EEW_repNum){
+        //   EEW_alertFlg = EEW_data['alertflg'];
 
-      // --- Is cansel --- //
-      EEW_isCansel = EEW_data["hypoInfo"]["items"][0]['isCancel'];
-      
-      if (EEW_isCansel){
-        EEW_alertFlg = '取消報';
+        //   if (!EEW_alertFlg){
+        //     EEW_alertFlg = '{Null}';
+        //   }
+        // }
+        
+        EEW_alertFlg = '';
+        
+        // --- Is cansel --- //
+        EEW_isCansel = EEW_data["hypoInfo"]["items"][0]['isCancel'];
+        
+        if (EEW_isCansel == 'true'){
+          EEW_alertFlg = '取消報';
+        }
       }
-    }
-
-    // ----- put ----- //
-    if (EEW_repNum != ""){
-      $('#eew .info').text("緊急地震速報 " + EEW_alertFlg + " (第" + EEW_repNum + "報)");
-      $('#eew .calcintensity_para').text(EEW_calcintensity);
-      $('#eew .region').text(EEW_Region_name);
-      $('#eew .origin_time').text(EEW_timeYear + '/' + EEW_timeMonth + '/' + EEW_timeDay + ' ' + EEW_timeHour + ':' + EEW_timeMinute);
-      $('#eew .magnitude').text("規模：" + EEW_Magnitude);
-      $('#eew .depth').text("深さ：" + EEW_depth);
     } else {
-      $('#eew .info').text("緊急地震速報は発表されていません");
+      EEW_repNum      = '';
+      EEW_repNum_last = '';
+      EEW_alertFlg    = '';
+
+      EEW_timeYear   = '';
+      EEW_timeMonth  = '';
+      EEW_timeDay    = '';
+      EEW_timeHour   = '';
+      EEW_timeMinute = '';
+
+      EEW_calcintensity = '';
+      EEW_Region_name   = '';
+      EEW_Magnitude     = '';
+      EEW_depth         = '';
     }
   })
   .catch((reason) => {
-    console.log('A');
     // console.log(reason);
   });
+  // ----- put ----- //
+  if (EEW_repNum != ''){
+    $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
+    $('#eew .calcintensity_para').text(EEW_calcintensity);
+    $('#eew .region').text(EEW_Region_name);
+    $('#eew .origin_time').text(`発生日時：${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+    $('#eew .magnitude').text(`予想規模：${EEW_Magnitude}`);
+    $('#eew .depth').text(`予想深さ：${EEW_depth}`);
+  } else {
+    $('#eew .info').text("緊急地震速報は発表されていません");
+  }
 };
+
+// EEW datetime format
+function setEEW_DT(num){
+  let ret;
+  if (num == 1){
+    ret = 60 - 1;
+  } else if(num == 0) {
+    ret = 60 - 2;
+  } else {
+    ret = num - 2;
+  }
+  return ret;
+}
 
 // ----- information ----- //
 function information(){
   const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=1";
-
+  
   const Response = fetch(url_p2p)
     .then(Response => Response.json())
     .then(data => {
@@ -328,7 +381,6 @@ function information(){
         p2p_latest_timeDay    = p2p_latest_time.substring(8 , 10);
         p2p_latest_timeHour   = p2p_latest_time.substring(11, 13);
         p2p_latest_timeMinute = p2p_latest_time.substring(14, 16);
-        p2p_latest_timeSecond = p2p_latest_time.substring(17, 19);
 
         // --- type --- //
         p2p_type = p2p_data[0]['issue']['type'];
@@ -400,18 +452,19 @@ function information(){
         };
 
         p2p_tsunami = tsunamiLevels[p2p_tsunami];
+      }
 
-        // ----- put ----- //
+      // ----- put ----- //
+      if (EEW_repNum != ''){
         $('#earthquake_info .info').text(p2p_type);
-        $('#earthquake_info .time').text(p2p_latest_time);
         $('#earthquake_info .hypocenter').text(p2p_hypocenter);
+        $('#earthquake_info .time').text(`発生日時：${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMonth}頃`);
         $('#earthquake_info .maxScale .para').text(p2p_maxScale);
         $('#earthquake_info .magnitude').text("規模：" + p2p_magnitude);
         $('#earthquake_info .depth').text("深さ：" + p2p_depth);
         $('#earthquake_info .tsunami').text(p2p_tsunami);
-
+      } else{
         $('#earthquake_history .info').text("この機能は現在ご利用いただけません");
-
       }
     });
 };
@@ -448,9 +501,14 @@ function showInfo(){
       </a>
       をご確認ください。
     </p>
-    <p>
-      また、現在 緊急地震速報と地震履歴の機能はご利用いただけませんのでご注意ください。
-    </p>
+    <section class="apology">
+      <h2>本サービスに関するお詫び</h2>
+      <p>
+        <span class="date">2022年6月12日</span><br>
+        本サービスの利用者並びに関係者様にご迷惑をおかけし、大変申し訳ございませんでした。<br>
+        お知らせページは <a href="https://yone1130.github.io/site/YDITS/news/2022/06/1201/" target='_brank'>こちら</a> です。
+      </p>
+    </section>
     <button class="button_ok">OK</button>
   `)
 
@@ -472,5 +530,20 @@ function showInfo(){
 
   $('#window_info .content p').css({
     'margin-bottom': '.5em'
+  })
+
+  $('#window_info .content .apology').css({
+    'padding': '1em',
+  })
+
+  $('#window_info .content .apology>h2').css({
+    'margin-bottom': '.2em',
+    'text-align': 'center'
+  })
+
+  $('#window_info .content .apology .date').css({
+    'display': 'block',
+    'margin-bottom': '.1em',
+    'text-align': 'right'
   })
 }
