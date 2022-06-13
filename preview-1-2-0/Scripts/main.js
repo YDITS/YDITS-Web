@@ -61,6 +61,7 @@ const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/preview-1-2-0/
 
 window.onload = function(){
   page_init();
+  mainloop();
 }
 
 // ----- Mainloop ----- //
@@ -100,8 +101,6 @@ function mainloop(){
 
   requestAnimationFrame(mainloop);
 }
-
-mainloop();
 
 // ----- Page ----- //
 function page_init(){
