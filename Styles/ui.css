@@ -1,4 +1,4 @@
-/* ui.css / YDITS for Web  Ver 1.2.1 / Yone */
+/* ui.css / YDITS for Web  Ver 1.2.2 / Yone */
 /* ----- Main ----- */
 /* --- Dialog --- */
 .window {
@@ -47,4 +47,41 @@
 
 .window .content {
   overflow: auto;
+}
+
+/* --- Toggle switch --- */
+.toggle-switch {
+  display: inline-block;
+
+  width: 64px;
+  height: 32px;
+  border-radius: 1em;
+
+  background-color: #7f7f7f;
+  cursor: pointer;
+
+  transition: all .2s;
+}
+
+.toggle-switch>.span {
+  position: relative;
+  top: 4px;
+  left: 6px;
+  display: inline-block;
+  
+  height: 24px;
+  width: 24px;
+  border-radius: 1em;
+
+  background-color: #fff;
+
+  transition: all .2s;
+}
+
+.toggle-switch.on {
+  background-color: #20ff20;
+}
+
+.toggle-switch.on>.span {
+  left: 34px;
 }

@@ -1,4 +1,4 @@
-<!-- index.html / home / YDITS for Web  Ver 1.2.1 / Yone -->
+<!-- index.html / home / YDITS for Web  Ver 1.2.2 / Yone -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -123,16 +123,27 @@
 
       <p class="version"></p>
 
-      <div class="getCnt">
+      <div class="content getCnt">
         <label>緊急地震速報 取得間隔</label>
-        <input type="range" min="1" max="8" step="1" value="2" id="settings_bar_cnt_eew">
-        <p><span id="settings_put_cnt_eew"></span>秒ごと</p>
+        <div class="content">
+          <input type="range" min="1" max="8" step="1" value="2" id="settings_bar_cnt_eew">
+          <p><span id="settings_put_cnt_eew"></span>秒ごと</p>
+        </div>
       </div>
 
-      <div class="getCnt">
+      <div class="content getCnt">
         <label>地震情報 取得間隔</label>
-        <input type="range" min="8" max="32" step="2" value="12" id="settings_bar_cnt">
-        <p><span id="settings_put_cnt"></span>秒ごと</p>
+        <div class="content">
+          <input type="range" min="8" max="32" step="2" value="12" id="settings_bar_cnt">
+          <p><span id="settings_put_cnt"></span>秒ごと</p>
+        </div>
+      </div>
+
+      <div class="content playSound">
+        <label>効果音</label>
+        <div class="content toggle-switch">
+          <div class="span"></div>
+        </div>
       </div>
 
       <button id="btn_eew_chk_sound">緊急地震速報の受信時音声を再生</button>

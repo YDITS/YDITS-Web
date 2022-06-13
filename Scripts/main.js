@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.2.1 / Yone
+// main.js / YDITS for Web  Ver 1.2.2 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.2.1";
+const ver_project = "1.2.2";
 
 let scene = 0;
 
@@ -16,6 +16,8 @@ let gmt;
 let DT;
 
 let loopCnt_getDT = -1;
+
+let settings_playSound = true;
 
 let EEW_time      = -1;
 let loopCnt_eew   = -1;
@@ -173,6 +175,18 @@ function settings_init(){
     window_settings.removeClass('active');
   });
 
+  $('.toggle-switch').addClass('on');
+  $(document).on('click', '.toggle-switch', function(){
+    if(settings_playSound == false){
+      $('.toggle-switch').addClass('on');
+      settings_playSound = true;
+      console.log('A', 'on')
+    } else if(settings_playSound == true){
+      $('.toggle-switch').removeClass('on');
+      settings_playSound = false;
+    }
+  })
+
   p2p_time = $('#settings_bar_cnt').val();
   $('#settings_put_cnt').text(p2p_time);
 
@@ -248,7 +262,9 @@ function eew(){
     if (EEW_repNum != EEW_repNum_last){
       EEW_repNum_last = EEW_repNum;
 
-      EEW_sound.play();
+      if(settings_playSound == true){
+        EEW_sound.play();
+      }
 
       // --- Final report --- //
       EEW_isFinal = EEW_data["hypoInfo"]["items"][0]["isFinal"];
@@ -456,7 +472,9 @@ function information(){
       if (p2p_id != p2p_id_last){
         p2p_id_last = p2p_id;
 
-        p2p_sound.play();
+        if(settings_playSound == true){
+          p2p_sound.play();
+        }
 
         // --- time --- //
         p2p_latest_time = p2p_data[0]['earthquake']['time'];
