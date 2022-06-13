@@ -1,0 +1,50 @@
+/* ui.css / YDITS for Web  Ver 1.2.0 / Yone */
+/* ----- Main ----- */
+/* --- Dialog --- */
+.window {
+  display: block;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border-radius: .8em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .5);
+  width: 70vw;
+  height: 70vh;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background-color: #fff;
+}
+
+.window .navBar {
+  height: 2em;
+  overflow: hidden;
+  background-color: #eee;
+}
+
+.window .navBar .title {
+  height: 1.4rem;
+  overflow: hidden;
+  padding: .2em .4em;
+}
+
+.window .navBar .close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 1.4rem;
+  overflow: hidden;
+  padding: .2em .4em;
+  cursor: pointer
+}
+
+.window .navBar .close:hover {
+  background-color: #ccc;
+}
+
+.window .content {
+  overflow: auto;
+}
