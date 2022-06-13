@@ -405,6 +405,9 @@ function eew(){
         break;
     }
 
+    reset_show();
+    $('#eew').addClass('active');
+
     $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
     $('#eew .calcintensity_para').text(EEW_calcintensity);
     $('#eew .region').text(EEW_Region_name);
