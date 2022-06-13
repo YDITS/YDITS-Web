@@ -16,11 +16,15 @@ let gmt;
 let DT;
 
 let loopCnt_getDT = -1;
+
+let EEW_time      = -1;
+let loopCnt_eew   = -1;
+
 let loopCnt_info  = -1;
 let p2p_time      = -1;
 let p2p_id_last   = -1;
-let EEW_time      = -1;
-let loopCnt_eew   = -1;
+
+let loopCnt_history = -1;
 
 let timeYear;
 let timeMonth;
@@ -80,8 +84,6 @@ function mainloop(){
       if (DT - loopCnt_eew >= 1000 * EEW_time){
         loopCnt_eew = DT;
         eew();
-        // $('#eew .info').text("緊急地震速報は発表されていません");
-        // $('#eew .origin_time').text("この機能は現在ご利用いただけません");
       }
       
       // P2P EQ info
@@ -90,12 +92,11 @@ function mainloop(){
         information();
       }
       
-      // Clock
-      // if (DT - loopCnt_clock >= 1000 * 1){
-      //   loopCnt_clock = DT;
-      //   clock(content);
-      // }
-
+      // P2P EQ history
+      if (DT - loopCnt_history >= 1000 * EEW_time){
+        loopCnt_history = DT;
+        history();
+      }
       break;
     }
 
@@ -545,6 +546,11 @@ function information(){
       $('#earthquake_info .tsunami').text(p2p_tsunami);
     });
 };
+
+// --- history --- //
+function history(){
+  $('#earthquake_history .info').text("この機能は現在ご利用いただけません")
+}
 
 // --- Clock --- //
 // function clock(content){
