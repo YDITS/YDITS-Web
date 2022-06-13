@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.1.1 / Yone
+// main.js / YDITS for Web  Ver 1.2.0 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = 0x010101;
+const ver_project = "1.2.0";
 
 let scene = 0;
 
@@ -16,11 +16,15 @@ let gmt;
 let DT;
 
 let loopCnt_getDT = -1;
+
+let EEW_time      = -1;
+let loopCnt_eew   = -1;
+
 let loopCnt_info  = -1;
 let p2p_time      = -1;
 let p2p_id_last   = -1;
-let EEW_time      = -1;
-let loopCnt_eew   = -1;
+
+let loopCnt_history = -1;
 
 let timeYear;
 let timeMonth;
@@ -54,15 +58,14 @@ let p2p_tsunami;
 
 let loopCnt_clock    = -1;
 
-const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW.wav");
-// const EEW_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewEEW.wav");
-const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
-// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
+const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/preview-1-2-0/Sounds/gotNewEEW.wav");
+// const EEW_sound = new Audio("file:///C:/Git/repos/YDITS-Web/preview-1-2-0/Sounds/gotNewEEW.wav");
+const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/preview-1-2-0/Sounds/gotNewInfo.wav");
+// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/preview-1-2-0/Sounds/gotNewInfo.wav");
 
 window.onload = function(){
   page_init();
-
-  showInfo();
+  mainloop();
 }
 
 // ----- Mainloop ----- //
@@ -70,7 +73,7 @@ function mainloop(){
 
   DT = new Date();
 
-  if(DT - loopCnt_getDT >= 1000 * 2){
+  if(DT - loopCnt_getDT >= 1000 * 1){
     loopCnt_getDT = DT;
     getServer_DT();
   }
@@ -81,8 +84,6 @@ function mainloop(){
       if (DT - loopCnt_eew >= 1000 * EEW_time){
         loopCnt_eew = DT;
         eew();
-        // $('#eew .info').text("緊急地震速報は発表されていません");
-        // $('#eew .origin_time').text("この機能は現在ご利用いただけません");
       }
       
       // P2P EQ info
@@ -91,26 +92,22 @@ function mainloop(){
         information();
       }
       
-      // Clock
-      // if (DT - loopCnt_clock >= 1000 * 1){
-      //   loopCnt_clock = DT;
-      //   clock(content);
-      // }
-
+      // P2P EQ history
+      if (DT - loopCnt_history >= 1000 * EEW_time){
+        loopCnt_history = DT;
+        history();
+      }
       break;
     }
 
   requestAnimationFrame(mainloop);
 }
 
-mainloop();
-
 // ----- Page ----- //
 function page_init(){
   $('header .title').text(name_project)
 
   settings_init();
-
   select_init();
 }
 
@@ -137,7 +134,7 @@ function win(winId, winTitle){
   })
 };
 
-// --- Get server datetime
+// --- Get server datetime --- //
 function getServer_DT(){
   axios.head(
     window.location.href,
@@ -150,6 +147,7 @@ function getServer_DT(){
     // --- debug
     // resDate = "29 May 2022 06:56:33 GMT";
     // gmt = new Date(resDate); // Server datetime
+    // gmt = new Date();
     // ---
 
     timeYear = setTime(gmt.getFullYear());
@@ -163,6 +161,8 @@ function getServer_DT(){
 
 // --- Settings --- //
 function settings_init(){
+  $('#settings_window .version').text(`Ver ${ver_project}`);
+
   $(document).on('click', '#btn_settings', function(){
     window_settings = $('#settings_window');
     window_settings.toggleClass('active');
@@ -226,9 +226,9 @@ function eew(){
   const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
 
   // --- debug
-  // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";
-  // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220610/20220610100000.json";
-  // const url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";
+  // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213231059.json`;  //2021-2-13-23:08 Fukushima
+  // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
+  // const url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19
   // ---
 
   response = fetch(url_EEW)
@@ -268,6 +268,7 @@ function eew(){
       EEW_timeHour   = EEW_origin_time.substring(11 , 13);
       EEW_timeMinute = EEW_origin_time.substring(14, 16);
       EEW_timeSecond = EEW_origin_time.substring(17, 19);
+
       // --- Region name --- //
       EEW_Region_name = EEW_data["hypoInfo"]["items"][0]["regionName"];
       
@@ -277,7 +278,7 @@ function eew(){
       
       // --- Calcintensity --- //
       EEW_calcintensity = EEW_data["hypoInfo"]["items"][0]["calcintensity"];
-      
+
       switch (EEW_calcintensity) {
         case '01': EEW_calcintensity = "1"; break;
         case '02': EEW_calcintensity = "2"; break;
@@ -290,11 +291,12 @@ function eew(){
         case '07': EEW_calcintensity = "7"; break;
         
         default:
+          EEW_calcintensity = `?`;
           break;
         }
         
         if (!EEW_calcintensity){
-          EEW_calcintensity = '不明';
+          EEW_calcintensity = '?';
         }
         
         // --- Magnitude --- //
@@ -353,22 +355,82 @@ function eew(){
   .catch((reason) => {
     // console.log(reason);
   });
+
   // ----- put ----- //
+  let EEW_bgc;
+  let EEW_fntc;
+
   if (EEW_repNum != ''){
+    switch (EEW_calcintensity) {
+      case '1':
+        EEW_bgc = "#c0c0c0"; 
+        EEW_fntc = "#010101";
+        break;
+      case '2':
+        EEW_bgc = "#2020c0";
+        EEW_fntc = "#ffffff";
+        break;
+      case '3': 
+        EEW_bgc = "#20c020";
+        EEW_fntc = "#010101";
+        break;
+      case '4':
+        EEW_bgc = "#c0c020";
+        EEW_fntc = "#010101";
+        break;
+      case '5-':
+        EEW_bgc = "#c0a020";
+        EEW_fntc = "#010101";
+        break;
+      case '5+':
+        EEW_bgc = "#c07f20";
+        EEW_fntc = "#010101";
+        break;
+      case '6-':
+        EEW_bgc = "#e02020";
+        EEW_fntc = "#010101";
+        break;
+      case '6+':
+        EEW_bgc = "#a02020";
+        EEW_fntc = "#ffffff";
+        break;
+      case '7':
+        EEW_bgc = "#7f207f";
+        EEW_fntc = "#ffffff";
+        break;
+      
+      default:
+        EEW_bgc = "#7f7fc0";
+        EEW_fntc = "#010101";
+        break;
+    }
+
+    reset_show();
+    $('#eew').addClass('active');
+
     $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
     $('#eew .calcintensity_para').text(EEW_calcintensity);
     $('#eew .region').text(EEW_Region_name);
     $('#eew .origin_time').text(`発生日時：${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
     $('#eew .magnitude').text(`予想規模：${EEW_Magnitude}`);
     $('#eew .depth').text(`予想深さ：${EEW_depth}`);
+
   } else {
+    EEW_bgc = "#ffffff";
+    EEW_fntc = "#010101";
     $('#eew .info').text("緊急地震速報は発表されていません");
   }
+
+  $('#eew').css({
+    'background-color': EEW_bgc,
+    'color': EEW_fntc
+  })
 };
 
 // EEW datetime format
 function setEEW_DT(num){
   let ret;
+
   if (num == 1){
     ret = 60 - 1;
   } else if(num == 0) {
@@ -376,6 +438,7 @@ function setEEW_DT(num){
   } else {
     ret = num - 2;
   }
+
   return ret;
 }
 
@@ -384,7 +447,7 @@ function information(){
 
   const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=1";
   
-  const Response = fetch(url_p2p)
+  response = fetch(url_p2p)
     .then(Response => Response.json())
     .then(data => {
       p2p_data = data;
@@ -434,10 +497,10 @@ function information(){
           case 20: p2p_maxScale = '2'; break;
           case 30: p2p_maxScale = '3'; break;
           case 40: p2p_maxScale = '4'; break;
-          case 45: p2p_maxScale = '5弱'; break;
-          case 50: p2p_maxScale = '5強'; break;
-          case 55: p2p_maxScale = '6弱'; break;
-          case 60: p2p_maxScale = '6強'; break;
+          case 45: p2p_maxScale = '5-'; break;
+          case 50: p2p_maxScale = '5+'; break;
+          case 55: p2p_maxScale = '6-'; break;
+          case 60: p2p_maxScale = '6+'; break;
           case 70: p2p_maxScale = '7'; break;
         }
 
@@ -487,81 +550,25 @@ function information(){
     });
 };
 
+// --- history --- //
+function history(){
+  $('#earthquake_history .info').text("この機能は現在ご利用いただけません")
+}
+
 // --- Clock --- //
-function clock(content){
-  $('#clock .para').text(content);
-};
+// function clock(content){
+//   $('#clock .para').text(content);
+// };
 
 // 二桁に修正
 function setTime(num) {
   let ret;
+
   if ( num < 10 ){
     ret = "0" + num;
   } else {
     ret = num;
   }
+
   return ret;
 };
-
-// --- Show info window --- //
-function showInfo(){
-  win('window_info', "お知らせ");
-
-  $(document).on('click', '#window_info .navBar .close', function(){
-    $(`#window_info`).remove();
-  })
-
-  $('#window_info .content').html(`
-    <p>
-      ご利用前に必ず
-      <a href='https://yone1130.github.io/site/YDITS/terms/' target='_brank'>
-        YDITS利用規約
-      </a>
-      をご確認ください。
-    </p>
-    <section class="apology">
-      <h2>本サービスに関するお詫び</h2>
-      <p>
-        <span class="date">2022年6月12日</span><br>
-        本サービスの利用者並びに関係者様にご迷惑をおかけし、大変申し訳ございませんでした。<br>
-        お知らせページは <a href="https://yone1130.github.io/site/YDITS/news/2022/06/1201/" target='_brank'>こちら</a> です。
-      </p>
-    </section>
-    <button class="button_ok">OK</button>
-  `)
-
-  $('#window_info .content .button_ok').css({
-    'position': 'absolute',
-    'bottom': '2em',
-    'right': '2em',
-    'width': '10em',
-    'height': '1.8em'
-  })
-
-  $(document).on('click', '#window_info .content .button_ok', function(){
-    $(`#window_info`).remove()
-  })
-
-  $('#window_info .content').css({
-    'padding': '1em'
-  })
-
-  $('#window_info .content p').css({
-    'margin-bottom': '.5em'
-  })
-
-  $('#window_info .content .apology').css({
-    'padding': '1em',
-  })
-
-  $('#window_info .content .apology>h2').css({
-    'margin-bottom': '.2em',
-    'text-align': 'center'
-  })
-
-  $('#window_info .content .apology .date').css({
-    'display': 'block',
-    'margin-bottom': '.1em',
-    'text-align': 'right'
-  })
-}

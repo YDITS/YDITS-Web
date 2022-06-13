@@ -1,4 +1,4 @@
-/* main.css / YDITS for Web  Ver 1.1.1 / Yone */
+/* main.css / YDITS for Web  Ver 1.2.0 / Yone */
 @charset "UTF-8";
 /* ----- Main ----- */
 .material-symbols-outlined {
@@ -55,6 +55,10 @@ main>.content {
   width: 80%;
   height: 24em;
   padding: 1em;
+}
+
+main>.content>.title {
+  text-align: center;
 }
 
 #settings_window {
