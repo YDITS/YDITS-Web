@@ -1,4 +1,4 @@
-/* main.css / YDITS for Web  Ver 1.4.2 / Yone */
+/* main.css / YDITS for Web  Ver 1.5.0 / Yone */
 @charset "UTF-8";
 /* ----- Main ----- */
 .material-symbols-outlined {
@@ -23,7 +23,7 @@ body {
 }
 
 main {
-  min-height: 60em;
+  min-height: 90em;
   padding: 2em 0;
 }
 
@@ -110,9 +110,23 @@ main>.content>.info {
   margin: 2em 0;
 }
 
+#settings_window>.content>label {
+  display: block;
+  font-size: 1.3em;
+}
+
 #settings_window .content label {
   display: block;
-  font-size: 1.2em;
+}
+
+#settings_window .playSound .eew,
+#settings_window .playSound .info {
+  margin-top: 2em;
+}
+
+#settings_window .playSound .eew>.content,
+#settings_window .playSound .info>.content {
+  margin-top: 1em;
 }
 
 #settings_window .getCnt>.content {
@@ -121,7 +135,7 @@ main>.content>.info {
 }
 
 #settings_window .content>.content {
-  margin-top: 1em;
+  margin-top: .5em;
 }
 
 #btn_earthquake_info_chk_sound {

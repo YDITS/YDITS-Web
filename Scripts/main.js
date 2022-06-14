@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.4.2 / Yone
+// main.js / YDITS for Web  Ver 1.5.0 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.4.2";
+const ver_project = "1.5.0";
 
 let scene = 0;
 
@@ -18,7 +18,10 @@ let DT;
 let loopCnt_getDT = -1;
 
 let settings_darkMode;
-let settings_playSound;
+let settings_playSound_eew_any;
+let settings_playSound_eew_first;
+let settings_playSound_eew_last;
+let settings_playSound_info;
 
 let EEW_time      = -1;
 let loopCnt_eew   = -1;
@@ -204,26 +207,108 @@ function settings_init(){
   })
 
   // --- Play sound
-  if(localStorage.getItem("settings-playSound") == 'true'){
-    settings_playSound = true;
-    $('#settings_window .playSound .toggle-switch').addClass('on');
-  } else if(localStorage.getItem("settings-playSound") == 'false'){
-    settings_playSound = false;
-    $('#settings_window .playSound .toggle-switch').removeClass('on');
+  if(localStorage.getItem("settings-playSound-eew-any") == 'true'){
+    settings_playSound_eew_any = true;
+    $('#settings_window .playSound .eew .any .toggle-switch').addClass('on');
+  } else if(localStorage.getItem("settings-playSound-eew-any") == 'false'){
+    settings_playSound_eew_any = false;
+    $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
   } else {
-    settings_playSound = true;
-    $('#settings_window .playSound .toggle-switch').addClass('on');
+    settings_playSound_eew_any = true;
+    $('#settings_window .playSound .eew .any .toggle-switch').addClass('on');
   }
 
-  $(document).on('click', '#settings_window .playSound .toggle-switch', function(){
-    if(settings_playSound == false){
-      settings_playSound = true;
-      localStorage.setItem('settings-playSound', 'true');
-      $('#settings_window .playSound .toggle-switch').addClass('on');
-    } else if(settings_playSound == true){
-      settings_playSound = false;
-      localStorage.setItem('settings-playSound', 'false');
-      $('#settings_window .playSound .toggle-switch').removeClass('on');
+  $(document).on('click', '#settings_window .playSound .eew .any .toggle-switch', function(){
+    if(settings_playSound_eew_any == false){
+      settings_playSound_eew_any = true;
+      localStorage.setItem('settings-playSound-eew-any', 'true');
+      $('#settings_window .playSound .eew .any .toggle-switch').addClass('on');
+      settings_playSound_eew_first = true;
+      localStorage.setItem('settings-playSound-eew-first', 'true');
+      $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
+      settings_playSound_eew_last = true;
+      localStorage.setItem('settings-playSound-eew-last', 'true');
+      $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
+    } else if(settings_playSound_eew_any == true){
+      settings_playSound_eew_any = false;
+      localStorage.setItem('settings-playSound-eew-any', 'false');
+      $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
+    }
+  })
+
+  if(localStorage.getItem("settings-playSound-eew-first") == 'true'){
+    settings_playSound_eew_first = true;
+    $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
+  } else if(localStorage.getItem("settings-playSound-eew-first") == 'false'){
+    settings_playSound_eew_first = false;
+    $('#settings_window .playSound .eew .first .toggle-switch').removeClass('on');
+  } else {
+    settings_playSound_eew_first = true;
+    $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
+  }
+
+  $(document).on('click', '#settings_window .playSound .eew .first .toggle-switch', function(){
+    if(settings_playSound_eew_first == false){
+      settings_playSound_eew_first = true;
+      localStorage.setItem('settings-playSound-eew-first', 'true');
+      $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
+    } else if(settings_playSound_eew_first == true){
+      settings_playSound_eew_any = false;
+      localStorage.setItem('settings-playSound-eew-any', 'false');
+      $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
+      settings_playSound_eew_first = false;
+      localStorage.setItem('settings-playSound-eew-first', 'false');
+      $('#settings_window .playSound .eew .first .toggle-switch').removeClass('on');
+    }
+  })
+
+  if(localStorage.getItem("settings-playSound-eew-last") == 'true'){
+    settings_playSound_eew_last = true;
+    $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
+  } else if(localStorage.getItem("settings-playSound-eew-last") == 'false'){
+    settings_playSound_eew_last = false;
+    $('#settings_window .playSound .eew .last .toggle-switch').removeClass('on');
+  } else {
+    settings_playSound_eew_last = true;
+    $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
+  }
+
+  $(document).on('click', '#settings_window .playSound .eew .last .toggle-switch', function(){
+    if(settings_playSound_eew_last == false){
+      settings_playSound_eew_last = true;
+      localStorage.setItem('settings-playSound-eew-last', 'true');
+      $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
+    } else if(settings_playSound_eew_last == true){
+      settings_playSound_eew_any = false;
+      localStorage.setItem('settings-playSound-eew-any', 'false');
+      $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
+      settings_playSound_eew_last = false;
+      localStorage.setItem('settings-playSound-eew-last', 'false');
+      $('#settings_window .playSound .eew .last .toggle-switch').removeClass('on');
+    }
+  })
+
+  if(localStorage.getItem("settings-playSound-info") == 'true'){
+    settings_playSound_info = true;
+    $('#settings_window .playSound .info .toggle-switch').addClass('on');
+  } else if(localStorage.getItem("settings-playSound-info") == 'false'){
+    settings_playSound_info = false;
+    $('#settings_window .playSound .info .toggle-switch').removeClass('on');
+  } else {
+    settings_playSound_info = true;
+    $('#settings_window .playSound .info .toggle-switch').addClass('on');
+  }
+
+  $(document).on('click', '#settings_window .playSound .info .toggle-switch', function(){
+    console.log('A')
+    if(settings_playSound_info == false){
+      settings_playSound_info = true;
+      localStorage.setItem('settings-playSound-info', 'true');
+      $('#settings_window .playSound .info .toggle-switch').addClass('on');
+    } else if(settings_playSound_info == true){
+      settings_playSound_info = false;
+      localStorage.setItem('settings-playSound-info', 'false');
+      $('#settings_window .playSound .info .toggle-switch').removeClass('on');
     }
   })
 
@@ -383,13 +468,9 @@ function eew(){
     if (EEW_repNum != EEW_repNum_last){
       EEW_repNum_last = EEW_repNum;
 
-      if(settings_playSound == true){
-        EEW_sound.play();
-      }
-
       // --- Final report --- //
       EEW_isFinal = EEW_data["hypoInfo"]["items"][0]["isFinal"];
-      
+
       if (EEW_isFinal == 'true'){
         EEW_repNum_p = '最終報';
       } else {
@@ -472,6 +553,15 @@ function eew(){
           EEW_alertFlg = '取消報';
         }
       }
+
+      if(settings_playSound_eew_any == true){
+        EEW_sound.play();
+      } else if(settings_playSound_eew_first == true && EEW_repNum == '1'){
+        EEW_sound.play();
+      } else if(settings_playSound_eew_last == true && EEW_isFinal == 'true'){
+        EEW_sound.play();
+      }
+
     } else {
       EEW_repNum      = '';
       EEW_repNum_last = '';
@@ -598,7 +688,7 @@ function information(){
       if (p2p_id != p2p_id_last){
         p2p_id_last = p2p_id;
 
-        if(settings_playSound == true){
+        if(settings_playSound_info == true){
           p2p_sound.play();
         }
 
