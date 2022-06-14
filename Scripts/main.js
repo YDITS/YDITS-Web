@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.2.2 / Yone
+// main.js / YDITS for Web  Ver 1.3.0 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.2.2";
+const ver_project = "1.3.0";
 
 let scene = 0;
 
@@ -17,6 +17,7 @@ let DT;
 
 let loopCnt_getDT = -1;
 
+let settings_darkMode  = true;
 let settings_playSound = true;
 
 let EEW_time      = -1;
@@ -175,32 +176,118 @@ function settings_init(){
     window_settings.removeClass('active');
   });
 
-  $('.toggle-switch').addClass('on');
-  $(document).on('click', '.toggle-switch', function(){
-    if(settings_playSound == false){
-      $('.toggle-switch').addClass('on');
-      settings_playSound = true;
-      console.log('A', 'on')
-    } else if(settings_playSound == true){
-      $('.toggle-switch').removeClass('on');
-      settings_playSound = false;
+  // --- Darkmode
+  if(localStorage.getItem("settings-darkMode") == 'true'){
+    settings_darkMode = true;
+    $('#settings_window .darkMode .toggle-switch').addClass('on');
+  } else if(localStorage.getItem("settings-darkMode") == 'false'){
+    settings_darkMode = false;
+    $('#settings_window .darkMode .toggle-switch').removeClass('on');
+  } else {
+    settings_darkMode = true;
+    $('#settings_window .darkMode .toggle-switch').addClass('on');
+  }
+  chg_darkMode();
+
+  $(document).on('click', '#settings_window .darkMode .toggle-switch', function(){
+    if(settings_darkMode == false){
+      settings_darkMode = true;
+      localStorage.setItem('settings-darkMode', 'true');
+      chg_darkMode();
+      $('#settings_window .darkMode .toggle-switch').addClass('on');
+    } else if(settings_darkMode == true){
+      settings_darkMode = false;
+      localStorage.setItem('settings-darkMode', 'false');
+      chg_darkMode();
+      $('#settings_window .darkMode .toggle-switch').removeClass('on');
     }
   })
 
-  p2p_time = $('#settings_bar_cnt').val();
+  // --- Play sound
+  if(localStorage.getItem("settings-playSound") == 'true'){
+    settings_playSound = true;
+    $('#settings_window .playSound .toggle-switch').addClass('on');
+  } else if(localStorage.getItem("settings-playSound") == 'false'){
+    settings_playSound = false;
+    $('#settings_window .playSound .toggle-switch').removeClass('on');
+  } else {
+    settings_playSound = true;
+    $('#settings_window .playSound .toggle-switch').addClass('on');
+  }
+
+  $(document).on('click', '#settings_window .playSound .toggle-switch', function(){
+    if(settings_playSound == false){
+      settings_playSound = true;
+      localStorage.setItem('settings-playSound', 'true');
+      $('#settings_window .playSound .toggle-switch').addClass('on');
+    } else if(settings_playSound == true){
+      settings_playSound = false;
+      localStorage.setItem('settings-playSound', 'false');
+      $('#settings_window .playSound .toggle-switch').removeClass('on');
+    }
+  })
+
+  // --- P2P get cnt
+  if(localStorage.getItem("settings-getCnt_p2p") != null){
+    p2p_time = Number(localStorage.getItem("settings-getCnt_p2p"));
+  } else {
+    p2p_time = 2;
+  }
+
+  $('#settings_bar_cnt').val = p2p_time;
   $('#settings_put_cnt').text(p2p_time);
 
   $(document).on('input', '#settings_bar_cnt', function(){
     p2p_time = $('#settings_bar_cnt').val();
+    localStorage.setItem('settings-getCnt_p2p', String(p2p_time));
     $('#settings_put_cnt').text(p2p_time);
   });
 
-  EEW_time = $('#settings_bar_cnt_eew').val();
-  $('#settings_put_cnt_eew').text(EEW_time);
+  // --- EEW get cnt
+  if(localStorage.getItem("settings-getCnt_eew") != null){
+    eew_time = Number(localStorage.getItem("settings-getCnt_eew"));
+  } else {
+    eew_time = 12;
+  }
+
+  $('#settings_bar_cnt_eew').val = eew_time;
+  $('#settings_put_cnt_eew').text(eew_time);
 
   $(document).on('input', '#settings_bar_cnt_eew', function(){
-    EEW_time = $('#settings_bar_cnt_eew').val();
-    $('#settings_put_cnt_eew').text(EEW_time);
+    eew_time = $('#settings_bar_cnt_eew').val();
+    localStorage.setItem('settings-getCnt_eew', String(eew_time));
+    $('#settings_put_cnt_eew').text(eew_time);
+  });
+
+  $(document).on('click', '#btn_resetSettings', function(){
+    localStorage.clear()
+
+    if(document.getElementById('win_settings_reset') == null){
+      win('win_settings_reset', '設定のリセット');
+
+      $('#win_settings_reset>.content').html(`
+        <p>
+          設定をリセットしました。
+          適用するにはページを再読み込みしてください。
+        </p>
+        <button class="btn_ok">OK</button>
+      `)
+
+      $('#win_settings_reset .content').css({
+        'padding': '1em'
+      })
+
+      $('#win_settings_reset .content .btn_ok').css({
+        'position': 'absolute',
+        'right': '3em',
+        'bottom': '3em',
+        'width': '10em'
+      })
+
+      $(document).on('click', '#win_settings_reset .content .btn_ok', function(){
+      $('#win_settings_reset').remove()
+      })
+    }
   });
 
   $(document).on('click', '#btn_eew_chk_sound', function(){
@@ -210,6 +297,32 @@ function settings_init(){
     p2p_sound.play();
   });
 };
+
+// --- Change darkmode --- //
+function chg_darkMode(){
+  if(settings_darkMode){
+    $('body').css({
+      'background-color': '#102040',
+      'color': '#ffffff'
+    })
+
+    $('#settings_window').css({
+      'background-color': '#102040',
+      'color': '#ffffff'
+    })
+
+  } else {
+    $('body').css({
+      'background-color': '#ffffff',
+      'color': '#010101'
+    })
+
+    $('#settings_window').css({
+      'background-color': '#ffffff',
+      'color': '#010101'
+    })
+  }
+}
 
 // ----- select ----- //
 function select_init(){
@@ -432,8 +545,13 @@ function eew(){
     $('#eew .depth').text(`予想深さ：${EEW_depth}`);
 
   } else {
-    EEW_bgc = "#ffffff";
-    EEW_fntc = "#010101";
+    if(settings_darkMode){
+      EEW_bgc = "#103050";
+      EEW_fntc = "#eeeeee";
+    } else {
+      EEW_bgc = "#ffffff";
+      EEW_fntc = "#010101";
+    }
     $('#eew .info').text("緊急地震速報は発表されていません");
   }
 
@@ -560,7 +678,7 @@ function information(){
       // ----- put ----- //
       $('#earthquake_info .info').text(p2p_type);
       $('#earthquake_info .hypocenter').text(p2p_hypocenter);
-      $('#earthquake_info .time').text(`発生日時：${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMonth}頃`);
+      $('#earthquake_info .time').text(`発生日時：${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}頃`);
       $('#earthquake_info .maxScale .para').text(p2p_maxScale);
       $('#earthquake_info .magnitude').text("規模：" + p2p_magnitude);
       $('#earthquake_info .depth').text("深さ：" + p2p_depth);
