@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.3.0 / Yone
+// main.js / YDITS for Web  Ver 1.4.0 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.3.0";
+const ver_project = "1.4.0";
 
 let scene = 0;
 
@@ -17,8 +17,8 @@ let DT;
 
 let loopCnt_getDT = -1;
 
-let settings_darkMode  = true;
-let settings_playSound = true;
+let settings_darkMode;
+let settings_playSound;
 
 let EEW_time      = -1;
 let loopCnt_eew   = -1;
@@ -96,7 +96,7 @@ function mainloop(){
       }
       
       // P2P EQ history
-      if (DT - loopCnt_history >= 1000 * EEW_time){
+      if (DT - loopCnt_history >= 1000 * p2p_time){
         loopCnt_history = DT;
         history();
       }
@@ -231,7 +231,7 @@ function settings_init(){
   if(localStorage.getItem("settings-getCnt_p2p") != null){
     p2p_time = Number(localStorage.getItem("settings-getCnt_p2p"));
   } else {
-    p2p_time = 2;
+    p2p_time = 12;
   }
 
   $('#settings_bar_cnt').val = p2p_time;
@@ -245,18 +245,18 @@ function settings_init(){
 
   // --- EEW get cnt
   if(localStorage.getItem("settings-getCnt_eew") != null){
-    eew_time = Number(localStorage.getItem("settings-getCnt_eew"));
+    EEW_time = Number(localStorage.getItem("settings-getCnt_eew"));
   } else {
-    eew_time = 12;
+    EEW_time = 2;
   }
 
-  $('#settings_bar_cnt_eew').val = eew_time;
-  $('#settings_put_cnt_eew').text(eew_time);
+  $('#settings_bar_cnt_eew').val = EEW_time;
+  $('#settings_put_cnt_eew').text(EEW_time);
 
   $(document).on('input', '#settings_bar_cnt_eew', function(){
-    eew_time = $('#settings_bar_cnt_eew').val();
-    localStorage.setItem('settings-getCnt_eew', String(eew_time));
-    $('#settings_put_cnt_eew').text(eew_time);
+    EEW_time = $('#settings_bar_cnt_eew').val();
+    localStorage.setItem('settings-getCnt_eew', String(EEW_time));
+    $('#settings_put_cnt_eew').text(EEW_time);
   });
 
   $(document).on('click', '#btn_resetSettings', function(){
