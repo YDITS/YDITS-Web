@@ -1,4 +1,4 @@
-/* main.css / YDITS for Web  Ver 1.4.1 / Yone */
+/* main.css / YDITS for Web  Ver 1.4.2 / Yone */
 @charset "UTF-8";
 /* ----- Main ----- */
 .material-symbols-outlined {
@@ -137,11 +137,10 @@ main>.content>.info {
 }
 
 #settings_window .link_terms {
-  display: block;
-  margin: 2em;
+  display: inline-block;
+  margin: 0 2em 0 0;
   text-align: center;
   font-size: 1.2em;
-  color: #111;
 }
 
 #select {

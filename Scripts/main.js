@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.4.1 / Yone
+// main.js / YDITS for Web  Ver 1.4.2 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.4.1";
+const ver_project = "1.4.2";
 
 let scene = 0;
 
@@ -311,6 +311,10 @@ function chg_darkMode(){
       'color': '#ffffff'
     })
 
+    $('#settings_window .link_terms').css({
+      'color': '#ffffff'
+    })
+
   } else {
     $('body').css({
       'background-color': '#ffffff',
@@ -319,6 +323,10 @@ function chg_darkMode(){
 
     $('#settings_window').css({
       'background-color': '#ffffff',
+      'color': '#010101'
+    })
+
+    $('#settings_window .link_terms').css({
       'color': '#010101'
     })
   }
