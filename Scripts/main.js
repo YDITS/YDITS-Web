@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.5.0 / Yone
+// main.js / YDITS for Web  Ver 1.5.1 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.5.0";
+const ver_project = "1.5.1";
 
 let scene = 0;
 
@@ -300,7 +300,6 @@ function settings_init(){
   }
 
   $(document).on('click', '#settings_window .playSound .info .toggle-switch', function(){
-    console.log('A')
     if(settings_playSound_info == false){
       settings_playSound_info = true;
       localStorage.setItem('settings-playSound-info', 'true');
@@ -319,7 +318,7 @@ function settings_init(){
     p2p_time = 12;
   }
 
-  $('#settings_bar_cnt').val = p2p_time;
+  $('#settings_bar_cnt').val(p2p_time);
   $('#settings_put_cnt').text(p2p_time);
 
   $(document).on('input', '#settings_bar_cnt', function(){
@@ -335,7 +334,7 @@ function settings_init(){
     EEW_time = 2;
   }
 
-  $('#settings_bar_cnt_eew').val = EEW_time;
+  $('#settings_bar_cnt_eew').val(EEW_time);
   $('#settings_put_cnt_eew').text(EEW_time);
 
   $(document).on('input', '#settings_bar_cnt_eew', function(){
@@ -345,6 +344,33 @@ function settings_init(){
   });
 
   $(document).on('click', '#btn_resetSettings', function(){
+    EEW_time = 2;
+    $('#settings_bar_cnt_eew').val(EEW_time);
+    $('#settings_put_cnt_eew').text(EEW_time);
+
+    p2p_time = 12;
+    $('#settings_bar_cnt').val(p2p_time);
+    $('#settings_put_cnt').text(p2p_time);
+
+    settings_darkMode = true;
+    $('#settings_window .darkMode .toggle-switch').addClass('on');
+    chg_darkMode();
+
+    settings_playSound_eew_any = true;
+    $('#settings_window .playSound .eew .any .toggle-switch').addClass('on');
+    
+    settings_playSound_eew_first = true;
+    $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
+
+    settings_playSound_eew_last = true;
+    $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
+    
+    settings_playSound_info = true;
+    $('#settings_window .playSound .info .toggle-switch').addClass('on');
+    
+    settings_playSound_info = true;
+    $('#settings_window .playSound .info .toggle-switch').addClass('on');
+
     localStorage.clear()
 
     if(document.getElementById('win_settings_reset') == null){
@@ -353,7 +379,6 @@ function settings_init(){
       $('#win_settings_reset>.content').html(`
         <p>
           設定をリセットしました。
-          適用するにはページを再読み込みしてください。
         </p>
         <button class="btn_ok">OK</button>
       `)
@@ -370,7 +395,7 @@ function settings_init(){
       })
 
       $(document).on('click', '#win_settings_reset .content .btn_ok', function(){
-      $('#win_settings_reset').remove()
+        $('#win_settings_reset').remove()
       })
     }
   });
@@ -400,6 +425,11 @@ function chg_darkMode(){
       'color': '#ffffff'
     })
 
+    $('main>.content').css({
+      'background-color': '#103050',
+      'color': '#eeeeee'
+    })
+
   } else {
     $('body').css({
       'background-color': '#ffffff',
@@ -414,6 +444,12 @@ function chg_darkMode(){
     $('#settings_window .link_terms').css({
       'color': '#010101'
     })
+
+    $('main>.content').css({
+      'background-color': '#ffffff',
+      'color': '#010101'
+    })
+
   }
 }
 
@@ -650,7 +686,13 @@ function eew(){
       EEW_bgc = "#ffffff";
       EEW_fntc = "#010101";
     }
+
     $('#eew .info').text("緊急地震速報は発表されていません");
+    $('#eew .calcintensity_para').text('');
+    $('#eew .region').text('');
+    $('#eew .origin_time').text('');
+    $('#eew .magnitude').text('');
+    $('#eew .depth').text('');
   }
 
   $('#eew').css({
