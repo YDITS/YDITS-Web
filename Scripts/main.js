@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.5.1 / Yone
+// main.js / YDITS for Web  Ver 1.5.2 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.5.1";
+const ver_project = "1.5.2";
 
 let scene = 0;
 
@@ -417,7 +417,7 @@ function chg_darkMode(){
     })
 
     $('#settings_window').css({
-      'background-color': '#102040',
+      'background-color': '#103050',
       'color': '#ffffff'
     })
 
@@ -430,6 +430,21 @@ function chg_darkMode(){
       'color': '#eeeeee'
     })
 
+    $('header').css({
+      'background-color': '#103050',
+      'color': '#eeeeee'
+    })
+
+    $('footer').css({
+      'background-color': '#103050',
+      'color': '#eeeeee'
+    })
+
+    $('#select').css({
+      'background-color': '#103050',
+      'color': '#eeeeee'
+    })
+
   } else {
     $('body').css({
       'background-color': '#ffffff',
@@ -437,7 +452,7 @@ function chg_darkMode(){
     })
 
     $('#settings_window').css({
-      'background-color': '#ffffff',
+      'background-color': '#cccccc',
       'color': '#010101'
     })
 
@@ -446,7 +461,22 @@ function chg_darkMode(){
     })
 
     $('main>.content').css({
-      'background-color': '#ffffff',
+      'background-color': '#cccccc',
+      'color': '#010101'
+    })
+
+    $('header').css({
+      'background-color': '#cccccc',
+      'color': '#010101'
+    })
+
+    $('footer').css({
+      'background-color': '#cccccc',
+      'color': '#010101'
+    })
+
+    $('#select').css({
+      'background-color': '#cccccc',
       'color': '#010101'
     })
 
@@ -683,7 +713,7 @@ function eew(){
       EEW_bgc = "#103050";
       EEW_fntc = "#eeeeee";
     } else {
-      EEW_bgc = "#ffffff";
+      EEW_bgc = "#cccccc";
       EEW_fntc = "#010101";
     }
 
