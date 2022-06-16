@@ -1,3 +1,291 @@
-/* main.css / home / YDITS for Web  Ver 1.5.2 / Yone */
+/* main.css / home / YDITS for Web  Ver 1.6.0 / Yone */
 @charset "UTF-8";
 /* ----- Elements ----- */
+/* --- main --- */
+main>.content {
+  display: none;
+  margin-bottom: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
+  border-radius: 1em;
+  width: 80%;
+  min-height: 24em;
+  padding: 1em;
+}
+
+main>.content>.title {
+  margin-bottom: 1em;
+  text-align: center;
+}
+
+main>.content>.info {
+  margin-left: 2em;
+}
+
+#settings_window {
+  display: none;
+  position: absolute;
+  top: 4em;
+  left: 0;
+  right: 0;
+  margin: 2em auto;
+  width: 80%;
+  /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
+  border-radius: 1em;
+  padding: 2em 4em 8em 4em;
+  background-color: #fff;
+}
+
+#settings_window.active {
+  display: block;
+}
+
+#settings_window .close {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  border-radius: .2em;
+  cursor: pointer;
+}
+
+#settings_window .close:hover {
+  background-color: #eee;
+}
+
+#settings_window .title {
+  text-align: center;
+}
+
+#settings_window .version {
+  text-align: center;
+}
+
+#settings_window>.content {
+  margin: 2em 0;
+}
+
+#settings_window>.content>label {
+  display: block;
+  font-size: 1.3em;
+}
+
+#settings_window .content label {
+  display: block;
+}
+
+#settings_window .playSound .eew,
+#settings_window .playSound .info {
+  margin-top: 2em;
+}
+
+#settings_window .playSound .eew>.content,
+#settings_window .playSound .info>.content {
+  margin-top: 1em;
+}
+
+#settings_window .getCnt>.content {
+  display: flex;
+  align-items: center;
+}
+
+#settings_window .content>.content {
+  margin-top: .5em;
+}
+
+#btn_earthquake_info_chk_sound {
+  height: 2em;
+}
+
+#settings_window .getCnt #settings_bar_cnt {
+  margin-right: 1em;
+}
+
+#settings_window .getCnt #settings_bar_cnt_eew {
+  margin-right: 1em;
+}
+
+#settings_window .link_terms {
+  display: inline-block;
+  margin: 0 2em 0 0;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+#select {
+  margin-bottom: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
+  border-radius: 1em;
+  width: 80%;
+  min-height: 4em;
+}
+
+#select ul {
+  display: flex;
+  margin: 0 4em;
+  list-style: none;
+  padding: 0;
+}
+
+#select li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: .5em auto;
+  border-radius: 1em;
+  width: 30%;
+  height: 4em;
+  text-align: center;
+}
+
+#select li:hover {
+  background-color: #80808080;
+}
+
+@media (max-width: 769px) {
+  #settings_window {
+    /* width: 75%; */
+    padding: 2em 2em 8em 2em;
+  }
+
+  main>.content {
+    font-size: .7em;
+  }
+
+  #select {
+    width: 90%;
+  }
+
+  #select ul {
+    margin: 0;
+  }
+}
+
+@media (max-width: 512px) {
+  main>.content {
+    padding-bottom: 4em;
+    min-height: 38em;
+  }
+
+  main>.content>.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  main>.content>.info {
+    margin: 0;
+    text-align: center;
+  }
+}
+
+/* EEW */
+#eew.active {
+  display: block;
+}
+
+#eew .content {
+  display: flex;
+  margin-top: 2em;
+}
+
+#eew .calcintensity {
+  margin: 0 2em;
+  width: 16em;
+  height: 16em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  border-radius: 1em;
+  text-align: center;
+}
+
+#eew .calcintensity h3 {
+  margin: 0;
+}
+
+#eew .calcintensity_para {
+  font-size: 8em;
+  font-weight: 900;
+}
+
+#eew .content .right {
+  margin-top: 1em;
+  font-size: 1.5em;
+}
+
+#eew .region {
+  font-size: 2em;
+  font-weight: 900;
+}
+
+/* information */
+#earthquake_info.active {
+  display: block;
+}
+
+#earthquake_info .content {
+  display: flex;
+  margin-top: 2em;
+}
+
+#earthquake_info .maxScale {
+  margin: 0 2em;
+  width: 16em;
+  height: 16em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  border-radius: 1em;
+  text-align: center;
+}
+
+#earthquake_info .maxScale h3 {
+  margin: 0;
+}
+
+#earthquake_info .maxScale .para {
+  font-size: 8em;
+  font-weight: 700;
+}
+
+#earthquake_info .content .right {
+  margin-top: 1em;
+  font-size: 1.5em;
+}
+
+#earthquake_info .hypocenter {
+  font-size: 2em;
+  font-weight: 900;
+}
+
+/* history */
+#earthquake_history.active {
+  display: block;
+}
+
+/* --- header --- */
+#btn_settings {
+  position: absolute;
+  margin: 0 1em;
+  width: 6em;
+  height: 3em;
+  border-radius: .5em;
+  cursor: pointer;
+}
+
+#btn_settings:hover {
+  background-color: #80808080;
+}
+
+#btn_settings span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 24px;
+  height: 24px;
+}
+
+/* --- footer --- */
+

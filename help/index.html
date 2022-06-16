@@ -1,4 +1,4 @@
-<!-- index.html / noscript / YDITS for Web  Ver 1.6.0 / Yone -->
+<!-- index.html / help / home / YDITS for Web  Ver 1.6.0 / Yone -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -10,7 +10,7 @@
   <meta name="description" content="YDITS for Web">
   <meta name="generator" content="Microsoft Visual Studio Code">
   <meta name="keywords" content="YDITS">
-  <title>noscript - YDITS for Web</title>
+  <title>ヘルプ - YDITS for Web</title>
 
   <!----- Links ----->
   <base href="https://yone1130.github.io/YDITS-Web/">
@@ -19,12 +19,12 @@
   <!--- Styles --->
   <link rel="stylesheet" href="./Styles/main.css">
   <link rel="stylesheet" href="./Styles/ui.css">
-  <link rel="stylesheet" href="./noscript/Styles/index.css">
+  <link rel="stylesheet" href="./help/Styles/index.css">
 
   <!--- Fonts --->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=Noto+Serif+JP&family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&family=Noto+Serif+JP:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
 
   <!--- Icons --->
   <link rel="icon" href="./Images/icon.png">
@@ -37,6 +37,13 @@
 
   <!-- Windows -->
   <meta name="application-name" content="">
+
+  <!----- Scripts ----->
+  <script src="./Scripts/jquery-3.6.0.js"></script>
+
+  <noscript>
+    <meta http-equiv="refresh" content="0; URL=./noscript/">
+  </noscript>
 </head>
 
 <body>
@@ -47,16 +54,16 @@
   </header>
 
   <main>
-    <noscript>
-      <h1 class="pageTitle">JavaScriptが無効</h1>
+    <h1 class="pageTitle">YDITS for Web ヘルプ</h1>
 
-      <p class="content">
-        お使いのブラウザではJavaScriptが有効化もしくは許可されていません。<br/>
-        当サービスを利用するにはJavaScriptが必要です。
-      </p>
-    </noscript>
-
-    <a href="./">再読み込み</a>
+    <section class="content">
+      <a class="link" href="./help/support-browser/">
+        <h2>サポートブラウザ</h2>
+      </a>
+      <a class="link" href="./help/sound-setting/">
+        <h2>効果音の自動再生を有効にする手順<h2>
+      </a>
+    </section>
   </main>
 
   <footer>

@@ -1,0 +1,40 @@
+/* main.css / help - support browser / YDITS for Web  Ver 1.6.0 / Yone */
+@charset "UTF-8";
+/* ----- Main ----- */
+main {
+  min-height: 32em;
+}
+
+header {
+  background-color: #cccccc;
+}
+
+footer {
+  background-color: #cccccc;
+}
+
+/* ----- Elements ----- */
+/* --- main --- */
+main>.pageTitle {
+  display: flex;
+  justify-content: center;
+}
+
+main>.description {
+  display: flex;
+  justify-content: center;
+}
+
+main>.content {
+  display: flex;
+  flex-direction: column;
+  margin: 2em 8em;
+}
+
+main>.content>.os {
+  margin-bottom: 3em;
+}
+
+main>.content>.os>h2 {
+  margin-bottom: .5em;
+}
