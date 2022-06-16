@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.6.0 / Yone
+// main.js / YDITS for Web  Ver 1.6.1 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.6.0";
+const ver_project = "1.6.1";
 
 let scene = 0;
 

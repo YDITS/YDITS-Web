@@ -1,4 +1,4 @@
-/* main.css / help - support browser / YDITS for Web  Ver 1.6.0 / Yone */
+/* main.css / help - support browser / YDITS for Web  Ver 1.6.1 / Yone */
 @charset "UTF-8";
 /* ----- Main ----- */
 main {
@@ -32,9 +32,26 @@ main>.content {
 }
 
 main>.content>.os {
-  margin-bottom: 3em;
+  margin: 1em 0;
 }
 
 main>.content>.os>h2 {
   margin-bottom: .5em;
+}
+
+@media (max-width: 1024px) {
+  main>.content {
+    margin: 2em 4em;
+  }
+}
+
+@media (max-width: 512px) {
+  main>.content {
+    margin: 2em 2em;
+  }
+  
+  main>.content>.link {
+    padding: 1em;
+    font-size: .7em;
+  }
 }

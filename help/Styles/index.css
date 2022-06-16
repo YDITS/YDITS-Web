@@ -1,8 +1,8 @@
-/* main.css / help / YDITS for Web  Ver 1.6.0 / Yone */
+/* main.css / help / YDITS for Web  Ver 1.6.1 / Yone */
 @charset "UTF-8";
 /* ----- Elements ----- */
 main {
-  min-height: 32em;
+  min-height: 90vh;
 }
 
 header {
@@ -42,4 +42,21 @@ main>.content>.link {
 
 main>.content>.link:hover {
   background-color: #c0c0ffa0;
+}
+
+@media (max-width: 1024px) {
+  main>.content {
+    margin: 2em 2em;
+  }
+}
+
+@media (max-width: 512px) {
+  main>.content {
+    margin: 2em 1em;
+  }
+  
+  main>.content>.link {
+    padding: 1em;
+    font-size: .7em;
+  }
 }
