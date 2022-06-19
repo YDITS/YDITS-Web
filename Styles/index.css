@@ -1,4 +1,4 @@
-/* main.css / home / YDITS for Web  Ver 1.7.0 / Yone */
+/* main.css / home / YDITS for Web  Ver 1.7.1 / Yone */
 @charset "UTF-8";
 /* ----- Elements ----- */
 /* --- main --- */
@@ -50,7 +50,7 @@ main>.content>.info {
 }
 
 #settings_window .close:hover {
-  background-color: #eee;
+  background-color: #80808080;
 }
 
 #settings_window .title {

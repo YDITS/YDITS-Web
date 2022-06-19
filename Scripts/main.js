@@ -1,10 +1,11 @@
 //
-// main.js / YDITS for Web  Ver 1.7.0 / Yone
+// main.js / YDITS for Web  Ver 1.7.1 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.7.0";
+const ver_project = "1.7.1";
 
+// --- main
 let scene = 0;
 
 let programCnt = -1;
@@ -17,30 +18,20 @@ let DT;
 
 let loopCnt_getDT = -1;
 
+// --- settings
+
+// Darkmode
 let settings_darkMode;
+
+// Play sound
 let settings_playSound_eew_any;
 let settings_playSound_eew_first;
 let settings_playSound_eew_last;
 let settings_playSound_info;
 
+// --- EEW
 let EEW_time      = -1;
 let loopCnt_eew   = -1;
-
-let loopCnt_info  = -1;
-let p2p_time      = -1;
-let p2p_id_last   = -1;
-
-let p2p_his_id;
-let p2p_his_id_last;
-
-let loopCnt_history = -1;
-
-let timeYear;
-let timeMonth;
-let timeDay ;
-let timeHour;
-let timeMinute;
-let timeSecond;
 
 let EEW_repNum      = '';
 let EEW_repNum_last = '';
@@ -58,23 +49,46 @@ let EEW_Region_name   = '';
 let EEW_Magnitude     = '';
 let EEW_depth         = '';
 
-let p2p_type;
-let p2p_latest_time;
-let p2p_hypocenter;
-let p2p_maxScale;
-let p2p_magnitude;
-let p2p_depth;
-let p2p_tsunami;
+// --- Earthquake information
+let p2p_data;
+
+let p2p_time      = -1;
+let loopCnt_p2p  = -1;
+
+let p2p_id   = -1;
+let p2p_id_last   = -1;
+
+let timeYear;
+let timeMonth;
+let timeDay ;
+let timeHour;
+let timeMinute;
+let timeSecond;
+
+// let p2p_type;
+// let p2p_latest_time;
+// let p2p_hypocenter;
+// let p2p_maxScale;
+// let p2p_magnitude;
+// let p2p_depth;
+// let p2p_tsunami;
+
+// --- Earthquake history
+let p2p_his_id_last = -1;
 
 let p2p_his_cnt = 0;
+let loopCnt_history = -1;
 
-let loopCnt_clock    = -1;
-
+// Sound
 const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW.wav");
-// const EEW_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewEEW.wav");
 const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
-// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
 
+// --- debug
+// const EEW_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewEEW.wav");
+// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
+// ---
+
+// ----- Main ----- //
 window.onload = function(){
   page_init();
   mainloop();
@@ -92,21 +106,21 @@ function mainloop(){
 
   switch(scene){
     case 0:
-      // EEW EEW
+      // EEW
       if (DT - loopCnt_eew >= 1000 * EEW_time){
         loopCnt_eew = DT;
         eew();
       }
-      
-      // P2P EQ info
-      if (DT - loopCnt_info >= 1000 * p2p_time){
-        loopCnt_info = DT;
+
+      // P2P get
+      if (DT - loopCnt_p2p >= 1000 * p2p_time || p2p_id_last == -1 || p2p_his_id_last == -1){
+        loopCnt_p2p = DT;
+        getInfo();
+
+        // P2P EQ info
         information();
-      }
-      
-      // P2P EQ history
-      if (DT - loopCnt_history >= 1000 * p2p_time){
-        loopCnt_history = DT;
+
+        // P2P EQ history
         history();
       }
       break;
@@ -148,18 +162,18 @@ function win(winId, winTitle){
 
 // --- Get server datetime --- //
 function getServer_DT(){
-  axios.head(
-    window.location.href,
-    {headers: {
-        'Cache-Control': 'no-cache'
-    },}
-  ).then(res => {
-    gmt = new Date(res.headers.date); // Server datetime
+  // axios.head(
+  //   window.location.href,
+  //   {headers: {
+  //       'Cache-Control': 'no-cache'
+  //   },}
+  // ).then(res => {
+  //   gmt = new Date(res.headers.date); // Server datetime
 
     // --- debug
     // resDate = "29 May 2022 06:56:33 GMT";
     // gmt = new Date(resDate); // Server datetime
-    // gmt = new Date();
+    gmt = new Date();
     // ---
 
     timeYear = setTime(gmt.getFullYear());
@@ -168,7 +182,7 @@ function getServer_DT(){
     timeHour = setTime(gmt.getHours());
     timeMinute = setTime(gmt.getMinutes());
     timeSecond = setTime(gmt.getSeconds());
-  })
+  // })
 }
 
 // --- Settings --- //
@@ -183,6 +197,7 @@ function settings_init(){
       $('main').css({
         'min-height': '90em'
       })
+
     } else {
       window_settings.removeClass('active');
       $('main').css({
@@ -534,16 +549,24 @@ function eew(){
   // --- debug
   // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213231059.json`;  //2021-2-13-23:08 Fukushima
   // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
-  // const url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19
+  // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
+  // const url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
   // ---
 
   response = fetch(url_EEW)
 
-  .then(Response => {
-    if (!Response.ok) {
-      throw new Error(`${Response.status} ${Response.statusText}`);
+  .then(response => {
+    if (!response.ok) {
+      switch (response.status) {
+        case 403: break;
+
+        default:
+          $('#eew .info').text(`緊急地震速報を取得できません Error: HTTP ${response.status}`);
+          break;
+      }
     }
-    return Response.json()
+
+    return response.json()
   })
 
   .then(result => {
@@ -554,8 +577,8 @@ function eew(){
       EEW_repNum = EEW_data["hypoInfo"]["items"][0]["reportNum"];
 
       // --- debug
-      // EEW_repNum = '1';
-      // EEW_repNum_last = -2;
+      // EEW_repNum = '1';  // First report
+      // EEW_repNum_last = -2;  // Difficalt report
       // ---
 
       if (EEW_repNum != EEW_repNum_last){
@@ -565,7 +588,7 @@ function eew(){
         EEW_isFinal = EEW_data["hypoInfo"]["items"][0]["isFinal"];
 
         // --- debug
-        // EEW_isFinal = 'true';
+        // EEW_isFinal = 'true'; 
         // ---
 
         if (EEW_isFinal == 'true'){
@@ -612,10 +635,6 @@ function eew(){
           default:
             EEW_calcintensity = `?`;
             break;
-        }
-
-        if (!EEW_calcintensity){
-          EEW_calcintensity = '?';
         }
 
         // --- Magnitude --- //
@@ -735,9 +754,9 @@ function eew(){
         $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
         $('#eew .calcintensity_para').text(EEW_calcintensity);
         $('#eew .region').text(EEW_Region_name);
-        $('#eew .origin_time').text(`発生日時：${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
-        $('#eew .magnitude').text(`予想規模：${EEW_Magnitude}`);
-        $('#eew .depth').text(`予想深さ：${EEW_depth}`);
+        $('#eew .origin_time').text(`発生日時: ${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+        $('#eew .magnitude').text(`予想規模: ${EEW_Magnitude}`);
+        $('#eew .depth').text(`予想深さ: ${EEW_depth}`);
 
         $('#eew').css({
           'background-color': EEW_bgc,
@@ -781,10 +800,6 @@ function eew(){
       })
     }
   })
-  .catch((reason) => {
-    // console.log(reason);
-  });
-
 };
 
 // EEW datetime format
@@ -802,26 +817,207 @@ function setEEW_DT(num){
   return ret;
 }
 
+// ----- Get p2p --- //
+function getInfo(){
+
+  const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=40";
+
+  response = fetch(url_p2p)
+
+  .then(response => {
+    return response.json()
+  })
+
+  .then(data => {
+
+    p2p_data = data;
+    p2p_id = p2p_data[0]['id'];
+
+  });
+
+}
+
 // ----- information ----- //
 function information(){
 
-  const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=1";
-  
-  response = fetch(url_p2p)
-    .then(Response => Response.json())
-    .then(data => {
-      p2p_data = data;
+  if (p2p_id != p2p_id_last){
+    p2p_id_last = p2p_id;
 
-      p2p_id = p2p_data[0]['id'];
-      if (p2p_id != p2p_id_last){
-        p2p_id_last = p2p_id;
+    if(settings_playSound_info == true){
+      p2p_sound.play();
+    }
 
-        if(settings_playSound_info == true){
-          p2p_sound.play();
-        }
+    // --- time --- //
+    p2p_latest_time = p2p_data[0]['earthquake']['time'];
+    // datetime
+    p2p_latest_timeYear   = p2p_latest_time.substring(0 , 4);
+    p2p_latest_timeMonth  = p2p_latest_time.substring(5 , 7);
+    p2p_latest_timeDay    = p2p_latest_time.substring(8 , 10);
+    p2p_latest_timeHour   = p2p_latest_time.substring(11, 13);
+    p2p_latest_timeMinute = p2p_latest_time.substring(14, 16);
 
+    // --- type --- //
+    p2p_type = p2p_data[0]['issue']['type'];
+
+    p2p_types = {
+      'ScalePrompt': '震度速報',
+      'Destination': '震源情報',
+      'ScaleAndDestination': '震源・震度情報',
+      'DetailScale': '各地の震度情報',
+      'Foreign': '遠地地震情報',
+      'Other': '地震情報'
+    };
+
+    p2p_type = p2p_types[p2p_type];
+
+    // --- hypocenter --- //
+    p2p_hypocenter = p2p_data[0]['earthquake']['hypocenter']['name'];
+
+    if (p2p_hypocenter == ''){
+      p2p_hypocenter = '調査中';
+    }
+
+    // --- maxScale --- //
+    p2p_maxScale = p2p_data[0]['earthquake']['maxScale'];
+
+    switch (p2p_maxScale){
+      case -1: p2p_maxScale = '調査中'; break;
+      case 10: p2p_maxScale = '1'; break;
+      case 20: p2p_maxScale = '2'; break;
+      case 30: p2p_maxScale = '3'; break;
+      case 40: p2p_maxScale = '4'; break;
+      case 45: p2p_maxScale = '5-'; break;
+      case 50: p2p_maxScale = '5+'; break;
+      case 55: p2p_maxScale = '6-'; break;
+      case 60: p2p_maxScale = '6+'; break;
+      case 70: p2p_maxScale = '7'; break;
+
+      default:
+        p2p_maxScale = `?`;
+        break;
+    }
+
+    // --- Magnitude --- //
+    p2p_magnitude = p2p_data[0]['earthquake']['hypocenter']['magnitude'];
+
+    if(p2p_magnitude == -1){
+      p2p_magnitude = '調査中';
+    } else {
+      p2p_magnitude = 'M' + String(p2p_magnitude);
+    }
+
+    // --- Depth --- //
+    p2p_depth = p2p_data[0]['earthquake']['hypocenter']['depth'];
+
+    if (p2p_depth == -1){
+      p2p_depth = '調査中';
+    } else if (p2p_depth == 0){
+      p2p_depth = 'ごく浅い';
+    } else {
+      p2p_depth = '約' + String(p2p_depth) + 'km';
+    }
+
+    // --- Tsunami --- //
+    p2p_tsunami = p2p_data[0]['earthquake']['domesticTsunami'];
+
+    tsunamiLevels = {
+      'None': '津波の心配はありません。',
+      'Unknown': '津波の影響は不明です。',
+      'Checking': '津波の影響を現在調査中です。',
+      'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
+      'Watch': '津波注意報が発表されています。',
+      'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
+    };
+
+    p2p_tsunami = tsunamiLevels[p2p_tsunami];
+
+    // ----- put ----- //
+    let p2p_bgc;
+    let p2p_fntc;
+
+    switch (p2p_maxScale) {
+      case '1':
+        p2p_bgc = "#c0c0c0"; 
+        p2p_fntc = "#010101";
+        break;
+      case '2':
+        p2p_bgc = "#2020c0";
+        p2p_fntc = "#ffffff";
+        break;
+      case '3': 
+        p2p_bgc = "#20c020";
+        p2p_fntc = "#010101";
+        break;
+      case '4':
+        p2p_bgc = "#c0c020";
+        p2p_fntc = "#010101";
+        break;
+      case '5-':
+        p2p_bgc = "#c0a020";
+        p2p_fntc = "#010101";
+        break;
+      case '5+':
+        p2p_bgc = "#c07f20";
+        p2p_fntc = "#010101";
+        break;
+      case '6-':
+        p2p_bgc = "#e02020";
+        p2p_fntc = "#010101";
+        break;
+      case '6+':
+        p2p_bgc = "#a02020";
+        p2p_fntc = "#ffffff";
+        break;
+      case '7':
+        p2p_bgc = "#7f207f";
+        p2p_fntc = "#ffffff";
+        break;
+      
+      default:
+        p2p_bgc = "#7f7fc0";
+        p2p_fntc = "#010101";
+        break;
+    }
+
+    $('#earthquake_info .info').text(p2p_type);
+    $('#earthquake_info .hypocenter').text(p2p_hypocenter);
+    $('#earthquake_info .time').text(`発生日時: ${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}頃`);
+    $('#earthquake_info .maxScale .para').text(p2p_maxScale);
+    $('#earthquake_info .magnitude').text("　規模　: " + p2p_magnitude);
+    $('#earthquake_info .depth').text("　深さ　: " + p2p_depth);
+    $('#earthquake_info .tsunami').text(p2p_tsunami);
+
+    $(`#earthquake_info .maxScale`).css({
+      'background-color': p2p_bgc,
+      'color': p2p_fntc
+    })
+  }
+}
+
+// --- history --- //
+function history(){
+
+  if (p2p_id != p2p_his_id_last){
+    p2p_his_id_last = p2p_id;
+
+    for(let i=0; i < 40; i++){
+      // --- type --- //
+      p2p_type = p2p_data[i]['issue']['type'];
+      
+      // p2p_types = {
+      //   'ScalePrompt': '震度速報',
+      //   'Destination': '震源情報',
+      //   'ScaleAndDestination': '震源・震度情報',
+      //   'DetailScale': '各地の震度情報',
+      //   'Foreign': '遠地地震情報',
+      //   'Other': '地震情報'
+      // };
+      
+      // p2p_type = p2p_types[p2p_type];
+      
+      if(p2p_type == 'DetailScale'){
         // --- time --- //
-        p2p_latest_time = p2p_data[0]['earthquake']['time'];
+        p2p_latest_time = p2p_data[i]['earthquake']['time'];
         // datetime
         p2p_latest_timeYear   = p2p_latest_time.substring(0 , 4);
         p2p_latest_timeMonth  = p2p_latest_time.substring(5 , 7);
@@ -829,30 +1025,16 @@ function information(){
         p2p_latest_timeHour   = p2p_latest_time.substring(11, 13);
         p2p_latest_timeMinute = p2p_latest_time.substring(14, 16);
 
-        // --- type --- //
-        p2p_type = p2p_data[0]['issue']['type'];
-
-        p2p_types = {
-          'ScalePrompt': '震度速報',
-          'Destination': '震源情報',
-          'ScaleAndDestination': '震源・震度情報',
-          'DetailScale': '各地の震度情報',
-          'Foreign': '遠地地震情報',
-          'Other': '地震情報'
-        };
-
-        p2p_type = p2p_types[p2p_type];
-
         // --- hypocenter --- //
-        p2p_hypocenter = p2p_data[0]['earthquake']['hypocenter']['name'];
-
+        p2p_hypocenter = p2p_data[i]['earthquake']['hypocenter']['name'];
+        
         if (p2p_hypocenter == ''){
           p2p_hypocenter = '調査中';
         }
 
         // --- maxScale --- //
-        p2p_maxScale = p2p_data[0]['earthquake']['maxScale'];
-
+        p2p_maxScale = p2p_data[i]['earthquake']['maxScale'];
+        
         switch (p2p_maxScale){
           case -1: p2p_maxScale = '調査中'; break;
           case 10: p2p_maxScale = '1'; break;
@@ -864,11 +1046,15 @@ function information(){
           case 55: p2p_maxScale = '6-'; break;
           case 60: p2p_maxScale = '6+'; break;
           case 70: p2p_maxScale = '7'; break;
+
+          default:
+            p2p_maxScale = `?`;
+            break;
         }
 
         // --- Magnitude --- //
-        p2p_magnitude = p2p_data[0]['earthquake']['hypocenter']['magnitude'];
-
+        p2p_magnitude = p2p_data[i]['earthquake']['hypocenter']['magnitude'];
+        
         if(p2p_magnitude == -1){
           p2p_magnitude = '調査中';
         } else {
@@ -876,7 +1062,7 @@ function information(){
         }
 
         // --- Depth --- //
-        p2p_depth = p2p_data[0]['earthquake']['hypocenter']['depth'];
+        p2p_depth = p2p_data[i]['earthquake']['hypocenter']['depth'];
 
         if (p2p_depth == -1){
           p2p_depth = '調査中';
@@ -887,7 +1073,7 @@ function information(){
         }
 
         // --- Tsunami --- //
-        p2p_tsunami = p2p_data[0]['earthquake']['domesticTsunami'];
+        p2p_tsunami = p2p_data[i]['earthquake']['domesticTsunami'];
 
         tsunamiLevels = {
           'None': '津波の心配はありません。',
@@ -899,144 +1085,84 @@ function information(){
         };
 
         p2p_tsunami = tsunamiLevels[p2p_tsunami];
-
+        
         // ----- put ----- //
-        $('#earthquake_info .info').text(p2p_type);
-        $('#earthquake_info .hypocenter').text(p2p_hypocenter);
-        $('#earthquake_info .time').text(`発生日時：${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}頃`);
-        $('#earthquake_info .maxScale .para').text(p2p_maxScale);
-        $('#earthquake_info .magnitude').text("規模：" + p2p_magnitude);
-        $('#earthquake_info .depth').text("深さ：" + p2p_depth);
-        $('#earthquake_info .tsunami').text(p2p_tsunami);
-      }
-    });
-}
+        let p2p_his_bgc;
+        let p2p_his_fntc;
 
-// --- history --- //
-function history(){
-
-  const url_his_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=40";
-
-  response = fetch(url_his_p2p)
-
-  .then(Response => Response.json())
-
-  .then(data => {
-
-    p2p_his_data = data;
-    p2p_his_id = p2p_his_data[0]['id'];
-    
-    if (p2p_his_id != p2p_his_id_last){
-      p2p_his_id_last = p2p_his_id;
-
-      for(let i=0; i < 40; i++){
-        // --- type --- //
-        p2p_type = p2p_his_data[i]['issue']['type'];
-        
-        // p2p_types = {
-        //   'ScalePrompt': '震度速報',
-        //   'Destination': '震源情報',
-        //   'ScaleAndDestination': '震源・震度情報',
-        //   'DetailScale': '各地の震度情報',
-        //   'Foreign': '遠地地震情報',
-        //   'Other': '地震情報'
-        // };
-        
-        // p2p_type = p2p_types[p2p_type];
-        
-        if(p2p_type == 'DetailScale'){
-          // --- time --- //
-          p2p_latest_time = p2p_his_data[i]['earthquake']['time'];
-          // datetime
-          p2p_latest_timeYear   = p2p_latest_time.substring(0 , 4);
-          p2p_latest_timeMonth  = p2p_latest_time.substring(5 , 7);
-          p2p_latest_timeDay    = p2p_latest_time.substring(8 , 10);
-          p2p_latest_timeHour   = p2p_latest_time.substring(11, 13);
-          p2p_latest_timeMinute = p2p_latest_time.substring(14, 16);
-
-          // --- hypocenter --- //
-          p2p_hypocenter = p2p_his_data[i]['earthquake']['hypocenter']['name'];
+        switch (p2p_maxScale) {
+          case '1':
+            p2p_his_bgc = "#c0c0c0"; 
+            p2p_his_fntc = "#010101";
+            break;
+          case '2':
+            p2p_his_bgc = "#2020c0";
+            p2p_his_fntc = "#ffffff";
+            break;
+          case '3': 
+            p2p_his_bgc = "#20c020";
+            p2p_his_fntc = "#010101";
+            break;
+          case '4':
+            p2p_his_bgc = "#c0c020";
+            p2p_his_fntc = "#010101";
+            break;
+          case '5-':
+            p2p_his_bgc = "#c0a020";
+            p2p_his_fntc = "#010101";
+            break;
+          case '5+':
+            p2p_his_bgc = "#c07f20";
+            p2p_his_fntc = "#010101";
+            break;
+          case '6-':
+            p2p_his_bgc = "#e02020";
+            p2p_his_fntc = "#010101";
+            break;
+          case '6+':
+            p2p_his_bgc = "#a02020";
+            p2p_his_fntc = "#ffffff";
+            break;
+          case '7':
+            p2p_his_bgc = "#7f207f";
+            p2p_his_fntc = "#ffffff";
+            break;
           
-          if (p2p_hypocenter == ''){
-            p2p_hypocenter = '調査中';
-          }
-
-          // --- maxScale --- //
-          p2p_maxScale = p2p_his_data[i]['earthquake']['maxScale'];
-          
-          switch (p2p_maxScale){
-            case -1: p2p_maxScale = '調査中'; break;
-            case 10: p2p_maxScale = '1'; break;
-            case 20: p2p_maxScale = '2'; break;
-            case 30: p2p_maxScale = '3'; break;
-            case 40: p2p_maxScale = '4'; break;
-            case 45: p2p_maxScale = '5-'; break;
-            case 50: p2p_maxScale = '5+'; break;
-            case 55: p2p_maxScale = '6-'; break;
-            case 60: p2p_maxScale = '6+'; break;
-            case 70: p2p_maxScale = '7'; break;
-          }
-
-          // --- Magnitude --- //
-          p2p_magnitude = p2p_his_data[i]['earthquake']['hypocenter']['magnitude'];
-          
-          if(p2p_magnitude == -1){
-            p2p_magnitude = '調査中';
-          } else {
-            p2p_magnitude = 'M' + String(p2p_magnitude);
-          }
-
-          // --- Depth --- //
-          p2p_depth = p2p_his_data[i]['earthquake']['hypocenter']['depth'];
-
-          if (p2p_depth == -1){
-            p2p_depth = '調査中';
-          } else if (p2p_depth == 0){
-            p2p_depth = 'ごく浅い';
-          } else {
-            p2p_depth = '約' + String(p2p_depth) + 'km';
-          }
-
-          // --- Tsunami --- //
-          p2p_tsunami = p2p_his_data[i]['earthquake']['domesticTsunami'];
-
-          tsunamiLevels = {
-            'None': '津波の心配はありません。',
-            'Unknown': '津波の影響は不明です。',
-            'Checking': '津波の影響を現在調査中です。',
-            'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
-            'Watch': '津波注意報が発表されています。',
-            'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
-          };
-
-          p2p_tsunami = tsunamiLevels[p2p_tsunami];
-          
-          // ----- put ----- //
-          $('#earthquake_history .content').append(`
-            <li class="list">
-              <div class="maxScale">
-                <p>${p2p_maxScale}</p>
-              </div>
-
-              <div class="right">
-                <p class="hypocenter">${p2p_hypocenter}</p>
-                <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
-                <div class="hypoInfo">
-                  <p>${p2p_magnitude}</p>
-                  <p>${p2p_depth}</p>
-                </div>
-                <p>${p2p_tsunami}</p>
-              </div>
-            </li>
-          `)
-
-          p2p_his_cnt++;
+          default:
+            p2p_his_bgc = "#7f7fc0";
+            p2p_his_fntc = "#010101";
+            break;
         }
 
-        if(p2p_his_cnt >= 20){break}
+        $('#earthquake_history .content').append(`
+          <li class="list list-${i}">
+            <div class="maxScale">
+              <p>${p2p_maxScale}</p>
+            </div>
+
+            <div class="right">
+              <p class="hypocenter">${p2p_hypocenter}</p>
+              <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
+              <div class="hypoInfo">
+                <p>規模: ${p2p_magnitude}</p>
+                <p>深さ: ${p2p_depth}</p>
+              </div>
+              <p>${p2p_tsunami}</p>
+            </div>
+          </li>
+        `)
+
+        $(`#earthquake_history>.content>.list-${i}>.maxScale`).css({
+          'background-color': p2p_his_bgc,
+          'color': p2p_his_fntc
+        })
+
+        p2p_his_cnt++;
       }
+
+      if(p2p_his_cnt >= 20){break}
     }
-  });
+  }
 }
 
 // --- Time string format --- //
