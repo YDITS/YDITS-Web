@@ -1,4 +1,4 @@
-/* main.css / YDITS for Web  Ver 1.6.1 / Yone */
+/* main.css / YDITS for Web  Ver 1.7.0 / Yone */
 @charset "UTF-8";
 /* ----- Main ----- */
 .material-symbols-outlined {
@@ -23,7 +23,7 @@ body {
 }
 
 main {
-  min-height: 90em;
+  /* min-height: 90em; */
   padding: 2em 0;
 }
 
