@@ -1,9 +1,9 @@
 //
-// main.js / YDITS for Web  Ver 1.7.1 / Yone
+// main.js / YDITS for Web  Ver 2.0.0 / Yone
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "1.7.1";
+const ver_project = "2.0.0";
 
 // --- main
 let scene = 0;
@@ -162,18 +162,18 @@ function win(winId, winTitle){
 
 // --- Get server datetime --- //
 function getServer_DT(){
-  // axios.head(
-  //   window.location.href,
-  //   {headers: {
-  //       'Cache-Control': 'no-cache'
-  //   },}
-  // ).then(res => {
-  //   gmt = new Date(res.headers.date); // Server datetime
+  axios.head(
+    window.location.href,
+    {headers: {
+        'Cache-Control': 'no-cache'
+    },}
+  ).then(res => {
+    gmt = new Date(res.headers.date); // Server datetime
 
     // --- debug
     // resDate = "29 May 2022 06:56:33 GMT";
     // gmt = new Date(resDate); // Server datetime
-    gmt = new Date();
+    // gmt = new Date();
     // ---
 
     timeYear = setTime(gmt.getFullYear());
@@ -182,14 +182,14 @@ function getServer_DT(){
     timeHour = setTime(gmt.getHours());
     timeMinute = setTime(gmt.getMinutes());
     timeSecond = setTime(gmt.getSeconds());
-  // })
+  })
 }
 
 // --- Settings --- //
 function settings_init(){
   $('#settings_window .version').text(`Ver ${ver_project}`);
 
-  $(document).on('click', '#btn_settings', function(){
+  $(document).on('click', '#menu>.settings', function(){
     window_settings = $('#settings_window');
 
     if(!window_settings.hasClass('active')){
@@ -451,6 +451,10 @@ function chg_darkMode(){
       'color': '#ffffff'
     })
 
+    $('#navMode').css({
+      'color': '#ffffff'
+    })
+
     $('#settings_window').css({
       'background-color': '#103050',
       'color': '#ffffff'
@@ -460,7 +464,7 @@ function chg_darkMode(){
       'color': '#ffffff'
     })
 
-    $('main>.content').css({
+    $('#earthquake>.content').css({
       'background-color': '#103050',
       'color': '#eeeeee'
     })
@@ -486,6 +490,10 @@ function chg_darkMode(){
       'color': '#010101'
     })
 
+    $('#navMode').css({
+      'color': '#ffffff'
+    })
+
     $('#settings_window').css({
       'background-color': '#e0e0e0',
       'color': '#010101'
@@ -495,7 +503,7 @@ function chg_darkMode(){
       'color': '#010101'
     })
 
-    $('main>.content').css({
+    $('#earthquake>.content').css({
       'background-color': '#e0e0e0',
       'color': '#010101'
     })
@@ -520,24 +528,39 @@ function chg_darkMode(){
 
 // ----- select ----- //
 function select_init(){
+  $('#earthquake').addClass('active');
+
+  $(document).on('click', '#btn_home', function(){
+    reset_show();
+    $('#earthquake').addClass('active');
+  })
+  $(document).on('click', '#btn_menu', function(){
+    reset_show();
+    $('#menu').addClass('active');
+  })
+
   $('#eew').addClass('active');
 
   $(document).on('click', '#btn_eew', function(){
-    reset_show();
+    reset_show_eq();
     $('#eew').addClass('active');
   })
   $(document).on('click', '#btn_info', function(){
-    reset_show();
+    reset_show_eq();
     $('#earthquake_info').addClass('active');
   })
   $(document).on('click', '#btn_history', function(){
-    reset_show();
+    reset_show_eq();
     $('#earthquake_history').addClass('active');
   })
 }
 
 function reset_show(){
-  $('main>.content').removeClass('active');
+  $('#main>.content').removeClass('active');
+}
+
+function reset_show_eq(){
+  $('#earthquake>.content').removeClass('active');
 }
 
 // ----- EEW ----- //
@@ -749,6 +772,9 @@ function eew(){
         }
 
         reset_show();
+        $('#earthquake').addClass('active');
+
+        reset_show_eq();
         $('#eew').addClass('active');
 
         $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
