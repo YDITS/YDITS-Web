@@ -1,0 +1,62 @@
+/* main.css / help / YDITS for Web  Ver 2.0.0 / Yone */
+@charset "UTF-8";
+/* ----- Elements ----- */
+main {
+  min-height: 90vh;
+}
+
+header {
+  background-color: #cccccc;
+}
+
+footer {
+  background-color: #cccccc;
+}
+
+/* ----- Elements ----- */
+main>.pageTitle {
+  display: flex;
+  justify-content: center;
+}
+
+main>.content {
+  display: flex;
+  flex-direction: column;
+  margin: 2em 8em;
+  align-items: center;
+}
+
+main>.content>.link {
+  display: flex;
+  margin-bottom: 2em;
+  
+  width: 60%;
+  border-radius: .5em;
+  
+  padding: 2em;
+  justify-content: center;
+  background-color: #c0c0ff;
+  color: #010101;
+  text-decoration: none;
+}
+
+main>.content>.link:hover {
+  background-color: #c0c0ffa0;
+}
+
+@media (max-width: 1024px) {
+  main>.content {
+    margin: 2em 2em;
+  }
+}
+
+@media (max-width: 512px) {
+  main>.content {
+    margin: 2em 1em;
+  }
+  
+  main>.content>.link {
+    padding: 1em;
+    font-size: .7em;
+  }
+}

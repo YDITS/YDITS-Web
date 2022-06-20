@@ -1,0 +1,447 @@
+/* main.css / home / YDITS for Web  Ver 2.0.0 / Yone */
+@charset "UTF-8";
+/* ----- Elements ----- */
+/* --- main --- */
+/* nav */
+main {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+#nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20vw;
+  height: 100%;
+
+  z-index: 1;
+}
+
+#navMode {
+  width: 60%;
+  height: 35em;
+  border-radius: 1em;
+  background-color: #404040;
+  /* color: #ffffff; */
+}
+
+#navMode ul {
+  list-style: none;
+  padding: 0;
+}
+
+#navMode ul>li {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 1.5em;
+  padding: .5em .5em;
+  border-radius: .5em;
+  text-align: center;
+}
+
+#navMode ul>li:hover {
+  background-color: #80808080;
+}
+
+@media (min-width: 1025px) {
+  #main {
+    width: 80vw;
+  }
+
+  #navMode {
+    padding: 2em 2em;
+  }
+}
+
+@media (max-width: 1024px) {
+  body {
+    margin-bottom: 4em;
+  }
+
+  #nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4em;
+    padding: 0;
+  }
+
+  #navMode {
+    width: 100%;
+    height: 100%;
+    border-radius: 1em;
+    padding: .7em 0;
+    border-radius: .5em .5em 0 0;
+    background-color: #404040;
+  }
+
+  #navMode ul {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+  }
+
+  #navMode ul>li {
+    display: flex;
+    margin: 0;
+  }
+
+  #main {
+    width: 100%;
+  }
+}
+
+#main>.content {
+  display: none;
+}
+
+#main>.content.active {
+  display: flex;
+  flex-direction: column;
+}
+
+#earthquake>.content {
+  display: none;
+  margin-bottom: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
+  border-radius: 1em;
+  width: 80%;
+  min-height: 24em;
+  padding: 1em;
+}
+
+#earthquake>.content>.title {
+  margin-bottom: 1em;
+  text-align: center;
+}
+
+#earthquake>.content>.info {
+  margin-left: 2em;
+}
+
+#menu {
+  min-height: 40em;
+}
+
+#menu .title {
+  text-align: center;
+}
+
+#menu>.settings {
+  display: flex;
+  margin: 2em;
+  align-items: center;
+  height: 4em;
+  padding: 0 0 0 2em;
+  border-radius: .2em;
+  background-color: #c0c0c080;
+}
+
+#menu>.settings:hover {
+  background-color: #80808080;
+}
+
+#menu>.settings>span {
+  margin-right: 1em;
+}
+
+#settings_window {
+  display: none;
+  position: absolute;
+  top: 4em;
+  left: 0;
+  right: 0;
+  margin: 2em auto;
+  width: 80%;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  border-radius: 1em;
+  padding: 2em 4em 8em 4em;
+  background-color: #fff;
+  z-index: 2;
+}
+
+#settings_window.active {
+  display: block;
+}
+
+#settings_window .close {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  border-radius: .2em;
+  cursor: pointer;
+}
+
+#settings_window .close:hover {
+  background-color: #80808080;
+}
+
+#settings_window .title {
+  text-align: center;
+}
+
+#settings_window .version {
+  text-align: center;
+}
+
+#settings_window>.content {
+  margin: 2em 0;
+}
+
+#settings_window>.content>label {
+  display: block;
+  font-size: 1.3em;
+}
+
+#settings_window .content label {
+  display: block;
+}
+
+#settings_window .playSound .eew,
+#settings_window .playSound .info {
+  margin-top: 2em;
+}
+
+#settings_window .playSound .eew>.content,
+#settings_window .playSound .info>.content {
+  margin-top: 1em;
+}
+
+#settings_window .getCnt>.content {
+  display: flex;
+  align-items: center;
+}
+
+#settings_window .content>.content {
+  margin-top: .5em;
+}
+
+#btn_earthquake_info_chk_sound {
+  height: 2em;
+}
+
+#settings_window .getCnt #settings_bar_cnt {
+  margin-right: 1em;
+}
+
+#settings_window .getCnt #settings_bar_cnt_eew {
+  margin-right: 1em;
+}
+
+#settings_window .link_terms {
+  display: inline-block;
+  margin: 0 2em 0 0;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+#select {
+  margin-bottom: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
+  border-radius: 1em;
+  width: 80%;
+  min-height: 4em;
+}
+
+#select ul {
+  display: flex;
+  margin: 0 4em;
+  list-style: none;
+  padding: 0;
+}
+
+#select li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: .5em auto;
+  border-radius: 1em;
+  width: 30%;
+  height: 4em;
+  text-align: center;
+}
+
+#select li:hover {
+  background-color: #80808080;
+}
+
+@media (max-width: 769px) {
+  #settings_window {
+    /* width: 75%; */
+    padding: 2em 2em 8em 2em;
+  }
+
+  #earthquake>.content {
+    font-size: .7em;
+  }
+
+  #select {
+    width: 90%;
+  }
+
+  #select ul {
+    margin: 0;
+  }
+}
+
+@media (max-width: 512px) {
+  #earthquake>.content {
+    padding-bottom: 4em;
+    min-height: 38em;
+  }
+
+  #earthquake>.content>.content {
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+  }
+
+  #earthquake>.content>.info {
+    margin: 0;
+    text-align: center;
+  }
+}
+
+/* EEW */
+#eew.active {
+  display: block;
+}
+
+#eew .content {
+  display: flex;
+  margin-top: 2em;
+}
+
+@media (max-width: 512px) {
+  #eew .content {
+    display: flex;
+    align-items: center;
+  }
+}
+
+#eew .calcintensity {
+  margin: 0 2em;
+  width: 16em;
+  height: 16em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  border-radius: 1em;
+  text-align: center;
+}
+
+#eew .calcintensity h3 {
+  margin: 0;
+}
+
+#eew .calcintensity_para {
+  font-size: 8em;
+  font-weight: 900;
+}
+
+#eew .content .right {
+  margin-top: 1em;
+  font-size: 1.5em;
+}
+
+#eew .region {
+  font-size: 2em;
+  font-weight: 900;
+}
+
+/* information */
+#earthquake_info.active {
+  display: block;
+}
+
+#earthquake_info .content {
+  display: flex;
+  margin-top: 2em;
+}
+
+@media (max-width: 512px) {
+  #earthquake_info .content {
+    display: flex;
+    align-items: center;
+  }
+}
+
+#earthquake_info .maxScale {
+  margin: 0 2em;
+  width: 16em;
+  height: 16em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  border-radius: 1em;
+  text-align: center;
+}
+
+#earthquake_info .maxScale h3 {
+  margin: 0;
+}
+
+#earthquake_info .maxScale .para {
+  font-size: 8em;
+  font-weight: 700;
+}
+
+#earthquake_info .content .right {
+  margin-top: 1em;
+  font-size: 1.5em;
+}
+
+#earthquake_info .hypocenter {
+  font-size: 2em;
+  font-weight: 900;
+}
+
+/* history */
+#earthquake_history.active {
+  display: block;
+}
+
+#earthquake_history>.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+}
+
+#earthquake_history>.content>.list {
+  display: flex;
+  align-items: center;
+  margin: 1em 2em;
+}
+
+#earthquake_history>.content>.list>.maxScale {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: .5em;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: .25em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  font-size: 4em;
+}
+
+#earthquake_history>.content>.list>.right>.hypoInfo {
+  display: flex;
+}
+
+#earthquake_history>.content>.list>.right>.hypoInfo>p {
+  margin-right: 1em;
+}
+
+#earthquake_history>.content>.list>.right>.hypocenter {
+  font-size: 2em;
+}
+
+/* --- header --- */
+
+
+/* --- footer --- */
+
