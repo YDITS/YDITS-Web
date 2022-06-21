@@ -1,4 +1,4 @@
-/* main.css / home / YDITS for Web  Ver 2.0.0 / Yone */
+/* main.css / home / YDITS for Web  Ver 2.0.1 / Yone */
 @charset "UTF-8";
 /* ----- Elements ----- */
 /* --- main --- */
@@ -292,7 +292,7 @@ main {
   margin-right: auto;
   /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
   border-radius: 1em;
-  /* width: 60%; */
+  width: 80%;
   min-height: 4em;
 }
 
