@@ -13,8 +13,7 @@
   <title>YDITS for Web</title>
 
   <!----- Links ----->
-  <!-- <base href="https://yone1130.github.io/YDITS-Web/"> -->
-  <base href="https://yone1130.github.io/YDITS-Web/preview-2-0-0/">
+  <base href="https://yone1130.github.io/YDITS-Web/">
   <!-- <base href="file:///C:/Git/Repos/YDITS-Web/"> -->
 
   <!--- Styles --->
@@ -117,14 +116,21 @@
       <section class="content" id="menu">
         <h2 class="title">メニュー</h2>
 
-        <div class="settings">
+        <div class="list settings">
           <span class="material-symbols-outlined">
             settings
           </span>
           設定
         </div>
 
-        <div id="settings_window">
+        <div class="list info">
+          <span class="material-symbols-outlined">
+            info
+          </span>
+          サイト情報
+        </div>
+
+        <div class="windows" id="settings_window">
           <span class="material-symbols-outlined close">
             close
           </span>
@@ -200,8 +206,18 @@
             <button id="btn_eew_chk_sound">緊急地震速報の受信時音声をテスト再生</button>
             <button id="btn_earthquake_info_chk_sound">地震情報の受信時音声をテスト再生</button>
           </div>
+        </div>
 
-          <p class="copyrights">音源提供  MNEqE721 様</p>
+        <div class="windows" id="info_window">
+          <span class="material-symbols-outlined close">
+            close
+          </span>
+
+          <h2 class="title">サイト情報</h2>
+
+          <div class="content">
+            <p class="copyrights">音源提供  MNEqE721 様</p>
+          </div>
 
           <div class="content">
             <a class="link_terms" href="./help/">
@@ -215,6 +231,7 @@
             </a>
           </div>
         </div>
+
       </section>
     </div>
 

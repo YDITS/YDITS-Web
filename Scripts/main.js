@@ -134,6 +134,7 @@ function page_init(){
   $('header .title').text(name_project)
 
   settings_init();
+  info_init();
   select_init();
 }
 
@@ -455,12 +456,12 @@ function chg_darkMode(){
       'color': '#ffffff'
     })
 
-    $('#settings_window').css({
+    $('#menu>.windows').css({
       'background-color': '#103050',
       'color': '#ffffff'
     })
 
-    $('#settings_window .link_terms').css({
+    $('#info_window .link_terms').css({
       'color': '#ffffff'
     })
 
@@ -494,12 +495,12 @@ function chg_darkMode(){
       'color': '#ffffff'
     })
 
-    $('#settings_window').css({
+    $('#menu>.windows').css({
       'background-color': '#e0e0e0',
       'color': '#010101'
     })
 
-    $('#settings_window .link_terms').css({
+    $('#info_window .link_terms').css({
       'color': '#010101'
     })
 
@@ -561,6 +562,17 @@ function reset_show(){
 
 function reset_show_eq(){
   $('#earthquake>.content').removeClass('active');
+}
+
+// ----- Info ----- //
+function info_init(){
+  $(document).on('click', '#menu>.info', function(){
+    $('#info_window').addClass('active');
+  })
+
+  $(document).on('click', '#info_window>.close', function(){
+    $('#info_window').removeClass('active');
+  })
 }
 
 // ----- EEW ----- //
