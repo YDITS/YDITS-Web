@@ -1,4 +1,4 @@
-/* ui.css / YDITS for Web  Ver 2.0.1 / Yone */
+/* ui.css / YDITS for Web / Yone */
 /* ----- Main ----- */
 /* --- Dialog --- */
 .window {
@@ -17,6 +17,7 @@
   padding: 0;
   border: 0;
   background-color: #fff;
+  z-index: 10;
 }
 
 .window .navBar {

@@ -1,11 +1,11 @@
-<!-- index.html / home / YDITS for Web  Ver 2.0.1 / Yone -->
+<!-- index.html / home / YDITS for Web / Yone -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
 
   <!----- Meta ----->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="author" content="よね/Yone">
   <meta name="description" content="YDITS for Web">
   <meta name="generator" content="Microsoft Visual Studio Code">
@@ -14,7 +14,7 @@
 
   <!----- Links ----->
   <base href="https://yone1130.github.io/YDITS-Web/">
-  <!-- <base href="file:///C:/Git/Repos/YDITS-Web/"> -->
+  <!-- <base href="http://192.168.10.102:5500/YDITS-Web/"> -->
 
   <!--- Styles --->
   <link rel="stylesheet" href="./Styles/main.css">
@@ -42,22 +42,21 @@
   <script src="./Scripts/jquery-3.6.0.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="./Scripts/main.js"></script>
+  <script src="./Scripts/index.js"></script>
 
   <noscript>
     <meta http-equiv="refresh" content="0; URL=./noscript/">
   </noscript>
 </head>
 
-<body>
+<body id="pageTop">
   <header>
-    <div class="content">
-      <p class="title"></p>
-    </div>
   </header>
 
   <main>
     <div id="main">
       <div class="content" id="earthquake">
+
         <section id="select">
           <ul>
             <li id="btn_info"><p>地震情報</p></li>
@@ -231,7 +230,6 @@
             </a>
           </div>
         </div>
-
       </section>
     </div>
 
@@ -254,11 +252,8 @@
       </nav>
     </div>
   </main>
-  
+
   <footer>
-    <div class="content">
-      <p class="copyrights">&copy;2022 よね/Yone.</p>
-    </div>
   </footer>
 </body>
 </html>
