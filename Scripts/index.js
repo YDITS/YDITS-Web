@@ -82,11 +82,6 @@ let loopCnt_history = -1;
 const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW.wav");
 const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
 
-// --- debug
-// const EEW_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewEEW.wav");
-// const p2p_sound = new Audio("file:///C:/Git/repos/YDITS-Web/Sounds/gotNewInfo.wav");
-// ---
-
 // ---------- Main ---------- //
 document.addEventListener('DOMContentLoaded', function(){
   page_init();
@@ -137,12 +132,11 @@ function page_init(){
 
 // --- Get server datetime --- //
 function getServer_DT(){
-  axios.head(
-    window.location.href,
-    {headers: {
-        'Cache-Control': 'no-cache'
-    },}
-  ).then(res => {
+  axios.head( window.location.href, {
+    headers: {
+      'Cache-Control': 'no-cache'
+    },
+  }).then(res => {
     gmt = new Date(res.headers.date); // Server datetime
 
     // --- debug
@@ -426,10 +420,6 @@ function chg_darkMode(){
       'color': '#ffffff'
     })
 
-    $('#navMode').css({
-      'color': '#ffffff'
-    })
-
     $('#menu>.windows').css({
       'background-color': '#103050',
       'color': '#ffffff'
@@ -463,10 +453,6 @@ function chg_darkMode(){
     $('body').css({
       'background-color': '#ffffff',
       'color': '#010101'
-    })
-
-    $('#navMode').css({
-      'color': '#ffffff'
     })
 
     $('#menu>.windows').css({
@@ -505,12 +491,12 @@ function chg_darkMode(){
 function select_init(){
   $('#earthquake').addClass('active');
 
-  $(document).on('click', '#btn_home', function(){
+  $(document).on('click', '#nav>ul>.home', function(){
     reset_show();
     window.location.href = "#pageTop";
     $('#earthquake').addClass('active');
   })
-  $(document).on('click', '#btn_menu', function(){
+  $(document).on('click', '#nav>ul>.menu', function(){
     reset_show();
     window.location.href = "#pageTop";
     $('#menu').addClass('active');
@@ -621,6 +607,10 @@ function eew(){
         // --- Region name --- //
         EEW_Region_name = EEW_data["hypoInfo"]["items"][0]["regionName"];
         
+        // --- debug
+        // EEW_Region_name = '東京湾';
+        // ---
+
         if (!EEW_Region_name){
           EEW_Region_name = '不明';
         }
@@ -650,6 +640,10 @@ function eew(){
 
         // --- Magnitude --- //
         EEW_Magnitude = EEW_data["hypoInfo"]["items"][0]["magnitude"];
+
+        // --- debug
+        // EEW_Magnitude = '7.0';
+        // ---
         
         if (EEW_Magnitude){
           EEW_Magnitude = 'M' + EEW_Magnitude;
@@ -659,7 +653,11 @@ function eew(){
 
         // --- Depth --- //
         EEW_depth = EEW_data["hypoInfo"]["items"][0]["depth"];
-        
+
+        // --- debug
+        // EEW_depth = '70km';
+        // ---
+
         if (EEW_depth){
           EEW_depth = '約' + EEW_depth;
         } else {

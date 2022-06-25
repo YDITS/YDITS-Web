@@ -1,127 +1,252 @@
 /* main.css / home / YDITS for Web / Yone */
 @charset "UTF-8";
-/* ----- Elements ----- */
-/* --- main --- */
-/* nav */
+
+/* ----- main ----- */
 main {
   display: flex;
-  flex-direction: row-reverse;
 }
 
 #nav {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   width: 20vw;
-  height: 100%;
+  height: 35em;
+  border-radius: 1em;
+
+  background-color: #404040;
+  color: #ffffff;
 
   z-index: 1;
 }
 
-#navMode {
-  width: 60%;
-  height: 35em;
-  border-radius: 1em;
-  background-color: #404040;
-  /* color: #ffffff; */
-}
-
-#navMode ul {
-  list-style: none;
-  padding: 0;
-}
-
-#navMode ul>li {
-  display: flex;
-  justify-content: space-evenly;
-  margin-bottom: 1.5em;
-  padding: .5em .5em;
-  border-radius: .5em;
-  text-align: center;
-}
-
-#navMode ul>li:hover {
-  background-color: #80808080;
-}
-
-@media (min-width: 1025px) {
-  #main {
-    width: 80vw;
-  }
-
-  #navMode {
-    padding: 2em 2em;
-  }
-}
-
-@media (max-width: 1024px) {
-  body {
-    margin-bottom: 4em;
-  }
-
-  #nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 4em;
-    padding: 0;
-    z-index: 3;
-  }
-
-  #navMode {
-    width: 100%;
-    height: 100%;
-    border-radius: 1em;
-    padding: .7em 0;
-    border-radius: .5em .5em 0 0;
-    background-color: #404040;
-  }
-
-  #navMode ul {
-    display: flex;
-    justify-content: space-evenly;
-    flex-direction: row;
-  }
-
-  #navMode ul>li {
-    display: flex;
-    margin: 0;
-  }
-
-  #main {
-    width: 100%;
-  }
-}
-
-#main>.content {
-  display: none;
-}
-
-#main>.content.active {
+#nav>ul {
   display: flex;
   flex-direction: column;
 }
 
+#nav>ul>li {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+  margin: 1em;
+  width: 10em;
+  height: 3em;
+  border-radius: .5em;
+}
+
+#nav ul>li:hover {
+  background-color: #80808080;
+}
+
+#main {
+  width: 80vw;
+}
+
+#main>.content {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+
+#main>.content.active {
+  display: flex;
+}
+
+#select {
+  margin-bottom: 2em;
+
+  width: 80%;
+  height: 4.5em;
+  border-radius: 1em;
+}
+
+#select ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+  list-style: none;
+  padding: 0;
+}
+
+#select li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* margin: 0 1em; */
+  width: 30%;
+  height: 80%;
+  border-radius: 1em;
+}
+
+#select li:hover {
+  background-color: #80808080;
+}
+
 #earthquake>.content {
   display: none;
-  margin-bottom: 2em;
-  margin-left: auto;
-  margin-right: auto;
-  /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
-  border-radius: 1em;
+
   width: 80%;
   min-height: 24em;
+  border-radius: 1em;
+
   padding: 1em;
+  overflow: auto;
 }
 
 #earthquake>.content>.title {
-  margin-bottom: 1em;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin: .5em;
 }
 
 #earthquake>.content>.info {
   margin-left: 2em;
+}
+
+/* EEW */
+#eew.active {
+  display: block;
+}
+
+#eew .content {
+  display: flex;
+  margin-top: 2em;
+}
+
+#eew .calcintensity {
+  display: flex;
+  flex-direction: column;
+
+  margin: 0 2em;
+  width: 16em;
+  height: 16em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  border-radius: 1em;
+}
+
+#eew .calcintensity h3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#eew .calcintensity_para {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 8em;
+  font-weight: 900;
+}
+
+#eew .content .right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  font-size: 1.5em;
+}
+
+#eew .region {
+  font-size: 2em;
+  font-weight: 900;
+}
+
+/* information */
+#earthquake_info.active {
+  display: block;
+}
+
+#earthquake_info .content {
+  display: flex;
+  margin-top: 2em;
+}
+
+#earthquake_info .maxScale {
+  display: flex;
+  flex-direction: column;
+
+  margin: 0 2em;
+  width: 16em;
+  height: 16em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+  border-radius: 1em;
+}
+
+#earthquake_info .maxScale h3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#earthquake_info .maxScale .para {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 8em;
+  font-weight: 900;
+}
+
+#earthquake_info .content .right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  font-size: 1.5em;
+}
+
+#earthquake_info .hypocenter {
+  font-size: 2em;
+  font-weight: 900;
+}
+
+/* history */
+#earthquake_history.active {
+  display: block;
+}
+
+#earthquake_history>.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+}
+
+#earthquake_history>.content>.list {
+  display: flex;
+  align-items: center;
+  margin: 1em 2em;
+}
+
+#earthquake_history>.content>.list>.maxScale {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-right: .5em;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: .25em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+
+  font-size: 4em;
+}
+
+#earthquake_history>.content>.list>.right>.hypoInfo {
+  display: flex;
+}
+
+#earthquake_history>.content>.list>.right>.hypoInfo>p {
+  margin-right: 1em;
+}
+
+#earthquake_history>.content>.list>.right>.hypocenter {
+  font-size: 2em;
 }
 
 #menu {
@@ -129,16 +254,22 @@ main {
 }
 
 #menu .title {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  
+  margin-bottom: 1em;
 }
 
 #menu>.list {
   display: flex;
-  margin: 2em 2em 0 2em;
   align-items: center;
+
+  margin-bottom: 2em;
+  width: 80%;
   height: 4em;
-  padding: 0 0 0 2em;
   border-radius: .2em;
+
+  padding: 0 0 0 2em;
   background-color: #80808020;
 }
 
@@ -164,12 +295,15 @@ main {
   top: 4em;
   left: 0;
   right: 0;
+
   margin: 2em auto;
   width: 80%;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
   border-radius: 1em;
+
   padding: 2em 4em 8em 4em;
   background-color: #fff;
+
   z-index: 2;
 }
 
@@ -177,7 +311,14 @@ main {
   position: absolute;
   top: 1em;
   right: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 32px;
+  height: 32px;
   border-radius: .2em;
+
   cursor: pointer;
 }
 
@@ -186,24 +327,22 @@ main {
 }
 
 #settings_window .title {
-  text-align: center;
+  display: flex;
+  justify-items: center;
 }
 
 #settings_window .version {
-  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 #settings_window>.content {
   margin: 2em 0;
 }
 
-#settings_window>.content>label {
+#settings_window>.content label {
   display: block;
   font-size: 1.3em;
-}
-
-#settings_window .content label {
-  display: block;
 }
 
 #settings_window .playSound .eew,
@@ -237,24 +376,20 @@ main {
   margin-right: 1em;
 }
 
-#settings_window .link_terms {
-  display: inline-block;
-  margin: 0 2em 0 0;
-  text-align: center;
-  font-size: 1.2em;
-}
-
-/*  */
 #info_window {
   position: absolute;
   top: 4em;
   left: 0;
   right: 0;
+
   margin: 2em auto;
+  width: 80%;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
   border-radius: 1em;
+
   padding: 2em 4em 8em 4em;
   background-color: #fff;
+
   z-index: 2;
 }
 
@@ -262,7 +397,14 @@ main {
   position: absolute;
   top: 1em;
   right: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 32px;
+  height: 32px;
   border-radius: .2em;
+
   cursor: pointer;
 }
 
@@ -271,7 +413,8 @@ main {
 }
 
 #info_window .title {
-  text-align: center;
+  display: flex;
+  justify-items: center;
 }
 
 #info_window>.content {
@@ -284,130 +427,75 @@ main {
   text-align: center;
   font-size: 1.2em;
 }
-/*  */
 
-#select {
-  margin-bottom: 2em;
-  margin-left: auto;
-  margin-right: auto;
-  /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
-  border-radius: 1em;
-  width: 80%;
-  min-height: 4em;
-}
+/* ----- Responsive ----- */
+@media (max-width: 1024px) {
+  body {
+    margin-bottom: 4em;
+  }
 
-#select ul {
-  display: flex;
-  margin: 0 4em;
-  list-style: none;
-  padding: 0;
-}
+  #nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
 
-#select li {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: .5em auto;
-  border-radius: 1em;
-  width: 30%;
-  height: 4em;
-  text-align: center;
-}
+    width: 100%;
+    height: 4em;
+    border-radius: .5em .5em 0 0;
 
-#select li:hover {
-  background-color: #80808080;
+    padding: 0;
+    background-color: #404040;
+
+    z-index: 3;
+  }
+
+  #nav>ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+  }
+
+  #nav> ul>li {
+    display: flex;
+    margin: 0;
+  }
+
+  #main {
+    width: 100%;
+  }
 }
 
 @media (max-width: 769px) {
+  main {
+    padding: 2em 1em;
+  }
+
   #settings_window {
-    /* width: 75%; */
+    padding: 2em 2em 8em 2em;
+  }
+
+  #info_window {
     padding: 2em 2em 8em 2em;
   }
 
   #earthquake>.content {
+    width: 90%;
     font-size: .7em;
   }
 
   #select {
-    width: 90%;
+    width: 100%;
   }
-
+  
   #select ul {
     margin: 0;
   }
-}
-
-@media (max-width: 512px) {
-  #earthquake>.content {
-    padding-bottom: 4em;
-    min-height: 38em;
-  }
-
-  #earthquake>.content>.content {
-    display: flex;
-    /* align-items: center; */
-    flex-direction: column;
-  }
-
-  #earthquake>.content>.info {
-    margin: 0;
-    text-align: center;
-  }
-}
-
-/* EEW */
-#eew.active {
-  display: block;
-}
-
-#eew .content {
-  display: flex;
-  margin-top: 2em;
-}
-
-@media (max-width: 512px) {
-  #eew .content {
-    display: flex;
-    align-items: center;
-  }
-}
-
-#eew .calcintensity {
-  margin: 0 2em;
-  width: 16em;
-  height: 16em;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
-  border-radius: 1em;
-  text-align: center;
-}
-
-#eew .calcintensity h3 {
-  margin: 0;
-}
-
-#eew .calcintensity_para {
-  font-size: 8em;
-  font-weight: 900;
-}
-
-#eew .content .right {
-  margin-top: 1em;
-  font-size: 1.5em;
-}
-
-#eew .region {
-  font-size: 2em;
-  font-weight: 900;
-}
-
-/* information */
-#earthquake_info.active {
-  display: block;
-}
-
-#earthquake_info .content {
-  display: flex;
-  margin-top: 2em;
 }
 
 @media (max-width: 512px) {
@@ -415,80 +503,28 @@ main {
     display: flex;
     align-items: center;
   }
+
+  #eew .content {
+    display: flex;
+    align-items: center;
+  }
+
+  #earthquake>.content {
+    min-height: 38em;
+    padding-bottom: 4em;
+  }
+
+  #earthquake>.content>.content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #earthquake>.content>.content>.right {
+    margin-top: 1em;
+  }
+
+  #earthquake>.content>.info {
+    margin: 0;
+    text-align: center;
+  }
 }
-
-#earthquake_info .maxScale {
-  margin: 0 2em;
-  width: 16em;
-  height: 16em;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
-  border-radius: 1em;
-  text-align: center;
-}
-
-#earthquake_info .maxScale h3 {
-  margin: 0;
-}
-
-#earthquake_info .maxScale .para {
-  font-size: 8em;
-  font-weight: 700;
-}
-
-#earthquake_info .content .right {
-  margin-top: 1em;
-  font-size: 1.5em;
-}
-
-#earthquake_info .hypocenter {
-  font-size: 2em;
-  font-weight: 900;
-}
-
-/* history */
-#earthquake_history.active {
-  display: block;
-}
-
-#earthquake_history>.content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0;
-}
-
-#earthquake_history>.content>.list {
-  display: flex;
-  align-items: center;
-  margin: 1em 2em;
-}
-
-#earthquake_history>.content>.list>.maxScale {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: .5em;
-  width: 1.5em;
-  height: 1.5em;
-  border-radius: .25em;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
-  font-size: 4em;
-}
-
-#earthquake_history>.content>.list>.right>.hypoInfo {
-  display: flex;
-}
-
-#earthquake_history>.content>.list>.right>.hypoInfo>p {
-  margin-right: 1em;
-}
-
-#earthquake_history>.content>.list>.right>.hypocenter {
-  font-size: 2em;
-}
-
-/* --- header --- */
-
-
-/* --- footer --- */
-

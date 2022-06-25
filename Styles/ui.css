@@ -1,62 +1,88 @@
 /* ui.css / YDITS for Web / Yone */
-/* ----- Main ----- */
-/* --- Dialog --- */
+@charset "UTF-8";
+
+/* ----- Dialog ----- */
 .window {
-  display: block;
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
+  display: block;
+
   margin: auto;
-  border-radius: .8em;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .5);
   width: 70vw;
   height: 70vh;
-  overflow: hidden;
-  padding: 0;
   border: 0;
+  border-radius: .8em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .5);
+
+  padding: 0;
+  overflow: hidden;
   background-color: #fff;
+  color: #010101;
+
   z-index: 10;
 }
 
 .window .navBar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   height: 2em;
+
   overflow: hidden;
-  background-color: #eee;
+  background-color: #e0e0e0;
 }
 
 .window .navBar .title {
-  height: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 2em;
+
   overflow: hidden;
-  padding: .2em .4em;
 }
 
 .window .navBar .close {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   position: absolute;
   top: 0;
   right: 0;
-  height: 1.4rem;
+
+  width: 2em;
+  height: 2rem;
   overflow: hidden;
-  padding: .2em .4em;
+
   cursor: pointer
 }
 
 .window .navBar .close:hover {
-  background-color: #ccc;
+  background-color: #c0c0c0;
 }
 
 .window .content {
   overflow: auto;
 }
 
-/* --- Toggle switch --- */
+/* ----- Toggle switch ----- */
 .toggle-switch {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+
+  /* display: inline-block; */
 
   width: 64px;
   height: 32px;
-  border-radius: 1em;
+  border-radius: 2em;
 
   background-color: #7f7f7f;
   cursor: pointer;
@@ -66,10 +92,10 @@
 
 .toggle-switch>.span {
   position: relative;
-  top: 4px;
   left: 6px;
+
   display: inline-block;
-  
+
   height: 24px;
   width: 24px;
   border-radius: 1em;

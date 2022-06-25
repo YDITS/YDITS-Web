@@ -5,7 +5,7 @@
 // ---------- Init var ---------- //
 
 const name_project = "YDITS for Web";
-const ver_project = "2.1.0";
+const ver_project = "2.2.0";
 
 // ---------- Main ---------- //
 document.addEventListener('DOMContentLoaded', function(){

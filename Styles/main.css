@@ -1,6 +1,6 @@
 /* main.css / YDITS for Web / Yone */
 @charset "UTF-8";
-/* ----- Main ----- */
+
 .material-symbols-outlined {
   font-variation-settings:
   'FILL' 0,
@@ -11,74 +11,53 @@
 
 * {
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 body {
-  background-color: #fff;
+  background-color: #ffffff;
+  font-family: 'Noto Sans JP', 'Roboto', sans-serif;
   font-size: 16px;
   font-weight: 400;
-  font-family: 'Noto Sans JP', 'Roboto', sans-serif;
 
   user-select: none;
 }
 
 main {
-  /* min-height: 90em; */
-  padding: 2em 0;
+  min-height: 100vh;
+  padding: 2em;
 }
 
 header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   width: 100%;
-  height: 3em;
-  /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
+  height: 3.5em;
   border-radius: 0 0 1em 1em;
-  padding: .5em 0;
 }
 
 footer {
-  /* box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2); */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   width: 100%;
-  height: 6em;
+  height: 7em;
+  border: 1em 1em 0 0;
 }
 
 a {
   color: #4040e0;
 }
 
-/* ----- Elements ----- */
-/* --- main --- */
-
-
-/* --- header --- */
-header .content {
-  display: flex;
-  margin: 0 auto;
-  max-width: 1024px;
-  height: 100%;
-}
-
-header .title {
-  position: relative;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
-
-/* --- footer --- */
-footer .content {
-  display: flex;
-  margin: 0 auto;
-  max-width: 1024px;
-  height: 100%;
-}
-
-footer .copyrights {
-  position: relative;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
+/* ----- Moblie ----- */
+@media (max-width: 769px){
+  main {
+    font-size: 14px;
+  }
 }
