@@ -1,0 +1,66 @@
+/* main.css / help - sound setting / YDITS for Web / Yone */
+@charset "UTF-8";
+/* ----- Main ----- */
+main {
+  min-height: 32em;
+}
+
+header {
+  background-color: #cccccc;
+}
+
+footer {
+  background-color: #cccccc;
+}
+
+/* ----- Elements ----- */
+/* --- main --- */
+main>.pageTitle {
+  display: flex;
+  justify-content: center;
+  font-size: 1.5em;
+}
+
+main>.description {
+  display: flex;
+  justify-content: center;
+}
+
+main>.content {
+  display: flex;
+  flex-direction: column;
+  margin: 2em 8em;
+}
+
+main>.content>.content {
+  margin-bottom: 3em;
+  font-size: 1.2em;
+}
+
+main>.content>.content>img {
+  width: 50vw;
+}
+
+@media (max-width: 1024px) {
+  main>.pageTitle {
+    font-size: 1.3em;
+  }
+
+  main>.content {
+    margin: 2em 4em;
+  }
+}
+
+@media (max-width: 769px) {
+  main>.pageTitle {
+    font-size: 1.2em;
+  }
+
+  main>.content {
+    margin: 2em 2em;
+  }
+
+  main>.content>.content>img {
+    width: 70vw;
+  }
+}
