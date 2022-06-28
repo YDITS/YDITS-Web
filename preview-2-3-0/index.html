@@ -19,8 +19,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   
   <!----- Links ----->
-  <!-- <base href="https://yone1130.github.io/YDITS-Web/preview-2-3-0/"> -->
-  <base href="http://192.168.10.101:5500/YDITS-Web/">
+  <base href="https://yone1130.github.io/YDITS-Web/preview-2-3-0/">
 
   <!--- OGP --->
   <meta property="og:url" content=" https://yone1130.github.io/YDITS-Web/">
@@ -212,7 +211,7 @@
             </div>
 
           <div class="content playSound">
-            <label>効果音</label>
+            <label>音声と効果音</label>
             <p>一部のブラウザでは効果音が再生されない可能性があります。</p>
             <div class="eew">
               <label>- 緊急地震速報 受信時</label>
@@ -236,6 +235,13 @@
                   <div class="span"></div>
                 </div>
               </div>
+
+              <div class="content cancel">
+                <label>取消報</label>
+                <div class="content toggle-switch">
+                  <div class="span"></div>
+                </div>
+              </div>
             </div>
 
             <div class="info">
@@ -252,8 +258,10 @@
           </div>
 
           <div class="content">
-            <button id="btn_eew_chk_sound">緊急地震速報の受信時音声をテスト再生</button>
-            <button id="btn_earthquake_info_chk_sound">地震情報の受信時音声をテスト再生</button>
+            <button id="btn_eew_chk_voice">緊急地震速報の音声をテスト再生</button>
+            <button id="btn_earthquake_info_chk_voice">地震情報の音声をテスト再生</button>
+            <button id="btn_eew_chk_sound">緊急地震速報の効果音をテスト再生</button>
+            <button id="btn_earthquake_info_chk_sound">地震情報の効果音をテスト再生</button>
           </div>
         </div>
 
@@ -264,18 +272,39 @@
 
           <h2 class="title">サイト情報</h2>
 
-          <div class="content">
-            <p class="copyrights">音源提供  MNEqE721 様</p>
+          <div class="content" id="copyrights">
+            <ul>
+              <li>
+                <h3>音声提供</h3>
+                <ul>
+                  <li>
+                    <a target="_blank" href="https://ondoku3.com/ja/about/">
+                      音読さん
+                    </a>
+                    &copy;2022 Ondoku3.
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <h3>音源提供</h3>
+                <ul>
+                  <li>
+                    <a target="_blank" href="https://twitter.com/MnEqE721/">MNEqE721</a> 様
+                  </li>
+                </ul>
+              </li>
+            </ul>
           </div>
 
           <div class="content">
-            <a class="link_terms" href="./help/">
+            <a class="link_terms"  target="_blank" href="./help/">
               ヘルプ
             </a>
-            <a class="link_terms" href="https://yone1130.github.io/site/YDITS/terms/">
+            <a class="link_terms" target="_blank" href="https://yone1130.github.io/site/YDITS/terms/">
               利用規約
             </a>
-            <a class="link_terms" href="https://yone1130.github.io/site/contact/">
+            <a class="link_terms" target="_blank" href="https://yone1130.github.io/site/contact/">
               お問い合わせ
             </a>
           </div>

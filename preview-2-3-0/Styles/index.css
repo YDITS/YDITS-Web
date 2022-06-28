@@ -421,11 +421,20 @@ main {
 
 #info_window .title {
   display: flex;
-  justify-items: center;
+  justify-content: center;
 }
 
 #info_window>.content {
   margin: 2em 0;
+}
+
+#copyrights>ul>li {
+  margin-bottom: 1em;
+}
+
+#copyrights>ul>li>ul>li {
+  margin-left: 2em;
+  list-style: disc;
 }
 
 #info_window .link_terms {

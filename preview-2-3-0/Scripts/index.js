@@ -25,6 +25,7 @@ let settings_darkMode;
 let settings_playSound_eew_any;
 let settings_playSound_eew_first;
 let settings_playSound_eew_last;
+let settings_playSound_eew_cancel;
 let settings_playSound_info;
 
 // --- EEW --- //
@@ -104,9 +105,13 @@ let EEW_hypo_LatLng = null;
 
 let loopCnt_loopWaves = -1;
 
-// --- Sound --- //
+// --- Sound & Voice --- //
 const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW.wav");
 const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
+
+const EEW_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW_v.mp3");
+const p2p_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo_v.mp3");
+const EEWCancel_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotEEWCancel_v.mp3");
 
 // ---------- Main ---------- //
 document.addEventListener('DOMContentLoaded', function(){
@@ -267,6 +272,9 @@ function settings_init(){
       settings_playSound_eew_last = true;
       localStorage.setItem('settings-playSound-eew-last', 'true');
       $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
+      settings_playSound_eew_cancel = true;
+      localStorage.setItem('settings-playSound-eew-cancel', 'true');
+      $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
     } else if(settings_playSound_eew_any == true){
       settings_playSound_eew_any = false;
       localStorage.setItem('settings-playSound-eew-any', 'false');
@@ -323,6 +331,32 @@ function settings_init(){
       settings_playSound_eew_last = false;
       localStorage.setItem('settings-playSound-eew-last', 'false');
       $('#settings_window .playSound .eew .last .toggle-switch').removeClass('on');
+    }
+  })
+
+  if(localStorage.getItem("settings-playSound-eew-cancel") == 'true'){
+    settings_playSound_eew_cancel = true;
+    $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+  } else if(localStorage.getItem("settings-playSound-eew-cancel") == 'false'){
+    settings_playSound_eew_cancel = false;
+    $('#settings_window .playSound .eew .cancel .toggle-switch').removeClass('on');
+  } else {
+    settings_playSound_eew_cancel = true;
+    $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+  }
+
+  $(document).on('click', '#settings_window .playSound .eew .cancel .toggle-switch', function(){
+    if(settings_playSound_eew_cancel == false){
+      settings_playSound_eew_cancel = true;
+      localStorage.setItem('settings-playSound-eew-cancel', 'true');
+      $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+    } else if(settings_playSound_eew_cancel == true){
+      settings_playSound_eew_any = false;
+      localStorage.setItem('settings-playSound-eew-any', 'false');
+      $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
+      settings_playSound_eew_cancel = false;
+      localStorage.setItem('settings-playSound-eew-cancel', 'false');
+      $('#settings_window .playSound .eew .cancel .toggle-switch').removeClass('on');
     }
   })
 
@@ -438,6 +472,12 @@ function settings_init(){
     }
   });
 
+  $(document).on('click', '#btn_eew_chk_voice', function(){
+    EEW_voice.play();
+  });
+  $(document).on('click', '#btn_earthquake_info_chk_voice', function(){
+    p2p_voice.play();
+  });
   $(document).on('click', '#btn_eew_chk_sound', function(){
     EEW_sound.play();
   });
@@ -451,6 +491,10 @@ function chg_darkMode(){
   if(settings_darkMode){
     $('body').css({
       'background-color': '#102040',
+      'color': '#ffffff'
+    })
+
+    $('a').css({
       'color': '#ffffff'
     })
 
@@ -486,6 +530,10 @@ function chg_darkMode(){
   } else {
     $('body').css({
       'background-color': '#ffffff',
+      'color': '#010101'
+    })
+
+    $('a').css({
       'color': '#010101'
     })
 
@@ -732,21 +780,35 @@ function eew(){
         
         // --- Is cansel --- //
         EEW_isCansel = EEW_data["hypoInfo"]["items"][0]['isCancel'];
-        
+
+        // --- debug
+        // EEW_isCansel = 'true';
+        // ---
+
         if (EEW_isCansel == 'true'){
           EEW_alertFlg = '取消報';
         }
 
         // Sound
-        if(settings_playSound_eew_any == true){
-          // 第n報 受信時
-          EEW_sound.play();
-        } else if(settings_playSound_eew_first == true && EEW_repNum == '1'){
-          // 第1報 受信時
-          EEW_sound.play();
-        } else if(settings_playSound_eew_last == true && EEW_isFinal == 'true'){
-          // 最終報 受信時
-          EEW_sound.play();
+        if (EEW_isCansel == 'true'){
+          if(settings_playSound_eew_cancel == true){
+            // 取消報 受信時
+            EEWCancel_voice.play();
+          }
+        } else {
+          if(settings_playSound_eew_any == true){
+            // 第n報 受信時
+            EEW_sound.play();
+            EEW_voice.play();
+          } else if(settings_playSound_eew_first == true && EEW_repNum == '1'){
+            // 第1報 受信時
+            EEW_sound.play();
+            EEW_voice.play();
+          } else if(settings_playSound_eew_last == true && EEW_isFinal == 'true'){
+            // 最終報 受信時
+            EEW_sound.play();
+            EEW_voice.play();
+          }
         }
 
         // ----- put ----- //
@@ -795,6 +857,11 @@ function eew(){
             EEW_bgc = "#7f7fc0";
             EEW_fntc = "#010101";
             break;
+        }
+
+        if (EEW_isCansel == 'true'){
+          EEW_bgc = "#7f7fc0";
+          EEW_fntc = "#010101";
         }
 
         // reset_show();
@@ -1007,11 +1074,12 @@ function getInfo(){
 function information(){
 
   if (p2p_id != p2p_id_last){
-    p2p_id_last = p2p_id;
-
-    if(settings_playSound_info == true){
+    if(settings_playSound_info == true && p2p_id_last != -1){
       p2p_sound.play();
+      p2p_voice.play();
     }
+
+    p2p_id_last = p2p_id;
 
     // --- time --- //
     p2p_latest_time = p2p_data[0]['earthquake']['time'];
