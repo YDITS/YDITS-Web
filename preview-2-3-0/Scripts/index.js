@@ -780,7 +780,7 @@ function eew(){
             break;
           case '6-':
             EEW_bgc = "#e02020";
-            EEW_fntc = "#010101";
+            EEW_fntc = "#ffffff";
             break;
           case '6+':
             EEW_bgc = "#a02020";
@@ -924,8 +924,12 @@ function monitor(){
     wave_p.setRadius(EEW_wave_p_put);
 
   } else {
-    wave_s.setRadius(-1);
-    wave_p.setRadius(-1);
+    hypo.setLatLng(new L.LatLng(0, 0));
+    wave_s.setLatLng(new L.LatLng(0, 0));
+    wave_p.setLatLng(new L.LatLng(0, 0));
+
+    wave_s.setRadius(0);
+    wave_p.setRadius(0);
   }
 }
 
@@ -952,7 +956,7 @@ function init_map(){
     attribution: '© OpenStreetMap'
   }).addTo(map);
 
-  hypo = L.circle([38.0194092, 138.3664968], {
+  hypo = L.circle([0, 0], {
     radius: 5000,
     weight: 2,
     color: '#ff2010',
@@ -960,7 +964,7 @@ function init_map(){
     fillOpacity: 1,
   }).addTo(map);
 
-  wave_s = L.circle([38.0194092, 138.3664968], {
+  wave_s = L.circle([0, 0], {
     radius: -1,
     weight: 2,
     color: '#ff8040',
@@ -968,7 +972,7 @@ function init_map(){
     fillOpacity: 0.25,
   }).addTo(map);
 
-  wave_p = L.circle([38.0194092, 138.3664968], {
+  wave_p = L.circle([0, 0], {
     radius: -1,
     weight: 2,
     color: '#4080ff',
