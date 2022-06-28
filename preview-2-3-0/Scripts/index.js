@@ -106,12 +106,12 @@ let EEW_hypo_LatLng = null;
 let loopCnt_loopWaves = -1;
 
 // --- Sound & Voice --- //
-const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW.wav");
-const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
+const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/preview-2-3-0/Sounds/gotNewEEW.wav");
+const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/preview-2-3-0/Sounds/gotNewInfo.wav");
 
-const EEW_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW_v.mp3");
-const p2p_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo_v.mp3");
-const EEWCancel_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotEEWCancel_v.mp3");
+const EEW_voice = new Audio("https://yone1130.github.io/YDITS-Web/preview-2-3-0/Sounds/gotNewEEW_v.mp3");
+const p2p_voice = new Audio("https://yone1130.github.io/YDITS-Web/preview-2-3-0/Sounds/gotNewInfo_v.mp3");
+const EEWCancel_voice = new Audio("https://yone1130.github.io/YDITS-Web/preview-2-3-0/Sounds/gotEEWCancel_v.mp3");
 
 // ---------- Main ---------- //
 document.addEventListener('DOMContentLoaded', function(){
