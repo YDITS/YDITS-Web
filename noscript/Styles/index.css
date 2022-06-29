@@ -4,3 +4,11 @@
 main {
   text-align: center;
 }
+
+main .pageTitle {
+  margin-bottom: .5em;
+}
+
+main p {
+  margin-bottom: .5em;
+}

@@ -3,7 +3,6 @@
 //
 
 // ---------- Init var ---------- //
-
 // --- main --- //
 let scene = 0;
 
@@ -26,11 +25,14 @@ let settings_darkMode;
 let settings_playSound_eew_any;
 let settings_playSound_eew_first;
 let settings_playSound_eew_last;
+let settings_playSound_eew_cancel;
 let settings_playSound_info;
 
 // --- EEW --- //
-let EEW_time      = -1;
-let loopCnt_eew   = -1;
+let EEW_data;
+
+let EEW_time    = -1;
+let loopCnt_eew = -1;
 
 let EEW_repNum      = '';
 let EEW_repNum_last = '';
@@ -51,11 +53,11 @@ let EEW_depth         = '';
 // --- Earthquake information --- //
 let p2p_data;
 
-let p2p_time      = -1;
-let loopCnt_p2p  = -1;
+let p2p_time    = -1;
+let loopCnt_p2p = -1;
 
-let p2p_id   = -1;
-let p2p_id_last   = -1;
+let p2p_id      = -1;
+let p2p_id_last = -1;
 
 let timeYear;
 let timeMonth;
@@ -75,12 +77,41 @@ let timeSecond;
 // --- Earthquake history --- //
 let p2p_his_id_last = -1;
 
-let p2p_his_cnt = 0;
+let p2p_his_cnt     = 0;
 let loopCnt_history = -1;
 
-// --- Sound --- //
+// ----- Monitor ----- //
+let map;
+
+let hypo   = null;
+let wave_s = null;
+let wave_p = null;
+
+let loopCnt_moni = -1;
+
+let EEW_waves           = null;
+let EEW_wave_p          = -1;
+let EEW_wave_p_last     = -1;
+let EEW_wave_p_Interval = -1;
+let EEW_wave_p_put      = -1;
+let EEW_wave_s          = -1;
+let EEW_wave_s_last     = -1;
+let EEW_wave_s_Interval = -1;
+let EEW_wave_s_put      = -1;
+
+let EEW_lat         = '';
+let EEW_lng         = '';
+let EEW_hypo_LatLng = null;
+
+let loopCnt_loopWaves = -1;
+
+// --- Sound & Voice --- //
 const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW.wav");
 const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
+
+const EEW_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW_v.mp3");
+const p2p_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo_v.mp3");
+const EEWCancel_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotEEWCancel_v.mp3");
 
 // ---------- Main ---------- //
 document.addEventListener('DOMContentLoaded', function(){
@@ -97,7 +128,7 @@ function mainloop(){
     loopCnt_getDT = DT;
     getServer_DT();
   }
-
+  
   switch(scene){
     case 0:
       // EEW
@@ -105,20 +136,28 @@ function mainloop(){
         loopCnt_eew = DT;
         eew();
       }
-
+      
       // P2P get
       if (DT - loopCnt_p2p >= 1000 * p2p_time || p2p_id_last == -1 || p2p_his_id_last == -1){
         loopCnt_p2p = DT;
         getInfo();
-
+        
         // P2P EQ info
         information();
-
+        
         // P2P EQ history
         history();
       }
+
+      // Monitor
+      if($('#monitor').hasClass('active')){
+        monitor();
+      }
+
       break;
-    }
+
+    default: break;
+  }
 
   requestAnimationFrame(mainloop);
 }
@@ -170,7 +209,7 @@ function settings_init(){
     } else {
       window_settings.removeClass('active');
       $('main').css({
-        'min-height': 'auto'
+        'min-height': '100vh'
       })
     }
   });
@@ -179,7 +218,7 @@ function settings_init(){
     window_settings = $('#settings_window');
     window_settings.removeClass('active');
     $('main').css({
-      'min-height': 'auto'
+      'min-height': '100vh'
     })
   });
 
@@ -233,6 +272,9 @@ function settings_init(){
       settings_playSound_eew_last = true;
       localStorage.setItem('settings-playSound-eew-last', 'true');
       $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
+      settings_playSound_eew_cancel = true;
+      localStorage.setItem('settings-playSound-eew-cancel', 'true');
+      $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
     } else if(settings_playSound_eew_any == true){
       settings_playSound_eew_any = false;
       localStorage.setItem('settings-playSound-eew-any', 'false');
@@ -289,6 +331,32 @@ function settings_init(){
       settings_playSound_eew_last = false;
       localStorage.setItem('settings-playSound-eew-last', 'false');
       $('#settings_window .playSound .eew .last .toggle-switch').removeClass('on');
+    }
+  })
+
+  if(localStorage.getItem("settings-playSound-eew-cancel") == 'true'){
+    settings_playSound_eew_cancel = true;
+    $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+  } else if(localStorage.getItem("settings-playSound-eew-cancel") == 'false'){
+    settings_playSound_eew_cancel = false;
+    $('#settings_window .playSound .eew .cancel .toggle-switch').removeClass('on');
+  } else {
+    settings_playSound_eew_cancel = true;
+    $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+  }
+
+  $(document).on('click', '#settings_window .playSound .eew .cancel .toggle-switch', function(){
+    if(settings_playSound_eew_cancel == false){
+      settings_playSound_eew_cancel = true;
+      localStorage.setItem('settings-playSound-eew-cancel', 'true');
+      $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+    } else if(settings_playSound_eew_cancel == true){
+      settings_playSound_eew_any = false;
+      localStorage.setItem('settings-playSound-eew-any', 'false');
+      $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
+      settings_playSound_eew_cancel = false;
+      localStorage.setItem('settings-playSound-eew-cancel', 'false');
+      $('#settings_window .playSound .eew .cancel .toggle-switch').removeClass('on');
     }
   })
 
@@ -406,9 +474,14 @@ function settings_init(){
 
   $(document).on('click', '#btn_eew_chk_sound', function(){
     EEW_sound.play();
+    EEW_voice.play();
   });
   $(document).on('click', '#btn_earthquake_info_chk_sound', function(){
     p2p_sound.play();
+    p2p_voice.play();
+  });
+  $(document).on('click', '#btn_eew_cancel_chk_sound', function(){
+    EEWCancel_voice.play();
   });
 };
 
@@ -417,6 +490,10 @@ function chg_darkMode(){
   if(settings_darkMode){
     $('body').css({
       'background-color': '#102040',
+      'color': '#ffffff'
+    })
+
+    $('a').css({
       'color': '#ffffff'
     })
 
@@ -452,6 +529,10 @@ function chg_darkMode(){
   } else {
     $('body').css({
       'background-color': '#ffffff',
+      'color': '#010101'
+    })
+
+    $('a').css({
       'color': '#010101'
     })
 
@@ -495,6 +576,12 @@ function select_init(){
     reset_show();
     window.location.href = "#pageTop";
     $('#earthquake').addClass('active');
+  })
+  $(document).on('click', '#nav>ul>.monitor', function(){
+    reset_show();
+    window.location.href = "#pageTop";
+    $('#monitor').addClass('active');
+    init_map();
   })
   $(document).on('click', '#nav>ul>.menu', function(){
     reset_show();
@@ -544,7 +631,7 @@ function eew(){
   const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
 
   // --- debug
-  // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213231059.json`;  //2021-2-13-23:08 Fukushima
+  // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
   // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
   // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
   // const url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
@@ -568,7 +655,7 @@ function eew(){
 
   .then(result => {
 
-    let EEW_data = result;
+    EEW_data = result;
     
     if(EEW_data["hypoInfo"] != null){
       EEW_repNum = EEW_data["hypoInfo"]["items"][0]["reportNum"];
@@ -593,7 +680,7 @@ function eew(){
         } else {
           EEW_repNum_p = `第${EEW_repNum}報`
         }
-        
+
         // --- Origin time --- //
         EEW_origin_time = EEW_data["hypoInfo"]["items"][0]["originTime"];
         // datetime
@@ -692,21 +779,35 @@ function eew(){
         
         // --- Is cansel --- //
         EEW_isCansel = EEW_data["hypoInfo"]["items"][0]['isCancel'];
-        
+
+        // --- debug
+        // EEW_isCansel = 'true';
+        // ---
+
         if (EEW_isCansel == 'true'){
           EEW_alertFlg = '取消報';
         }
 
         // Sound
-        if(settings_playSound_eew_any == true){
-          // 第n報 受信時
-          EEW_sound.play();
-        } else if(settings_playSound_eew_first == true && EEW_repNum == '1'){
-          // 第1報 受信時
-          EEW_sound.play();
-        } else if(settings_playSound_eew_last == true && EEW_isFinal == 'true'){
-          // 最終報 受信時
-          EEW_sound.play();
+        if (EEW_isCansel == 'true'){
+          if(settings_playSound_eew_cancel == true){
+            // 取消報 受信時
+            EEWCancel_voice.play();
+          }
+        } else {
+          if(settings_playSound_eew_any == true){
+            // 第n報 受信時
+            EEW_sound.play();
+            EEW_voice.play();
+          } else if(settings_playSound_eew_first == true && EEW_repNum == '1'){
+            // 第1報 受信時
+            EEW_sound.play();
+            EEW_voice.play();
+          } else if(settings_playSound_eew_last == true && EEW_isFinal == 'true'){
+            // 最終報 受信時
+            EEW_sound.play();
+            EEW_voice.play();
+          }
         }
 
         // ----- put ----- //
@@ -740,7 +841,7 @@ function eew(){
             break;
           case '6-':
             EEW_bgc = "#e02020";
-            EEW_fntc = "#010101";
+            EEW_fntc = "#ffffff";
             break;
           case '6+':
             EEW_bgc = "#a02020";
@@ -757,11 +858,16 @@ function eew(){
             break;
         }
 
-        reset_show();
-        $('#earthquake').addClass('active');
+        if (EEW_isCansel == 'true'){
+          EEW_bgc = "#7f7fc0";
+          EEW_fntc = "#010101";
+        }
 
-        reset_show_eq();
-        $('#eew').addClass('active');
+        // reset_show();
+        // $('#earthquake').addClass('active');
+
+        // reset_show_eq();
+        // $('#eew').addClass('active');
 
         $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
         $('#eew .calcintensity_para').text(EEW_calcintensity);
@@ -829,6 +935,120 @@ function setEEW_DT(num){
   return ret;
 }
 
+// ----- Monitor ----- //
+function monitor(){
+  if(EEW_data["hypoInfo"] != null){
+
+    EEW_waves = EEW_data['psWave']['items'][0];
+
+    if (EEW_waves !== null)
+    {
+      EEW_lat = EEW_waves['latitude'].replace("N", "");
+      EEW_lng = EEW_waves['longitude'].replace("E", "");
+      EEW_hypo_LatLng = new L.LatLng(EEW_lat, EEW_lng);
+
+      EEW_wave_p = EEW_waves['pRadius'];
+      EEW_wave_s = EEW_waves['sRadius'];
+      EEW_wave_p *= 1000;
+      EEW_wave_s *= 1000;
+    }
+
+    if(EEW_wave_s != EEW_wave_s_last){
+      EEW_wave_s_Interval = (EEW_wave_s - EEW_wave_s_last) / (60 * ((DT - loopCnt_moni) / 1000));
+      EEW_wave_s_last = EEW_wave_s;
+      EEW_wave_s_put = EEW_wave_s;
+    } else if(EEW_wave_s == EEW_wave_s_last){
+      EEW_wave_s_put += EEW_wave_s_Interval;
+    }
+
+    if(EEW_wave_p != EEW_wave_p_last){
+      EEW_wave_p_Interval = (EEW_wave_p - EEW_wave_p_last) / (60 * ((DT - loopCnt_moni) / 1000));
+      EEW_wave_p_last = EEW_wave_p;
+      EEW_wave_p_put = EEW_wave_p;
+      loopCnt_moni = DT;
+    } else if(EEW_wave_p == EEW_wave_p_last){
+      EEW_wave_p_put += EEW_wave_p_Interval;
+    }
+
+    // if(EEW_wave_p_put >= 480000){
+    //   map.setZoom(5);
+    // } else if(EEW_wave_p_put >= 320000){
+    //   map.setZoom(6);
+    // } else if(EEW_wave_p_put >= 140000){
+    //   map.setZoom(6.5);
+    // } else if(EEW_wave_p_put > 0){
+    //   map.setZoom(7);
+    // }
+    // map.setView([EEW_lat, EEW_lng]);
+
+    hypo.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+
+    wave_s.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+    wave_s.setRadius(EEW_wave_s_put);
+
+    wave_p.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+    wave_p.setRadius(EEW_wave_p_put);
+
+  } else {
+    hypo.setLatLng(new L.LatLng(0, 0));
+    wave_s.setLatLng(new L.LatLng(0, 0));
+    wave_p.setLatLng(new L.LatLng(0, 0));
+
+    wave_s.setRadius(0);
+    wave_p.setRadius(0);
+  }
+}
+
+//--- Init monitor map --- //
+function init_map(){
+
+  map = L.map('map', {
+    // center: [36.1852, 139.3442],
+    // center: [35.4232, 138.2647],
+    center: [38.0194092, 138.3664968],
+
+    zoom: 5,
+    maxZoom: 10,
+    minZoom: 4,
+    zoomSnap: 0.5,
+
+    // preferCanvas: true,
+
+    zoomControl: false,
+    gestureHandling: true
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  hypo = L.circle([0, 0], {
+    radius: 5000,
+    weight: 2,
+    color: '#ff2010',
+    fillColor: '#ff2010',
+    fillOpacity: 1,
+  }).addTo(map);
+
+  wave_s = L.circle([0, 0], {
+    radius: -1,
+    weight: 2,
+    color: '#ff8040',
+    fillColor: '#ff8040',
+    fillOpacity: 0.25,
+  }).addTo(map);
+
+  wave_p = L.circle([0, 0], {
+    radius: -1,
+    weight: 2,
+    color: '#4080ff',
+    fillColor: '#00000000',
+    fillOpacity: 0,
+  }).addTo(map);
+
+  // loopCnt_loopWaves = new Date();
+}
+
 // ----- Get p2p --- //
 function getInfo(){
 
@@ -853,11 +1073,12 @@ function getInfo(){
 function information(){
 
   if (p2p_id != p2p_id_last){
-    p2p_id_last = p2p_id;
-
-    if(settings_playSound_info == true){
+    if(settings_playSound_info == true && p2p_id_last != -1){
       p2p_sound.play();
+      p2p_voice.play();
     }
+
+    p2p_id_last = p2p_id;
 
     // --- time --- //
     p2p_latest_time = p2p_data[0]['earthquake']['time'];

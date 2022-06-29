@@ -109,6 +109,13 @@ main {
   margin-left: 2em;
 }
 
+#main>.content>.title {
+  display: flex;
+  justify-content: center;
+  
+  margin-bottom: 1em;
+}
+
 /* EEW */
 #eew.active {
   display: block;
@@ -249,15 +256,15 @@ main {
   font-size: 2em;
 }
 
-#menu {
-  min-height: 40em;
+#map {
+  width: 90%;
+  height: 48em;
+
+  z-index: 2;
 }
 
-#menu .title {
-  display: flex;
-  justify-content: center;
-  
-  margin-bottom: 1em;
+#menu {
+  min-height: 40em;
 }
 
 #menu>.list {
@@ -328,7 +335,7 @@ main {
 
 #settings_window .title {
   display: flex;
-  justify-items: center;
+  justify-content: center;
 }
 
 #settings_window .version {
@@ -414,11 +421,20 @@ main {
 
 #info_window .title {
   display: flex;
-  justify-items: center;
+  justify-content: center;
 }
 
 #info_window>.content {
   margin: 2em 0;
+}
+
+#copyrights>ul>li {
+  margin-bottom: 1em;
+}
+
+#copyrights>ul>li>ul>li {
+  margin-left: 2em;
+  list-style: disc;
 }
 
 #info_window .link_terms {
@@ -457,13 +473,14 @@ main {
     justify-content: space-evenly;
     align-items: center;
 
-    width: 100%;
+    width: 90%;
     height: 100%;
   }
 
   #nav> ul>li {
-    display: flex;
-    margin: 0;
+    flex-direction: column;
+
+    width: 33%;
   }
 
   #main {
@@ -486,6 +503,11 @@ main {
 
   #earthquake>.content {
     width: 90%;
+    font-size: .7em;
+  }
+
+  #monitor>.content {
+    width: 100%;
     font-size: .7em;
   }
 
