@@ -278,6 +278,7 @@ main {
 
   padding: 0 0 0 2em;
   background-color: #80808020;
+  text-decoration: none;
 }
 
 #menu>.list:hover {
@@ -383,7 +384,7 @@ main {
   margin-right: 1em;
 }
 
-#info_window {
+#licence_window {
   position: absolute;
   top: 4em;
   left: 0;
@@ -400,7 +401,7 @@ main {
   z-index: 2;
 }
 
-#info_window .close {
+#licence_window .close {
   position: absolute;
   top: 1em;
   right: 1em;
@@ -415,21 +416,21 @@ main {
   cursor: pointer;
 }
 
-#info_window .close:hover {
+#licence_window .close:hover {
   background-color: #80808080;
 }
 
-#info_window .title {
+#licence_window .title {
   display: flex;
   justify-content: center;
 }
 
-#info_window>.content {
+#licence_window>.content {
   margin: 2em 0;
 }
 
 #copyrights>ul>li {
-  margin-bottom: 1em;
+  margin-bottom: 2em;
 }
 
 #copyrights>ul>li>ul>li {
@@ -497,7 +498,7 @@ main {
     padding: 2em 2em 8em 2em;
   }
 
-  #info_window {
+  #licence_window {
     padding: 2em 2em 8em 2em;
   }
 

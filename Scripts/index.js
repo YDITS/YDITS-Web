@@ -165,7 +165,7 @@ function mainloop(){
 // ----- Page ----- //
 function page_init(){
   settings_init();
-  info_init();
+  licence_init();
   select_init();
 }
 
@@ -614,13 +614,21 @@ function reset_show_eq(){
 }
 
 // ----- Info ----- //
-function info_init(){
-  $(document).on('click', '#menu>.info', function(){
-    $('#info_window').addClass('active');
+function licence_init(){
+  $(document).on('click', '#menu>.licence', function(){
+    $('#licence_window').addClass('active');
+
+    $('main').css({
+      'min-height': '50em'
+    })
   })
 
-  $(document).on('click', '#info_window>.close', function(){
-    $('#info_window').removeClass('active');
+  $(document).on('click', '#licence_window>.close', function(){
+    $('#licence_window').removeClass('active');
+
+    $('main').css({
+      'min-height': '100vh'
+    })
   })
 }
 
