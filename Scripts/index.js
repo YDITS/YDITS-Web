@@ -23,8 +23,6 @@ let settings_darkMode;
 
 // Play sound
 let settings_playSound_eew_any;
-let settings_playSound_eew_first;
-let settings_playSound_eew_last;
 let settings_playSound_eew_cancel;
 let settings_playSound_info;
 
@@ -66,14 +64,6 @@ let timeHour;
 let timeMinute;
 let timeSecond;
 
-// let p2p_type;
-// let p2p_latest_time;
-// let p2p_hypocenter;
-// let p2p_maxScale;
-// let p2p_magnitude;
-// let p2p_depth;
-// let p2p_tsunami;
-
 // --- Earthquake history --- //
 let p2p_his_id_last = -1;
 
@@ -106,12 +96,29 @@ let EEW_hypo_LatLng = null;
 let loopCnt_loopWaves = -1;
 
 // --- Sound & Voice --- //
-const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW.wav");
-const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo.wav");
+const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew.wav");
+const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info.wav");
 
-const EEW_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewEEW_v.mp3");
-const p2p_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotNewInfo_v.mp3");
-const EEWCancel_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/gotEEWCancel_v.mp3");
+const EEW_1_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_1_v.mp3");
+const EEW_2_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_2_v.mp3");
+const EEW_3_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_3_v.mp3");
+const EEW_4_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_4_v.mp3");
+const EEW_5_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_5_v.mp3");
+const EEW_6_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_6_v.mp3");
+const EEW_7_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_7_v.mp3");
+const EEW_8_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_8_v.mp3");
+const EEW_9_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_9_v.mp3");
+const EEW_Cancel_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_cancel_v.mp3");
+
+const p2p_1_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_1_v.mp3");
+const p2p_2_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_2_v.mp3");
+const p2p_3_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_3_v.mp3");
+const p2p_4_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_4_v.mp3");
+const p2p_5_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_5_v.mp3");
+const p2p_6_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_6_v.mp3");
+const p2p_7_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_7_v.mp3");
+const p2p_8_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_8_v.mp3");
+const p2p_9_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_9_v.mp3");
 
 // ---------- Main ---------- //
 document.addEventListener('DOMContentLoaded', function(){
@@ -282,58 +289,6 @@ function settings_init(){
     }
   })
 
-  if(localStorage.getItem("settings-playSound-eew-first") == 'true'){
-    settings_playSound_eew_first = true;
-    $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
-  } else if(localStorage.getItem("settings-playSound-eew-first") == 'false'){
-    settings_playSound_eew_first = false;
-    $('#settings_window .playSound .eew .first .toggle-switch').removeClass('on');
-  } else {
-    settings_playSound_eew_first = true;
-    $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
-  }
-
-  $(document).on('click', '#settings_window .playSound .eew .first .toggle-switch', function(){
-    if(settings_playSound_eew_first == false){
-      settings_playSound_eew_first = true;
-      localStorage.setItem('settings-playSound-eew-first', 'true');
-      $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
-    } else if(settings_playSound_eew_first == true){
-      settings_playSound_eew_any = false;
-      localStorage.setItem('settings-playSound-eew-any', 'false');
-      $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
-      settings_playSound_eew_first = false;
-      localStorage.setItem('settings-playSound-eew-first', 'false');
-      $('#settings_window .playSound .eew .first .toggle-switch').removeClass('on');
-    }
-  })
-
-  if(localStorage.getItem("settings-playSound-eew-last") == 'true'){
-    settings_playSound_eew_last = true;
-    $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
-  } else if(localStorage.getItem("settings-playSound-eew-last") == 'false'){
-    settings_playSound_eew_last = false;
-    $('#settings_window .playSound .eew .last .toggle-switch').removeClass('on');
-  } else {
-    settings_playSound_eew_last = true;
-    $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
-  }
-
-  $(document).on('click', '#settings_window .playSound .eew .last .toggle-switch', function(){
-    if(settings_playSound_eew_last == false){
-      settings_playSound_eew_last = true;
-      localStorage.setItem('settings-playSound-eew-last', 'true');
-      $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
-    } else if(settings_playSound_eew_last == true){
-      settings_playSound_eew_any = false;
-      localStorage.setItem('settings-playSound-eew-any', 'false');
-      $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
-      settings_playSound_eew_last = false;
-      localStorage.setItem('settings-playSound-eew-last', 'false');
-      $('#settings_window .playSound .eew .last .toggle-switch').removeClass('on');
-    }
-  })
-
   if(localStorage.getItem("settings-playSound-eew-cancel") == 'true'){
     settings_playSound_eew_cancel = true;
     $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
@@ -430,13 +385,7 @@ function settings_init(){
 
     settings_playSound_eew_any = true;
     $('#settings_window .playSound .eew .any .toggle-switch').addClass('on');
-    
-    settings_playSound_eew_first = true;
-    $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
 
-    settings_playSound_eew_last = true;
-    $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
-    
     settings_playSound_info = true;
     $('#settings_window .playSound .info .toggle-switch').addClass('on');
     
@@ -474,11 +423,11 @@ function settings_init(){
 
   $(document).on('click', '#btn_eew_chk_sound', function(){
     EEW_sound.play();
-    EEW_voice.play();
+    EEW_7_voice.play();
   });
   $(document).on('click', '#btn_earthquake_info_chk_sound', function(){
     p2p_sound.play();
-    p2p_voice.play();
+    p2p_7_voice.play();
   });
   $(document).on('click', '#btn_eew_cancel_chk_sound', function(){
     EEWCancel_voice.play();
@@ -711,6 +660,8 @@ function eew(){
         }
         
         // --- Calcintensity --- //
+        EEW_calcintensity_last = EEW_calcintensity;
+
         EEW_calcintensity = EEW_data["hypoInfo"]["items"][0]["calcintensity"];
 
         // --- debug
@@ -800,21 +751,60 @@ function eew(){
         if (EEW_isCansel == 'true'){
           if(settings_playSound_eew_cancel == true){
             // 取消報 受信時
-            EEWCancel_voice.play();
+            EEW_Cancel_voice.play();
           }
         } else {
-          if(settings_playSound_eew_any == true){
-            // 第n報 受信時
-            EEW_sound.play();
-            EEW_voice.play();
-          } else if(settings_playSound_eew_first == true && EEW_repNum == '1'){
-            // 第1報 受信時
-            EEW_sound.play();
-            EEW_voice.play();
-          } else if(settings_playSound_eew_last == true && EEW_isFinal == 'true'){
-            // 最終報 受信時
-            EEW_sound.play();
-            EEW_voice.play();
+          if(settings_playSound_eew_any == true && EEW_calcintensity_last != EEW_calcintensity){
+            switch (EEW_calcintensity) {
+              case '1':
+                EEW_sound.play();
+                EEW_1_voice.play();
+                break;
+
+              case '2':
+                EEW_sound.play();
+                EEW_2_voice.play();
+                break;
+
+              case '3':
+                EEW_sound.play();
+                EEW_3_voice.play();
+                break;
+
+              case '4':
+                EEW_sound.play();
+                EEW_4_voice.play();
+                break;
+
+              case '5-':
+                EEW_sound.play();
+                EEW_5_voice.play();
+                break;
+
+              case '5+':
+                EEW_sound.play();
+                EEW_6_voice.play();
+                break;
+
+              case '6-':
+                EEW_sound.play();
+                EEW_7_voice.play();
+                break;
+
+              case '6+':
+                EEW_sound.play();
+                EEW_8_voice.play();
+                break;
+
+              case '7':
+                EEW_sound.play();
+                EEW_9_voice.play();
+                break;
+
+              default:
+                EEW_sound.play();
+                break;
+            }
           }
         }
 
@@ -1081,10 +1071,6 @@ function getInfo(){
 function information(){
 
   if (p2p_id != p2p_id_last){
-    if(settings_playSound_info == true && p2p_id_last != -1){
-      p2p_sound.play();
-      p2p_voice.play();
-    }
 
     p2p_id_last = p2p_id;
 
@@ -1109,7 +1095,7 @@ function information(){
       'Other': '地震情報'
     };
 
-    p2p_type = p2p_types[p2p_type];
+    p2p_type_put = p2p_types[p2p_type];
 
     // --- hypocenter --- //
     p2p_hypocenter = p2p_data[0]['earthquake']['hypocenter']['name'];
@@ -1120,6 +1106,61 @@ function information(){
 
     // --- maxScale --- //
     p2p_maxScale = p2p_data[0]['earthquake']['maxScale'];
+
+    if(settings_playSound_info == true && p2p_id_last != -1){
+     if(p2p_type == 'DetailScale' || p2p_type == 'ScalePrompt'){
+        switch (p2p_maxScale){
+          case 10:
+            p2p_sound.play();
+            p2p_1_voice.play();
+            break;
+
+          case 20:
+            p2p_sound.play();
+            p2p_2_voice.play();
+            break;
+
+          case 30:
+            p2p_sound.play();
+            p2p_3_voice.play();
+            break;
+
+          case 40:
+            p2p_sound.play();
+            p2p_4_voice.play();
+            break;
+
+          case 45:
+            p2p_sound.play();
+            p2p_5_voice.play();
+            break;
+
+          case 50:
+            p2p_sound.play();
+            p2p_6_voice.play();
+            break;
+
+          case 55:
+            p2p_sound.play();
+            p2p_7_voice.play();
+            break;
+
+          case 60:
+            p2p_sound.play();
+            p2p_8_voice.play();
+            break;
+
+          case 70:
+            p2p_sound.play();
+            p2p_9_voice.play();
+            break;
+
+          default:
+            p2p_sound.play();
+            break;
+        }
+      }
+    }
 
     switch (p2p_maxScale){
       case -1: p2p_maxScale = '調査中'; break;
@@ -1220,7 +1261,7 @@ function information(){
         break;
     }
 
-    $('#earthquake_info .info').text(p2p_type);
+    $('#earthquake_info .info').text(p2p_type_put);
     $('#earthquake_info .hypocenter').text(p2p_hypocenter);
     $('#earthquake_info .time').text(`発生日時: ${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}頃`);
     $('#earthquake_info .maxScale .para').text(p2p_maxScale);
