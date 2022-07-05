@@ -430,7 +430,7 @@ function settings_init(){
     p2p_7_voice.play();
   });
   $(document).on('click', '#btn_eew_cancel_chk_sound', function(){
-    EEWCancel_voice.play();
+    EEW_Cancel_voice.play();
   });
 };
 
@@ -1072,8 +1072,6 @@ function information(){
 
   if (p2p_id != p2p_id_last){
 
-    p2p_id_last = p2p_id;
-
     // --- time --- //
     p2p_latest_time = p2p_data[0]['earthquake']['time'];
     // datetime
@@ -1178,6 +1176,10 @@ function information(){
         p2p_maxScale = `?`;
         break;
     }
+
+    // --- update --- //
+
+    p2p_id_last = p2p_id;
 
     // --- Magnitude --- //
     p2p_magnitude = p2p_data[0]['earthquake']['hypocenter']['magnitude'];
