@@ -166,6 +166,8 @@ function mainloop(){
     default: break;
   }
 
+  console.log(pageLang);
+
   requestAnimationFrame(mainloop);
 }
 
@@ -395,14 +397,25 @@ function settings_init(){
     localStorage.clear()
 
     if(document.getElementById('win_settings_reset') == null){
-      win('win_settings_reset', '設定のリセット');
+      if(pageLang === 'en-US'){
+        win('win_settings_reset', 'Reset settings');
 
-      $('#win_settings_reset>.content').html(`
+        $('#win_settings_reset>.content').html(`
+        <p>
+          Settings have been reset.
+        </p>
+        <button class="btn_ok">OK</button>
+      `)
+      } else {
+        win('win_settings_reset', '設定のリセット');
+
+        $('#win_settings_reset>.content').html(`
         <p>
           設定をリセットしました。
         </p>
         <button class="btn_ok">OK</button>
       `)
+      }
 
       $('#win_settings_reset .content').css({
         'padding': '1em'
@@ -523,18 +536,30 @@ function select_init(){
 
   $(document).on('click', '#nav>ul>.home', function(){
     reset_show();
-    window.location.href = "#pageTop";
+    if(pageLang === 'en-US'){
+      window.location.href = "en-US/#pageTop";
+    } else {
+      window.location.href = "#pageTop";
+    }
     $('#earthquake').addClass('active');
   })
   $(document).on('click', '#nav>ul>.monitor', function(){
     reset_show();
-    window.location.href = "#pageTop";
+    if(pageLang === 'en-US'){
+      window.location.href = "en-US/#pageTop";
+    } else {
+      window.location.href = "#pageTop";
+    }
     $('#monitor').addClass('active');
     init_map();
   })
   $(document).on('click', '#nav>ul>.menu', function(){
     reset_show();
-    window.location.href = "#pageTop";
+    if(pageLang === 'en-US'){
+      window.location.href = "en-US/#pageTop";
+    } else {
+      window.location.href = "#pageTop";
+    }
     $('#menu').addClass('active');
   })
 
@@ -633,9 +658,17 @@ function eew(){
         // ---
 
         if (EEW_isFinal == 'true'){
-          EEW_repNum_p = '最終報';
+          if(pageLang === 'en-US'){
+            EEW_repNum_p = 'Final report';
+          } else {
+            EEW_repNum_p = '最終報';
+          }
         } else {
-          EEW_repNum_p = `第${EEW_repNum}報`
+          if(pageLang === 'en-US'){
+            EEW_repNum_p = `Report #${EEW_repNum}`
+          } else {
+            EEW_repNum_p = `第${EEW_repNum}報`
+          }
         }
 
         // --- Origin time --- //
@@ -656,7 +689,11 @@ function eew(){
         // ---
 
         if (!EEW_Region_name){
-          EEW_Region_name = '不明';
+          if(pageLang === 'en-US'){
+            EEW_Region_name = 'Unknown';
+          } else {
+            EEW_Region_name = '不明';
+          }
         }
         
         // --- Calcintensity --- //
@@ -694,7 +731,11 @@ function eew(){
         if (EEW_Magnitude){
           EEW_Magnitude = 'M' + EEW_Magnitude;
         } else {
-          EEW_Magnitude = '不明';
+          if(pageLang === 'en-US'){
+            EEW_Magnitude = 'Unknown';
+          } else {
+            EEW_Magnitude = '不明';
+          }
         }
 
         // --- Depth --- //
@@ -705,9 +746,17 @@ function eew(){
         // ---
 
         if (EEW_depth){
-          EEW_depth = '約' + EEW_depth;
+          if(pageLang === 'en-US'){
+            EEW_depth = 'about ' + EEW_depth;
+          } else {
+            EEW_depth = '約' + EEW_depth;
+          }
         } else {
-          EEW_depth = '不明';
+          if(pageLang === 'en-US'){
+            EEW_depth = 'Unknown';
+          } else {
+            EEW_depth = '不明';
+          }
         }
 
         // --- alert flag --- //
@@ -867,12 +916,21 @@ function eew(){
         // reset_show_eq();
         // $('#eew').addClass('active');
 
-        $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
-        $('#eew .calcintensity_para').text(EEW_calcintensity);
-        $('#eew .region').text(EEW_Region_name);
-        $('#eew .origin_time').text(`発生日時: ${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
-        $('#eew .magnitude').text(`予想規模: ${EEW_Magnitude}`);
-        $('#eew .depth').text(`予想深さ: ${EEW_depth}`);
+        if(pageLang === 'en-US'){
+          $('#eew .info').text(`Earthquake Early Warning ${EEW_alertFlg}(${EEW_repNum_p})`);
+          $('#eew .calcintensity_para').text(EEW_calcintensity);
+          $('#eew .region').text(EEW_Region_name);
+          $('#eew .origin_time').text(`${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+          $('#eew .magnitude').text(`${EEW_Magnitude}`);
+          $('#eew .depth').text(`${EEW_depth}`);
+        } else {
+          $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
+          $('#eew .calcintensity_para').text(EEW_calcintensity);
+          $('#eew .region').text(EEW_Region_name);
+          $('#eew .origin_time').text(`発生日時: ${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+          $('#eew .magnitude').text(`予想規模: ${EEW_Magnitude}`);
+          $('#eew .depth').text(`予想深さ: ${EEW_depth}`);
+        }
 
         $('#eew').css({
           'background-color': EEW_bgc,
@@ -902,8 +960,13 @@ function eew(){
         EEW_bgc = "#e0e0e0";
         EEW_fntc = "#010101";
       }
-  
-      $('#eew .info').text("緊急地震速報は発表されていません");
+
+      if(pageLang === 'en-US'){
+        $('#eew .info').text("No Earthquake Early Warning issued");
+      } else {
+        $('#eew .info').text("緊急地震速報は発表されていません");
+      }
+
       $('#eew .calcintensity_para').text('');
       $('#eew .region').text('');
       $('#eew .origin_time').text('');
@@ -1084,14 +1147,25 @@ function information(){
     // --- type --- //
     p2p_type = p2p_data[0]['issue']['type'];
 
-    p2p_types = {
-      'ScalePrompt': '震度速報',
-      'Destination': '震源情報',
-      'ScaleAndDestination': '震源・震度情報',
-      'DetailScale': '各地の震度情報',
-      'Foreign': '遠地地震情報',
-      'Other': '地震情報'
-    };
+    if(pageLang === 'en-US'){
+      p2p_types = {
+        'ScalePrompt': 'Intensity report',
+        'Destination': 'epicenter information',
+        'ScaleAndDestination': 'Intensity and epicenter information',
+        'DetailScale': 'Information on intensity in each area',
+        'Foreign': 'Foreign earthquake information',
+        'Other': 'Earthquake information'
+      };
+    } else {
+      p2p_types = {
+        'ScalePrompt': '震度速報',
+        'Destination': '震源情報',
+        'ScaleAndDestination': '震源・震度情報',
+        'DetailScale': '各地の震度情報',
+        'Foreign': '遠地地震情報',
+        'Other': '地震情報'
+      };
+    }
 
     p2p_type_put = p2p_types[p2p_type];
 
@@ -1099,7 +1173,11 @@ function information(){
     p2p_hypocenter = p2p_data[0]['earthquake']['hypocenter']['name'];
 
     if (p2p_hypocenter == ''){
-      p2p_hypocenter = '調査中';
+      if(pageLang === 'en-US'){
+        p2p_hypocenter = 'Checking';
+      } else {
+        p2p_hypocenter = '調査中';
+      }
     }
 
     // --- maxScale --- //
@@ -1161,7 +1239,7 @@ function information(){
     }
 
     switch (p2p_maxScale){
-      case -1: p2p_maxScale = '調査中'; break;
+      case -1: p2p_maxScale = '-'; break;
       case 10: p2p_maxScale = '1'; break;
       case 20: p2p_maxScale = '2'; break;
       case 30: p2p_maxScale = '3'; break;
@@ -1185,7 +1263,11 @@ function information(){
     p2p_magnitude = p2p_data[0]['earthquake']['hypocenter']['magnitude'];
 
     if(p2p_magnitude == -1){
-      p2p_magnitude = '調査中';
+      if(pageLang === 'en-US'){
+        p2p_magnitude = 'Checking';
+      } else {
+        p2p_magnitude = '調査中';
+      }
     } else {
       p2p_magnitude = 'M' + String(p2p_magnitude);
     }
@@ -1194,24 +1276,43 @@ function information(){
     p2p_depth = p2p_data[0]['earthquake']['hypocenter']['depth'];
 
     if (p2p_depth == -1){
-      p2p_depth = '調査中';
+      if(pageLang === 'en-US'){
+        p2p_depth = 'Checking';
+      } else {
+        p2p_depth = '調査中';
+      }
     } else if (p2p_depth == 0){
-      p2p_depth = 'ごく浅い';
+      if(pageLang === 'en-US'){
+        p2p_depth = 'Very shallow';
+      } else {
+        p2p_depth = 'ごく浅い';
+      }
     } else {
-      p2p_depth = '約' + String(p2p_depth) + 'km';
+      p2p_depth = 'about ' + String(p2p_depth) + 'km';
     }
 
     // --- Tsunami --- //
     p2p_tsunami = p2p_data[0]['earthquake']['domesticTsunami'];
 
-    tsunamiLevels = {
-      'None': '津波の心配はありません。',
-      'Unknown': '津波の影響は不明です。',
-      'Checking': '津波の影響を現在調査中です。',
-      'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
-      'Watch': '津波注意報が発表されています。',
-      'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
-    };
+    if(pageLang === 'en-US'){
+      tsunamiLevels = {
+        'None': 'No tsunami risk.',
+        'Unknown': 'The impact of the tsunami is unknown.',
+        'Checking': 'The impact of the tsunami is currently being investigated.',
+        'NonEffective': 'Some sea level fluctuation is expected, but no damage is anticipated.',
+        'Watch': 'A tsunami advisory has been issued.',
+        'Warning': 'Tsunami warnings, etc. (major tsunami warnings, tsunami warnings, or tsunami advisories) have been issued.'
+      };
+    } else {
+      tsunamiLevels = {
+        'None': '津波の心配はありません。',
+        'Unknown': '津波の影響は不明です。',
+        'Checking': '津波の影響を現在調査中です。',
+        'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
+        'Watch': '津波注意報が発表されています。',
+        'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
+      };
+    }
 
     p2p_tsunami = tsunamiLevels[p2p_tsunami];
 
@@ -1263,13 +1364,23 @@ function information(){
         break;
     }
 
-    $('#earthquake_info .info').text(p2p_type_put);
-    $('#earthquake_info .hypocenter').text(p2p_hypocenter);
-    $('#earthquake_info .time').text(`発生日時: ${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}頃`);
-    $('#earthquake_info .maxScale .para').text(p2p_maxScale);
-    $('#earthquake_info .magnitude').text("　規模　: " + p2p_magnitude);
-    $('#earthquake_info .depth').text("　深さ　: " + p2p_depth);
-    $('#earthquake_info .tsunami').text(p2p_tsunami);
+    if(pageLang === 'en-US'){
+      $('#earthquake_info .info').text(p2p_type_put);
+      $('#earthquake_info .hypocenter').text(p2p_hypocenter);
+      $('#earthquake_info .time').text(`${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}頃`);
+      $('#earthquake_info .maxScale .para').text(p2p_maxScale);
+      $('#earthquake_info .magnitude').text(p2p_magnitude);
+      $('#earthquake_info .depth').text(p2p_depth);
+      $('#earthquake_info .tsunami').text(p2p_tsunami);
+    } else {
+      $('#earthquake_info .info').text(p2p_type_put);
+      $('#earthquake_info .hypocenter').text(p2p_hypocenter);
+      $('#earthquake_info .time').text(`発生日時: ${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}頃`);
+      $('#earthquake_info .maxScale .para').text(p2p_maxScale);
+      $('#earthquake_info .magnitude').text("　規模　: " + p2p_magnitude);
+      $('#earthquake_info .depth').text("　深さ　: " + p2p_depth);
+      $('#earthquake_info .tsunami').text(p2p_tsunami);
+    }
 
     $(`#earthquake_info .maxScale`).css({
       'background-color': p2p_bgc,
@@ -1313,14 +1424,18 @@ function history(){
         p2p_hypocenter = p2p_data[i]['earthquake']['hypocenter']['name'];
         
         if (p2p_hypocenter == ''){
-          p2p_hypocenter = '調査中';
+          if(pageLang === 'en-US'){
+            p2p_hypocenter = 'Checking';
+          } else {
+            p2p_hypocenter = '調査中';
+          }
         }
 
         // --- maxScale --- //
         p2p_maxScale = p2p_data[i]['earthquake']['maxScale'];
         
         switch (p2p_maxScale){
-          case -1: p2p_maxScale = '調査中'; break;
+          case -1: p2p_maxScale = '-'; break;
           case 10: p2p_maxScale = '1'; break;
           case 20: p2p_maxScale = '2'; break;
           case 30: p2p_maxScale = '3'; break;
@@ -1340,7 +1455,11 @@ function history(){
         p2p_magnitude = p2p_data[i]['earthquake']['hypocenter']['magnitude'];
         
         if(p2p_magnitude == -1){
-          p2p_magnitude = '調査中';
+          if(pageLang === 'en-US'){
+            p2p_magnitude = 'Checking';
+          } else {
+            p2p_magnitude = '調査中';
+          }
         } else {
           p2p_magnitude = 'M' + String(p2p_magnitude);
         }
@@ -1349,24 +1468,47 @@ function history(){
         p2p_depth = p2p_data[i]['earthquake']['hypocenter']['depth'];
 
         if (p2p_depth == -1){
-          p2p_depth = '調査中';
+          if(pageLang === 'en-US'){
+            p2p_depth = 'Checking';
+          } else {
+            p2p_depth = '調査中';
+          }
         } else if (p2p_depth == 0){
-          p2p_depth = 'ごく浅い';
+          if(pageLang === 'en-US'){
+            p2p_depth = 'Very shallow';
+          } else {
+            p2p_depth = 'ごく浅い';
+          }
         } else {
-          p2p_depth = '約' + String(p2p_depth) + 'km';
+          if(pageLang === 'en-US'){
+            p2p_depth = 'about ' + String(p2p_depth) + 'km';
+          } else {
+            p2p_depth = '約' + String(p2p_depth) + 'km';
+          }
         }
 
         // --- Tsunami --- //
         p2p_tsunami = p2p_data[i]['earthquake']['domesticTsunami'];
 
-        tsunamiLevels = {
-          'None': '津波の心配はありません。',
-          'Unknown': '津波の影響は不明です。',
-          'Checking': '津波の影響を現在調査中です。',
-          'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
-          'Watch': '津波注意報が発表されています。',
-          'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
-        };
+        if(pageLang === 'en-US'){
+          tsunamiLevels = {
+            'None': 'No tsunami risk.',
+            'Unknown': 'The impact of the tsunami is unknown.',
+            'Checking': 'The impact of the tsunami is currently being investigated.',
+            'NonEffective': 'Some sea level fluctuation is expected, but no damage is anticipated.',
+            'Watch': 'A tsunami advisory has been issued.',
+            'Warning': 'Tsunami warnings, etc. (major tsunami warnings, tsunami warnings, or tsunami advisories) have been issued.'
+          };
+        } else {
+          tsunamiLevels = {
+            'None': '津波の心配はありません。',
+            'Unknown': '津波の影響は不明です。',
+            'Checking': '津波の影響を現在調査中です。',
+            'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
+            'Watch': '津波注意報が発表されています。',
+            'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
+          };
+        }
 
         p2p_tsunami = tsunamiLevels[p2p_tsunami];
         
@@ -1428,8 +1570,8 @@ function history(){
               <p class="hypocenter">${p2p_hypocenter}</p>
               <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
               <div class="hypoInfo">
-                <p>規模: ${p2p_magnitude}</p>
-                <p>深さ: ${p2p_depth}</p>
+                <p>${p2p_magnitude}</p>
+                <p>${p2p_depth}</p>
               </div>
               <p>${p2p_tsunami}</p>
             </div>

@@ -5,7 +5,9 @@
 // ---------- Init var ---------- //
 
 const name_project = "YDITS for Web";
-const ver_project = "2.4.1";
+const ver_project = "2.5.0";
+
+let pageLang = '';
 
 // ---------- Main ---------- //
 document.addEventListener('DOMContentLoaded', function(){
@@ -20,7 +22,19 @@ function mainloop(){
 
 // ----- Page ----- //
 function init_page(){
+  init_lang();
   init_commonElements();
+}
+
+// --- Init lang --- //
+function init_lang(){
+  let path = location.pathname
+
+  if (path.indexOf('en-US') !== -1) {
+    pageLang = 'en-US';
+  } else {
+    pageLang = 'ja-JP';
+  }
 }
 
 // --- Init common elements --- //

@@ -82,6 +82,8 @@ main {
   width: 30%;
   height: 80%;
   border-radius: 1em;
+
+  text-align: center;
 }
 
 #select li:hover {
