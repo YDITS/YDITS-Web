@@ -213,7 +213,7 @@
             <label>EEW Acquisition Interval</label>
             <div class="content">
               <input type="range" min="1" max="8" step="1" value="2" id="settings_bar_cnt_eew">
-              <p><span id="settings_put_cnt_eew"></span>秒ごと</p>
+              <p><span id="settings_put_cnt_eew"></span>s</p>
             </div>
           </div>
 
@@ -221,7 +221,7 @@
             <label>Earthquake information Acquisition interval</label>
             <div class="content">
               <input type="range" min="8" max="32" step="2" value="12" id="settings_bar_cnt">
-              <p><span id="settings_put_cnt"></span>秒ごと</p>
+              <p><span id="settings_put_cnt"></span>s</p>
             </div>
           </div>
 
@@ -335,7 +335,30 @@
 
       <div class="content" id="monitor">
         <h2 class="title">Strong motion monitor</h2>
-        <div class="content" id="map"></div>
+        
+        <div id="mapContainer">
+          <div class="content" id="map"></div>
+
+          <div id="monitorInfo">
+            <span id="eewInfo"></span>
+  
+            <div class="content">
+              <div class="calcintensity">
+                <span>Expected max intensity</span>
+                <span class="put"></span>
+              </div>
+  
+              <div class="container">
+                <span class="region"></span>
+                <span class="origin_time"></span>
+                <div class="hypoInfo">
+                  <span class="magnitude"></span>
+                  <span class="depth"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </main>

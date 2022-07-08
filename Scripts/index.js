@@ -166,8 +166,6 @@ function mainloop(){
     default: break;
   }
 
-  console.log(pageLang);
-
   requestAnimationFrame(mainloop);
 }
 
@@ -628,6 +626,7 @@ function eew(){
 
         default:
           $('#eew .info').text(`緊急地震速報を取得できません Error: HTTP ${response.status}`);
+          $('#eewInfo').text(`緊急地震速報を取得できません Error: HTTP ${response.status}`);
           break;
       }
     }
@@ -1050,6 +1049,86 @@ function monitor(){
     wave_p.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
     wave_p.setRadius(EEW_wave_p_put);
 
+    // --- put --- //
+    let EEW_bgc;
+    let EEW_fntc;
+
+    switch (EEW_calcintensity) {
+      case '1':
+        EEW_bgc = "#c0c0c0"; 
+        EEW_fntc = "#010101";
+        break;
+      case '2':
+        EEW_bgc = "#2020c0";
+        EEW_fntc = "#ffffff";
+        break;
+      case '3': 
+        EEW_bgc = "#20c020";
+        EEW_fntc = "#010101";
+        break;
+      case '4':
+        EEW_bgc = "#c0c020";
+        EEW_fntc = "#010101";
+        break;
+      case '5-':
+        EEW_bgc = "#c0a020";
+        EEW_fntc = "#010101";
+        break;
+      case '5+':
+        EEW_bgc = "#c07f20";
+        EEW_fntc = "#010101";
+        break;
+      case '6-':
+        EEW_bgc = "#e02020";
+        EEW_fntc = "#ffffff";
+        break;
+      case '6+':
+        EEW_bgc = "#a02020";
+        EEW_fntc = "#ffffff";
+        break;
+      case '7':
+        EEW_bgc = "#7f207f";
+        EEW_fntc = "#ffffff";
+        break;
+      
+      default:
+        EEW_bgc = "#7f7fc0";
+        EEW_fntc = "#010101";
+        break;
+    }
+
+    if (EEW_isCansel == 'true'){
+      EEW_bgc = "#7f7fc0";
+      EEW_fntc = "#010101";
+    }
+
+    // reset_show();
+    // $('#earthquake').addClass('active');
+
+    // reset_show_eq();
+    // $('#eew').addClass('active');
+
+    if(pageLang === 'en-US'){
+      $('#eewInfo').text(`Earthquake Early Warning ${EEW_alertFlg}(${EEW_repNum_p})`);
+      $('#monitorInfo>.content .calcintensity>.put').text(EEW_calcintensity);
+      $('#monitorInfo>.content .region').text(EEW_Region_name);
+      $('#monitorInfo>.content .origin_time').text(`${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+      $('#monitorInfo>.content .magnitude').text(`${EEW_Magnitude}`);
+      $('#monitorInfo>.content .depth').text(`${EEW_depth}`);
+    } else {
+      $('#eewInfo').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
+      $('#monitorInfo>.content .calcintensity>.put').text(EEW_calcintensity);
+      $('#monitorInfo>.content .region').text(EEW_Region_name);
+      $('#monitorInfo>.content .origin_time').text(`${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+      $('#monitorInfo>.content .magnitude').text(`${EEW_Magnitude}`);
+      $('#monitorInfo>.content .depth').text(`${EEW_depth}`);
+    }
+
+    $('#monitorInfo').css({
+      'background-color': EEW_bgc,
+      'color': EEW_fntc
+    })
+
   } else {
     hypo.setLatLng(new L.LatLng(0, 0));
     wave_s.setLatLng(new L.LatLng(0, 0));
@@ -1057,7 +1136,49 @@ function monitor(){
 
     wave_s.setRadius(0);
     wave_p.setRadius(0);
+
+    // --- put --- //
+    EEW_repNum      = '';
+    EEW_repNum_last = '';
+    EEW_alertFlg    = '';
+
+    EEW_timeYear   = '';
+    EEW_timeMonth  = '';
+    EEW_timeDay    = '';
+    EEW_timeHour   = '';
+    EEW_timeMinute = '';
+
+    EEW_calcintensity = '';
+    EEW_Region_name   = '';
+    EEW_Magnitude     = '';
+    EEW_depth         = '';
+
+    if(settings_darkMode){
+      EEW_bgc = "#103050";
+      EEW_fntc = "#eeeeee";
+    } else {
+      EEW_bgc = "#e0e0e0";
+      EEW_fntc = "#010101";
+    }
+
+    if(pageLang === 'en-US'){
+      $('#eewInfo').text("No Earthquake Early Warning issued");
+    } else {
+      $('#eewInfo').text("緊急地震速報は発表されていません");
+    }
+
+    $('#eew .calcintensity_para').text('');
+    $('#eew .region').text('');
+    $('#eew .origin_time').text('');
+    $('#eew .magnitude').text('');
+    $('#eew .depth').text('');
+
+    $('#monitorInfo').css({
+      'background-color': EEW_bgc,
+      'color': EEW_fntc
+    })
   }
+
 }
 
 //--- Init monitor map --- //
