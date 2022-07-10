@@ -5,7 +5,7 @@
 // ---------- Init var ---------- //
 
 const name_project = "YDITS for Web";
-const ver_project = "2.6.0";
+const ver_project = "2.6.1";
 
 let pageLang = '';
 

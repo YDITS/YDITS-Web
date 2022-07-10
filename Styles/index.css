@@ -268,6 +268,8 @@ main {
   width: 100%;
   height: 100%;
 
+  overflow: hidden;
+
   z-index: 2;
 }
 
@@ -279,6 +281,7 @@ main {
   width: 20em;
   height: 8em;
 
+  overflow: hidden;
   padding: 4px;
   background-color: #103050;
 
@@ -286,9 +289,12 @@ main {
 }
 
 #monitorInfo>.content {
+  display: flex;
+
   width: 100%;
   height: 85%;
-  display: flex;
+
+  overflow: hidden;
 }
 
 #eewInfo {
