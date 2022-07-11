@@ -1,37 +1,24 @@
-<!-- index.html / help / home / YDITS for Web / Yone -->
+<!-- index.html / help - sound settings / home / YDITS for Web / Yone -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
 
   <!----- Meta ----->
-  <meta name="application-name" content="YDITS for Web">
-  <meta name="description" content="YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。">
-  <meta name="author" content="よね/Yone">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Yone">
+  <meta name="description" content="YDITS for Web">
   <meta name="generator" content="Microsoft Visual Studio Code">
   <meta name="keywords" content="YDITS">
-  <title>ヘルプ - YDITS for Web</title>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light">
+  <title>Enable automatic of sounds  - help - YDITS for Web</title>
 
   <!----- Links ----->
   <base href="https://yone1130.github.io/YDITS-Web/">
 
-  <!--- OGP --->
-  <meta property="og:url" content=" https://yone1130.github.io/YDITS-Web/help/">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="YDITS for Web">
-  <meta property="og:title" content="">
-  <meta property="og:description" content="YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。">
-  <meta property="og:image" content="./Images/icon.png">
-  <meta name="twitter:site" content="@yone1130_">
-  <meta name="twitter:card" content="summary">
-
   <!--- Styles --->
   <link rel="stylesheet" href="./Styles/main.css">
   <link rel="stylesheet" href="./Styles/ui.css">
-  <link rel="stylesheet" href="./help/Styles/index.css">
+  <link rel="stylesheet" href="./help/sound-setting/Styles/index.css">
 
   <!--- Fonts --->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -66,18 +53,27 @@
   </header>
 
   <main>
-    <section id="main">
-      <h1 id="pageTitle">YDITS for Web ヘルプ</h1>
+    <h1 class="pageTitle">Enable automatic of sounds</h1>
 
-      <section id="links">
-        <a class="link" href="./help/support-browser/">
-          サポートブラウザ
-        </a>
-        <a class="link" href="./help/sound-setting/">
-          効果音の自動再生を有効にする
-        </a>
+    <div class="content">
+      <section class="content first">
+        <p>(1) Click on 'Site Info' (key icon) at the top.</p>
+        <img src="./help/sound-setting/Images/procedure-1.png" alt="">
       </section>
-    </section>
+
+      <section class="content second">
+        <p>(2) Click on 'Site Settings'.</p>
+        <img src="./help/sound-setting/Images/procedure-2.png" alt="">
+      </section>
+
+      <section class="content third">
+        <p>(3) When the settings open, change the 'Audio' item to 'Allow'.</p>
+        <img src="./help/sound-setting/Images/procedure-3.png" alt="">
+      </section>
+
+      <p>The above procedure will cause the sound effects to be played.</p>
+    </div>
+
   </main>
 
   <footer>

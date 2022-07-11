@@ -96,29 +96,29 @@ let EEW_hypo_LatLng = null;
 let loopCnt_loopWaves = -1;
 
 // --- Sound & Voice --- //
-const EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew.wav");
-const p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info.wav");
+let EEW_sound
+let p2p_sound
 
-const EEW_1_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_1_v.mp3");
-const EEW_2_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_2_v.mp3");
-const EEW_3_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_3_v.mp3");
-const EEW_4_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_4_v.mp3");
-const EEW_5_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_5_v.mp3");
-const EEW_6_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_6_v.mp3");
-const EEW_7_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_7_v.mp3");
-const EEW_8_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_8_v.mp3");
-const EEW_9_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_9_v.mp3");
-const EEW_Cancel_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_cancel_v.mp3");
+let EEW_1_voice
+let EEW_2_voice
+let EEW_3_voice
+let EEW_4_voice
+let EEW_5_voice
+let EEW_6_voice
+let EEW_7_voice
+let EEW_8_voice
+let EEW_9_voice
+let EEW_Cancel_voice
 
-const p2p_1_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_1_v.mp3");
-const p2p_2_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_2_v.mp3");
-const p2p_3_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_3_v.mp3");
-const p2p_4_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_4_v.mp3");
-const p2p_5_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_5_v.mp3");
-const p2p_6_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_6_v.mp3");
-const p2p_7_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_7_v.mp3");
-const p2p_8_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_8_v.mp3");
-const p2p_9_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_9_v.mp3");
+let p2p_1_voice
+let p2p_2_voice
+let p2p_3_voice
+let p2p_4_voice
+let p2p_5_voice
+let p2p_6_voice
+let p2p_7_voice
+let p2p_8_voice
+let p2p_9_voice
 
 // ---------- Main ---------- //
 document.addEventListener('DOMContentLoaded', function(){
@@ -171,6 +171,7 @@ function mainloop(){
 
 // ----- Page ----- //
 function page_init(){
+  init_sounds();
   settings_init();
   licence_init();
   select_init();
@@ -198,6 +199,59 @@ function getServer_DT(){
     timeMinute = setTime(gmt.getMinutes());
     timeSecond = setTime(gmt.getSeconds());
   })
+}
+
+// --- sounds --- //
+function init_sounds(){
+  if(pageLang === 'en-US'){
+    EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew.wav");
+    p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info.wav");
+  
+    EEW_1_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_1_v.mp3");
+    EEW_2_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_2_v.mp3");
+    EEW_3_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_3_v.mp3");
+    EEW_4_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_4_v.mp3");
+    EEW_5_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_5_v.mp3");
+    EEW_6_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_6_v.mp3");
+    EEW_7_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_7_v.mp3");
+    EEW_8_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_8_v.mp3");
+    EEW_9_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_9_v.mp3");
+    EEW_Cancel_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/eew_cancel_v.mp3");
+  
+    p2p_1_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info_1_v.mp3");
+    p2p_2_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info_2_v.mp3");
+    p2p_3_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info_3_v.mp3");
+    p2p_4_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info_4_v.mp3");
+    p2p_5_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info_5_v.mp3");
+    p2p_6_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info_6_v.mp3");
+    p2p_7_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info_7_v.mp3");
+    p2p_8_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info_8_v.mp3");
+    p2p_9_voice = new Audio("https://yone1130.github.io/YDITS-Web/en-US/Sounds/info_9_v.mp3");
+  } else {
+    EEW_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew.wav");
+    p2p_sound = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info.wav");
+  
+    EEW_1_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_1_v.mp3");
+    EEW_2_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_2_v.mp3");
+    EEW_3_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_3_v.mp3");
+    EEW_4_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_4_v.mp3");
+    EEW_5_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_5_v.mp3");
+    EEW_6_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_6_v.mp3");
+    EEW_7_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_7_v.mp3");
+    EEW_8_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_8_v.mp3");
+    EEW_9_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_9_v.mp3");
+    EEW_Cancel_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/eew_cancel_v.mp3");
+  
+    p2p_1_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_1_v.mp3");
+    p2p_2_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_2_v.mp3");
+    p2p_3_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_3_v.mp3");
+    p2p_4_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_4_v.mp3");
+    p2p_5_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_5_v.mp3");
+    p2p_6_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_6_v.mp3");
+    p2p_7_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_7_v.mp3");
+    p2p_8_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_8_v.mp3");
+    p2p_9_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_9_v.mp3");
+  }
 }
 
 // --- Settings --- //
