@@ -95,6 +95,8 @@ let EEW_hypo_LatLng = null;
 
 let loopCnt_loopWaves = -1;
 
+let isFullscreen_map = false;
+
 // --- Sound & Voice --- //
 let EEW_sound
 let p2p_sound
@@ -1176,8 +1178,8 @@ function init_map(){
 
     // preferCanvas: true,
 
-    zoomControl: false,
-    gestureHandling: true
+    // zoomControl: false,
+    // gestureHandling: true
   });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1209,6 +1211,28 @@ function init_map(){
   }).addTo(map);
 
   // loopCnt_loopWaves = new Date();
+
+  $(document).on('click', '#btn_fullScreen', function(){
+    console.log(isFullscreen_map)
+    if(!isFullscreen_map){
+      isFullscreen_map = true;
+
+      $('#btn_fullScreen .on').removeClass('active');
+      $('#btn_fullScreen .off').addClass('active');
+
+      $('#mapContainer').addClass('fullScreen');
+
+      console.log('DEBUG_BEON')
+    } else if(isFullscreen_map){
+      isFullscreen_map = false;
+
+      $('#btn_fullScreen .off').removeClass('active');
+      $('#btn_fullScreen .on').addClass('active');
+
+      $('#mapContainer').removeClass('fullScreen');
+      console.log('DEBUG_BEOFF')
+    }
+  });
 }
 
 // ----- Get p2p --- //
