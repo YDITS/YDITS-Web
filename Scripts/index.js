@@ -1,5 +1,7 @@
 //
-// index.js / YDITS for Web / Yone
+// index.js | YDITS for Web
+//
+// (c) 2022 よね/Yone
 //
 
 // ---------- Init var ---------- //
