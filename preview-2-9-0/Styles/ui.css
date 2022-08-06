@@ -1,0 +1,120 @@
+/* 
+
+  ui.css | YDITS for Web
+
+  (c) 2022 よね/Yone
+
+*/
+@charset "UTF-8";
+
+/* ----- Dialog ----- */
+.window {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: block;
+
+  margin: auto;
+  width: 70vw;
+  height: 70vh;
+  border: 0;
+  border-radius: .8em;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .5);
+
+  padding: 0;
+  overflow: hidden;
+  background-color: #fff;
+  color: #010101;
+
+  z-index: 10;
+}
+
+.window .navBar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 2em;
+
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
+
+.window .navBar .title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 2em;
+
+  overflow: hidden;
+}
+
+.window .navBar .close {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  width: 2em;
+  height: 2rem;
+  overflow: hidden;
+
+  cursor: pointer
+}
+
+.window .navBar .close:hover {
+  background-color: #c0c0c0;
+}
+
+.window .content {
+  overflow: auto;
+}
+
+/* ----- Toggle switch ----- */
+.toggle-switch {
+  display: inline-flex;
+  align-items: center;
+
+  /* display: inline-block; */
+
+  width: 64px;
+  height: 32px;
+  border-radius: 2em;
+
+  background-color: #7f7f7f;
+  cursor: pointer;
+
+  transition: all .2s;
+}
+
+.toggle-switch>.span {
+  position: relative;
+  left: 6px;
+
+  display: inline-block;
+
+  height: 24px;
+  width: 24px;
+  border-radius: 1em;
+
+  background-color: #fff;
+
+  transition: all .2s;
+}
+
+.toggle-switch.on {
+  background-color: #20ff20;
+}
+
+.toggle-switch.on>.span {
+  left: 34px;
+}
