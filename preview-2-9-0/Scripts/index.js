@@ -29,8 +29,8 @@ let settings_playSound_eew_cancel;
 let settings_playSound_info;
 
 // --- EEW --- //
-let EEW_data;
-let EEW_data_nakn
+let EEW_data      = null;
+let EEW_data_nakn = null;
 
 let EEW_time    = -1;
 let loopCnt_eew = -1;
@@ -152,7 +152,10 @@ function mainloop(){
       // EEW
       if (DT - loopCnt_eew >= 1000 * EEW_time){
         loopCnt_eew = DT;
-        eew();
+
+        if (EEW_data_nakn !== null){
+          eew();
+        }
       }
       
       // P2P get
@@ -692,10 +695,9 @@ function eew(){
   let url_EEW_yahoo = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
 
   // --- debug
-  // let url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
-  // let url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
-  // let url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
-  // let url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
+  // let url_EEW_yahoo = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
+  // let url_EEW_yahoo = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
+  // let url_EEW_yahoo = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
   // ---
 
   response = fetch(url_EEW_yahoo)
@@ -872,14 +874,14 @@ function eew(){
         EEW_isCansel = EEW_data_nakn["isCancel"];
 
         // --- debug
-        // EEW_isCansel = 'true';
+        // EEW_isCansel = true;
         // ---
 
         if (EEW_isCansel == true){
           if(pageLang === 'en-US'){
-            EEW_alertFlg = 'Cancel';
+            EEW_repNum_p = 'Cancel';
           } else {
-            EEW_alertFlg = '取消報';
+            EEW_repNum_p = '取消報';
           }
         }
 
@@ -1004,9 +1006,9 @@ function eew(){
         // $('#eew').addClass('active');
 
         if(pageLang === 'en-US'){
-          $('#eew .info').text(`Earthquake Early Warning ${EEW_alertFlg}(${EEW_repNum_p})`);
+          $('#eew .info').text(`Earthquake Early Warning ${EEW_alertFlg} (${EEW_repNum_p})`);
         } else {
-          $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
+          $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}（${EEW_repNum_p}）`);
         }
 
         $('#eew').css({
@@ -1015,9 +1017,9 @@ function eew(){
         })
 
         if(pageLang === 'en-US'){
-          $('#eewInfo').text(`Earthquake Early Warning ${EEW_alertFlg}(${EEW_repNum_p})`);
+          $('#eewInfo').text(`Earthquake Early Warning ${EEW_alertFlg} (${EEW_repNum_p})`);
         } else {
-          $('#eewInfo').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
+          $('#eewInfo').text(`緊急地震速報 ${EEW_alertFlg}（${EEW_repNum_p}）`);
         }
 
         $('#monitorInfo').css({
