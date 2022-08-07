@@ -30,6 +30,7 @@ let settings_playSound_info;
 
 // --- EEW --- //
 let EEW_data;
+let EEW_data_nakn
 
 let EEW_time    = -1;
 let loopCnt_eew = -1;
@@ -679,7 +680,7 @@ function init_socket(){
   // });
 
   naknSocket.addEventListener('message', function (event) {
-    EEW_data = JSON.parse(event.data);
+    EEW_data_nakn = JSON.parse(event.data);
   });
 
 }
@@ -844,7 +845,7 @@ function eew(){
         }
 
         // --- alert flag --- //
-        EEW_alertFlg = EEW_data['alertFlg'];
+        EEW_alertFlg = EEW_data_nakn['alertFlg'];
 
         switch (EEW_alertFlg) {
           case true:
@@ -865,10 +866,10 @@ function eew(){
         }
 
         // --- Is training --- //
-        EEW_isTraining = EEW_data["isTraining"];
+        EEW_isTraining = EEW_data_nakn["isTraining"];
 
         // --- Is cansel --- //
-        EEW_isCansel = EEW_data["isCancel"];
+        EEW_isCansel = EEW_data_nakn["isCancel"];
 
         // --- debug
         // EEW_isCansel = 'true';
