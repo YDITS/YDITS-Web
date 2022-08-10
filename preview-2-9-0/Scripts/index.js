@@ -67,7 +67,8 @@ let EEW_fntc;
 // --- Earthquake information --- //
 let p2p_data;
 
-let p2p_time    = -1;
+let p2p_time      = -1;
+let p2p_time_temp = -1;
 let loopCnt_p2p = -1;
 
 let p2p_id      = -1;
@@ -160,13 +161,20 @@ function mainloop(){
       if (DT - loopCnt_eew >= 1000 * EEW_time){
         loopCnt_eew = DT;
 
-        if (EEW_data_nakn !== null){
+        if (EEW_data!== null){
           eew_yahoo();
         }
       }
       
       // P2P get
-      if (DT - loopCnt_p2p >= 1000 * p2p_time || p2p_id_last == -1 || p2p_his_id_last == -1){
+      if (p2p_id_last != -1){
+        p2p_time = p2p_time_temp;
+      } else if(p2p_id_last == -1 && p2p_time_temp == -1){
+        p2p_time_temp = p2p_time;
+        p2p_time = 1;
+      }
+
+      if (DT - loopCnt_p2p >= 1000 * p2p_time){
         loopCnt_p2p = DT;
         getInfo();
         
