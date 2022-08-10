@@ -162,7 +162,7 @@ function mainloop(){
         loopCnt_eew = DT;
 
         if (EEW_data!== null){
-          eew_yahoo();
+          eew_loop();
         }
       }
       
@@ -682,14 +682,6 @@ function init_socket(){
 
     EEW_isFinal = EEW_data_nakn['isFinal'];
     EEW_repDT   = new Date(EEW_data_nakn['reportTime']);
-  
-    if(EEW_isFinal === true && gmt - EEW_repDT >= 1000 * 180){
-      // 最終報発表から3分経過している場合は過去のEEWとする
-      EEW = false;
-    } else {
-      // 最終報発表から3分経過してない場合は発表中のEEWとする
-      EEW = true;
-    }
 
     eew();
   });
@@ -699,8 +691,16 @@ function init_socket(){
 // ----- EEW ----- //
 function eew(){
 
+  if(EEW_isFinal === true && gmt - EEW_repDT >= 1000 * 180){
+    // 最終報発表から3分経過している場合は過去のEEWとする
+    EEW_flg = false;
+  } else {
+    // 最終報発表から3分経過してない場合は発表中のEEWとする
+    EEW_flg = true;
+  }
+
   // EEW true
-  if(EEW){
+  if(EEW_flg){
 
     // Report datetime
     EEW_repTimeYear = setTime(EEW_repDT.getFullYear());
@@ -1057,8 +1057,18 @@ function eew(){
   }
 }
 
-// Yahoo
-function eew_yahoo(){
+// eew loop
+function eew_loop(){
+
+  if(EEW_isFinal === true && gmt - EEW_repDT >= 1000 * 180){
+    // 最終報発表から3分経過している場合は過去のEEWとする
+    EEW_flg = false;
+  } else {
+    // 最終報発表から3分経過してない場合は発表中のEEWとする
+    EEW_flg = true;
+  }
+
+  // Yahoo
 
   let EEW_Date = String(timeYear) + String(timeMonth) + String(timeDay);
   let EEW_DT = String(timeYear) + String(timeMonth) + String(timeDay) + String(timeHour) + String(timeMinute) + String(setTime(setEEW_DT(Number(timeSecond))));
@@ -1072,13 +1082,7 @@ function eew_yahoo(){
         case 403: break;
 
         default:
-          if(pageLang === 'en-US'){
-            $('#eew .info').text(`No connect Error: HTTP ${response.status}`);
-            $('#eewInfo').text(`No connect Error: HTTP ${response.status}`);
-          } else {
-            $('#eew .info').text(`取得できません Error: HTTP ${response.status}`);
-            $('#eewInfo').text(`取得できません Error: HTTP ${response.status}`);
-          }
+          console.error(`Connect Error: HTTP ${response.status}`)
           break;
       }
     }
@@ -1110,66 +1114,67 @@ function setEEW_DT(num){
 
 // ----- Monitor ----- //
 function monitor(){
-  if(EEW_data["hypoInfo"] != null){
+  if(EEW_data != null){
+    if(EEW_data["hypoInfo"] != null){
 
-    EEW_waves = EEW_data['psWave']['items'][0];
+      EEW_waves = EEW_data['psWave']['items'][0];
 
-    if (EEW_waves !== null){
-      EEW_lat = EEW_waves['latitude'].replace("N", "");
-      EEW_lng = EEW_waves['longitude'].replace("E", "");
-      EEW_hypo_LatLng = new L.LatLng(EEW_lat, EEW_lng);
+      if (EEW_waves !== null){
+        EEW_lat = EEW_waves['latitude'].replace("N", "");
+        EEW_lng = EEW_waves['longitude'].replace("E", "");
+        EEW_hypo_LatLng = new L.LatLng(EEW_lat, EEW_lng);
 
-      EEW_wave_p = EEW_waves['pRadius'];
-      EEW_wave_s = EEW_waves['sRadius'];
-      EEW_wave_p *= 1000;
-      EEW_wave_s *= 1000;
+        EEW_wave_p = EEW_waves['pRadius'];
+        EEW_wave_s = EEW_waves['sRadius'];
+        EEW_wave_p *= 1000;
+        EEW_wave_s *= 1000;
+      }
+
+      if(EEW_wave_s != EEW_wave_s_last){
+        EEW_wave_s_Interval = (EEW_wave_s - EEW_wave_s_last) / (60 * ((DT - loopCnt_moni) / 1000));
+        EEW_wave_s_last = EEW_wave_s;
+        EEW_wave_s_put = EEW_wave_s;
+      } else if(EEW_wave_s == EEW_wave_s_last){
+        EEW_wave_s_put += EEW_wave_s_Interval;
+      }
+
+      if(EEW_wave_p != EEW_wave_p_last){
+        EEW_wave_p_Interval = (EEW_wave_p - EEW_wave_p_last) / (60 * ((DT - loopCnt_moni) / 1000));
+        EEW_wave_p_last = EEW_wave_p;
+        EEW_wave_p_put = EEW_wave_p;
+        loopCnt_moni = DT;
+      } else if(EEW_wave_p == EEW_wave_p_last){
+        EEW_wave_p_put += EEW_wave_p_Interval;
+      }
+
+      if(EEW_wave_p_put >= 480000){
+        map.setZoom(6.5);
+      } else if(EEW_wave_p_put >= 320000){
+        map.setZoom(6.5);
+      } else if(EEW_wave_p_put >= 140000){
+        map.setZoom(6.5);
+      } else if(EEW_wave_p_put > 0){
+        map.setZoom(7);
+      }
+      map.setView([EEW_lat, EEW_lng]);
+
+      hypo.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+
+      wave_s.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+      wave_s.setRadius(EEW_wave_s_put);
+
+      wave_p.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+      wave_p.setRadius(EEW_wave_p_put);
+
+    } else {
+      hypo.setLatLng(new L.LatLng(0, 0));
+      wave_s.setLatLng(new L.LatLng(0, 0));
+      wave_p.setLatLng(new L.LatLng(0, 0));
+
+      wave_s.setRadius(0);
+      wave_p.setRadius(0);
     }
-
-    if(EEW_wave_s != EEW_wave_s_last){
-      EEW_wave_s_Interval = (EEW_wave_s - EEW_wave_s_last) / (60 * ((DT - loopCnt_moni) / 1000));
-      EEW_wave_s_last = EEW_wave_s;
-      EEW_wave_s_put = EEW_wave_s;
-    } else if(EEW_wave_s == EEW_wave_s_last){
-      EEW_wave_s_put += EEW_wave_s_Interval;
-    }
-
-    if(EEW_wave_p != EEW_wave_p_last){
-      EEW_wave_p_Interval = (EEW_wave_p - EEW_wave_p_last) / (60 * ((DT - loopCnt_moni) / 1000));
-      EEW_wave_p_last = EEW_wave_p;
-      EEW_wave_p_put = EEW_wave_p;
-      loopCnt_moni = DT;
-    } else if(EEW_wave_p == EEW_wave_p_last){
-      EEW_wave_p_put += EEW_wave_p_Interval;
-    }
-
-    if(EEW_wave_p_put >= 480000){
-      map.setZoom(6.5);
-    } else if(EEW_wave_p_put >= 320000){
-      map.setZoom(6.5);
-    } else if(EEW_wave_p_put >= 140000){
-      map.setZoom(6.5);
-    } else if(EEW_wave_p_put > 0){
-      map.setZoom(7);
-    }
-    map.setView([EEW_lat, EEW_lng]);
-
-    hypo.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
-
-    wave_s.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
-    wave_s.setRadius(EEW_wave_s_put);
-
-    wave_p.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
-    wave_p.setRadius(EEW_wave_p_put);
-
-  } else {
-    hypo.setLatLng(new L.LatLng(0, 0));
-    wave_s.setLatLng(new L.LatLng(0, 0));
-    wave_p.setLatLng(new L.LatLng(0, 0));
-
-    wave_s.setRadius(0);
-    wave_p.setRadius(0);
   }
-
 }
 
 //--- Init monitor map --- //
