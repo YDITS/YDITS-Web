@@ -789,7 +789,7 @@ function eew(){
     EEW_intensity = EEW_data_nakn['intensity'];
 
     if(EEW_intensity == '不明'){
-      EEW_intensity = '-';
+      EEW_intensity = '?';
     }
 
     // Magnitude
