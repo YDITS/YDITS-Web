@@ -161,7 +161,7 @@ function mainloop(){
       if (DT - loopCnt_eew >= 1000 * EEW_time){
         loopCnt_eew = DT;
 
-        if (EEW_data!== null){
+        if (EEW_data_nakn !== null && EEW_flg){
           eew_loop();
         }
       }
@@ -683,6 +683,14 @@ function init_socket(){
     EEW_isFinal = EEW_data_nakn['isFinal'];
     EEW_repDT   = new Date(EEW_data_nakn['reportTime']);
 
+    if(EEW_isFinal === true && gmt - EEW_repDT >= 1000 * 180){
+      // 最終報発表から3分経過している場合は過去のEEWとする
+      EEW_flg = false;
+    } else {
+      // 最終報発表から3分経過してない場合は発表中のEEWとする
+      EEW_flg = true;
+    }
+
     eew();
   });
 
@@ -690,14 +698,6 @@ function init_socket(){
 
 // ----- EEW ----- //
 function eew(){
-
-  if(EEW_isFinal === true && gmt - EEW_repDT >= 1000 * 180){
-    // 最終報発表から3分経過している場合は過去のEEWとする
-    EEW_flg = false;
-  } else {
-    // 最終報発表から3分経過してない場合は発表中のEEWとする
-    EEW_flg = true;
-  }
 
   // EEW true
   if(EEW_flg){
