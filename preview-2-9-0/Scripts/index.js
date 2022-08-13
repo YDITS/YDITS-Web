@@ -709,7 +709,10 @@ function eew(){
     EEW_repTimeHour = setTime(EEW_repDT.getHours());
     EEW_repTimeMinute = setTime(EEW_repDT.getMinutes());
     EEW_repTimeSecond = setTime(EEW_repDT.getSeconds());
-    
+
+    // Report Number
+    EEW_repNum = EEW_data_nakn["eventSerial"];
+
     // Is cansel
     EEW_isCansel = EEW_data_nakn["isCancel"];
     
@@ -733,7 +736,7 @@ function eew(){
       EEW_originTimeHour = setTime(EEW_originDT.getHours());
       EEW_originTimeMinute = setTime(EEW_originDT.getMinutes());
       EEW_originTimeSecond = setTime(EEW_originDT.getSeconds());
-      
+
       // Is final
       EEW_isFinal = EEW_data_nakn["isFinal"];
       
@@ -787,9 +790,6 @@ function eew(){
         EEW_alertFlg = "{Unknown}"
         break;
     }
-
-    // Report Number
-    EEW_repNum = EEW_data_nakn["eventSerial"];
 
     // Intensity
     EEW_intensity_last = EEW_intensity;
