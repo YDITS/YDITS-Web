@@ -161,7 +161,7 @@ function mainloop(){
       if (DT - loopCnt_eew >= 1000 * EEW_time){
         loopCnt_eew = DT;
 
-        if (EEW_data_nakn !== null && EEW_flg){
+        if (EEW_data_nakn !== null){
           eew_loop();
         }
       }
@@ -1068,33 +1068,34 @@ function eew_loop(){
     EEW_flg = true;
   }
 
-  // Yahoo
+  if(EEW_flg){
+    // Yahoo
+    let EEW_Date = String(timeYear) + String(timeMonth) + String(timeDay);
+    let EEW_DT = String(timeYear) + String(timeMonth) + String(timeDay) + String(timeHour) + String(timeMinute) + String(setTime(setEEW_DT(Number(timeSecond))));
+    let url_EEW_yahoo = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
 
-  let EEW_Date = String(timeYear) + String(timeMonth) + String(timeDay);
-  let EEW_DT = String(timeYear) + String(timeMonth) + String(timeDay) + String(timeHour) + String(timeMinute) + String(setTime(setEEW_DT(Number(timeSecond))));
-  let url_EEW_yahoo = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
+    response = fetch(url_EEW_yahoo)
 
-  response = fetch(url_EEW_yahoo)
+    .then(response => {
+      if (!response.ok) {
+        switch (response.status) {
+          case 403: break;
 
-  .then(response => {
-    if (!response.ok) {
-      switch (response.status) {
-        case 403: break;
-
-        default:
-          console.error(`Connect Error: HTTP ${response.status}`)
-          break;
+          default:
+            console.error(`Connect Error: HTTP ${response.status}`)
+            break;
+        }
       }
-    }
 
-    return response.json()
-  })
+      return response.json()
+    })
 
-  .then(result => {
+    .then(result => {
 
-    EEW_data = result;
+      EEW_data = result;
 
-  })
+    })
+  }
 };
 
 // EEW datetime format
