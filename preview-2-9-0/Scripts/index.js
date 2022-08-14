@@ -162,7 +162,8 @@ function mainloop(){
         loopCnt_eew = DT;
 
         if (EEW_data_nakn !== null){
-          eew_loop();
+          eew();
+          eew_api();
         }
       }
       
@@ -692,6 +693,7 @@ function init_socket(){
     }
 
     eew();
+    eew_api();
   });
 
 }
@@ -1058,7 +1060,7 @@ function eew(){
 }
 
 // eew loop
-function eew_loop(){
+function eew_api(){
 
   if(EEW_isFinal === true && gmt - EEW_repDT >= 1000 * 180){
     // 最終報発表から3分経過している場合は過去のEEWとする
