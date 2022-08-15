@@ -40,7 +40,7 @@ let EEW_intensity = null;
 // Yahoo
 let EEW_data      = null;
 
-let EEW_time    = -1;
+let EEW_time    = 1;
 
 let EEW_repNum      = '';
 let EEW_repNum_last = '';
