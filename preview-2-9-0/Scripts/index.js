@@ -1046,11 +1046,11 @@ function eew(){
       $('#eewInfo').text("緊急地震速報は発表されていません");
     }
 
-    $('#eew .calcintensity_para').text('');
-    $('#eew .region').text('');
-    $('#eew .origin_time').text('');
-    $('#eew .magnitude').text('');
-    $('#eew .depth').text('');
+    $('#monitorInfo>.content .calcintensity>.put').text('');
+    $('#monitorInfo>.content .region').text('');
+    $('#monitorInfo>.content .origin_time').text('');
+    $('#monitorInfo>.content .magnitude').text('');
+    $('#monitorInfo>.content .depth').text('');
 
     $('#monitorInfo').css({
       'background-color': EEW_bgc,
@@ -1117,66 +1117,64 @@ function setEEW_DT(num){
 
 // ----- Monitor ----- //
 function monitor(){
-  if(EEW_data != null){
-    if(EEW_data["hypoInfo"] != null){
+  if(EEW_data["hypoInfo"] != null){
 
-      EEW_waves = EEW_data['psWave']['items'][0];
+    EEW_waves = EEW_data['psWave']['items'][0];
 
-      if (EEW_waves !== null){
-        EEW_lat = EEW_waves['latitude'].replace("N", "");
-        EEW_lng = EEW_waves['longitude'].replace("E", "");
-        EEW_hypo_LatLng = new L.LatLng(EEW_lat, EEW_lng);
+    if (EEW_waves !== null){
+      EEW_lat = EEW_waves['latitude'].replace("N", "");
+      EEW_lng = EEW_waves['longitude'].replace("E", "");
+      EEW_hypo_LatLng = new L.LatLng(EEW_lat, EEW_lng);
 
-        EEW_wave_p = EEW_waves['pRadius'];
-        EEW_wave_s = EEW_waves['sRadius'];
-        EEW_wave_p *= 1000;
-        EEW_wave_s *= 1000;
-      }
-
-      if(EEW_wave_s != EEW_wave_s_last){
-        EEW_wave_s_Interval = (EEW_wave_s - EEW_wave_s_last) / (60 * ((DT - loopCnt_moni) / 1000));
-        EEW_wave_s_last = EEW_wave_s;
-        EEW_wave_s_put = EEW_wave_s;
-      } else if(EEW_wave_s == EEW_wave_s_last){
-        EEW_wave_s_put += EEW_wave_s_Interval;
-      }
-
-      if(EEW_wave_p != EEW_wave_p_last){
-        EEW_wave_p_Interval = (EEW_wave_p - EEW_wave_p_last) / (60 * ((DT - loopCnt_moni) / 1000));
-        EEW_wave_p_last = EEW_wave_p;
-        EEW_wave_p_put = EEW_wave_p;
-        loopCnt_moni = DT;
-      } else if(EEW_wave_p == EEW_wave_p_last){
-        EEW_wave_p_put += EEW_wave_p_Interval;
-      }
-
-      if(EEW_wave_p_put >= 480000){
-        map.setZoom(6.5);
-      } else if(EEW_wave_p_put >= 320000){
-        map.setZoom(6.5);
-      } else if(EEW_wave_p_put >= 140000){
-        map.setZoom(6.5);
-      } else if(EEW_wave_p_put > 0){
-        map.setZoom(7);
-      }
-      map.setView([EEW_lat, EEW_lng]);
-
-      hypo.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
-
-      wave_s.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
-      wave_s.setRadius(EEW_wave_s_put);
-
-      wave_p.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
-      wave_p.setRadius(EEW_wave_p_put);
-
-    } else {
-      hypo.setLatLng(new L.LatLng(0, 0));
-      wave_s.setLatLng(new L.LatLng(0, 0));
-      wave_p.setLatLng(new L.LatLng(0, 0));
-
-      wave_s.setRadius(0);
-      wave_p.setRadius(0);
+      EEW_wave_p = EEW_waves['pRadius'];
+      EEW_wave_s = EEW_waves['sRadius'];
+      EEW_wave_p *= 1000;
+      EEW_wave_s *= 1000;
     }
+
+    if(EEW_wave_s != EEW_wave_s_last){
+      EEW_wave_s_Interval = (EEW_wave_s - EEW_wave_s_last) / (60 * ((DT - loopCnt_moni) / 1000));
+      EEW_wave_s_last = EEW_wave_s;
+      EEW_wave_s_put = EEW_wave_s;
+    } else if(EEW_wave_s == EEW_wave_s_last){
+      EEW_wave_s_put += EEW_wave_s_Interval;
+    }
+
+    if(EEW_wave_p != EEW_wave_p_last){
+      EEW_wave_p_Interval = (EEW_wave_p - EEW_wave_p_last) / (60 * ((DT - loopCnt_moni) / 1000));
+      EEW_wave_p_last = EEW_wave_p;
+      EEW_wave_p_put = EEW_wave_p;
+      loopCnt_moni = DT;
+    } else if(EEW_wave_p == EEW_wave_p_last){
+      EEW_wave_p_put += EEW_wave_p_Interval;
+    }
+
+    if(EEW_wave_p_put >= 480000){
+      map.setZoom(6.5);
+    } else if(EEW_wave_p_put >= 320000){
+      map.setZoom(6.5);
+    } else if(EEW_wave_p_put >= 140000){
+      map.setZoom(6.5);
+    } else if(EEW_wave_p_put > 0){
+      map.setZoom(7);
+    }
+    map.setView([EEW_lat, EEW_lng]);
+
+    hypo.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+
+    wave_s.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+    wave_s.setRadius(EEW_wave_s_put);
+
+    wave_p.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+    wave_p.setRadius(EEW_wave_p_put);
+
+  } else {
+    hypo.setLatLng(new L.LatLng(0, 0));
+    wave_s.setLatLng(new L.LatLng(0, 0));
+    wave_p.setLatLng(new L.LatLng(0, 0));
+
+    wave_s.setRadius(0);
+    wave_p.setRadius(0);
   }
 }
 
@@ -1706,7 +1704,7 @@ function history(){
             break;
         }
 
-        $('#earthquake_history .content').append(`
+        $('#earthquake_history .content').prepend(`
           <li class="list list-${i}">
             <div class="maxScale">
               <p>${p2p_maxScale}</p>
