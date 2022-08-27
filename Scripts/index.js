@@ -531,6 +531,16 @@ function settings_init(){
   $(document).on('click', '#btn_eew_cancel_chk_sound', function(){
     EEW_Cancel_voice.play();
   });
+  $(document).on('click', '#btn_push_chk', function(){
+    Push.create(`YDITS for Web`, {
+      body: `これはプッシュ通知のテストです。`,
+      timeout: 10000,
+      onClick: function () {
+          window.focus(); 
+          this.close();
+      }
+    })
+  });
 };
 
 // --- Change darkmode --- //
