@@ -36,6 +36,14 @@ let EEW_repDT       = null;
 let EEW_origin_time = null;
 
 let EEW_intensity = null;
+let EEW_hypocenter = "";
+
+let EEW_originTimeYear   = -1;
+let EEW_originTimeMonth  = -1;
+let EEW_originTimeDay    = -1;
+let EEW_originTimeHour   = -1;
+let EEW_originTimeMinute = -1;
+let EEW_originTimeSecond = -1;
 
 // Yahoo
 let EEW_data      = null;
@@ -202,6 +210,7 @@ function mainloop(){
 // ----- Page ----- //
 function page_init(){
   init_sounds();
+  init_push();
   settings_init();
   licence_init();
   select_init();
@@ -283,6 +292,19 @@ function init_sounds(){
     p2p_7_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_7_v.mp3");
     p2p_8_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_8_v.mp3");
     p2p_9_voice = new Audio("https://yone1130.github.io/YDITS-Web/Sounds/info_9_v.mp3");
+  }
+}
+
+// --- Push --- //
+function init_push(){
+  if (!Push.Permission.has()) {
+    Push.Permission.request(
+      // OK
+      () => {},
+
+      // NG
+      () => {}
+    )
   }
 }
 
@@ -694,6 +716,7 @@ function init_socket(){
 
     eew();
     eew_api();
+    eew_push(); 
   });
 
 }
@@ -717,7 +740,7 @@ function eew(){
 
     // Is cansel
     EEW_isCansel = EEW_data_nakn["isCancel"];
-    
+
     if (EEW_isCansel == true){
       if(pageLang === 'en-US'){
         EEW_repNum_p = 'Cancel';
@@ -758,12 +781,15 @@ function eew(){
       
       // hypocenter name
       EEW_hypocenter = EEW_data_nakn['hypocenter']['name'];
-      
+    } else {
+
+      EEW_hypocenter = "---"
+
     }
 
     // Is training
     EEW_isTraining = EEW_data_nakn["isTraining"];
-    
+
     // Alert flag
     EEW_alertFlg = EEW_data_nakn['alertFlg'];
 
@@ -949,7 +975,7 @@ function eew(){
     // $('#eew').addClass('active');
 
     if(pageLang === 'en-US'){
-      $('#eew .info').text(`Earthquake Early Warning ${EEW_alertFlg} (${EEW_repNum_p})`);
+      $('#eew .info').text(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`);
     } else {
       $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}（${EEW_repNum_p}）`);
     }
@@ -960,7 +986,7 @@ function eew(){
     })
 
     if(pageLang === 'en-US'){
-      $('#eewInfo').text(`Earthquake Early Warning ${EEW_alertFlg} (${EEW_repNum_p})`);
+      $('#eewInfo').text(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`);
     } else {
       $('#eewInfo').text(`緊急地震速報 ${EEW_alertFlg}（${EEW_repNum_p}）`);
     }
@@ -1099,6 +1125,51 @@ function eew_api(){
     })
   }
 };
+
+// ----- EEW push ----- //
+function eew_push(){
+  if (EEW_isCansel) {
+    if (pageLang === 'en-US') {
+      Push.create(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`, {
+        body: `The earthquake early warning just announced has been canceled.\nSelect here to view the page.\n`,
+        timeout: 10000,
+        onClick: function () {
+            window.focus(); 
+            this.close();
+        }
+      })
+    } else {
+      Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
+        body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。\n`,
+        timeout: 10000,
+        onClick: function () {
+            window.focus(); 
+            this.close();
+        }
+      })
+    }
+  } else {
+    if (pageLang === 'en-US') {
+      Push.create(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`, {
+        body: `Earthquake occurs in ${EEW_hypocenter}. Expected max intensity is ${EEW_intensity}.\nSelect here to view the page.\n`,
+        timeout: 10000,
+        onClick: function () {
+            window.focus(); 
+            this.close();
+        }
+      })
+    } else {
+      Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
+        body: `${EEW_hypocenter}で地震発生。予想最大震度は${EEW_intensity}です。\nページ表示するにはここを選択してください。\n`,
+        timeout: 10000,
+        onClick: function () {
+            window.focus(); 
+            this.close();
+        }
+      })
+    }
+  }
+}
 
 // EEW datetime format
 function setEEW_DT(num){
@@ -1397,10 +1468,6 @@ function information(){
         break;
     }
 
-    // --- update --- //
-
-    p2p_id_last = p2p_id;
-
     // --- Magnitude --- //
     p2p_magnitude = p2p_data[0]['earthquake']['hypocenter']['magnitude'];
 
@@ -1531,6 +1598,26 @@ function information(){
     $(`#earthquake_info .maxScale`).css({
       'background-color': p2p_bgc,
       'color': p2p_fntc
+    })
+
+    information_push();
+
+    // --- update --- //
+    p2p_id_last = p2p_id;
+
+  }
+}
+
+// ----- Information push ----- //
+function information_push(){
+  if (p2p_id_last != -1) {
+    Push.create(p2p_type_put, {
+      body: `${p2p_hypocenter}を震源とする、最大震度${p2p_maxScale}の地震がありました。\n規模は${p2p_magnitude}、深さは${p2p_depth}と推定されます。\n${p2p_tsunami}\nページ表示するにはここを選択してください。\n`,
+      timeout: 10000,
+      onClick: function () {
+          window.focus(); 
+          this.close();
+      }
     })
   }
 }
