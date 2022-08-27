@@ -1115,10 +1115,10 @@ function setEEW_DT(num){
   return ret;
 }
 
-// ----- Monitor ----- //(
+// ----- Monitor ----- //
 function monitor(){
   if(EEW_data != null){
-    if(EEW_data["hypoInfo"] != null){
+    if(EEW_data["hypoInfo"] != null && EEW_flg){
 
       EEW_waves = EEW_data['psWave']['items'][0];
 
@@ -1706,7 +1706,7 @@ function history(){
             break;
         }
 
-        $('#earthquake_history .content').prepend(`
+        $('#earthquake_history .content').append(`
           <li class="list list-${i}">
             <div class="maxScale">
               <p>${p2p_maxScale}</p>
