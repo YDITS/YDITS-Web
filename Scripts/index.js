@@ -716,7 +716,7 @@ function init_socket(){
 
     eew();
     eew_api();
-    eew_push(); 
+    if (EEW_flg) {eew_push();} 
   });
 
 }
