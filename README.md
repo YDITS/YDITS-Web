@@ -9,6 +9,7 @@ YDITS for Web
 
 #### 言語/ライブラリ
 - HTML5/CSS3
+- JavaScript
 - Leaflet
 
 #### コード管理
