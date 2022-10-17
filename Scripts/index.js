@@ -791,6 +791,19 @@ function eew(){
       
       // hypocenter name
       EEW_hypocenter = EEW_data_nakn['hypocenter']['name'];
+
+      // Depth
+      EEW_depth = EEW_data_nakn['hypocenter']['depth'];
+
+      if(EEW_depth == null){
+        if(pageLang === 'en-US'){
+          EEW_depth = 'Unknown';
+        } else {
+          EEW_depth = '不明';
+        }
+      } else {
+        EEW_depth = "" + EEW_depth;
+      }
     } else {
 
       EEW_hypocenter = "---"
@@ -849,19 +862,6 @@ function eew(){
       }
     } else {
       EEW_Magnitude = "M" + EEW_Magnitude;
-    }
-
-    // Depth
-    EEW_depth = EEW_data_nakn['hypocenter']['depth'];
-
-    if(EEW_depth == null){
-      if(pageLang === 'en-US'){
-        EEW_depth = 'Unknown';
-      } else {
-        EEW_depth = '不明';
-      }
-    } else {
-      EEW_depth = "" + EEW_depth;
     }
 
     // Sound
