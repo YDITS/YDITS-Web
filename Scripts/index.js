@@ -791,19 +791,6 @@ function eew(){
       
       // hypocenter name
       EEW_hypocenter = EEW_data_nakn['hypocenter']['name'];
-
-      // Depth
-      EEW_depth = EEW_data_nakn['hypocenter']['depth'];
-
-      if(EEW_depth == null){
-        if(pageLang === 'en-US'){
-          EEW_depth = 'Unknown';
-        } else {
-          EEW_depth = '不明';
-        }
-      } else {
-        EEW_depth = "" + EEW_depth;
-      }
     } else {
 
       EEW_hypocenter = "---"
@@ -862,6 +849,19 @@ function eew(){
       }
     } else {
       EEW_Magnitude = "M" + EEW_Magnitude;
+    }
+
+    // Depth
+    EEW_depth = EEW_data_nakn['hypocenter']['depth'];
+
+    if(EEW_depth == null){
+      if(pageLang === 'en-US'){
+        EEW_depth = 'Unknown';
+      } else {
+        EEW_depth = '不明';
+      }
+    } else {
+      EEW_depth = "" + EEW_depth;
     }
 
     // Sound
@@ -1142,7 +1142,6 @@ function eew_push(){
     if (pageLang === 'en-US') {
       Push.create(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`, {
         body: `The earthquake early warning just announced has been canceled.\nSelect here to view the page.\n`,
-        timeout: 10000,
         onClick: function () {
             window.focus(); 
             this.close();
@@ -1151,7 +1150,6 @@ function eew_push(){
     } else {
       Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
         body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。\n`,
-        timeout: 10000,
         onClick: function () {
             window.focus(); 
             this.close();
@@ -1162,7 +1160,6 @@ function eew_push(){
     if (pageLang === 'en-US') {
       Push.create(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`, {
         body: `Earthquake occurs in ${EEW_hypocenter}. Expected max intensity is ${EEW_intensity}.\nSelect here to view the page.\n`,
-        timeout: 10000,
         onClick: function () {
             window.focus(); 
             this.close();
@@ -1171,7 +1168,6 @@ function eew_push(){
     } else {
       Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
         body: `${EEW_hypocenter}で地震発生。予想最大震度は${EEW_intensity}です。\nページ表示するにはここを選択してください。\n`,
-        timeout: 10000,
         onClick: function () {
             window.focus(); 
             this.close();
@@ -1623,7 +1619,6 @@ function information_push(){
   if (p2p_id_last != -1) {
     Push.create(p2p_type_put, {
       body: `${p2p_hypocenter}を震源とする、最大震度${p2p_maxScale}の地震がありました。\n規模は${p2p_magnitude}、深さは${p2p_depth}と推定されます。\n${p2p_tsunami}\nページ表示するにはここを選択してください。\n`,
-      timeout: 10000,
       onClick: function () {
           window.focus(); 
           this.close();
