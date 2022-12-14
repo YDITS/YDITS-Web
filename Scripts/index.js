@@ -167,12 +167,9 @@ function mainloop(){
     case 0:
       // EEW
       if (DT - loopCnt_eew >= 1000 * EEW_time){
-        loopCnt_eew = DT;
+            loopCnt_eew = DT;
 
-        if (EEW_data_nakn !== null){
-          eew();
-          eew_api();
-        }
+            eew();
       }
       
       // P2P get
@@ -214,8 +211,6 @@ function page_init(){
   settings_init();
   licence_init();
   select_init();
-
-  init_socket();
 }
 
 // --- Get server datetime --- //
@@ -446,11 +441,27 @@ function settings_init(){
     }
   })
 
+    // --- EEW get cnt
+    if(localStorage.getItem("settings-getCnt_eew") != null){
+        EEW_time = Number(localStorage.getItem("settings-getCnt_eew"));
+      } else {
+        EEW_time = 1;
+      }
+    
+      $('#settings_bar_cnt_eew').val(EEW_time);
+      $('#settings_put_cnt_eew').text(EEW_time);
+    
+      $(document).on('input', '#settings_bar_cnt_eew', function(){
+        EEW_time = $('#settings_bar_cnt_eew').val();
+        localStorage.setItem('settings-getCnt_eew', String(EEW_time));
+        $('#settings_put_cnt_eew').text(EEW_time);
+    });
+
   // --- P2P get cnt
   if(localStorage.getItem("settings-getCnt_p2p") != null){
     p2p_time = Number(localStorage.getItem("settings-getCnt_p2p"));
   } else {
-    p2p_time = 12;
+    p2p_time = 8;
   }
 
   $('#settings_bar_cnt').val(p2p_time);
@@ -463,7 +474,11 @@ function settings_init(){
   });
 
   $(document).on('click', '#btn_resetSettings', function(){
-    p2p_time = 12;
+    EEW_time = 1;
+    $('#settings_bar_cnt_eew').val(EEW_time);
+    $('#settings_put_cnt_eew').text(EEW_time);
+
+    p2p_time = 8;
     $('#settings_bar_cnt').val(p2p_time);
     $('#settings_put_cnt').text(p2p_time);
 
@@ -702,439 +717,444 @@ function licence_init(){
   })
 }
 
-// ----- Socket ----- //
-function init_socket(){
-
-  const naknSocket = new WebSocket('wss://eew.ws.nakn.jp:8080/eew');
-
-  // naknSocket.addEventListener('open', function (event) {
-  // });
-
-  naknSocket.addEventListener('message', function (event) {
-    EEW_data_nakn = JSON.parse(event.data);
-
-    EEW_isFinal = EEW_data_nakn['isFinal'];
-    EEW_repDT   = new Date(EEW_data_nakn['reportTime']);
-
-    if(EEW_isFinal === true && gmt - EEW_repDT >= 1000 * 180){
-      // 最終報発表から3分経過している場合は過去のEEWとする
-      EEW_flg = false;
-    } else {
-      // 最終報発表から3分経過してない場合は発表中のEEWとする
-      EEW_flg = true;
-    }
-
-    eew();
-    eew_api();
-    if (EEW_flg) {eew_push();} 
-  });
-
-}
-
 // ----- EEW ----- //
 function eew(){
-
-  // EEW true
-  if(EEW_flg){
-
-    // Report datetime
-    EEW_repTimeYear = setTime(EEW_repDT.getFullYear());
-    EEW_repTimeMonth = setTime(EEW_repDT.getMonth() + 1);
-    EEW_repTimeDay = setTime(EEW_repDT.getDate());
-    EEW_repTimeHour = setTime(EEW_repDT.getHours());
-    EEW_repTimeMinute = setTime(EEW_repDT.getMinutes());
-    EEW_repTimeSecond = setTime(EEW_repDT.getSeconds());
-
-    // Report Number
-    EEW_repNum = EEW_data_nakn["eventSerial"];
-
-    // Is cansel
-    EEW_isCansel = EEW_data_nakn["isCancel"];
-
-    if (EEW_isCansel == true){
-      if(pageLang === 'en-US'){
-        EEW_repNum_p = 'Cancel';
-      } else {
-        EEW_repNum_p = '取消報';
-      }
-    }
-    
-    // Calsel false
-    if(!EEW_isCansel){
-      
-      // Origin datetime
-      EEW_originDT = new Date(EEW_data_nakn['originTime']);
-
-      EEW_originTimeYear = setTime(EEW_originDT.getFullYear());
-      EEW_originTimeMonth = setTime(EEW_originDT.getMonth() + 1);
-      EEW_originTimeDay = setTime(EEW_originDT.getDate());
-      EEW_originTimeHour = setTime(EEW_originDT.getHours());
-      EEW_originTimeMinute = setTime(EEW_originDT.getMinutes());
-      EEW_originTimeSecond = setTime(EEW_originDT.getSeconds());
-
-      // Is final
-      EEW_isFinal = EEW_data_nakn["isFinal"];
-      
-      if (EEW_isFinal == true){
-        if(pageLang === 'en-US'){
-          EEW_repNum_p = 'Final report';
-        } else {
-          EEW_repNum_p = '最終報';
-        }
-      } else {
-        if(pageLang === 'en-US'){
-          EEW_repNum_p = `Report #${EEW_repNum}`
-        } else {
-          EEW_repNum_p = `第${EEW_repNum}報`
-        }
-      }
-      
-      // hypocenter name
-      EEW_hypocenter = EEW_data_nakn['hypocenter']['name'];
-    } else {
-
-      EEW_hypocenter = "---"
-
-    }
-
-    // Is training
-    EEW_isTraining = EEW_data_nakn["isTraining"];
-
-    // Alert flag
-    EEW_alertFlg = EEW_data_nakn['alertFlg'];
-
-    switch (EEW_alertFlg) {
-      case true:
-        if(pageLang === 'en-US'){
-          EEW_alertFlg = "Warning"
-        } else {
-          EEW_alertFlg = "警報"
-        }
-        break;
-
-      case false:
-        if(pageLang === 'en-US'){
-          EEW_alertFlg = "Forecast"
-        } else {
-          EEW_alertFlg = "予報"
-        }
-        break;
-
-      case null:
-        EEW_alertFlg = "{Null}"
-        break;
-
-      default:
-        EEW_alertFlg = "{Unknown}"
-        break;
-    }
-
-    // Intensity
-    EEW_intensity_last = EEW_intensity;
-
-    EEW_intensity = EEW_data_nakn['intensity'];
-
-    if(EEW_intensity == '不明'){
-      EEW_intensity = '?';
-    }
-
-    // Magnitude
-    EEW_Magnitude = EEW_data_nakn['magnitude'];
-
-    if(EEW_Magnitude == null){
-      if(pageLang === 'en-US'){
-        EEW_Magnitude = 'Unknown';
-      } else {
-        EEW_Magnitude = '不明';
-      }
-    } else {
-      EEW_Magnitude = "M" + EEW_Magnitude;
-    }
-
-    // Depth
-    EEW_depth = EEW_data_nakn['hypocenter']['depth'];
-
-    if(EEW_depth == null){
-      if(pageLang === 'en-US'){
-        EEW_depth = 'Unknown';
-      } else {
-        EEW_depth = '不明';
-      }
-    } else {
-      EEW_depth = "" + EEW_depth;
-    }
-
-    // Sound
-    if(settings_playSound_eew_any == true && EEW_intensity_last != EEW_intensity){
-      switch (EEW_intensity) {
-        case '1':
-          EEW_sound.play();
-          EEW_1_voice.play();
-          break;
-
-          case '2':
-          EEW_sound.play();
-          EEW_2_voice.play();
-          break;
-
-        case '3':
-          EEW_sound.play();
-          EEW_3_voice.play();
-          break;
-
-        case '4':
-          EEW_sound.play();
-          EEW_4_voice.play();
-          break;
-
-        case '5-':
-          EEW_sound.play();
-          EEW_5_voice.play();
-          break;
-
-        case '5+':
-          EEW_sound.play();
-          EEW_6_voice.play();
-          break;
-
-        case '6-':
-          EEW_sound.play();
-          EEW_7_voice.play();
-          break;
-
-        case '6+':
-          EEW_sound.play();
-          EEW_8_voice.play();
-          break;
-
-        case '7':
-          EEW_sound.play();
-          EEW_9_voice.play();
-          break;
-
-        default:
-          EEW_sound.play();
-          break;
-      }
-    }
-
-    if (EEW_isCansel == true){
-      if(settings_playSound_eew_cancel == true){
-        // 取消報 受信時
-        EEW_Cancel_voice.play();
-      }
-    }
-
-    // ----- put ----- //
-    let EEW_bgc;
-    let EEW_fntc;
-
-    switch (EEW_intensity) {
-      case '1':
-        EEW_bgc = "#c0c0c0"; 
-        EEW_fntc = "#010101";
-        break;
-      case '2':
-        EEW_bgc = "#2020c0";
-        EEW_fntc = "#ffffff";
-        break;
-      case '3': 
-        EEW_bgc = "#20c020";
-        EEW_fntc = "#010101";
-        break;
-      case '4':
-        EEW_bgc = "#c0c020";
-        EEW_fntc = "#010101";
-        break;
-      case '5-':
-        EEW_bgc = "#c0a020";
-        EEW_fntc = "#010101";
-        break;
-      case '5+':
-        EEW_bgc = "#c07f20";
-        EEW_fntc = "#010101";
-        break;
-      case '6-':
-        EEW_bgc = "#e02020";
-        EEW_fntc = "#ffffff";
-        break;
-      case '6+':
-        EEW_bgc = "#a02020";
-        EEW_fntc = "#ffffff";
-        break;
-      case '7':
-        EEW_bgc = "#7f207f";
-        EEW_fntc = "#ffffff";
-        break;
-      
-      default:
-        EEW_bgc = "#7f7fc0";
-        EEW_fntc = "#010101";
-        break;
-    }
-
-    if (EEW_isCansel == true){
-      EEW_bgc = "#7f7fc0";
-      EEW_fntc = "#010101";
-    }
-
-    // reset_show();
-    // $('#earthquake').addClass('active');
-
-    // reset_show_eq();
-    // $('#eew').addClass('active');
-
-    if(pageLang === 'en-US'){
-      $('#eew .info').text(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`);
-    } else {
-      $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}（${EEW_repNum_p}）`);
-    }
-
-    $('#eew').css({
-      'background-color': EEW_bgc,
-      'color': EEW_fntc
-    })
-
-    if(pageLang === 'en-US'){
-      $('#eewInfo').text(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`);
-    } else {
-      $('#eewInfo').text(`緊急地震速報 ${EEW_alertFlg}（${EEW_repNum_p}）`);
-    }
-
-    $('#monitorInfo').css({
-      'background-color': EEW_bgc,
-      'color': EEW_fntc
-    })
-
-    if(pageLang === 'en-US'){
-      $('#eew .calcintensity_para').text(EEW_intensity);
-      $('#eew .region').text(EEW_hypocenter);
-      $('#eew .origin_time').text(`${EEW_originTimeYear}/${EEW_originTimeMonth}/${EEW_originTimeDay} ${EEW_originTimeHour}:${EEW_originTimeMinute}`);
-      $('#eew .magnitude').text(`${EEW_Magnitude}`);
-      $('#eew .depth').text(`${EEW_depth}`);
-    } else {
-      $('#eew .calcintensity_para').text(EEW_intensity);
-      $('#eew .region').text(EEW_hypocenter);
-      $('#eew .origin_time').text(`発生日時: ${EEW_originTimeYear}/${EEW_originTimeMonth}/${EEW_originTimeDay} ${EEW_originTimeHour}:${EEW_originTimeMinute}`);
-      $('#eew .magnitude').text(`予想規模: ${EEW_Magnitude}`);
-      $('#eew .depth').text(`予想深さ: ${EEW_depth}`);
-    }
-
-    if(pageLang === 'en-US'){
-      $('#monitorInfo>.content .calcintensity>.put').text(EEW_intensity);
-      $('#monitorInfo>.content .region').text(EEW_hypocenter);
-      $('#monitorInfo>.content .origin_time').text(`${EEW_originTimeYear}/${EEW_originTimeMonth}/${EEW_originTimeDay} ${EEW_originTimeHour}:${EEW_originTimeMinute}`);
-      $('#monitorInfo>.content .magnitude').text(`${EEW_Magnitude}`);
-      $('#monitorInfo>.content .depth').text(`${EEW_depth}`);
-    } else {
-      $('#monitorInfo>.content .calcintensity>.put').text(EEW_intensity);
-      $('#monitorInfo>.content .region').text(EEW_hypocenter);
-      $('#monitorInfo>.content .origin_time').text(`${EEW_originTimeYear}/${EEW_originTimeMonth}/${EEW_originTimeDay} ${EEW_originTimeHour}:${EEW_originTimeMinute}`);
-      $('#monitorInfo>.content .magnitude').text(`${EEW_Magnitude}`);
-      $('#monitorInfo>.content .depth').text(`${EEW_depth}`);
-    }
-
-  // EEW false
-  } else {
-    EEW_repNum      = '';
-    EEW_repNum_last = '';
-    EEW_alertFlg    = '';
-
-    EEW_timeYear   = '';
-    EEW_timeMonth  = '';
-    EEW_timeDay    = '';
-    EEW_timeHour   = '';
-    EEW_timeMinute = '';
-
-    EEW_intensity = '';
-    EEW_Region_name   = '';
-    EEW_Magnitude     = '';
-    EEW_depth         = '';
-
-    if(settings_darkMode){
-      EEW_bgc = "#103050";
-      EEW_fntc = "#eeeeee";
-    } else {
-      EEW_bgc = "#e0e0e0";
-      EEW_fntc = "#010101";
-    }
-
-    if(pageLang === 'en-US'){
-      $('#eew .info').text("No Earthquake Early Warning issued");
-    } else {
-      $('#eew .info').text("緊急地震速報は発表されていません");
-    }
-
-    $('#eew .calcintensity_para').text('');
-    $('#eew .region').text('');
-    $('#eew .origin_time').text('');
-    $('#eew .magnitude').text('');
-    $('#eew .depth').text('');
-
-    $('#eew').css({
-      'background-color': EEW_bgc,
-      'color': EEW_fntc
-    })
-
-    if(pageLang === 'en-US'){
-      $('#eewInfo').text("No Earthquake Early Warning issued");
-    } else {
-      $('#eewInfo').text("緊急地震速報は発表されていません");
-    }
-
-    $('#monitorInfo>.content .calcintensity>.put').text('');
-    $('#monitorInfo>.content .region').text('');
-    $('#monitorInfo>.content .origin_time').text('');
-    $('#monitorInfo>.content .magnitude').text('');
-    $('#monitorInfo>.content .depth').text('');
-
-    $('#monitorInfo').css({
-      'background-color': EEW_bgc,
-      'color': EEW_fntc
-    })
-  }
-}
-
-// eew loop
-function eew_api(){
-
-  if(EEW_isFinal === true && gmt - EEW_repDT >= 1000 * 180){
-    // 最終報発表から3分経過している場合は過去のEEWとする
-    EEW_flg = false;
-  } else {
-    // 最終報発表から3分経過してない場合は発表中のEEWとする
-    EEW_flg = true;
-  }
-
-  if(EEW_flg){
-    // Yahoo
-    let EEW_Date = String(timeYear) + String(timeMonth) + String(timeDay);
-    let EEW_DT = String(timeYear) + String(timeMonth) + String(timeDay) + String(timeHour) + String(timeMinute) + String(setTime(setEEW_DT(Number(timeSecond))));
-    let url_EEW_yahoo = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
-
-    response = fetch(url_EEW_yahoo)
-
+    const EEW_Date = String(timeYear) + String(timeMonth) + String(timeDay);
+    const EEW_DT = String(timeYear) + String(timeMonth) + String(timeDay) + String(timeHour) + String(timeMinute) + String(setTime(setEEW_DT(Number(timeSecond))));
+    const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
+  
+    // --- debug
+    // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
+    // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
+    // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
+    // const url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
+    // ---
+  
+    response = fetch(url_EEW)
+  
     .then(response => {
       if (!response.ok) {
         switch (response.status) {
           case 403: break;
-
+  
           default:
-            console.error(`Connect Error: HTTP ${response.status}`)
+            if(pageLang === 'en-US'){
+              $('#eew .info').text(`No connect Error: HTTP ${response.status}`);
+              $('#eewInfo').text(`No connect Error: HTTP ${response.status}`);
+            } else {
+              $('#eew .info').text(`取得できません Error: HTTP ${response.status}`);
+              $('#eewInfo').text(`取得できません Error: HTTP ${response.status}`);
+            }
             break;
         }
       }
-
+  
       return response.json()
     })
-
+  
     .then(result => {
-
+  
       EEW_data = result;
-
+      
+      if(EEW_data["hypoInfo"] != null){
+        EEW_repNum = EEW_data["hypoInfo"]["items"][0]["reportNum"];
+  
+        // --- debug
+        // EEW_repNum = '1';  // First report
+        // EEW_repNum_last = -2;  // Difficalt report
+        // ---
+  
+        if (EEW_repNum != EEW_repNum_last){
+          EEW_repNum_last = EEW_repNum;
+  
+          // --- Final report --- //
+          EEW_isFinal = EEW_data["hypoInfo"]["items"][0]["isFinal"];
+  
+          // --- debug
+          // EEW_isFinal = 'true'; 
+          // ---
+  
+          if (EEW_isFinal == 'true'){
+            if(pageLang === 'en-US'){
+              EEW_repNum_p = 'Final report';
+            } else {
+              EEW_repNum_p = '最終報';
+            }
+          } else {
+            if(pageLang === 'en-US'){
+              EEW_repNum_p = `Report #${EEW_repNum}`
+            } else {
+              EEW_repNum_p = `第${EEW_repNum}報`
+            }
+          }
+  
+          // --- Origin time --- //
+          EEW_origin_time = EEW_data["hypoInfo"]["items"][0]["originTime"];
+          // datetime
+          EEW_timeYear   = EEW_origin_time.substring(0 , 4);
+          EEW_timeMonth  = EEW_origin_time.substring(5 , 7);
+          EEW_timeDay    = EEW_origin_time.substring(8 , 10);
+          EEW_timeHour   = EEW_origin_time.substring(11 , 13);
+          EEW_timeMinute = EEW_origin_time.substring(14, 16);
+          EEW_timeSecond = EEW_origin_time.substring(17, 19);
+  
+          // --- Region name --- //
+          EEW_Region_name = EEW_data["hypoInfo"]["items"][0]["regionName"];
+          
+          // --- debug
+          // EEW_Region_name = '東京湾';
+          // ---
+  
+          if (!EEW_Region_name){
+            if(pageLang === 'en-US'){
+              EEW_Region_name = 'Unknown';
+            } else {
+              EEW_Region_name = '不明';
+            }
+          }
+          
+          // --- Calcintensity --- //
+          EEW_calcintensity_last = EEW_calcintensity;
+  
+          EEW_calcintensity = EEW_data["hypoInfo"]["items"][0]["calcintensity"];
+  
+          // --- debug
+          // EEW_calcintensity = '5-';
+          // ---
+  
+          switch (EEW_calcintensity) {
+            case '01': EEW_calcintensity = "1"; break;
+            case '02': EEW_calcintensity = "2"; break;
+            case '03': EEW_calcintensity = "3"; break;
+            case '04': EEW_calcintensity = "4"; break;
+            case '5-': EEW_calcintensity = "5-"; break;
+            case '5+': EEW_calcintensity = "5+"; break;
+            case '6-': EEW_calcintensity = "6-"; break;
+            case '6+': EEW_calcintensity = "6+"; break;
+            case '07': EEW_calcintensity = "7"; break;
+            
+            default:
+              EEW_calcintensity = `?`;
+              break;
+          }
+  
+          // --- Magnitude --- //
+          EEW_Magnitude = EEW_data["hypoInfo"]["items"][0]["magnitude"];
+  
+          // --- debug
+          // EEW_Magnitude = '7.0';
+          // ---
+          
+          if (EEW_Magnitude){
+            EEW_Magnitude = 'M' + EEW_Magnitude;
+          } else {
+            if(pageLang === 'en-US'){
+              EEW_Magnitude = 'Unknown';
+            } else {
+              EEW_Magnitude = '不明';
+            }
+          }
+  
+          // --- Depth --- //
+          EEW_depth = EEW_data["hypoInfo"]["items"][0]["depth"];
+  
+          // --- debug
+          // EEW_depth = '70km';
+          // ---
+  
+          if (EEW_depth){
+            if(pageLang === 'en-US'){
+              EEW_depth = 'about ' + EEW_depth;
+            } else {
+              EEW_depth = '約' + EEW_depth;
+            }
+          } else {
+            if(pageLang === 'en-US'){
+              EEW_depth = 'Unknown';
+            } else {
+              EEW_depth = '不明';
+            }
+          }
+  
+          // --- alert flag --- //
+  
+          // Yahoo 強震モニタのJSONデータに 予報・警報 のフラッグがないため 未実装
+  
+          // EEW_alertFlg = EEW_data['alertflg'];
+  
+          // switch (EEW_alertFlg) {
+          //   case 'true':
+          //     EEW_alertFlg = "警報"
+          //     break;
+  
+          //   case 'false':
+          //     EEW_alertFlg = "予報"
+          //     break;
+  
+          //   case null:
+          //     EEW_alertFlg = "{Null}"
+          //     break;
+  
+          //   default:
+          //     EEW_alertFlg = "{Unknown}"
+          //     break;
+          // }
+  
+          EEW_alertFlg = '';
+          
+          // --- Is cansel --- //
+          EEW_isCansel = EEW_data["hypoInfo"]["items"][0]['isCancel'];
+  
+          // --- debug
+          // EEW_isCansel = 'true';
+          // ---
+  
+          if (EEW_isCansel == 'true'){
+            if(pageLang === 'en-US'){
+              EEW_alertFlg = 'Cancel';
+            } else {
+              EEW_alertFlg = '取消報';
+            }
+          }
+  
+          // Sound
+          if (EEW_isCansel == 'true'){
+            if(settings_playSound_eew_cancel == true){
+              // 取消報 受信時
+              EEW_Cancel_voice.play();
+            }
+          } else {
+            if(settings_playSound_eew_any == true && EEW_calcintensity_last != EEW_calcintensity){
+              switch (EEW_calcintensity) {
+                case '1':
+                  EEW_sound.play();
+                  EEW_1_voice.play();
+                  break;
+  
+                case '2':
+                  EEW_sound.play();
+                  EEW_2_voice.play();
+                  break;
+  
+                case '3':
+                  EEW_sound.play();
+                  EEW_3_voice.play();
+                  break;
+  
+                case '4':
+                  EEW_sound.play();
+                  EEW_4_voice.play();
+                  break;
+  
+                case '5-':
+                  EEW_sound.play();
+                  EEW_5_voice.play();
+                  break;
+  
+                case '5+':
+                  EEW_sound.play();
+                  EEW_6_voice.play();
+                  break;
+  
+                case '6-':
+                  EEW_sound.play();
+                  EEW_7_voice.play();
+                  break;
+  
+                case '6+':
+                  EEW_sound.play();
+                  EEW_8_voice.play();
+                  break;
+  
+                case '7':
+                  EEW_sound.play();
+                  EEW_9_voice.play();
+                  break;
+  
+                default:
+                  EEW_sound.play();
+                  break;
+              }
+            }
+          }
+  
+          // ----- put ----- //
+          let EEW_bgc;
+          let EEW_fntc;
+  
+          switch (EEW_calcintensity) {
+            case '1':
+              EEW_bgc = "#c0c0c0"; 
+              EEW_fntc = "#010101";
+              break;
+            case '2':
+              EEW_bgc = "#2020c0";
+              EEW_fntc = "#ffffff";
+              break;
+            case '3': 
+              EEW_bgc = "#20c020";
+              EEW_fntc = "#010101";
+              break;
+            case '4':
+              EEW_bgc = "#c0c020";
+              EEW_fntc = "#010101";
+              break;
+            case '5-':
+              EEW_bgc = "#c0a020";
+              EEW_fntc = "#010101";
+              break;
+            case '5+':
+              EEW_bgc = "#c07f20";
+              EEW_fntc = "#010101";
+              break;
+            case '6-':
+              EEW_bgc = "#e02020";
+              EEW_fntc = "#ffffff";
+              break;
+            case '6+':
+              EEW_bgc = "#a02020";
+              EEW_fntc = "#ffffff";
+              break;
+            case '7':
+              EEW_bgc = "#7f207f";
+              EEW_fntc = "#ffffff";
+              break;
+            
+            default:
+              EEW_bgc = "#7f7fc0";
+              EEW_fntc = "#010101";
+              break;
+          }
+  
+          if (EEW_isCansel == 'true'){
+            EEW_bgc = "#7f7fc0";
+            EEW_fntc = "#010101";
+          }
+  
+          // reset_show();
+          // $('#earthquake').addClass('active');
+  
+          // reset_show_eq();
+          // $('#eew').addClass('active');
+  
+          if(pageLang === 'en-US'){
+            $('#eew .info').text(`Earthquake Early Warning ${EEW_alertFlg}(${EEW_repNum_p})`);
+            $('#eew .calcintensity_para').text(EEW_calcintensity);
+            $('#eew .region').text(EEW_Region_name);
+            $('#eew .origin_time').text(`${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+            $('#eew .magnitude').text(`${EEW_Magnitude}`);
+            $('#eew .depth').text(`${EEW_depth}`);
+          } else {
+            $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
+            $('#eew .calcintensity_para').text(EEW_calcintensity);
+            $('#eew .region').text(EEW_Region_name);
+            $('#eew .origin_time').text(`発生日時: ${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+            $('#eew .magnitude').text(`予想規模: ${EEW_Magnitude}`);
+            $('#eew .depth').text(`予想深さ: ${EEW_depth}`);
+          }
+  
+          $('#eew').css({
+            'background-color': EEW_bgc,
+            'color': EEW_fntc
+          })
+  
+          if(pageLang === 'en-US'){
+            $('#eewInfo').text(`Earthquake Early Warning ${EEW_alertFlg}(${EEW_repNum_p})`);
+            $('#monitorInfo>.content .calcintensity>.put').text(EEW_calcintensity);
+            $('#monitorInfo>.content .region').text(EEW_Region_name);
+            $('#monitorInfo>.content .origin_time').text(`${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+            $('#monitorInfo>.content .magnitude').text(`${EEW_Magnitude}`);
+            $('#monitorInfo>.content .depth').text(`${EEW_depth}`);
+          } else {
+            $('#eewInfo').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
+            $('#monitorInfo>.content .calcintensity>.put').text(EEW_calcintensity);
+            $('#monitorInfo>.content .region').text(EEW_Region_name);
+            $('#monitorInfo>.content .origin_time').text(`${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+            $('#monitorInfo>.content .magnitude').text(`${EEW_Magnitude}`);
+            $('#monitorInfo>.content .depth').text(`${EEW_depth}`);
+          }
+  
+          $('#monitorInfo').css({
+            'background-color': EEW_bgc,
+            'color': EEW_fntc
+          })
+  
+        }
+      } else {
+        EEW_repNum      = '';
+        EEW_repNum_last = '';
+        EEW_alertFlg    = '';
+  
+        EEW_timeYear   = '';
+        EEW_timeMonth  = '';
+        EEW_timeDay    = '';
+        EEW_timeHour   = '';
+        EEW_timeMinute = '';
+  
+        EEW_calcintensity = '';
+        EEW_Region_name   = '';
+        EEW_Magnitude     = '';
+        EEW_depth         = '';
+  
+        if(settings_darkMode){
+          EEW_bgc = "#103050";
+          EEW_fntc = "#eeeeee";
+        } else {
+          EEW_bgc = "#e0e0e0";
+          EEW_fntc = "#010101";
+        }
+  
+        if(pageLang === 'en-US'){
+          $('#eew .info').text("No Earthquake Early Warning issued");
+        } else {
+          $('#eew .info').text("緊急地震速報は発表されていません");
+        }
+  
+        $('#eew .calcintensity_para').text('');
+        $('#eew .region').text('');
+        $('#eew .origin_time').text('');
+        $('#eew .magnitude').text('');
+        $('#eew .depth').text('');
+  
+        $('#eew').css({
+          'background-color': EEW_bgc,
+          'color': EEW_fntc
+        })
+  
+        if(pageLang === 'en-US'){
+          $('#eewInfo').text("No Earthquake Early Warning issued");
+        } else {
+          $('#eewInfo').text("緊急地震速報は発表されていません");
+        }
+    
+        $('#eew .calcintensity_para').text('');
+        $('#eew .region').text('');
+        $('#eew .origin_time').text('');
+        $('#eew .magnitude').text('');
+        $('#eew .depth').text('');
+    
+        $('#monitorInfo').css({
+          'background-color': EEW_bgc,
+          'color': EEW_fntc
+        })
+      }
     })
-  }
 };
+
+// EEW datetime format
+function setEEW_DT(num){
+    let ret;
+
+    if (num == 1){
+    ret = 60 - 1;
+    } else if(num == 0) {
+    ret = 60 - 2;
+    } else {
+    ret = num - 2;
+    }
+
+    return ret;
+}
 
 // ----- EEW push ----- //
 function eew_push(){
@@ -1194,8 +1214,7 @@ function setEEW_DT(num){
 
 // ----- Monitor ----- //
 function monitor(){
-  if(EEW_data != null){
-    if(EEW_data["hypoInfo"] != null && EEW_flg){
+    if(EEW_data["hypoInfo"] != null){
 
       EEW_waves = EEW_data['psWave']['items'][0];
 
@@ -1254,7 +1273,6 @@ function monitor(){
       wave_s.setRadius(0);
       wave_p.setRadius(0);
     }
-  }
 }
 
 //--- Init monitor map --- //

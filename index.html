@@ -220,9 +220,17 @@
           <p class="version"></p>
 
           <div class="content getCnt">
+            <label>緊急地震速報 取得間隔</label>
+            <div class="content">
+              <input type="range" min="1" max="2" step="1" value="1" id="settings_bar_cnt_eew">
+              <p><span id="settings_put_cnt_eew"></span>秒ごと</p>
+            </div>
+          </div>
+
+          <div class="content getCnt">
             <label>地震情報 取得間隔</label>
             <div class="content">
-              <input type="range" min="8" max="32" step="2" value="12" id="settings_bar_cnt">
+              <input type="range" min="2" max="10" step="2" value="8" id="settings_bar_cnt">
               <p><span id="settings_put_cnt"></span>秒ごと</p>
             </div>
           </div>
@@ -284,57 +292,61 @@
 
           <div class="content" id="copyrights">
             <ul>
-              <li>
-                <h3>音声 提供</h3>
-                <ul>
-                  <li>
-                    <a target="_blank" href="https://ondoku3.com/ja/about/">音読さん</a> &copy;2022 Ondoku3.
-                  </li>
-                </ul>
-              </li>
+                <li>
+                    <h3><a target="_blank" href="https://ondoku3.com/ja/about/">音読さん</a></h3>
+                    <p>
+                        警報音声の提供<br>
+                        &copy; 2022 Ondoku3
+                    </p>
+                </li>
 
-              <li>
-                <h3>音源 提供</h3>
-                <ul>
-                  <li>
-                    <a target="_blank" href="https://twitter.com/xl9rmushvoCZ8oG/">MENqE721</a> 様
-                  </li>
-                </ul>
-              </li>
+                <li>
+                    <h3><a target="_blank" href="https://twitter.com/xl9rmushvoCZ8oG/">MENqE721</a> 様</h3>
+                    <p>
+                        警報音の提供
+                    </p>
+                </li>
 
-              <li>
-                <h3>緊急地震速報 提供</h3>
-                <ul>
-                  <li>
-                    <a target="_blank" href="https://narikakun.github.io/">&copy; Narikakun</a> が提供する <a target="_blank" href="https://dev.narikakun.net/">WebSocket API</a>  を利用して，<br>
-                    <a href="https://www.jma.go.jp/jma/">国土交通省・気象庁</a> が発表する緊急地震速報を取得。<br><br>
-                  </li>
-                  <li>
-                    <a target="_blank" href="https://developer.yahoo.co.jp/">&copy; Yahoo! JAPAN</a> が提供する <a target="_blank" href="https://typhoon.yahoo.co.jp/weather/jp/earthquake/kyoshin/">強震モニタ</a> を利用して，<br>
-                    緊急地震速報を用いた地震波の到達予想円を取得。
-                  </li>
-                </ul>
-              </li>
+                <li>
+                    <h3><a target="_blank" href="https://typhoon.yahoo.co.jp/weather/jp/earthquake/kyoshin/">Yahoo!天気・災害 リアルタイム震度（強震モニタ）</a></h3>
+                    <p>
+                        緊急地震速報JSONデータの提供<br>
+                        <a target="_blank" href="https://developer.yahoo.co.jp/">&copy; Yahoo! JAPAN</a>
+                    </p>
+                </li>
 
-              <li>
-                <h3>地震情報 提供</h3>
-                <ul>
-                  <li>
-                    <a target="_blank" href="https://www.p2pquake.net/json_api_v2/">P2P地震情報 が提供する JSON API v2</a> を利用して，<br>
-                    <a href="https://www.jma.go.jp/jma/">国土交通省・気象庁</a> が発表する地震情報を取得。 - <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0準拠</a><br>
-                    この情報の利用に際し，<a href="https://www.jma.go.jp/jma/kishou/info/coment.html">気象庁ホームページの利用規約</a> が適用されます。
-                  </li>
-                </ul>
-              </li>
+                <li>
+                    <h3><a href="https://www.jma.go.jp/jma/">国土交通省 気象庁</a></h3>
+                    <p>
+                        緊急地震速報，地震情報の提供<br>
+                        <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0準拠</a><br>
+                        この情報の利用には，<a href="https://www.jma.go.jp/jma/kishou/info/coment.html">気象庁ホームページの利用規約</a> が適用されます。
+                    </p>
+                </li>
 
-              <li>
-                <h3>地図 提供</h3>
-                <ul>
-                  <li><a target="_blank" href="https://leafletjs.com/">&copy; Leaflet</a> (地図描画ライブラリ)<br></li>
-                  <li><a target="_blank" href="https://www.openstreetmap.org/copyright">&copy; OpenStreetMap</a> - <a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0準拠</a> (地図データ)</li>
-                </ul>
-              </li>
-            </ul>
+                <li>
+                    <h3><a target="_blank" href="https://www.p2pquake.net/json_api_v2/">P2P地震情報 JSON API v2</a></h3>
+                    <p>
+                        地震情報のREST APIの提供
+                    </p>
+                </li>
+
+                <li>
+                    <h3><a target="_blank" href="https://leafletjs.com/">Leaflet</a></h3>
+                    <p>
+                        地図描画ライブラリの提供
+                    </p>
+                </li>
+
+                <li>
+                    <h3><a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap &reg;</a></h3>
+                    <p>
+                        地図画像の提供<br>
+                        <a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0準拠</a><br>
+                        OpenStreetMapならびに拡大鏡のロゴおよびState of the MapはOpenStreetMap財団の登録商標です。
+                    </p>
+                </li>
+              </ul>
           </div>
         </div>
       </div>

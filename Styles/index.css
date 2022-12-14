@@ -568,12 +568,15 @@ main {
 }
 
 #copyrights>ul>li {
-  margin-bottom: 2em;
+  padding: 1em 0;
 }
 
-#copyrights>ul>li>ul>li {
-  margin-left: 2em;
-  list-style: disc;
+#copyrights>ul>li>h3 {
+    margin-bottom: .5em;
+}
+
+#copyrights>ul>li>p {
+  padding-left: 1em;
 }
 
 #info_window .link_terms {
