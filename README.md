@@ -16,7 +16,6 @@ YDITS for Web
 - Git/GitHub
 
 #### 外部API
-- Narikakun API
 - Yahoo! JAPAN 強震モニタ JSONデータ
 - P2P地震情報 API
 
