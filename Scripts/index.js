@@ -240,53 +240,53 @@ function getServer_DT(){
 // --- sounds --- //
 function init_sounds(){
   if(pageLang === 'en-US'){
-    EEW_sound = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew.wav");
-    p2p_sound = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info.wav");
+    EEW_sound = new Audio("https://webapp.ydits.net/en-US/Sounds/eew.wav");
+    p2p_sound = new Audio("https://webapp.ydits.net/en-US/Sounds/info.wav");
   
-    EEW_1_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_1_v.mp3");
-    EEW_2_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_2_v.mp3");
-    EEW_3_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_3_v.mp3");
-    EEW_4_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_4_v.mp3");
-    EEW_5_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_5_v.mp3");
-    EEW_6_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_6_v.mp3");
-    EEW_7_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_7_v.mp3");
-    EEW_8_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_8_v.mp3");
-    EEW_9_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_9_v.mp3");
-    EEW_Cancel_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/eew_cancel_v.mp3");
+    EEW_1_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_1_v.mp3");
+    EEW_2_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_2_v.mp3");
+    EEW_3_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_3_v.mp3");
+    EEW_4_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_4_v.mp3");
+    EEW_5_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_5_v.mp3");
+    EEW_6_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_6_v.mp3");
+    EEW_7_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_7_v.mp3");
+    EEW_8_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_8_v.mp3");
+    EEW_9_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_9_v.mp3");
+    EEW_Cancel_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_cancel_v.mp3");
   
-    p2p_1_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info_1_v.mp3");
-    p2p_2_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info_2_v.mp3");
-    p2p_3_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info_3_v.mp3");
-    p2p_4_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info_4_v.mp3");
-    p2p_5_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info_5_v.mp3");
-    p2p_6_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info_6_v.mp3");
-    p2p_7_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info_7_v.mp3");
-    p2p_8_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info_8_v.mp3");
-    p2p_9_voice = new Audio("https://ydits-web.yonejp.net/en-US/Sounds/info_9_v.mp3");
+    p2p_1_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_1_v.mp3");
+    p2p_2_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_2_v.mp3");
+    p2p_3_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_3_v.mp3");
+    p2p_4_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_4_v.mp3");
+    p2p_5_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_5_v.mp3");
+    p2p_6_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_6_v.mp3");
+    p2p_7_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_7_v.mp3");
+    p2p_8_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_8_v.mp3");
+    p2p_9_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_9_v.mp3");
   } else {
-    EEW_sound = new Audio("https://ydits-web.yonejp.net/Sounds/eew.wav");
-    p2p_sound = new Audio("https://ydits-web.yonejp.net/Sounds/info.wav");
+    EEW_sound = new Audio("https://webapp.ydits.net/Sounds/eew.wav");
+    p2p_sound = new Audio("https://webapp.ydits.net/Sounds/info.wav");
   
-    EEW_1_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_1_v.mp3");
-    EEW_2_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_2_v.mp3");
-    EEW_3_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_3_v.mp3");
-    EEW_4_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_4_v.mp3");
-    EEW_5_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_5_v.mp3");
-    EEW_6_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_6_v.mp3");
-    EEW_7_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_7_v.mp3");
-    EEW_8_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_8_v.mp3");
-    EEW_9_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_9_v.mp3");
-    EEW_Cancel_voice = new Audio("https://ydits-web.yonejp.net/Sounds/eew_cancel_v.mp3");
+    EEW_1_voice = new Audio("https://webapp.ydits.net/Sounds/eew_1_v.mp3");
+    EEW_2_voice = new Audio("https://webapp.ydits.net/Sounds/eew_2_v.mp3");
+    EEW_3_voice = new Audio("https://webapp.ydits.net/Sounds/eew_3_v.mp3");
+    EEW_4_voice = new Audio("https://webapp.ydits.net/Sounds/eew_4_v.mp3");
+    EEW_5_voice = new Audio("https://webapp.ydits.net/Sounds/eew_5_v.mp3");
+    EEW_6_voice = new Audio("https://webapp.ydits.net/Sounds/eew_6_v.mp3");
+    EEW_7_voice = new Audio("https://webapp.ydits.net/Sounds/eew_7_v.mp3");
+    EEW_8_voice = new Audio("https://webapp.ydits.net/Sounds/eew_8_v.mp3");
+    EEW_9_voice = new Audio("https://webapp.ydits.net/Sounds/eew_9_v.mp3");
+    EEW_Cancel_voice = new Audio("https://webapp.ydits.net/Sounds/eew_cancel_v.mp3");
   
-    p2p_1_voice = new Audio("https://ydits-web.yonejp.net/Sounds/info_1_v.mp3");
-    p2p_2_voice = new Audio("https://ydits-web.yonejp.net/Sounds/info_2_v.mp3");
-    p2p_3_voice = new Audio("https://ydits-web.yonejp.net/Sounds/info_3_v.mp3");
-    p2p_4_voice = new Audio("https://ydits-web.yonejp.net/Sounds/info_4_v.mp3");
-    p2p_5_voice = new Audio("https://ydits-web.yonejp.net/Sounds/info_5_v.mp3");
-    p2p_6_voice = new Audio("https://ydits-web.yonejp.net/Sounds/info_6_v.mp3");
-    p2p_7_voice = new Audio("https://ydits-web.yonejp.net/Sounds/info_7_v.mp3");
-    p2p_8_voice = new Audio("https://ydits-web.yonejp.net/Sounds/info_8_v.mp3");
-    p2p_9_voice = new Audio("https://ydits-web.yonejp.net/Sounds/info_9_v.mp3");
+    p2p_1_voice = new Audio("https://webapp.ydits.net/Sounds/info_1_v.mp3");
+    p2p_2_voice = new Audio("https://webapp.ydits.net/Sounds/info_2_v.mp3");
+    p2p_3_voice = new Audio("https://webapp.ydits.net/Sounds/info_3_v.mp3");
+    p2p_4_voice = new Audio("https://webapp.ydits.net/Sounds/info_4_v.mp3");
+    p2p_5_voice = new Audio("https://webapp.ydits.net/Sounds/info_5_v.mp3");
+    p2p_6_voice = new Audio("https://webapp.ydits.net/Sounds/info_6_v.mp3");
+    p2p_7_voice = new Audio("https://webapp.ydits.net/Sounds/info_7_v.mp3");
+    p2p_8_voice = new Audio("https://webapp.ydits.net/Sounds/info_8_v.mp3");
+    p2p_9_voice = new Audio("https://webapp.ydits.net/Sounds/info_9_v.mp3");
   }
 }
 
