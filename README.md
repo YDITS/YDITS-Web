@@ -1,34 +1,32 @@
 
 # YDITS for Web
 
-## About | 概要
-
+## About
 YDITS for Web
 
-## 使用技術
+## Usage Technology
 
-#### 言語/ライブラリ
+#### Lagage
 - HTML5/CSS3
 - JavaScript
 - Leaflet
 
-#### コード管理
-- Git/GitHub
-
-#### 外部API
+#### External API
 - Yahoo! JAPAN 強震モニタ JSONデータ
 - P2P地震情報 API
 
-#### その他
+#### Build
+- GitHub Pages
+
+#### Code Management
+- Git/GitHub
+
+#### Ohter
 - 音読さん
 - OpenStreetMap
 
-#### 開発
+#### Developing Software
 - Visual Studio Code
 
-#### 公開
-- GitHub Pages
-
-## LICENCE | ライセンス
-
+## LICENCE
 個人用およびGitHub Pages公開用のため、**ライセンスは置いておらず、改変や複製は一切禁止しています。**
