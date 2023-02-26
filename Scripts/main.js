@@ -1,64 +1,52 @@
 //
 // main.js | YDITS for Web
 //
-// (c) 2022 よね/Yone
+// (c) 2022-2023 よね/Yone
 //
-
-// ---------- Init var ---------- //
+// No modification or reproduction of any kind is permitted.
+// 改変や複製を一切禁じます。
+//
 
 const name_project = "YDITS for Web";
 const ver_project = "2.11.0";
-
 let pageLang = '';
 
-// ---------- Main ---------- //
-document.addEventListener('DOMContentLoaded', function(){
-  init_page();
-  // mainloop();
+document.addEventListener('DOMContentLoaded', function () {
+    init_page();
+    // mainloop();
 })
 
 // ---------- Mainloop ---------- //
-function mainloop(){
-  requestAnimationFrame(mainloop);
+function mainloop() {
+    requestAnimationFrame(mainloop);
 }
 
 // ----- Page ----- //
-function init_page(){
-  init_lang();
-  init_commonElements();
+function init_page() {
+    init_lang();
+    init_commonElements();
 }
 
 // --- Init lang --- //
-function init_lang(){
-  let path = location.pathname
+function init_lang() {
+    let path = location.pathname
 
-  if (path.indexOf('en-US') !== -1) {
-    pageLang = 'en-US';
-  } else {
-    pageLang = 'ja-JP';
-  }
+    if (path.indexOf('en-US') !== -1) {
+        pageLang = 'en-US';
+    } else {
+        pageLang = 'ja-JP';
+    }
 }
 
 // --- Init common elements --- //
-function init_commonElements(){
-  init_commonElements_header();
-  init_commonElements_footer();
+function init_commonElements() {
+    $("header").load("./commonElements/header.html");
+    $("footer").load("./commonElements/footer.html");
 }
 
-// header
-function init_commonElements_header(){
-  $("header").load("./commonElements/header.html");
-}
-
-// footer
-function init_commonElements_footer(){
-  $("footer").load("./commonElements/footer.html");
-}
-
-// ---------- Functions ---------- //
 // --- Window --- //
-function win(winId, winTitle){
-  let newHTML = `
+function win(winId, winTitle) {
+    let newHTML = `
   <dialog class="window" id=${winId}>
     <div class="navBar">
       <p class="title"></p>
@@ -70,11 +58,11 @@ function win(winId, winTitle){
   </dialog>
   `
 
-  document.body.innerHTML += newHTML
+    document.body.innerHTML += newHTML
 
-  $(`#${winId} .navBar .title`).text(winTitle);
+    $(`#${winId} .navBar .title`).text(winTitle);
 
-  $(document).on('click', `#${winId} .navBar .close`, function(){
-    $(`#${winId}`).remove()
-  })
+    $(document).on('click', `#${winId} .navBar .close`, function () {
+        $(`#${winId}`).remove()
+    })
 };

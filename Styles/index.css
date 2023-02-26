@@ -1,574 +1,582 @@
-/* main.css / home / YDITS for Web / Yone */
+/* 
+
+    index.css | home | YDITS for Web
+
+    (c) 2022-2023 よね/Yone
+
+    No modification or reproduction of any kind is permitted.
+    改変や複製を一切禁じます。
+
+*/
 @charset "UTF-8";
 
-/* ----- main ----- */
 main {
-  display: flex;
+    display: flex;
 }
 
 #nav {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-  width: 20vw;
-  height: 35em;
-  border-radius: 1em;
+    width: 20vw;
+    height: 35em;
+    border-radius: 1em;
 
-  background-color: #404040;
-  color: #ffffff;
+    background-color: #404040;
+    color: #ffffff;
 
-  z-index: 1;
+    z-index: 1;
 }
 
 #nav>ul {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 #nav>ul>li {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 
-  margin: 1em;
-  width: 10em;
-  height: 3em;
-  border-radius: .5em;
+    margin: 1em;
+    width: 10em;
+    height: 3em;
+    border-radius: .5em;
 }
 
 #nav ul>li:hover {
-  background-color: #80808080;
+    background-color: #80808080;
 }
 
 #main {
-  width: 80vw;
+    width: 80vw;
 }
 
 #main>.content {
-  display: none;
-  flex-direction: column;
-  align-items: center;
+    display: none;
+    flex-direction: column;
+    align-items: center;
 }
 
 #main>.content.active {
-  display: flex;
+    display: flex;
 }
 
 #select {
-  margin-bottom: 2em;
+    margin-bottom: 2em;
 
-  width: 80%;
-  height: 4.5em;
-  border-radius: 1em;
+    width: 80%;
+    height: 4.5em;
+    border-radius: 1em;
 }
 
 #select ul {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  height: 100%;
-  list-style: none;
-  padding: 0;
+    height: 100%;
+    list-style: none;
+    padding: 0;
 }
 
 #select li {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  /* margin: 0 1em; */
-  width: 30%;
-  height: 80%;
-  border-radius: 1em;
+    /* margin: 0 1em; */
+    width: 30%;
+    height: 80%;
+    border-radius: 1em;
 
-  text-align: center;
+    text-align: center;
 }
 
 #select li:hover {
-  background-color: #80808080;
+    background-color: #80808080;
 }
 
 #earthquake>.content {
-  display: none;
+    display: none;
 
-  width: 80%;
-  min-height: 24em;
-  border-radius: 1em;
+    width: 80%;
+    min-height: 24em;
+    border-radius: 1em;
 
-  padding: 1em;
-  overflow: auto;
+    padding: 1em;
+    overflow: auto;
 }
 
 #earthquake>.content>.title {
-  display: flex;
-  justify-content: center;
-  margin: .5em;
+    display: flex;
+    justify-content: center;
+    margin: .5em;
 }
 
 #earthquake>.content>.info {
-  margin-left: 2em;
+    margin-left: 2em;
 }
 
 #main>.content>.title {
-  display: flex;
-  justify-content: center;
-  
-  margin-bottom: 1em;
+    display: flex;
+    justify-content: center;
+
+    margin-bottom: 1em;
 }
 
 /* EEW */
 #eew.active {
-  display: block;
+    display: block;
 }
 
 #eew .content {
-  display: flex;
-  margin-top: 2em;
+    display: flex;
+    margin-top: 2em;
 }
 
 #eew .calcintensity {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
-  margin: 0 2em;
-  width: 16em;
-  height: 16em;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
-  border-radius: 1em;
+    margin: 0 2em;
+    width: 16em;
+    height: 16em;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+    border-radius: 1em;
 }
 
 #eew .calcintensity h3 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #eew .calcintensity_para {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 8em;
-  font-weight: 900;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 8em;
+    font-weight: 900;
 }
 
 #eew .content .right {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-  font-size: 1.5em;
+    font-size: 1.5em;
 }
 
 #eew .region {
-  font-size: 2em;
-  font-weight: 900;
+    font-size: 2em;
+    font-weight: 900;
 }
 
 /* information */
 #earthquake_info.active {
-  display: block;
+    display: block;
 }
 
 #earthquake_info .content {
-  display: flex;
-  margin-top: 2em;
+    display: flex;
+    margin-top: 2em;
 }
 
 #earthquake_info .maxScale {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
-  margin: 0 2em;
-  width: 16em;
-  height: 16em;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
-  border-radius: 1em;
+    margin: 0 2em;
+    width: 16em;
+    height: 16em;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+    border-radius: 1em;
 }
 
 #earthquake_info .maxScale h3 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #earthquake_info .maxScale .para {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 8em;
-  font-weight: 900;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 8em;
+    font-weight: 900;
 }
 
 #earthquake_info .content .right {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-  font-size: 1.5em;
+    font-size: 1.5em;
 }
 
 #earthquake_info .hypocenter {
-  font-size: 2em;
-  font-weight: 900;
+    font-size: 2em;
+    font-weight: 900;
 }
 
 /* history */
 #earthquake_history.active {
-  display: block;
+    display: block;
 }
 
 #earthquake_history>.content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
 }
 
 #earthquake_history>.content>.list {
-  display: flex;
-  align-items: center;
-  margin: 1em 2em;
+    display: flex;
+    align-items: center;
+    margin: 1em 2em;
 }
 
 #earthquake_history>.content>.list>.maxScale {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  margin-right: .5em;
-  width: 1.5em;
-  height: 1.5em;
-  border-radius: .25em;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+    margin-right: .5em;
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: .25em;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
 
-  font-size: 4em;
+    font-size: 4em;
 }
 
 #earthquake_history>.content>.list>.right>.hypoInfo {
-  display: flex;
+    display: flex;
 }
 
 #earthquake_history>.content>.list>.right>.hypoInfo>p {
-  margin-right: 1em;
+    margin-right: 1em;
 }
 
 #earthquake_history>.content>.list>.right>.hypocenter {
-  font-size: 2em;
+    font-size: 2em;
 }
 
 #mapContainer {
-  position: relative;
-  width: 90%;
-  height: 80vh;
+    position: relative;
+    width: 90%;
+    height: 80vh;
 }
 
 #mapContainer.fullScreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
 }
 
 #map {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 
-  overflow: hidden;
+    overflow: hidden;
 
-  z-index: 2;
+    z-index: 2;
 }
 
 #monitorInfo {
-  position: absolute;
-  top: 1px;
-  left: 1px;
+    position: absolute;
+    top: 1px;
+    left: 1px;
 
-  width: 20em;
-  height: 8em;
+    width: 20em;
+    height: 8em;
 
-  overflow: hidden;
-  padding: 4px;
-  background-color: #103050;
+    overflow: hidden;
+    padding: 4px;
+    background-color: #103050;
 
-  z-index: 3;
+    z-index: 3;
 }
 
 #monitorInfo>.content {
-  display: flex;
+    display: flex;
 
-  width: 100%;
-  height: 85%;
+    width: 100%;
+    height: 85%;
 
-  overflow: hidden;
+    overflow: hidden;
 }
 
 #eewInfo {
-  display: block;
+    display: block;
 
-  margin-bottom: 8px;
+    margin-bottom: 8px;
 
-  width: 100%;
-  height: 15%;
+    width: 100%;
+    height: 15%;
 
-  font-size: 1em;
-  font-weight: 600;
+    font-size: 1em;
+    font-weight: 600;
 }
 
 #monitorInfo>.content>.calcintensity {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-  margin-right: 16px;
+    margin-right: 16px;
 
-  width: 50%;
-  height: 100%;
-  text-align: center;
-  line-height: 1em;
-  font-size: .8em;
+    width: 50%;
+    height: 100%;
+    text-align: center;
+    line-height: 1em;
+    font-size: .8em;
 }
 
 #monitorInfo>.content>.calcintensity>.put {
-  position: absolute;
-  bottom: 42px;
-  display: flex;
-  flex-direction: column;
-  /* justify-content: center; */
-  align-items: center;
+    position: absolute;
+    bottom: 42px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
 
-  /* width: 100%; */
-  /* height: 100%; */
+    /* width: 100%; */
+    /* height: 100%; */
 
-  font-size: 5em;
-  font-weight: 900;
+    font-size: 5em;
+    font-weight: 900;
 }
 
 #monitorInfo>.content>.container {
-  width: 100%;
+    width: 100%;
 }
 
 #monitorInfo>.content>.container span {
-  display: block;
+    display: block;
 }
 
 #monitorInfo>.content>.container .region {
-  font-size: 1.7em;
-  font-weight: 600;
+    font-size: 1.7em;
+    font-weight: 600;
 }
 
 #monitorInfo>.content>.container .origin_time {
-  font-size: 1.2em;
+    font-size: 1.2em;
 }
 
 #monitorInfo>.content>.container .hypoInfo {
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 
-  font-size: 1.5em;
-  font-weight: 600;
+    font-size: 1.5em;
+    font-weight: 600;
 }
 
 #btn_fullScreen {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-  border-radius: 100%;
-  width: 3em;
-  height: 3em;
+    border-radius: 100%;
+    width: 3em;
+    height: 3em;
 
-  background-color: #80808080;
+    background-color: #80808080;
 
-  cursor: pointer;
+    cursor: pointer;
 
-  z-index: 3;
+    z-index: 3;
 }
 
 #btn_fullScreen span {
-  display: none;
+    display: none;
 }
 
 #btn_fullScreen span.active {
-  display: block;
+    display: block;
 }
 
 #menu {
-  min-height: 40em;
+    min-height: 40em;
 }
 
 #menu>.list {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 
-  margin-bottom: 2em;
-  width: 80%;
-  height: 4em;
-  border-radius: .2em;
+    margin-bottom: 2em;
+    width: 80%;
+    height: 4em;
+    border-radius: .2em;
 
-  padding: 0 0 0 2em;
-  background-color: #80808020;
-  text-decoration: none;
+    padding: 0 0 0 2em;
+    background-color: #80808020;
+    text-decoration: none;
 }
 
 #menu>.list:hover {
-  background-color: #80808080;
+    background-color: #80808080;
 }
 
 #menu>.list>span {
-  margin-right: 1em;
+    margin-right: 1em;
 }
 
 #menu>.windows {
-  display: none;
-  min-height: 30em;
+    display: none;
+    min-height: 30em;
 }
 
 #menu>.windows.active {
-  display: block;
+    display: block;
 }
 
 #settings_window {
-  position: absolute;
-  top: 4em;
-  left: 0;
-  right: 0;
+    position: absolute;
+    top: 4em;
+    left: 0;
+    right: 0;
 
-  margin: 2em auto;
-  width: 80%;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
-  border-radius: 1em;
+    margin: 2em auto;
+    width: 80%;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+    border-radius: 1em;
 
-  padding: 2em 4em 8em 4em;
-  background-color: #fff;
+    padding: 2em 4em 8em 4em;
+    background-color: #fff;
 
-  z-index: 2;
+    z-index: 2;
 }
 
 #settings_window .close {
-  position: absolute;
-  top: 1em;
-  right: 1em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  width: 32px;
-  height: 32px;
-  border-radius: .2em;
+    width: 32px;
+    height: 32px;
+    border-radius: .2em;
 
-  cursor: pointer;
+    cursor: pointer;
 }
 
 #settings_window .close:hover {
-  background-color: #80808080;
+    background-color: #80808080;
 }
 
 #settings_window .title {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 #settings_window .version {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 #settings_window>.content {
-  margin: 2em 0;
+    margin: 2em 0;
 }
 
 #settings_window>.content label {
-  display: block;
-  font-size: 1.3em;
+    display: block;
+    font-size: 1.3em;
 }
 
 #settings_window .playSound .eew,
 #settings_window .playSound .info {
-  margin-top: 2em;
+    margin-top: 2em;
 }
 
 #settings_window .playSound .eew>.content,
 #settings_window .playSound .info>.content {
-  margin-top: 1em;
+    margin-top: 1em;
 }
 
 #settings_window .getCnt>.content {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 #settings_window .content>.content {
-  margin-top: .5em;
+    margin-top: .5em;
 }
 
 #btn_earthquake_info_chk_sound {
-  height: 2em;
+    height: 2em;
 }
 
 #settings_window .getCnt #settings_bar_cnt {
-  margin-right: 1em;
+    margin-right: 1em;
 }
 
 #settings_window .getCnt #settings_bar_cnt_eew {
-  margin-right: 1em;
+    margin-right: 1em;
 }
 
 #licence_window {
-  position: absolute;
-  top: 4em;
-  left: 0;
-  right: 0;
+    position: absolute;
+    top: 4em;
+    left: 0;
+    right: 0;
 
-  margin: 2em auto;
-  width: 80%;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
-  border-radius: 1em;
+    margin: 2em auto;
+    width: 80%;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2);
+    border-radius: 1em;
 
-  padding: 2em 4em 8em 4em;
-  background-color: #fff;
+    padding: 2em 4em 8em 4em;
+    background-color: #fff;
 
-  z-index: 2;
+    z-index: 2;
 }
 
 #licence_window .close {
-  position: absolute;
-  top: 1em;
-  right: 1em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  width: 32px;
-  height: 32px;
-  border-radius: .2em;
+    width: 32px;
+    height: 32px;
+    border-radius: .2em;
 
-  cursor: pointer;
+    cursor: pointer;
 }
 
 #licence_window .close:hover {
-  background-color: #80808080;
+    background-color: #80808080;
 }
 
 #licence_window .title {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 #licence_window>.content {
-  margin: 2em 0;
+    margin: 2em 0;
 }
 
 #copyrights>ul>li {
-  padding: 1em 0;
+    padding: 1em 0;
 }
 
 #copyrights>ul>li>h3 {
@@ -576,123 +584,123 @@ main {
 }
 
 #copyrights>ul>li>p {
-  padding-left: 1em;
+    padding-left: 1em;
 }
 
 #info_window .link_terms {
-  display: inline-block;
-  margin: 0 2em 0 0;
-  text-align: center;
-  font-size: 1.2em;
+    display: inline-block;
+    margin: 0 2em 0 0;
+    text-align: center;
+    font-size: 1.2em;
 }
 
 /* ----- Responsive ----- */
 @media (max-width: 1024px) {
-  body {
-    margin-bottom: 4em;
-  }
+    body {
+        margin-bottom: 4em;
+    }
 
-  #nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
+    #nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
 
-    width: 100%;
-    height: 4em;
-    border-radius: .5em .5em 0 0;
+        width: 100%;
+        height: 4em;
+        border-radius: .5em .5em 0 0;
 
-    padding: 0;
-    background-color: #404040;
+        padding: 0;
+        background-color: #404040;
 
-    z-index: 4;
-  }
+        z-index: 4;
+    }
 
-  #nav>ul {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
+    #nav>ul {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
 
-    width: 90%;
-    height: 100%;
-  }
+        width: 90%;
+        height: 100%;
+    }
 
-  #nav> ul>li {
-    flex-direction: column;
+    #nav>ul>li {
+        flex-direction: column;
 
-    width: 33%;
-  }
+        width: 33%;
+    }
 
-  #main {
-    width: 100%;
-  }
+    #main {
+        width: 100%;
+    }
 }
 
 @media (max-width: 769px) {
-  main {
-    padding: 2em 1em;
-  }
+    main {
+        padding: 2em 1em;
+    }
 
-  #settings_window {
-    padding: 2em 2em 8em 2em;
-  }
+    #settings_window {
+        padding: 2em 2em 8em 2em;
+    }
 
-  #licence_window {
-    padding: 2em 2em 8em 2em;
-  }
+    #licence_window {
+        padding: 2em 2em 8em 2em;
+    }
 
-  #earthquake>.content {
-    width: 90%;
-    font-size: .7em;
-  }
+    #earthquake>.content {
+        width: 90%;
+        font-size: .7em;
+    }
 
-  #monitor>.content {
-    width: 100%;
-    font-size: .7em;
-  }
+    #monitor>.content {
+        width: 100%;
+        font-size: .7em;
+    }
 
-  /* #monitorInfo {
+    /* #monitorInfo {
     width: 100%;
   } */
 
-  #select {
-    width: 100%;
-  }
-  
-  #select ul {
-    margin: 0;
-  }
+    #select {
+        width: 100%;
+    }
+
+    #select ul {
+        margin: 0;
+    }
 }
 
 @media (max-width: 512px) {
-  #earthquake_info .content {
-    display: flex;
-    align-items: center;
-  }
+    #earthquake_info .content {
+        display: flex;
+        align-items: center;
+    }
 
-  #eew .content {
-    display: flex;
-    align-items: center;
-  }
+    #eew .content {
+        display: flex;
+        align-items: center;
+    }
 
-  #earthquake>.content {
-    min-height: 38em;
-    padding-bottom: 4em;
-  }
+    #earthquake>.content {
+        min-height: 38em;
+        padding-bottom: 4em;
+    }
 
-  #earthquake>.content>.content {
-    display: flex;
-    flex-direction: column;
-  }
+    #earthquake>.content>.content {
+        display: flex;
+        flex-direction: column;
+    }
 
-  #earthquake>.content>.content>.right {
-    margin-top: 1em;
-  }
+    #earthquake>.content>.content>.right {
+        margin-top: 1em;
+    }
 
-  #earthquake>.content>.info {
-    margin: 0;
-    text-align: center;
-  }
+    #earthquake>.content>.info {
+        margin: 0;
+        text-align: center;
+    }
 }
