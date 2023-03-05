@@ -8,7 +8,7 @@
 //
 
 const name_project = "YDITS for Web";
-const ver_project = "2.11.0";
+const ver_project = "2.12.0";
 let pageLang = '';
 
 document.addEventListener('DOMContentLoaded', function () {
