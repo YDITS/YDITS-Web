@@ -11,7 +11,7 @@
 @charset "UTF-8";
 
 /* ----- Dialog ----- */
-.window {
+.dialog {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -34,7 +34,7 @@
     z-index: 10;
 }
 
-.window .navBar {
+.dialog .navBar {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -46,7 +46,7 @@
     background-color: #e0e0e0;
 }
 
-.window .navBar .title {
+.dialog .navBar .title {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -57,7 +57,7 @@
     overflow: hidden;
 }
 
-.window .navBar .close {
+.dialog .navBar .close {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -74,11 +74,11 @@
     cursor: pointer
 }
 
-.window .navBar .close:hover {
+.dialog .navBar .close:hover {
     background-color: #c0c0c0;
 }
 
-.window .content {
+.dialog .content {
     overflow: auto;
 }
 

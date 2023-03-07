@@ -7,58 +7,37 @@
 // 改変や複製を一切禁じます。
 //
 
-const name_project = "YDITS for Web";
-const ver_project = "2.12.0";
-let pageLang = '';
+const version = "3.0.0";
 
-document.addEventListener('DOMContentLoaded', function () {
-    init_page();
-    // mainloop();
-})
+document.addEventListener('DOMContentLoaded', () => {
+    initPage();
+});
 
-// ---------- Mainloop ---------- //
-function mainloop() {
-    requestAnimationFrame(mainloop);
-}
 
-// ----- Page ----- //
-function init_page() {
-    init_lang();
+// -------------------- Functions -------------------- //
+function initPage() {
     init_commonElements();
 }
 
-// --- Init lang --- //
-function init_lang() {
-    let path = location.pathname
 
-    if (path.indexOf('en-US') !== -1) {
-        pageLang = 'en-US';
-    } else {
-        pageLang = 'ja-JP';
-    }
-}
-
-// --- Init common elements --- //
 function init_commonElements() {
-    $("header").load("./commonElements/header.html");
-    $("footer").load("./commonElements/footer.html");
+    $("header").load("./elements/header.html");
+    $("footer").load("./elements/footer.html");
 }
 
-// --- Window --- //
-function win(winId, winTitle) {
-    let newHTML = `
-  <dialog class="window" id=${winId}>
-    <div class="navBar">
-      <p class="title"></p>
-      <span class="close material-symbols-outlined">close</span>
-    </div>
-  
-    <div class="content">
-    </div>
-  </dialog>
-  `
 
-    document.body.innerHTML += newHTML
+function win(winId, winTitle) {
+    document.body.innerHTML += `
+        <dialog class="dialog" id=${winId}>
+            <div class="navBar">
+                <p class="title"></p>
+                <span class="close material-symbols-outlined">close</span>
+            </div>
+        
+            <div class="content">
+            </div>
+        </dialog>
+    `
 
     $(`#${winId} .navBar .title`).text(winTitle);
 

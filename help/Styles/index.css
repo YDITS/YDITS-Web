@@ -1,62 +1,56 @@
 /* main.css / help / YDITS for Web / Yone */
 @charset "UTF-8";
+
 /* ----- Elements ----- */
 main {
-  padding: 0;
-  min-height: 100vh;
+    padding: 0;
+    min-height: 100vh;
 }
 
-header {
-  background-color: #cccccc;
-}
-
-footer {
-  background-color: #cccccc;
-}
 
 /* ----- Elements ----- */
 #main {
-  padding: 2em 10vw;
+    padding: 2em 10vw;
 }
 
 #pageTitle {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 #links {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-  padding: 2em 0;
+    padding: 2em 0;
 }
 
 #links .link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  margin-bottom: 2em;
-  
-  width: 60vw;
-  height: 4em;
-  border-radius: .5em;
-  
-  background-color: #c0c0ff;
-  color: #010101;
-  text-decoration: none;
-  font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 2em;
+
+    width: 60vw;
+    height: 4em;
+    border-radius: .5em;
+
+    background-color: #c0c0ff;
+    color: #010101;
+    text-decoration: none;
+    font-size: 1.5em;
 }
 
 #links .link:hover {
-  background-color: #c0c0ffa0;
+    background-color: #c0c0ffa0;
 }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 511px) {
-  #links .link {
-    width: 75vw;
-    font-size: 1.2em;
-  }
+    #links .link {
+        width: 75vw;
+        font-size: 1.2em;
+    }
 }

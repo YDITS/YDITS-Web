@@ -7,7 +7,7 @@ YDITS for Web
 ## Usage Technology
 
 #### Lagage
-- HTML5/CSS3
+- HTML/CSS
 - JavaScript
 - Leaflet
 
@@ -16,10 +16,7 @@ YDITS for Web
 - P2P地震情報 API
 
 #### Build
-- GitHub Pages
-
-#### Code Management
-- Git/GitHub
+- Cloudflare Pages
 
 #### Ohter
 - 音読さん
@@ -29,4 +26,4 @@ YDITS for Web
 - Visual Studio Code
 
 ## LICENCE
-個人用およびGitHub Pages公開用のため、**ライセンスは置いておらず、改変や複製は一切禁止しています。**
+ページ公開用のため、**ライセンスは置いておらず、改変や複製は一切禁止しています。**

@@ -1,6 +1,6 @@
 <!-- 
 
-    index.html | home | YDITS for Web
+    index.html | YDITS for Web
 
     (c) 2022-2023 よね/Yone
 
@@ -15,30 +15,27 @@
     <meta charset="UTF-8">
     <meta name="application-name" content="YDITS for Web">
     <meta name="description" content="YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。">
+    <meta name="keywords" content="YDITS">
     <meta name="author" content="よね/Yone">
     <meta name="generator" content="Microsoft Visual Studio Code">
-    <meta name="keywords" content="YDITS">
-    <title>YDITS for Web</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="dark light">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="YDITS for Web">
-
-    <base href="https://webapp.ydits.net/">
+    <title>YDITS for Web</title>
 
     <meta property="og:url" content=" https://webapp.ydits.net/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="YDITS for Web">
-    <meta property="og:title" content="">
+    <meta property="og:title" content="YDITS for Web">
     <meta property="og:description" content="YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。">
-    <meta property="og:image" content="./Images/icon.png">
-    <meta name="twitter:site" content="@yone1130_">
+    <meta property="og:image" content="https://webapp.ydits.net/Images/icon.png">
+    <meta name="twitter:site" content="@YDITS_JP">
     <meta name="twitter:card" content="summary">
 
+    <base href="https://webapp.ydits.net/">
     <link rel="shortcut icon" type="image/x-icon" href="./Images/icon.png">
     <link rel="apple-touch-icon-precomposed" href="./Images/icon.png">
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
         integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
         crossorigin="">
@@ -53,7 +50,6 @@
         rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-
 
     <script src="./Scripts/jquery-3.6.0.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -73,328 +69,225 @@
     <header></header>
 
     <main>
-        <div id="nav">
-            <ul>
-                <li class="home">
-                    <span class="material-symbols-outlined">
-                        home
-                    </span>
-                    ホーム
-                </li>
-
-                <li class="monitor">
-                    <span class="material-symbols-outlined">
-                        layers
-                    </span>
-                    強震モニタ
-                </li>
-
-                <li class="menu">
-                    <span class="material-symbols-outlined">
-                        menu
-                    </span>
-                    メニュー
-                </li>
-
-            </ul>
-        </div>
-
-        <div id="main">
-            <div class="content" id="earthquake">
-
-                <section id="select">
-                    <ul>
-                        <li id="btn_info">
-                            <p>地震情報</p>
-                        </li>
-                        <li id="btn_eew">
-                            <p>緊急地震速報</p>
-                        </li>
-                        <li id="btn_history">
-                            <p>地震履歴</p>
-                        </li>
-                    </ul>
-                </section>
-
-                <section class="content" id="eew">
-                    <h1 class="title">緊急地震速報</h1>
-                    <h2 class="info"></h2>
-
-                    <div class="content">
-                        <div class="calcintensity">
-                            <h3>予想最大震度</h3>
-                            <p class="calcintensity_para"></p>
-                        </div>
-
-                        <div class="right">
-                            <p class="region"></p>
-                            <p class="origin_time"></p>
-                            <p class="magnitude"></p>
-                            <p class="depth"></p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="content" id="earthquake_info">
-                    <h1 class="title">地震情報</h1>
-                    <h2 class="info"></h2>
-
-                    <div class="content">
-                        <div class="maxScale">
-                            <h3>最大震度</h3>
-                            <p class="para"></p>
-                        </div>
-
-                        <div class="right">
-                            <p class="hypocenter"></p>
-                            <p class="time"></p>
-                            <p class="magnitude"></p>
-                            <p class="depth"></p>
-                            <p class="tsunami"></p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="content" id="earthquake_history">
-                    <h1 class="title">地震履歴 (直近20件)</h1>
-
-                    <ul class="content">
-                    </ul>
-                </section>
+        <div id="control">
+            <div id="list">
+                <ul>
+                    <li id="menuBtn">
+                        <span class="material-symbols-outlined">menu</span>
+                    </li>
+                </ul>
             </div>
 
-            <div class="content" id="menu">
-                <h2 class="title">メニュー</h2>
-
-                <div class="list settings">
-                    <span class="material-symbols-outlined">
-                        settings
-                    </span>
-                    設定
-                </div>
-
-                <div class="list licence">
-                    <span class="material-symbols-outlined">
-                        info
-                    </span>
-                    ライセンス情報
-                </div>
-
-                <a class="list help" target="_blank" href="./help/">
-                    <span class="material-symbols-outlined">
-                        help
-                    </span>
-                    ヘルプ
-                </a>
-
-                <a class="list terms" target="_blank" href="https://www.ydits.net/terms/">
-                    <span class="material-symbols-outlined">
-                        article
-                    </span>
-                    利用規約
-                </a>
-
-                <a class="list contact" target="_blank" href="https://www.yoneyo.com/site/contact/">
-                    <span class="material-symbols-outlined">
-                        mail
-                    </span>
-                    お問い合わせ
-                </a>
-
-                <div class="windows" id="settings_window">
-                    <span class="material-symbols-outlined close">
-                        close
-                    </span>
-
-                    <h2 class="title">設定</h2>
-
-                    <p class="version"></p>
-
-                    <div class="content getCnt">
-                        <label>緊急地震速報 取得間隔</label>
-                        <div class="content">
-                            <input type="range" min="1" max="2" step="1" value="1" id="settings_bar_cnt_eew">
-                            <p><span id="settings_put_cnt_eew"></span>秒ごと</p>
+            <div id="panel">
+                <div id="eewField">
+                    <span id="eewTitle"></span>
+                    <div class="content">
+                        <div class="left">
+                            <span class="title">予想最大震度</span>
+                            <span id="eewCalc"></span>
                         </div>
-                    </div>
-
-                    <div class="content getCnt">
-                        <label>地震情報 取得間隔</label>
-                        <div class="content">
-                            <input type="range" min="2" max="10" step="2" value="8" id="settings_bar_cnt">
-                            <p><span id="settings_put_cnt"></span>秒ごと</p>
-                        </div>
-                    </div>
-
-                    <div class="content darkMode">
-                        <label>ダークモード</label>
-                        <div class="content toggle-switch">
-                            <div class="span"></div>
-                        </div>
-                    </div>
-
-                    <div class="content playSound">
-                        <label>音声と効果音</label>
-                        <p>一部のブラウザでは効果音が再生されない可能性があります。</p>
-                        <div class="eew">
-                            <label>- 緊急地震速報 受信時</label>
-                            <div class="content any">
-                                <label>震度変化時</label>
-                                <div class="content toggle-switch">
-                                    <div class="span"></div>
-                                </div>
-                            </div>
-
-                            <div class="content cancel">
-                                <label>取消報</label>
-                                <div class="content toggle-switch">
-                                    <div class="span"></div>
+                        <div class="right">
+                            <span id="eewRegion"></span>
+                            <div id="eewInfo">
+                                <span id="eewOrigin_time"></span>
+                                <div class="eqinfo">
+                                    <span id="eewMagnitude"></span>
+                                    <span id="eewDepth"></span>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="info">
-                            <label>- 地震情報 受信時</label>
+                <div id="eqHistoryField"></div>
+            </div>
+        </div>
+
+        <div id="map">
+
+        </div>
+
+        <div id="popup">
+            <div class="window" id="menu">
+                <span class="material-symbols-outlined closeBtn">close</span>
+
+                <span class="title">メニュー</span>
+
+                <div class="lists">
+                    <div class="list" id="menuSettings">
+                        <span class="material-symbols-outlined">
+                            settings
+                        </span>
+                        設定
+                    </div>
+
+                    <div class="list" id="menuLicense">
+                        <span class="material-symbols-outlined">
+                            info
+                        </span>
+                        ライセンス情報
+                    </div>
+
+                    <a class="list" id="menuHelp" target="_blank" href="./help/">
+                        <span class="material-symbols-outlined">
+                            help
+                        </span>
+                        ヘルプ
+                    </a>
+
+                    <a class="list" id="menuTerms" target="_blank" href="https://www.ydits.net/terms/">
+                        <span class="material-symbols-outlined">
+                            article
+                        </span>
+                        利用規約
+                    </a>
+
+                    <a class="list" id="menuContact" target="_blank" href="https://www.yoneyo.com/site/contact/">
+                        <span class="material-symbols-outlined">
+                            mail
+                        </span>
+                        お問い合わせ
+                    </a>
+                </div>
+            </div>
+
+            <div class="window" id="settings">
+                <span class="material-symbols-outlined closeBtn">close</span>
+
+                <span class="title">設定</span>
+
+                <p class="version"></p>
+
+                <div class="list" id="settings_getCnt_eew">
+                    <label>緊急地震速報 取得間隔</label>
+                    <div class="content">
+                        <input type="range" min="1" max="2" step="1" value="1" id="settings_getCnt_eew_bar">
+                        <p><span id="settings_getCnt_eew_put"></span>秒ごと</p>
+                    </div>
+                </div>
+
+                <div class="list" id="settings_getCnt_eqinfo">
+                    <label>地震情報 取得間隔</label>
+                    <div class="content">
+                        <input type="range" min="2" max="10" step="2" value="8" id="settings_getCnt_eqinfo_bar">
+                        <p><span id="settings_getCnt_eqinfo_put"></span>秒ごと</p>
+                    </div>
+                </div>
+
+                <div class="list" id="settings_playSound">
+                    <label>音声と効果音</label>
+                    <p>一部のブラウザでは効果音が再生されない可能性があります。</p>
+                    <div id="settings_playSound_eew">
+                        <label class="sectionTitle">- 緊急地震速報 受信時</label>
+                        <div class="content" id="settings_playSound_eew_any">
+                            <label>震度変化時</label>
+                            <div class="content toggle-switch">
+                                <div class="span"></div>
+                            </div>
+                        </div>
+
+                        <div class="content" id="settings_playSound_eew_cancel">
+                            <label>取消報</label>
                             <div class="content toggle-switch">
                                 <div class="span"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="content">
-                        <p>設定は自動的に保存されます</p>
-                        <button id="btn_resetSettings">設定をリセット</button><br>
-                    </div>
-
-                    <div class="content">
-                        <button id="btn_eew_chk_sound">緊急地震速報の音声をテスト再生</button>
-                        <button id="btn_earthquake_info_chk_sound">地震情報の音声をテスト再生</button>
-                        <button id="btn_eew_cancel_chk_sound">取消報の音声をテスト再生</button>
-                        <button id="btn_push_chk">プッシュ通知のテスト</button>
+                    <div id="settings_playSound_eqinfo">
+                        <label class="sectionTitle">- 地震情報 受信時</label>
+                        <div class="content toggle-switch">
+                            <div class="span"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="windows" id="licence_window">
-                    <span class="material-symbols-outlined close">
-                        close
-                    </span>
+                <div class="list">
+                    <label>設定は自動的に保存されます</label>
+                    <button id="settings_resetSettingsBtn">設定をリセット</button><br>
+                </div>
 
-                    <h2 class="title">ライセンス情報</h2>
-
-                    <div class="content" id="copyrights">
-                        <ul>
-                            <li>
-                                <h3><a target="_blank" href="https://ondoku3.com/ja/about/">音読さん</a></h3>
-                                <p>
-                                    警報音声の提供<br>
-                                    &copy; 2022 Ondoku3
-                                </p>
-                            </li>
-
-                            <li>
-                                <h3><a target="_blank" href="https://twitter.com/xl9rmushvoCZ8oG/">MENqE721</a> 様</h3>
-                                <p>
-                                    警報音の提供
-                                </p>
-                            </li>
-
-                            <li>
-                                <h3><a target="_blank"
-                                        href="https://typhoon.yahoo.co.jp/weather/jp/earthquake/kyoshin/">Yahoo!天気・災害
-                                        リアルタイム震度（強震モニタ）</a></h3>
-                                <p>
-                                    緊急地震速報JSONデータの提供<br>
-                                    <a target="_blank" href="https://developer.yahoo.co.jp/">&copy; Yahoo! JAPAN</a>
-                                </p>
-                            </li>
-
-                            <li>
-                                <h3><a href="https://www.jma.go.jp/jma/">国土交通省 気象庁</a></h3>
-                                <p>
-                                    緊急地震速報，地震情報の提供<br>
-                                    <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0準拠</a><br>
-                                    この情報の利用には，<a
-                                        href="https://www.jma.go.jp/jma/kishou/info/coment.html">気象庁ホームページの利用規約</a>
-                                    が適用されます。
-                                </p>
-                            </li>
-
-                            <li>
-                                <h3><a target="_blank" href="https://www.p2pquake.net/json_api_v2/">P2P地震情報 JSON API
-                                        v2</a></h3>
-                                <p>
-                                    地震情報のREST APIの提供
-                                </p>
-                            </li>
-
-                            <li>
-                                <h3><a target="_blank" href="https://leafletjs.com/">Leaflet</a></h3>
-                                <p>
-                                    地図描画ライブラリの提供
-                                </p>
-                            </li>
-
-                            <li>
-                                <h3><a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap&reg;</a></h3>
-                                <p>
-                                    地図画像の提供<br>
-                                    <a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0準拠</a><br>
-                                    OpenStreetMapならびに拡大鏡のロゴおよびState of the MapはOpenStreetMap財団の登録商標です。
-                                </p>
-                            </li>
-
-                            <li>
-                                <h3><a target="_blank" href="https://stadiamaps.com/">Stadia Maps</a></h3>
-                                <p>
-                                    地図画像の提供
-                                </p>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="list">
+                    <button id="btn_eew_chk_sound">緊急地震速報の音声をテスト再生</button>
+                    <button id="btn_earthquake_info_chk_sound">地震情報の音声をテスト再生</button>
+                    <button id="btn_eew_cancel_chk_sound">取消報の音声をテスト再生</button>
+                    <button id="btn_push_chk">プッシュ通知のテスト</button>
                 </div>
             </div>
 
-            <div class="content" id="monitor">
-                <h2 class="title">強震モニタ</h2>
+            <div class="window" id="license">
+                <span class="material-symbols-outlined closeBtn">close</span>
 
-                <div id="mapContainer">
-                    <div class="content" id="map"></div>
+                <h2 class="title">ライセンス情報</h2>
 
-                    <div id="monitorInfo">
-                        <span id="eewInfo"></span>
+                <div class="content" id="copyrights">
+                    <ul>
+                        <li>
+                            <h3><a target="_blank" href="https://ondoku3.com/ja/about/">音読さん</a></h3>
+                            <p>
+                                警報音声の提供<br>
+                                &copy; 2022 Ondoku3
+                            </p>
+                        </li>
 
-                        <div class="content">
-                            <div class="calcintensity">
-                                <span>予想最大震度</span>
-                                <span class="put"></span>
-                            </div>
+                        <li>
+                            <h3><a target="_blank" href="https://twitter.com/xl9rmushvoCZ8oG/">MENqE721</a> 様</h3>
+                            <p>
+                                警報音の提供
+                            </p>
+                        </li>
 
-                            <div class="container">
-                                <span class="region"></span>
-                                <span class="origin_time"></span>
-                                <div class="hypoInfo">
-                                    <span class="magnitude"></span>
-                                    <span class="depth"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        <li>
+                            <h3><a target="_blank"
+                                    href="https://typhoon.yahoo.co.jp/weather/jp/earthquake/kyoshin/">Yahoo!天気・災害
+                                    リアルタイム震度（強震モニタ）</a></h3>
+                            <p>
+                                緊急地震速報JSONデータの提供<br>
+                                <a target="_blank" href="https://developer.yahoo.co.jp/">&copy; Yahoo! JAPAN</a>
+                            </p>
+                        </li>
 
-                    <div id="btn_fullScreen">
-                        <span class="material-symbols-outlined on active">
-                            fullscreen
-                        </span>
+                        <li>
+                            <h3><a href="https://www.jma.go.jp/jma/">国土交通省 気象庁</a></h3>
+                            <p>
+                                緊急地震速報，地震情報の提供<br>
+                                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY
+                                    4.0準拠</a><br>
+                                この情報の利用には，<a href="https://www.jma.go.jp/jma/kishou/info/coment.html">気象庁ホームページの利用規約</a>
+                                が適用されます。
+                            </p>
+                        </li>
 
-                        <span class="material-symbols-outlined off">
-                            fullscreen_exit
-                        </span>
-                    </div>
+                        <li>
+                            <h3><a target="_blank" href="https://www.p2pquake.net/json_api_v2/">P2P地震情報 JSON API
+                                    v2</a></h3>
+                            <p>
+                                地震情報のREST APIの提供
+                            </p>
+                        </li>
+
+                        <li>
+                            <h3><a target="_blank" href="https://leafletjs.com/">Leaflet</a></h3>
+                            <p>
+                                地図描画ライブラリの提供
+                            </p>
+                        </li>
+
+                        <li>
+                            <h3><a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap
+                                    &reg;</a></h3>
+                            <p>
+                                地図画像の提供<br>
+                                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA
+                                    2.0準拠</a><br>
+                                OpenStreetMapならびに拡大鏡のロゴおよびState of the MapはOpenStreetMap財団の登録商標です。
+                            </p>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </main>
-
-    <footer></footer>
 </body>
 
 </html>

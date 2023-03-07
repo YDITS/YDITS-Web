@@ -3,18 +3,21 @@
 //
 // (c) 2022-2023 よね/Yone
 //
+// No modification or reproduction of any kind is permitted.
+// 改変や複製を一切禁じます。
+//
 
 let scene = 0;
 let gmt;
 let DT;
-let loopCnt_getDT = -1;
+let cnt_getNTP = -1;
 
 let settings_darkMode;
 let settings_playSound_eew_any;
 let settings_playSound_eew_cancel;
-let settings_playSound_info;
+let settings_playSound_eqinfo;
 
-let loopCnt_eew = -1;
+let cnt_eew = -1;
 let EEW_flg = false;
 let EEW_data_nakn = null;
 let EEW_repDT = null;
@@ -51,7 +54,7 @@ let EEW_fntc;
 let p2p_data;
 let p2p_time = -1;
 let p2p_time_temp = -1;
-let loopCnt_p2p = -1;
+let cnt_p2p = -1;
 let p2p_id = -1;
 let p2p_id_last = -1;
 
@@ -67,6 +70,7 @@ let p2p_his_cnt = 0;
 let loopCnt_history = -1;
 
 let map;
+let cnt_mapMove = -1;
 let hypo = null;
 let wave_s = null;
 let wave_p = null;
@@ -109,144 +113,97 @@ let p2p_8_voice
 let p2p_9_voice
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    page_init();
+document.addEventListener('DOMContentLoaded', () => {
+    init();
     mainloop();
 })
 
 
+// -------------------- Functions -------------------- //
 // ---------- Mainloop ---------- //
 function mainloop() {
-    DT = new Date();
+    dateNow = new Date();
 
-    if (DT - loopCnt_getDT >= 1000 * 1) {
-        loopCnt_getDT = DT;
-        getServer_DT();
+    if (dateNow - cnt_getNTP >= 1000) {
+        cnt_getNTP = dateNow;
+        getNtp();
     }
 
-    switch (scene) {
-        case 0:
-            // EEW
-            if (DT - loopCnt_eew >= 1000 * EEW_time) {
-                loopCnt_eew = DT;
-                eew();
-            }
-
-            // P2P get
-            if (p2p_id_last != -1) {
-                p2p_time = p2p_time_temp;
-            } else if (p2p_id_last == -1 && p2p_time_temp == -1) {
-                p2p_time_temp = p2p_time;
-                p2p_time = 1;
-            }
-
-            if (DT - loopCnt_p2p >= 1000 * p2p_time) {
-                loopCnt_p2p = DT;
-                getInfo();
-                information();
-                history();
-            }
-
-            if ($('#monitor').hasClass('active')) {
-                monitor();
-            }
-
-            break;
-
-        default: break;
+    if (dateNow - cnt_eew >= 1000 * EEW_time) {
+        cnt_eew = dateNow;
+        eew();
     }
+
+    if (dateNow - cnt_p2p >= 1000 * p2p_time) {
+        cnt_p2p = dateNow;
+        getInfo();
+        eqinfo();
+    }
+
+    mapMain();
 
     requestAnimationFrame(mainloop);
 }
 
 
-// ----- Page ----- //
-function page_init() {
+// ---------- Page ---------- //
+function init() {
+    initMenu();
     init_sounds();
     init_push();
     settings_init();
     licence_init();
     select_init();
+    init_map();
 }
 
 
-// --- Get server datetime --- //
-function getServer_DT() {
+// ------------- Get NTP datetime ---------- //
+function getNtp() {
     axios.head(window.location.href, {
         headers: {
             'Cache-Control': 'no-cache'
-        },
+        }
     }).then(res => {
         gmt = new Date(res.headers.date); // Server datetime
 
-        // --- debug
-        // resDate = "29 May 2022 06:56:33 GMT";
-        // gmt = new Date(resDate); // Server datetime
-        // gmt = new Date();
-        // ---
-
-        timeYear = setTime(gmt.getFullYear());
-        timeMonth = setTime(gmt.getMonth() + 1);
-        timeDay = setTime(gmt.getDate());
-        timeHour = setTime(gmt.getHours());
-        timeMinute = setTime(gmt.getMinutes());
-        timeSecond = setTime(gmt.getSeconds());
+        timeYear = gmt.getFullYear();
+        timeMonth = gmt.getMonth() + 1;
+        timeDay = gmt.getDate();
+        timeHour = gmt.getHours();
+        timeMinute = gmt.getMinutes();
+        timeSecond = gmt.getSeconds();
     })
 }
 
 
-// --- sounds --- //
+// ---------- sounds ---------- //
 function init_sounds() {
-    if (pageLang === 'en-US') {
-        EEW_sound = new Audio("https://webapp.ydits.net/en-US/Sounds/eew.wav");
-        p2p_sound = new Audio("https://webapp.ydits.net/en-US/Sounds/info.wav");
-        EEW_1_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_1_v.mp3");
-        EEW_2_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_2_v.mp3");
-        EEW_3_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_3_v.mp3");
-        EEW_4_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_4_v.mp3");
-        EEW_5_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_5_v.mp3");
-        EEW_6_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_6_v.mp3");
-        EEW_7_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_7_v.mp3");
-        EEW_8_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_8_v.mp3");
-        EEW_9_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_9_v.mp3");
-        EEW_Cancel_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/eew_cancel_v.mp3");
-        p2p_1_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_1_v.mp3");
-        p2p_2_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_2_v.mp3");
-        p2p_3_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_3_v.mp3");
-        p2p_4_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_4_v.mp3");
-        p2p_5_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_5_v.mp3");
-        p2p_6_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_6_v.mp3");
-        p2p_7_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_7_v.mp3");
-        p2p_8_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_8_v.mp3");
-        p2p_9_voice = new Audio("https://webapp.ydits.net/en-US/Sounds/info_9_v.mp3");
-
-    } else {
-        EEW_sound = new Audio("https://webapp.ydits.net/Sounds/eew.wav");
-        p2p_sound = new Audio("https://webapp.ydits.net/Sounds/info.wav");
-        EEW_1_voice = new Audio("https://webapp.ydits.net/Sounds/eew_1_v.mp3");
-        EEW_2_voice = new Audio("https://webapp.ydits.net/Sounds/eew_2_v.mp3");
-        EEW_3_voice = new Audio("https://webapp.ydits.net/Sounds/eew_3_v.mp3");
-        EEW_4_voice = new Audio("https://webapp.ydits.net/Sounds/eew_4_v.mp3");
-        EEW_5_voice = new Audio("https://webapp.ydits.net/Sounds/eew_5_v.mp3");
-        EEW_6_voice = new Audio("https://webapp.ydits.net/Sounds/eew_6_v.mp3");
-        EEW_7_voice = new Audio("https://webapp.ydits.net/Sounds/eew_7_v.mp3");
-        EEW_8_voice = new Audio("https://webapp.ydits.net/Sounds/eew_8_v.mp3");
-        EEW_9_voice = new Audio("https://webapp.ydits.net/Sounds/eew_9_v.mp3");
-        EEW_Cancel_voice = new Audio("https://webapp.ydits.net/Sounds/eew_cancel_v.mp3");
-        p2p_1_voice = new Audio("https://webapp.ydits.net/Sounds/info_1_v.mp3");
-        p2p_2_voice = new Audio("https://webapp.ydits.net/Sounds/info_2_v.mp3");
-        p2p_3_voice = new Audio("https://webapp.ydits.net/Sounds/info_3_v.mp3");
-        p2p_4_voice = new Audio("https://webapp.ydits.net/Sounds/info_4_v.mp3");
-        p2p_5_voice = new Audio("https://webapp.ydits.net/Sounds/info_5_v.mp3");
-        p2p_6_voice = new Audio("https://webapp.ydits.net/Sounds/info_6_v.mp3");
-        p2p_7_voice = new Audio("https://webapp.ydits.net/Sounds/info_7_v.mp3");
-        p2p_8_voice = new Audio("https://webapp.ydits.net/Sounds/info_8_v.mp3");
-        p2p_9_voice = new Audio("https://webapp.ydits.net/Sounds/info_9_v.mp3");
-    }
+    EEW_sound = new Audio("https://webapp.ydits.net/Sounds/eew.wav");
+    p2p_sound = new Audio("https://webapp.ydits.net/Sounds/info.wav");
+    EEW_1_voice = new Audio("https://webapp.ydits.net/Sounds/eew_1_v.mp3");
+    EEW_2_voice = new Audio("https://webapp.ydits.net/Sounds/eew_2_v.mp3");
+    EEW_3_voice = new Audio("https://webapp.ydits.net/Sounds/eew_3_v.mp3");
+    EEW_4_voice = new Audio("https://webapp.ydits.net/Sounds/eew_4_v.mp3");
+    EEW_5_voice = new Audio("https://webapp.ydits.net/Sounds/eew_5_v.mp3");
+    EEW_6_voice = new Audio("https://webapp.ydits.net/Sounds/eew_6_v.mp3");
+    EEW_7_voice = new Audio("https://webapp.ydits.net/Sounds/eew_7_v.mp3");
+    EEW_8_voice = new Audio("https://webapp.ydits.net/Sounds/eew_8_v.mp3");
+    EEW_9_voice = new Audio("https://webapp.ydits.net/Sounds/eew_9_v.mp3");
+    EEW_Cancel_voice = new Audio("https://webapp.ydits.net/Sounds/eew_cancel_v.mp3");
+    p2p_1_voice = new Audio("https://webapp.ydits.net/Sounds/info_1_v.mp3");
+    p2p_2_voice = new Audio("https://webapp.ydits.net/Sounds/info_2_v.mp3");
+    p2p_3_voice = new Audio("https://webapp.ydits.net/Sounds/info_3_v.mp3");
+    p2p_4_voice = new Audio("https://webapp.ydits.net/Sounds/info_4_v.mp3");
+    p2p_5_voice = new Audio("https://webapp.ydits.net/Sounds/info_5_v.mp3");
+    p2p_6_voice = new Audio("https://webapp.ydits.net/Sounds/info_6_v.mp3");
+    p2p_7_voice = new Audio("https://webapp.ydits.net/Sounds/info_7_v.mp3");
+    p2p_8_voice = new Audio("https://webapp.ydits.net/Sounds/info_8_v.mp3");
+    p2p_9_voice = new Audio("https://webapp.ydits.net/Sounds/info_9_v.mp3");
 }
 
 
-// --- Push --- //
+// ---------- Push ---------- //
 function init_push() {
     if (!Push.Permission.has()) {
         Push.Permission.request(
@@ -260,141 +217,104 @@ function init_push() {
 }
 
 
-// --- Settings --- //
+// ---------- Menu ---------- //
+function initMenu() {
+    $(document).on('click', '#menuBtn', () => {
+        $('#popup').addClass('active');
+        $('#menu').addClass('active');
+    });
+    $(document).on('click', '#menu .closeBtn', () => {
+        $('#popup').removeClass('active');
+        $('#menu').removeClass('active');
+    });
+
+    $(document).on('click', '#menuSettings', () => {
+        $('#settings').addClass('active');
+        $('#menu').removeClass('active')
+    });
+
+    $(document).on('click', '#menuLicense', () => {
+        $('#license').addClass('active');
+        $('#menu').removeClass('active')
+    });
+}
+
+// ---------- Settings ---------- //
 function settings_init() {
-    $('#settings_window .version').text(`Ver ${ver_project}`);
+    $('#settings .version').text(`Ver ${version}`);
 
-    $(document).on('click', '#menu>.settings', function () {
-        window_settings = $('#settings_window');
-
-        if (!window_settings.hasClass('active')) {
-            window_settings.addClass('active');
-            $('main').css({
-                'min-height': '90em'
-            })
-
-        } else {
-            window_settings.removeClass('active');
-            $('main').css({
-                'min-height': '100vh'
-            })
-        }
+    $(document).on('click', '#settings .closeBtn', function () {
+        $('#settings').removeClass('active');
+        $('#menu').addClass('active')
     });
-
-    $(document).on('click', '#settings_window .close', function () {
-        window_settings = $('#settings_window');
-        window_settings.removeClass('active');
-        $('main').css({
-            'min-height': '100vh'
-        })
-    });
-
-    // --- Darkmode
-    if (localStorage.getItem("settings-darkMode") == 'true') {
-        settings_darkMode = true;
-        $('#settings_window .darkMode .toggle-switch').addClass('on');
-    } else if (localStorage.getItem("settings-darkMode") == 'false') {
-        settings_darkMode = false;
-        $('#settings_window .darkMode .toggle-switch').removeClass('on');
-    } else {
-        settings_darkMode = true;
-        $('#settings_window .darkMode .toggle-switch').addClass('on');
-    }
-    chg_darkMode();
-
-    $(document).on('click', '#settings_window .darkMode .toggle-switch', function () {
-        if (settings_darkMode == false) {
-            settings_darkMode = true;
-            localStorage.setItem('settings-darkMode', 'true');
-            chg_darkMode();
-            $('#settings_window .darkMode .toggle-switch').addClass('on');
-        } else if (settings_darkMode == true) {
-            settings_darkMode = false;
-            localStorage.setItem('settings-darkMode', 'false');
-            chg_darkMode();
-            $('#settings_window .darkMode .toggle-switch').removeClass('on');
-        }
-    })
 
     // --- Play sound
     if (localStorage.getItem("settings-playSound-eew-any") == 'true') {
         settings_playSound_eew_any = true;
-        $('#settings_window .playSound .eew .any .toggle-switch').addClass('on');
+        $('#settings_playSound_eew_any .toggle-switch').addClass('on');
     } else if (localStorage.getItem("settings-playSound-eew-any") == 'false') {
         settings_playSound_eew_any = false;
-        $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
+        $('#settings_playSound_eew_any .toggle-switch').removeClass('on');
     } else {
         settings_playSound_eew_any = true;
-        $('#settings_window .playSound .eew .any .toggle-switch').addClass('on');
+        $('#settings_playSound_eew_any .toggle-switch').addClass('on');
     }
 
-    $(document).on('click', '#settings_window .playSound .eew .any .toggle-switch', function () {
+    $(document).on('click', '#settings_playSound_eew_any .toggle-switch', function () {
         if (settings_playSound_eew_any == false) {
             settings_playSound_eew_any = true;
             localStorage.setItem('settings-playSound-eew-any', 'true');
-            $('#settings_window .playSound .eew .any .toggle-switch').addClass('on');
-            settings_playSound_eew_first = true;
-            localStorage.setItem('settings-playSound-eew-first', 'true');
-            $('#settings_window .playSound .eew .first .toggle-switch').addClass('on');
-            settings_playSound_eew_last = true;
-            localStorage.setItem('settings-playSound-eew-last', 'true');
-            $('#settings_window .playSound .eew .last .toggle-switch').addClass('on');
-            settings_playSound_eew_cancel = true;
-            localStorage.setItem('settings-playSound-eew-cancel', 'true');
-            $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+            $('#settings_playSound_eew_any .toggle-switch').addClass('on');
         } else if (settings_playSound_eew_any == true) {
             settings_playSound_eew_any = false;
             localStorage.setItem('settings-playSound-eew-any', 'false');
-            $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
+            $('#settings_playSound_eew_any .toggle-switch').removeClass('on');
         }
     })
 
     if (localStorage.getItem("settings-playSound-eew-cancel") == 'true') {
         settings_playSound_eew_cancel = true;
-        $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+        $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
     } else if (localStorage.getItem("settings-playSound-eew-cancel") == 'false') {
         settings_playSound_eew_cancel = false;
-        $('#settings_window .playSound .eew .cancel .toggle-switch').removeClass('on');
+        $('#settings_playSound_eew_cancel .toggle-switch').removeClass('on');
     } else {
         settings_playSound_eew_cancel = true;
-        $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+        $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
     }
 
-    $(document).on('click', '#settings_window .playSound .eew .cancel .toggle-switch', function () {
+    $(document).on('click', '#settings_playSound_eew_cancel .toggle-switch', function () {
         if (settings_playSound_eew_cancel == false) {
             settings_playSound_eew_cancel = true;
             localStorage.setItem('settings-playSound-eew-cancel', 'true');
-            $('#settings_window .playSound .eew .cancel .toggle-switch').addClass('on');
+            $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
         } else if (settings_playSound_eew_cancel == true) {
-            settings_playSound_eew_any = false;
-            localStorage.setItem('settings-playSound-eew-any', 'false');
-            $('#settings_window .playSound .eew .any .toggle-switch').removeClass('on');
             settings_playSound_eew_cancel = false;
             localStorage.setItem('settings-playSound-eew-cancel', 'false');
-            $('#settings_window .playSound .eew .cancel .toggle-switch').removeClass('on');
+            $('#settings_playSound_eew_cancel .toggle-switch').removeClass('on');
         }
     })
 
     if (localStorage.getItem("settings-playSound-info") == 'true') {
-        settings_playSound_info = true;
-        $('#settings_window .playSound .info .toggle-switch').addClass('on');
+        settings_playSound_eqinfo = true;
+        $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
     } else if (localStorage.getItem("settings-playSound-info") == 'false') {
-        settings_playSound_info = false;
-        $('#settings_window .playSound .info .toggle-switch').removeClass('on');
+        settings_playSound_eqinfo = false;
+        $('#settings_playSound_eqinfo .toggle-switch').removeClass('on');
     } else {
-        settings_playSound_info = true;
-        $('#settings_window .playSound .info .toggle-switch').addClass('on');
+        settings_playSound_eqinfo = true;
+        $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
     }
 
-    $(document).on('click', '#settings_window .playSound .info .toggle-switch', function () {
-        if (settings_playSound_info == false) {
-            settings_playSound_info = true;
+    $(document).on('click', '#settings_playSound_eqinfo .toggle-switch', function () {
+        if (settings_playSound_eqinfo == false) {
+            settings_playSound_eqinfo = true;
             localStorage.setItem('settings-playSound-info', 'true');
-            $('#settings_window .playSound .info .toggle-switch').addClass('on');
-        } else if (settings_playSound_info == true) {
-            settings_playSound_info = false;
+            $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
+        } else if (settings_playSound_eqinfo == true) {
+            settings_playSound_eqinfo = false;
             localStorage.setItem('settings-playSound-info', 'false');
-            $('#settings_window .playSound .info .toggle-switch').removeClass('on');
+            $('#settings_playSound_eqinfo .toggle-switch').removeClass('on');
         }
     })
 
@@ -405,13 +325,13 @@ function settings_init() {
         EEW_time = 1;
     }
 
-    $('#settings_bar_cnt_eew').val(EEW_time);
-    $('#settings_put_cnt_eew').text(EEW_time);
+    $('#settings_getCnt_eew_bar').val(EEW_time);
+    $('#settings_getCnt_eew_put').text(EEW_time);
 
-    $(document).on('input', '#settings_bar_cnt_eew', function () {
-        EEW_time = $('#settings_bar_cnt_eew').val();
+    $(document).on('input', '#settings_getCnt_eew_bar', function () {
+        EEW_time = $('#settings_getCnt_eew_bar').val();
         localStorage.setItem('settings-getCnt_eew', String(EEW_time));
-        $('#settings_put_cnt_eew').text(EEW_time);
+        $('#settings_getCnt_eew_put').text(EEW_time);
     });
 
     // --- P2P get cnt
@@ -421,59 +341,46 @@ function settings_init() {
         p2p_time = 8;
     }
 
-    $('#settings_bar_cnt').val(p2p_time);
-    $('#settings_put_cnt').text(p2p_time);
+    $('#settings_getCnt_eqinfo_bar').val(p2p_time);
+    $('#settings_getCnt_eqinfo_put').text(p2p_time);
 
-    $(document).on('input', '#settings_bar_cnt', function () {
-        p2p_time = $('#settings_bar_cnt').val();
+    $(document).on('input', '#settings_getCnt_eqinfo_bar', function () {
+        p2p_time = $('#settings_getCnt_eqinfo_bar').val();
         localStorage.setItem('settings-getCnt_p2p', String(p2p_time));
-        $('#settings_put_cnt').text(p2p_time);
+        $('#settings_getCnt_eqinfo_put').text(p2p_time);
     });
 
-    $(document).on('click', '#btn_resetSettings', function () {
+    // --- resetsettings
+    $(document).on('click', '#settings_resetSettingsBtn', function () {
         EEW_time = 1;
-        $('#settings_bar_cnt_eew').val(EEW_time);
-        $('#settings_put_cnt_eew').text(EEW_time);
+        $('#settings_getCnt_eew_bar').val(EEW_time);
+        $('#settings_getCnt_eew_put').text(EEW_time);
 
         p2p_time = 8;
-        $('#settings_bar_cnt').val(p2p_time);
-        $('#settings_put_cnt').text(p2p_time);
-
-        settings_darkMode = true;
-        $('#settings_window .darkMode .toggle-switch').addClass('on');
-        chg_darkMode();
+        $('#settings_getCnt_eqinfo_bar').val(p2p_time);
+        $('#settings_getCnt_eqinfo_bar').text(p2p_time);
 
         settings_playSound_eew_any = true;
-        $('#settings_window .playSound .eew .any .toggle-switch').addClass('on');
+        $('#settings_playSound_eew_any .toggle-switch').addClass('on');
 
-        settings_playSound_info = true;
-        $('#settings_window .playSound .info .toggle-switch').addClass('on');
+        settings_playSound_eew_cancel = true;
+        $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
 
-        settings_playSound_info = true;
-        $('#settings_window .playSound .info .toggle-switch').addClass('on');
+        settings_playSound_eqinfo = true;
+        $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
 
         localStorage.clear()
 
         if (document.getElementById('win_settings_reset') == null) {
-            if (pageLang === 'en-US') {
-                win('win_settings_reset', 'Reset settings');
 
-                $('#win_settings_reset>.content').html(`
-        <p>
-          Settings have been reset.
-        </p>
-        <button class="btn_ok">OK</button>
-      `)
-            } else {
-                win('win_settings_reset', '設定のリセット');
+            win('win_settings_reset', '設定のリセット');
 
-                $('#win_settings_reset>.content').html(`
-        <p>
-          設定をリセットしました。
-        </p>
-        <button class="btn_ok">OK</button>
-      `)
-            }
+            $('#win_settings_reset>.content').html(`
+                <p>
+                    設定をリセットしました。
+                </p>
+                <button class="btn_ok">OK</button>
+            `)
 
             $('#win_settings_reset .content').css({
                 'padding': '1em'
@@ -515,90 +422,7 @@ function settings_init() {
     });
 };
 
-
-// --- Change darkmode --- //
-function chg_darkMode() {
-    if (settings_darkMode) {
-        $('body').css({
-            'background-color': '#102040',
-            'color': '#ffffff'
-        })
-
-        $('a').css({
-            'color': '#ffffff'
-        })
-
-        $('#menu>.windows').css({
-            'background-color': '#103050',
-            'color': '#ffffff'
-        })
-
-        $('#info_window .link_terms').css({
-            'color': '#ffffff'
-        })
-
-        $('#earthquake>.content').css({
-            'background-color': '#103050',
-            'color': '#eeeeee'
-        })
-
-        $('header').css({
-            'background-color': '#103050',
-            'color': '#eeeeee'
-        })
-
-        $('footer').css({
-            'background-color': '#103050',
-            'color': '#eeeeee'
-        })
-
-        $('#select').css({
-            'background-color': '#103050',
-            'color': '#eeeeee'
-        })
-
-    } else {
-        $('body').css({
-            'background-color': '#ffffff',
-            'color': '#010101'
-        })
-
-        $('a').css({
-            'color': '#010101'
-        })
-
-        $('#menu>.windows').css({
-            'background-color': '#e0e0e0',
-            'color': '#010101'
-        })
-
-        $('#info_window .link_terms').css({
-            'color': '#010101'
-        })
-
-        $('#earthquake>.content').css({
-            'background-color': '#e0e0e0',
-            'color': '#010101'
-        })
-
-        $('header').css({
-            'background-color': '#e0e0e0',
-            'color': '#010101'
-        })
-
-        $('footer').css({
-            'background-color': '#e0e0e0',
-            'color': '#010101'
-        })
-
-        $('#select').css({
-            'background-color': '#e0e0e0',
-            'color': '#010101'
-        })
-    }
-}
-
-// --- select --- //
+// ---------- select ---------- //
 function select_init() {
     $('#earthquake').addClass('active');
 
@@ -656,55 +480,32 @@ function reset_show_eq() {
 }
 
 
-// ----- Info ----- //
+// ---------- Info ---------- //
 function licence_init() {
-    $(document).on('click', '#menu>.licence', function () {
-        $('#licence_window').addClass('active');
-
-        $('main').css({
-            'min-height': '50em'
-        })
-    })
-
-    $(document).on('click', '#licence_window>.close', function () {
-        $('#licence_window').removeClass('active');
-
-        $('main').css({
-            'min-height': '100vh'
-        })
+    $(document).on('click', '#license>.closeBtn', function () {
+        $('#license').removeClass('active');
+        $('#menu').addClass('active')
     })
 }
 
 
-// ----- EEW ----- //
+// ---------- EEW ---------- //
 function eew() {
-    const EEW_Date = String(timeYear) + String(timeMonth) + String(timeDay);
-    const EEW_DT = String(timeYear) + String(timeMonth) + String(timeDay) + String(timeHour) + String(timeMinute) + String(setTime(setEEW_DT(Number(timeSecond))));
-    const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${EEW_Date}/${EEW_DT}.json`;
+    yahooEewDate = makeDate_yahooEew();
+    const yahooEewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${yahooEewDate}.json`;
 
     // --- debug
-    // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
-    // const url_EEW = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
-    // const url_EEW = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
-    // const url_EEW = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
+    // const yahooEewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
+    // const yahooEewUrl = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
+    // const yahooEewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
+    // const yahooEewUrl = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
     // ---
 
-    response = fetch(url_EEW)
+    fetch(yahooEewUrl)
+
         .then(response => {
             if (!response.ok) {
-                switch (response.status) {
-                    case 403: break;
-
-                    default:
-                        if (pageLang === 'en-US') {
-                            $('#eew .info').text(`No connect Error: HTTP ${response.status}`);
-                            $('#eewInfo').text(`No connect Error: HTTP ${response.status}`);
-                        } else {
-                            $('#eew .info').text(`取得できません Error: HTTP ${response.status}`);
-                            $('#eewInfo').text(`取得できません Error: HTTP ${response.status}`);
-                        }
-                        break;
-                }
+                $('#eewTitle').text(`取得できません Error: HTTP ${response.status}`);
             }
 
             return response.json()
@@ -732,17 +533,9 @@ function eew() {
                     // ---
 
                     if (EEW_isFinal == 'true') {
-                        if (pageLang === 'en-US') {
-                            EEW_repNum_p = 'Final report';
-                        } else {
-                            EEW_repNum_p = '最終報';
-                        }
+                        EEW_repNum_p = '最終報';
                     } else {
-                        if (pageLang === 'en-US') {
-                            EEW_repNum_p = `Report #${EEW_repNum}`
-                        } else {
-                            EEW_repNum_p = `第${EEW_repNum}報`
-                        }
+                        EEW_repNum_p = `第${EEW_repNum}報`
                     }
 
                     // --- Origin time --- //
@@ -763,11 +556,7 @@ function eew() {
                     // ---
 
                     if (!EEW_Region_name) {
-                        if (pageLang === 'en-US') {
-                            EEW_Region_name = 'Unknown';
-                        } else {
-                            EEW_Region_name = '不明';
-                        }
+                        EEW_Region_name = '不明';
                     }
 
                     // --- Calcintensity --- //
@@ -805,11 +594,7 @@ function eew() {
                     if (EEW_Magnitude) {
                         EEW_Magnitude = 'M' + EEW_Magnitude;
                     } else {
-                        if (pageLang === 'en-US') {
-                            EEW_Magnitude = 'Unknown';
-                        } else {
-                            EEW_Magnitude = '不明';
-                        }
+                        EEW_Magnitude = '不明';
                     }
 
                     // --- Depth --- //
@@ -820,17 +605,9 @@ function eew() {
                     // ---
 
                     if (EEW_depth) {
-                        if (pageLang === 'en-US') {
-                            EEW_depth = 'about ' + EEW_depth;
-                        } else {
-                            EEW_depth = '約' + EEW_depth;
-                        }
+                        EEW_depth = '約' + EEW_depth;
                     } else {
-                        if (pageLang === 'en-US') {
-                            EEW_depth = 'Unknown';
-                        } else {
-                            EEW_depth = '不明';
-                        }
+                        EEW_depth = '不明';
                     }
 
                     // --- alert flag --- //
@@ -867,11 +644,7 @@ function eew() {
                     // ---
 
                     if (EEW_isCansel == 'true') {
-                        if (pageLang === 'en-US') {
-                            EEW_alertFlg = 'Cancel';
-                        } else {
-                            EEW_alertFlg = '取消報';
-                        }
+                        EEW_alertFlg = '取消報';
                     }
 
                     // Sound
@@ -994,48 +767,17 @@ function eew() {
                     // reset_show_eq();
                     // $('#eew').addClass('active');
 
-                    if (pageLang === 'en-US') {
-                        $('#eew .info').text(`Earthquake Early Warning ${EEW_alertFlg}(${EEW_repNum_p})`);
-                        $('#eew .calcintensity_para').text(EEW_calcintensity);
-                        $('#eew .region').text(EEW_Region_name);
-                        $('#eew .origin_time').text(`${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
-                        $('#eew .magnitude').text(`${EEW_Magnitude}`);
-                        $('#eew .depth').text(`${EEW_depth}`);
-                    } else {
-                        $('#eew .info').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
-                        $('#eew .calcintensity_para').text(EEW_calcintensity);
-                        $('#eew .region').text(EEW_Region_name);
-                        $('#eew .origin_time').text(`発生日時: ${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
-                        $('#eew .magnitude').text(`予想規模: ${EEW_Magnitude}`);
-                        $('#eew .depth').text(`予想深さ: ${EEW_depth}`);
-                    }
+                    $('#eewTitle').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
+                    $('#eewCalc').text(EEW_calcintensity);
+                    $('#eewRegion').text(EEW_Region_name);
+                    $('#eewOrigin_time').text(`発生日時: ${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
+                    $('#eewMagnitude').text(`規模 ${EEW_Magnitude}`);
+                    $('#eewDepth').text(`深さ ${EEW_depth}`);
 
-                    $('#eew').css({
+                    $('#eewField').css({
                         'background-color': EEW_bgc,
                         'color': EEW_fntc
                     })
-
-                    if (pageLang === 'en-US') {
-                        $('#eewInfo').text(`Earthquake Early Warning ${EEW_alertFlg}(${EEW_repNum_p})`);
-                        $('#monitorInfo>.content .calcintensity>.put').text(EEW_calcintensity);
-                        $('#monitorInfo>.content .region').text(EEW_Region_name);
-                        $('#monitorInfo>.content .origin_time').text(`${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
-                        $('#monitorInfo>.content .magnitude').text(`${EEW_Magnitude}`);
-                        $('#monitorInfo>.content .depth').text(`${EEW_depth}`);
-                    } else {
-                        $('#eewInfo').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
-                        $('#monitorInfo>.content .calcintensity>.put').text(EEW_calcintensity);
-                        $('#monitorInfo>.content .region').text(EEW_Region_name);
-                        $('#monitorInfo>.content .origin_time').text(`${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
-                        $('#monitorInfo>.content .magnitude').text(`${EEW_Magnitude}`);
-                        $('#monitorInfo>.content .depth').text(`${EEW_depth}`);
-                    }
-
-                    $('#monitorInfo').css({
-                        'background-color': EEW_bgc,
-                        'color': EEW_fntc
-                    })
-
                 }
             } else {
                 EEW_repNum = '';
@@ -1061,11 +803,7 @@ function eew() {
                     EEW_fntc = "#010101";
                 }
 
-                if (pageLang === 'en-US') {
-                    $('#eew .info').text("No Earthquake Early Warning issued");
-                } else {
-                    $('#eew .info').text("緊急地震速報は発表されていません");
-                }
+                $('#eewTitle').text("緊急地震速報は発表されていません");
 
                 $('#eew .calcintensity_para').text('');
                 $('#eew .region').text('');
@@ -1077,28 +815,19 @@ function eew() {
                     'background-color': EEW_bgc,
                     'color': EEW_fntc
                 })
-
-                if (pageLang === 'en-US') {
-                    $('#eewInfo').text("No Earthquake Early Warning issued");
-                } else {
-                    $('#eewInfo').text("緊急地震速報は発表されていません");
-                }
-
-                $('#eew .calcintensity_para').text('');
-                $('#eew .region').text('');
-                $('#eew .origin_time').text('');
-                $('#eew .magnitude').text('');
-                $('#eew .depth').text('');
-
-                $('#monitorInfo').css({
-                    'background-color': EEW_bgc,
-                    'color': EEW_fntc
-                })
             }
         })
 };
 
 
+function makeDate_yahooEew() {
+    yahooEewDate = new Date();
+    yahooEewDate.setSeconds(timeSecond - 2)
+    yahooEewDate = `${yahooEewDate.getFullYear()}${('0' + (yahooEewDate.getMonth() + 1)).slice(-2)}${('0' + yahooEewDate.getDate()).slice(-2)}/${yahooEewDate.getFullYear()}${('0' + (yahooEewDate.getMonth() + 1)).slice(-2)}${('0' + yahooEewDate.getDate()).slice(-2)}${('0' + yahooEewDate.getHours()).slice(-2)}${('0' + yahooEewDate.getMinutes()).slice(-2)}${('0' + yahooEewDate.getSeconds()).slice(-2)}`
+    return yahooEewDate
+}
+
+
 // EEW datetime format
 function setEEW_DT(num) {
     let ret;
@@ -1115,67 +844,31 @@ function setEEW_DT(num) {
 }
 
 
-// ----- EEW push ----- //
+// ---------- EEW push ---------- //
 function eew_push() {
     if (EEW_isCansel) {
-        if (pageLang === 'en-US') {
-            Push.create(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`, {
-                body: `The earthquake early warning just announced has been canceled.\nSelect here to view the page.\n`,
-                onClick: function () {
-                    window.focus();
-                    this.close();
-                }
-            })
-        } else {
-            Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
-                body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。\n`,
-                onClick: function () {
-                    window.focus();
-                    this.close();
-                }
-            })
-        }
+        Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
+            body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。\n`,
+            onClick: function () {
+                window.focus();
+                this.close();
+            }
+        })
     } else {
-        if (pageLang === 'en-US') {
-            Push.create(`Earthquake Early Warning (${EEW_alertFlg})  ${EEW_repNum_p}`, {
-                body: `Earthquake occurs in ${EEW_hypocenter}. Expected max intensity is ${EEW_intensity}.\nSelect here to view the page.\n`,
-                onClick: function () {
-                    window.focus();
-                    this.close();
-                }
-            })
-        } else {
-            Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
-                body: `${EEW_hypocenter}で地震発生。予想最大震度は${EEW_intensity}です。\nページ表示するにはここを選択してください。\n`,
-                onClick: function () {
-                    window.focus();
-                    this.close();
-                }
-            })
-        }
+        Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
+            body: `${EEW_hypocenter}で地震発生。予想最大震度は${EEW_intensity}です。\nページ表示するにはここを選択してください。\n`,
+            onClick: function () {
+                window.focus();
+                this.close();
+            }
+        })
     }
 }
 
 
-// EEW datetime format
-function setEEW_DT(num) {
-    let ret;
-
-    if (num == 1) {
-        ret = 60 - 1;
-    } else if (num == 0) {
-        ret = 60 - 2;
-    } else {
-        ret = num - 2;
-    }
-
-    return ret;
-}
-
-
-// ----- Monitor ----- //
-function monitor() {
-    if (EEW_data["hypoInfo"] != null) {
+// ---------- Monitor ---------- //
+function mapMain() {
+    if (EEW_data != null && EEW_data["hypoInfo"] != null) {
         EEW_waves = EEW_data['psWave']['items'][0];
 
         if (EEW_waves !== null) {
@@ -1190,7 +883,7 @@ function monitor() {
         }
 
         if (EEW_wave_s != EEW_wave_s_last) {
-            EEW_wave_s_Interval = (EEW_wave_s - EEW_wave_s_last) / (60 * ((DT - loopCnt_moni) / 1000));
+            EEW_wave_s_Interval = (EEW_wave_s - EEW_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
             EEW_wave_s_last = EEW_wave_s;
             EEW_wave_s_put = EEW_wave_s;
         } else if (EEW_wave_s == EEW_wave_s_last) {
@@ -1198,30 +891,33 @@ function monitor() {
         }
 
         if (EEW_wave_p != EEW_wave_p_last) {
-            EEW_wave_p_Interval = (EEW_wave_p - EEW_wave_p_last) / (60 * ((DT - loopCnt_moni) / 1000));
+            EEW_wave_p_Interval = (EEW_wave_p - EEW_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
             EEW_wave_p_last = EEW_wave_p;
             EEW_wave_p_put = EEW_wave_p;
-            loopCnt_moni = DT;
+            loopCnt_moni = dateNow;
         } else if (EEW_wave_p == EEW_wave_p_last) {
             EEW_wave_p_put += EEW_wave_p_Interval;
         }
 
-        if (EEW_wave_p_put >= 480000) {
-            map.setZoom(6.5);
-        } else if (EEW_wave_p_put >= 320000) {
-            map.setZoom(6.5);
-        } else if (EEW_wave_p_put >= 140000) {
-            map.setZoom(6.5);
-        } else if (EEW_wave_p_put > 0) {
-            map.setZoom(7);
+        if (dateNow - cnt_mapMove >= 1000 * 3) {
+            if (EEW_wave_p_put >= 480000) {
+                map.setZoom(6.5);
+            } else if (EEW_wave_p_put >= 320000) {
+                map.setZoom(6.5);
+            } else if (EEW_wave_p_put >= 140000) {
+                map.setZoom(6.5);
+            } else if (EEW_wave_p_put > 0) {
+                map.setZoom(7);
+            }
+            map.setView([EEW_lat, EEW_lng]);
+
+            cnt_mapMove = dateNow
         }
-        map.setView([EEW_lat, EEW_lng]);
 
         hypo.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
 
         wave_s.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
         wave_s.setRadius(EEW_wave_s_put);
-
         wave_p.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
         wave_p.setRadius(EEW_wave_p_put);
 
@@ -1236,21 +932,21 @@ function monitor() {
 }
 
 
-//--- Init monitor map --- //
+// ---------- Init monitor map ---------- //
 function init_map() {
     map = L.map('map', {
         // center: [36.1852, 139.3442],
         // center: [35.4232, 138.2647],
         center: [38.0194092, 138.3664968],
 
-        zoom: 5,
+        zoom: 5.5,
         maxZoom: 10,
         minZoom: 4,
         zoomSnap: 0.5,
 
         // preferCanvas: true,
 
-        // zoomControl: false,
+        zoomControl: false,
         // gestureHandling: true
     });
 
@@ -1284,32 +980,10 @@ function init_map() {
     }).addTo(map);
 
     // loopCnt_loopWaves = new Date();
-
-    $(document).on('click', '#btn_fullScreen', function () {
-        console.log(isFullscreen_map)
-        if (!isFullscreen_map) {
-            isFullscreen_map = true;
-
-            $('#btn_fullScreen .on').removeClass('active');
-            $('#btn_fullScreen .off').addClass('active');
-
-            $('#mapContainer').addClass('fullScreen');
-
-            console.log('DEBUG_BEON')
-        } else if (isFullscreen_map) {
-            isFullscreen_map = false;
-
-            $('#btn_fullScreen .off').removeClass('active');
-            $('#btn_fullScreen .on').addClass('active');
-
-            $('#mapContainer').removeClass('fullScreen');
-            console.log('DEBUG_BEOFF')
-        }
-    });
 }
 
 
-// ----- Get p2p --- //
+// ---------- Get p2p ---------- //
 function getInfo() {
     const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=40";
 
@@ -1326,286 +1000,9 @@ function getInfo() {
 
 }
 
-// ----- information ----- //
-function information() {
-    if (p2p_id != p2p_id_last) {
-        // --- time --- //
-        p2p_latest_time = p2p_data[0]['earthquake']['time'];
-        // datetime
-        p2p_latest_timeYear = p2p_latest_time.substring(0, 4);
-        p2p_latest_timeMonth = p2p_latest_time.substring(5, 7);
-        p2p_latest_timeDay = p2p_latest_time.substring(8, 10);
-        p2p_latest_timeHour = p2p_latest_time.substring(11, 13);
-        p2p_latest_timeMinute = p2p_latest_time.substring(14, 16);
 
-        // --- type --- //
-        p2p_type = p2p_data[0]['issue']['type'];
-
-        if (pageLang === 'en-US') {
-            p2p_types = {
-                'ScalePrompt': 'Intensity report',
-                'Destination': 'epicenter information',
-                'ScaleAndDestination': 'Intensity and epicenter information',
-                'DetailScale': 'Information on intensity in each area',
-                'Foreign': 'Foreign earthquake information',
-                'Other': 'Earthquake information'
-            };
-        } else {
-            p2p_types = {
-                'ScalePrompt': '震度速報',
-                'Destination': '震源情報',
-                'ScaleAndDestination': '震源・震度情報',
-                'DetailScale': '各地の震度情報',
-                'Foreign': '遠地地震情報',
-                'Other': '地震情報'
-            };
-        }
-
-        p2p_type_put = p2p_types[p2p_type];
-
-        // --- hypocenter --- //
-        p2p_hypocenter = p2p_data[0]['earthquake']['hypocenter']['name'];
-
-        if (p2p_hypocenter == '') {
-            if (pageLang === 'en-US') {
-                p2p_hypocenter = 'Checking';
-            } else {
-                p2p_hypocenter = '調査中';
-            }
-        }
-
-        // --- maxScale --- //
-        p2p_maxScale = p2p_data[0]['earthquake']['maxScale'];
-
-        if (settings_playSound_info == true && p2p_id_last != -1) {
-            if (p2p_type == 'DetailScale' || p2p_type == 'ScalePrompt') {
-                switch (p2p_maxScale) {
-                    case 10:
-                        p2p_sound.play();
-                        p2p_1_voice.play();
-                        break;
-
-                    case 20:
-                        p2p_sound.play();
-                        p2p_2_voice.play();
-                        break;
-
-                    case 30:
-                        p2p_sound.play();
-                        p2p_3_voice.play();
-                        break;
-
-                    case 40:
-                        p2p_sound.play();
-                        p2p_4_voice.play();
-                        break;
-
-                    case 45:
-                        p2p_sound.play();
-                        p2p_5_voice.play();
-                        break;
-
-                    case 50:
-                        p2p_sound.play();
-                        p2p_6_voice.play();
-                        break;
-
-                    case 55:
-                        p2p_sound.play();
-                        p2p_7_voice.play();
-                        break;
-
-                    case 60:
-                        p2p_sound.play();
-                        p2p_8_voice.play();
-                        break;
-
-                    case 70:
-                        p2p_sound.play();
-                        p2p_9_voice.play();
-                        break;
-
-                    default:
-                        p2p_sound.play();
-                        break;
-                }
-            }
-        }
-
-        switch (p2p_maxScale) {
-            case -1: p2p_maxScale = '-'; break;
-            case 10: p2p_maxScale = '1'; break;
-            case 20: p2p_maxScale = '2'; break;
-            case 30: p2p_maxScale = '3'; break;
-            case 40: p2p_maxScale = '4'; break;
-            case 45: p2p_maxScale = '5-'; break;
-            case 50: p2p_maxScale = '5+'; break;
-            case 55: p2p_maxScale = '6-'; break;
-            case 60: p2p_maxScale = '6+'; break;
-            case 70: p2p_maxScale = '7'; break;
-
-            default:
-                p2p_maxScale = `?`;
-                break;
-        }
-
-        // --- Magnitude --- //
-        p2p_magnitude = p2p_data[0]['earthquake']['hypocenter']['magnitude'];
-
-        if (p2p_magnitude == -1) {
-            if (pageLang === 'en-US') {
-                p2p_magnitude = 'Checking';
-            } else {
-                p2p_magnitude = '調査中';
-            }
-        } else {
-            p2p_magnitude = 'M' + String(p2p_magnitude);
-        }
-
-        // --- Depth --- //
-        p2p_depth = p2p_data[0]['earthquake']['hypocenter']['depth'];
-
-        if (p2p_depth == -1) {
-            if (pageLang === 'en-US') {
-                p2p_depth = 'Checking';
-            } else {
-                p2p_depth = '調査中';
-            }
-        } else if (p2p_depth == 0) {
-            if (pageLang === 'en-US') {
-                p2p_depth = 'Very shallow';
-            } else {
-                p2p_depth = 'ごく浅い';
-            }
-        } else {
-            if (pageLang === 'en-US') {
-                p2p_depth = `about ${String(p2p_depth)}km`;
-            } else {
-                p2p_depth = `約${String(p2p_depth)}km`;
-            }
-        }
-
-        // --- Tsunami --- //
-        p2p_tsunami = p2p_data[0]['earthquake']['domesticTsunami'];
-
-        if (pageLang === 'en-US') {
-            tsunamiLevels = {
-                'None': 'No tsunami risk.',
-                'Unknown': 'The impact of the tsunami is unknown.',
-                'Checking': 'The impact of the tsunami is currently being investigated.',
-                'NonEffective': 'Some sea level fluctuation is expected, but no damage is anticipated.',
-                'Watch': 'A tsunami advisory has been issued.',
-                'Warning': 'Tsunami warnings, etc. (major tsunami warnings, tsunami warnings, or tsunami advisories) have been issued.'
-            };
-        } else {
-            tsunamiLevels = {
-                'None': '津波の心配はありません。',
-                'Unknown': '津波の影響は不明です。',
-                'Checking': '津波の影響を現在調査中です。',
-                'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
-                'Watch': '津波注意報が発表されています。',
-                'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
-            };
-        }
-
-        p2p_tsunami = tsunamiLevels[p2p_tsunami];
-
-        // ----- put ----- //
-        let p2p_bgc;
-        let p2p_fntc;
-
-        switch (p2p_maxScale) {
-            case '1':
-                p2p_bgc = "#c0c0c0";
-                p2p_fntc = "#010101";
-                break;
-            case '2':
-                p2p_bgc = "#2020c0";
-                p2p_fntc = "#ffffff";
-                break;
-            case '3':
-                p2p_bgc = "#20c020";
-                p2p_fntc = "#010101";
-                break;
-            case '4':
-                p2p_bgc = "#c0c020";
-                p2p_fntc = "#010101";
-                break;
-            case '5-':
-                p2p_bgc = "#c0a020";
-                p2p_fntc = "#010101";
-                break;
-            case '5+':
-                p2p_bgc = "#c07f20";
-                p2p_fntc = "#010101";
-                break;
-            case '6-':
-                p2p_bgc = "#e02020";
-                p2p_fntc = "#010101";
-                break;
-            case '6+':
-                p2p_bgc = "#a02020";
-                p2p_fntc = "#ffffff";
-                break;
-            case '7':
-                p2p_bgc = "#7f207f";
-                p2p_fntc = "#ffffff";
-                break;
-
-            default:
-                p2p_bgc = "#7f7fc0";
-                p2p_fntc = "#010101";
-                break;
-        }
-
-        if (pageLang === 'en-US') {
-            $('#earthquake_info .info').text(p2p_type_put);
-            $('#earthquake_info .hypocenter').text(p2p_hypocenter);
-            $('#earthquake_info .time').text(`${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}頃`);
-            $('#earthquake_info .maxScale .para').text(p2p_maxScale);
-            $('#earthquake_info .magnitude').text(p2p_magnitude);
-            $('#earthquake_info .depth').text(p2p_depth);
-            $('#earthquake_info .tsunami').text(p2p_tsunami);
-        } else {
-            $('#earthquake_info .info').text(p2p_type_put);
-            $('#earthquake_info .hypocenter').text(p2p_hypocenter);
-            $('#earthquake_info .time').text(`発生日時: ${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}頃`);
-            $('#earthquake_info .maxScale .para').text(p2p_maxScale);
-            $('#earthquake_info .magnitude').text("　規模　: " + p2p_magnitude);
-            $('#earthquake_info .depth').text("　深さ　: " + p2p_depth);
-            $('#earthquake_info .tsunami').text(p2p_tsunami);
-        }
-
-        $(`#earthquake_info .maxScale`).css({
-            'background-color': p2p_bgc,
-            'color': p2p_fntc
-        })
-
-        information_push();
-
-        // --- update --- //
-        p2p_id_last = p2p_id;
-
-    }
-}
-
-
-// ----- Information push ----- //
-function information_push() {
-    if (p2p_id_last != -1) {
-        Push.create(p2p_type_put, {
-            body: `${p2p_hypocenter}を震源とする、最大震度${p2p_maxScale}の地震がありました。\n規模は${p2p_magnitude}、深さは${p2p_depth}と推定されます。\n${p2p_tsunami}\nページ表示するにはここを選択してください。\n`,
-            onClick: function () {
-                window.focus();
-                this.close();
-            }
-        })
-    }
-}
-
-
-// ----- history ----- //
-function history() {
+// ---------- Eqinfo ---------- //
+function eqinfo() {
     if (p2p_id != p2p_his_id_last) {
         p2p_his_id_last = p2p_id;
 
@@ -1682,47 +1079,24 @@ function history() {
                 p2p_depth = p2p_data[i]['earthquake']['hypocenter']['depth'];
 
                 if (p2p_depth == -1) {
-                    if (pageLang === 'en-US') {
-                        p2p_depth = 'Checking';
-                    } else {
-                        p2p_depth = '調査中';
-                    }
+                    p2p_depth = '調査中';
                 } else if (p2p_depth == 0) {
-                    if (pageLang === 'en-US') {
-                        p2p_depth = 'Very shallow';
-                    } else {
-                        p2p_depth = 'ごく浅い';
-                    }
+                    p2p_depth = 'ごく浅い';
                 } else {
-                    if (pageLang === 'en-US') {
-                        p2p_depth = 'about ' + String(p2p_depth) + 'km';
-                    } else {
-                        p2p_depth = '約' + String(p2p_depth) + 'km';
-                    }
+                    p2p_depth = '約' + String(p2p_depth) + 'km';
                 }
 
                 // --- Tsunami --- //
                 p2p_tsunami = p2p_data[i]['earthquake']['domesticTsunami'];
 
-                if (pageLang === 'en-US') {
-                    tsunamiLevels = {
-                        'None': 'No tsunami risk.',
-                        'Unknown': 'The impact of the tsunami is unknown.',
-                        'Checking': 'The impact of the tsunami is currently being investigated.',
-                        'NonEffective': 'Some sea level fluctuation is expected, but no damage is anticipated.',
-                        'Watch': 'A tsunami advisory has been issued.',
-                        'Warning': 'Tsunami warnings, etc. (major tsunami warnings, tsunami warnings, or tsunami advisories) have been issued.'
-                    };
-                } else {
-                    tsunamiLevels = {
-                        'None': '津波の心配はありません。',
-                        'Unknown': '津波の影響は不明です。',
-                        'Checking': '津波の影響を現在調査中です。',
-                        'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
-                        'Watch': '津波注意報が発表されています。',
-                        'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
-                    };
-                }
+                tsunamiLevels = {
+                    'None': '津波の心配はありません。',
+                    'Unknown': '津波の影響は不明です。',
+                    'Checking': '津波の影響を現在調査中です。',
+                    'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
+                    'Watch': '津波注意報が発表されています。',
+                    'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
+                };
 
                 p2p_tsunami = tsunamiLevels[p2p_tsunami];
 
@@ -1774,25 +1148,25 @@ function history() {
                         break;
                 }
 
-                $('#earthquake_history .content').append(`
-          <li class="list list-${i}">
-            <div class="maxScale">
-              <p>${p2p_maxScale}</p>
-            </div>
+                $('#eqHistoryField').append(`
+                    <li class="list list-${i}">
+                        <div class="maxScale">
+                            <p>${p2p_maxScale}</p>
+                        </div>
 
-            <div class="right">
-              <p class="hypocenter">${p2p_hypocenter}</p>
-              <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
-              <div class="hypoInfo">
-                <p>${p2p_magnitude}</p>
-                <p>${p2p_depth}</p>
-              </div>
-              <p>${p2p_tsunami}</p>
-            </div>
-          </li>
-        `)
+                        <div class="right">
+                            <p class="hypocenter">${p2p_hypocenter}</p>
+                            <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
+                            <div class="hypoInfo">
+                                <p>${p2p_magnitude}</p>
+                                <p>${p2p_depth}</p>
+                            </div>
+                            <p>${p2p_tsunami}</p>
+                        </div>
+                    </li>
+                `)
 
-                $(`#earthquake_history>.content>.list-${i}>.maxScale`).css({
+                $(`#eqHistoryField>.list-${i}>.maxScale`).css({
                     'background-color': p2p_his_bgc,
                     'color': p2p_his_fntc
                 })
@@ -1802,20 +1176,31 @@ function history() {
 
             if (p2p_his_cnt >= 20) { break }
         }
+
+        eqinfo_pushNotify();
+
     }
 }
 
 
-// --- Time string format --- //
-function setTime(num) {
-    let ret;
-
-    if (num < 10) {
-        ret = "0" + num;
-    } else {
-        ret = num;
+// ---------- Eqinfo Push Notification ---------- //
+function eqinfo_pushNotify() {
+    if (p2p_id_last != -1) {
+        Push.create(p2p_type_put, {
+            body: `${p2p_hypocenter}を震源とする、最大震度${p2p_maxScale}の地震がありました。\n規模は${p2p_magnitude}、深さは${p2p_depth}と推定されます。\n${p2p_tsunami}\nページ表示するにはここを選択してください。\n`,
+            onClick: function () {
+                window.focus();
+                this.close();
+            }
+        })
     }
+}
 
-    return ret;
-};
 
+// ---------- Error ---------- //
+function error(errCode, errContent) {
+    console.error(
+        `Code: ${errCode}\n` +
+        `${errContent}`
+    )
+}

@@ -1,57 +1,51 @@
 /* main.css / help - support browser / YDITS for Web / Yone */
 @charset "UTF-8";
+
 /* ----- Main ----- */
 main {
-  min-height: 32em;
+    min-height: 32em;
 }
 
-header {
-  background-color: #cccccc;
-}
-
-footer {
-  background-color: #cccccc;
-}
 
 /* ----- Elements ----- */
 /* --- main --- */
 main>.pageTitle {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 main>.description {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 main>.content {
-  display: flex;
-  flex-direction: column;
-  margin: 2em 8em;
+    display: flex;
+    flex-direction: column;
+    margin: 2em 8em;
 }
 
 main>.content>.os {
-  margin: 1em 0;
+    margin: 1em 0;
 }
 
 main>.content>.os>h2 {
-  margin-bottom: .5em;
+    margin-bottom: .5em;
 }
 
 @media (max-width: 1024px) {
-  main>.content {
-    margin: 2em 4em;
-  }
+    main>.content {
+        margin: 2em 4em;
+    }
 }
 
 @media (max-width: 512px) {
-  main>.content {
-    margin: 2em 2em;
-  }
-  
-  main>.content>.link {
-    padding: 1em;
-    font-size: .7em;
-  }
+    main>.content {
+        margin: 2em 2em;
+    }
+
+    main>.content>.link {
+        padding: 1em;
+        font-size: .7em;
+    }
 }
