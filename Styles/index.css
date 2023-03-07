@@ -36,7 +36,7 @@ main {
 
 }
 
-#list ul li {
+#list li {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -49,12 +49,17 @@ main {
     background-color: rgba(255, 255, 255, .5);
 }
 
+#eqHistoryBtn {
+    display: none!important;
+}
+
 #control {
     display: flex;
     width: 35em;
     height: 100%;
     background-color: #303030;
     border-bottom: 2px solid #808080;
+    transition: all .5s; 
 }
 
 #panel {
@@ -149,14 +154,14 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 17%;
+    width: 1.75em;
     height: 100%;
     border-radius: .2em;
     font-size: 3em;
 }
 
 #eqHistoryField .list .right {
-    width: 70%;
+    width: 50%;
     height: 100%;
 }
 
@@ -333,14 +338,14 @@ main {
         flex-direction: column;
     }
 
+    #eqHistoryBtn {
+        display: flex!important;
+    }
+
     #control {
         display: flex;
         width: 100vw;
         height: 18em;
-    }
-
-    #eewField {
-        height: 100%;
     }
 
     #map {
@@ -349,6 +354,18 @@ main {
 
     #eqHistoryField {
         display: none;
-        /* !DEBUG! */
+    }
+
+    #control.mobile {
+        height: 100%;
+    }
+
+    #eqHistoryField.mobile {
+        display: block;
+        height: 100%;
+    }
+
+    #map.mobile {
+        display: none;
     }
 }

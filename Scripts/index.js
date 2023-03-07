@@ -228,6 +228,12 @@ function initMenu() {
         $('#menu').removeClass('active');
     });
 
+    $(document).on('click', '#eqHistoryBtn', () => {
+        $('#control').toggleClass('mobile');
+        $('#eqHistoryField').toggleClass('mobile');
+        $('#map').toggleClass('mobile');
+    });
+
     $(document).on('click', '#menuSettings', () => {
         $('#settings').addClass('active');
         $('#menu').removeClass('active')
