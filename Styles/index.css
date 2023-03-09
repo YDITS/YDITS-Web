@@ -137,7 +137,7 @@ main {
 
 #eqHistoryField {
     width: 100%;
-    height: calc(100% - 2em);
+    height: calc(100% - 17em);
     padding: 1em 0;
     overflow: scroll;
 }
@@ -345,7 +345,7 @@ main {
     #control {
         display: flex;
         width: 100vw;
-        height: 18em;
+        height: 17em;
     }
 
     #map {
@@ -362,7 +362,6 @@ main {
 
     #eqHistoryField.mobile {
         display: block;
-        height: 100%;
     }
 
     #map.mobile {

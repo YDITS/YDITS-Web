@@ -7,7 +7,7 @@
 // 改変や複製を一切禁じます。
 //
 
-const version = "3.0.0";
+const version = "3.0.1";
 
 document.addEventListener('DOMContentLoaded', () => {
     initPage();
