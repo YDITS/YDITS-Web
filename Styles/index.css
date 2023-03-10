@@ -173,13 +173,29 @@ main {
     margin-right: 2em;
 }
 
-#map {
+#mapWrapper {
+    position: relative;
     width: calc(100vw - 35em);
     height: 100%;
 }
 
 #map {
+    width: 100%;
+    height: 100%;
     z-index: 1;
+}
+
+#clock {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 10rem;
+    padding: .2em;
+    text-align: center;
+    background-color: #202020;
+    font-size: 1.2em;
+    z-index: 2;
 }
 
 #popup {

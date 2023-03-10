@@ -123,7 +123,9 @@ function mainloop() {
     if (dateNow - cnt_getNTP >= 1000) {
         cnt_getNTP = dateNow;
         getNtp();
+        clock();
     }
+
 
     if (dateNow - cnt_eew >= 1000 * EEW_time) {
         cnt_eew = dateNow;
@@ -227,6 +229,12 @@ function initMenu() {
         $('#control').toggleClass('mobile');
         $('#eqHistoryField').toggleClass('mobile');
         $('#map').toggleClass('mobile');
+    });
+
+    $(document).on('click', '#homeBtn', () => {
+        map.setZoom(6);
+        setTimeout('map.setView([38.0194092, 138.3664968])', 750);
+        
     });
 
     $(document).on('click', '#menuSettings', () => {
@@ -431,6 +439,12 @@ function licence_init() {
         $('#license').removeClass('active');
         $('#menu').addClass('active')
     })
+}
+
+
+// ---------- Clock ---------- //
+function clock() {
+    $('#clock').text(`${timeYear}/${('0' + timeMonth).slice(-2)}/${('0' + timeDay).slice(-2)} ${('0' + timeHour).slice(-2)}:${('0' + timeMinute).slice(-2)}:${('0' + timeSecond).slice(-2)}`);
 }
 
 
@@ -810,12 +824,10 @@ function mapMain() {
         }
 
         if (dateNow - cnt_mapMove >= 1000 * 3) {
-            if (EEW_wave_p_put >= 480000) {
-                map.setZoom(6.5);
-            } else if (EEW_wave_p_put >= 320000) {
-                map.setZoom(6.5);
-            } else if (EEW_wave_p_put >= 140000) {
-                map.setZoom(6.5);
+            if (EEW_wave_p_put >= 560000) {
+                map.setZoom(5);
+            } else if (EEW_wave_p_put >= 280000) {
+                map.setZoom(6);
             } else if (EEW_wave_p_put > 0) {
                 map.setZoom(7);
             }
@@ -848,12 +860,11 @@ function init_map() {
         // center: [36.1852, 139.3442],
         // center: [35.4232, 138.2647],
         center: [38.0194092, 138.3664968],
-        zoom: 5.5,
+        zoom: 6,
         maxZoom: 10,
         minZoom: 4,
-        zoomSnap: 0.5,
         // preferCanvas: true,
-        zoomControl: false,
+        zoomControl: false
         // gestureHandling: true
     });
 
