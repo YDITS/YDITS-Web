@@ -195,7 +195,7 @@ main {
     text-align: center;
     background-color: #202020;
     font-size: 1.2em;
-    z-index: 2;
+    z-index: 1;
 }
 
 #popup {
