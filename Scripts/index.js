@@ -16,6 +16,7 @@ let settings_playSound_eqinfo;
 let cnt_eew = -1;
 let EEW_flg = false;
 let EEW_data_nakn = null;
+let eewGetType = "";
 let EEW_repDT = null;
 let EEW_origin_time = null;
 let EEW_intensity = null;
@@ -129,7 +130,11 @@ function mainloop() {
 
     if (dateNow - cnt_eew >= 1000 * EEW_time) {
         cnt_eew = dateNow;
-        eew();
+        if (eewGetType === "dmdata") {
+            dmdata()
+        } else {
+            kmoni();
+        }
     }
 
     if (dateNow - cnt_p2p >= 1000 * p2p_time) {
@@ -258,6 +263,47 @@ function settings_init() {
         $('#menu').addClass('active')
     });
 
+    $(document).on('click', '#settings_list_sound', () => {
+        $('#settings_sounds').addClass('active');
+        $('#settings_connect').removeClass('active');
+        $('#settings_notify').removeClass('active');
+        $('#settings_other').removeClass('active');
+        $('#settings_list_sound').addClass('active');
+        $('#settings_list_connect').removeClass('active');
+        $('#settings_list_notify').removeClass('active');
+        $('#settings_list_other').removeClass('active');
+    });
+    $(document).on('click', '#settings_list_connect', () => {
+        $('#settings_sounds').removeClass('active');
+        $('#settings_connect').addClass('active');
+        $('#settings_notify').removeClass('active');
+        $('#settings_other').removeClass('active');
+        $('#settings_list_sound').removeClass('active');
+        $('#settings_list_connect').addClass('active');
+        $('#settings_list_notify').removeClass('active');
+        $('#settings_list_other').removeClass('active');
+    });
+    $(document).on('click', '#settings_list_notify', () => {
+        $('#settings_sounds').removeClass('active');
+        $('#settings_connect').removeClass('active');
+        $('#settings_notify').addClass('active');
+        $('#settings_other').removeClass('active');
+        $('#settings_list_sound').removeClass('active');
+        $('#settings_list_connect').removeClass('active');
+        $('#settings_list_notify').addClass('active');
+        $('#settings_list_other').removeClass('active');
+    });
+    $(document).on('click', '#settings_list_other', () => {
+        $('#settings_sounds').removeClass('active');
+        $('#settings_connect').removeClass('active');
+        $('#settings_notify').removeClass('active');
+        $('#settings_other').addClass('active');
+        $('#settings_list_sound').removeClass('active');
+        $('#settings_list_connect').removeClass('active');
+        $('#settings_list_notify').removeClass('active');
+        $('#settings_list_other').addClass('active');
+    });
+
     // --- Play sound
     if (localStorage.getItem("settings-playSound-eew-any") == 'true') {
         settings_playSound_eew_any = true;
@@ -328,6 +374,35 @@ function settings_init() {
         }
     })
 
+    // --- Get type
+    if (localStorage.getItem("settings-getType-eew") != null) {
+        eewGetType = localStorage.getItem("settings-getType-eew");
+    } else {
+        eewGetType = "yahoo-kmoni";
+    }
+
+    $(`input[value=${eewGetType}]`).prop('checked', true);
+
+    if (eewGetType === 'yahoo-kmoni') {
+        $('#settings_yahoo_kmoni').show();
+        $('#settings_dmdata').hide();
+    } else if (eewGetType === 'dmdata') {
+        $('#settings_yahoo_kmoni').hide();
+        $('#settings_dmdata').show();
+    }
+
+    $(document).on('input', 'input[name="settings-getType-eew"]', () => {
+        eewGetType = $('input[name="settings-getType-eew"]:checked').val();
+        if (eewGetType === 'yahoo-kmoni') {
+            $('#settings_yahoo_kmoni').show();
+            $('#settings_dmdata').hide();
+        } else if (eewGetType === 'dmdata') {
+            $('#settings_yahoo_kmoni').hide();
+            $('#settings_dmdata').show();
+        }
+        localStorage.setItem('settings-getType-eew', eewGetType);
+    });
+
     // --- EEW get cnt
     if (localStorage.getItem("settings-getCnt_eew") != null) {
         EEW_time = Number(localStorage.getItem("settings-getCnt_eew"));
@@ -362,13 +437,16 @@ function settings_init() {
 
     // --- resetsettings
     $(document).on('click', '#settings_resetSettingsBtn', function () {
+        eewGetType = "yahoo-kmoni";
+        $(`input[value=${eewGetType}]`).prop('checked', true);
+
         EEW_time = 1;
         $('#settings_getCnt_eew_bar').val(EEW_time);
         $('#settings_getCnt_eew_put').text(EEW_time);
 
         p2p_time = 8;
         $('#settings_getCnt_eqinfo_bar').val(p2p_time);
-        $('#settings_getCnt_eqinfo_bar').text(p2p_time);
+        $('#settings_getCnt_eqinfo_put').text(p2p_time);
 
         settings_playSound_eew_any = true;
         $('#settings_playSound_eew_any .toggle-switch').addClass('on');
@@ -449,7 +527,7 @@ function clock() {
 
 
 // ---------- EEW ---------- //
-function eew() {
+function kmoni() {
     yahooEewDate = makeDate_yahooEew();
     const yahooEewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${yahooEewDate}.json`;
 
@@ -765,6 +843,11 @@ function makeDate_yahooEew() {
     yahooEewDate.setSeconds(second - 2);
     yahooEewDate = `${yahooEewDate.getFullYear()}${('0' + (yahooEewDate.getMonth() + 1)).slice(-2)}${('0' + yahooEewDate.getDate()).slice(-2)}/${yahooEewDate.getFullYear()}${('0' + (yahooEewDate.getMonth() + 1)).slice(-2)}${('0' + yahooEewDate.getDate()).slice(-2)}${('0' + yahooEewDate.getHours()).slice(-2)}${('0' + yahooEewDate.getMinutes()).slice(-2)}${('0' + yahooEewDate.getSeconds()).slice(-2)}`;
     return yahooEewDate;
+}
+
+
+function dmdata() {
+    $('#eewTitle').text("取得エラー; dmdataからの取得にはまだ対応しておりません。設定から取得先を変更してください。");
 }
 
 

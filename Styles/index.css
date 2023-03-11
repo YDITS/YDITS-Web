@@ -137,7 +137,7 @@ main {
 
 #eqHistoryField {
     width: 100%;
-    height: calc(100% - 17em);
+    height: calc(100% - 16em);
     padding: 1em 0;
     overflow: scroll;
 }
@@ -218,10 +218,10 @@ main {
     top: 5vh;
     left: 5vw;
     display: none;
-    width: calc(90vw - 4em);
-    height: calc(90vh - 4em);
+    width: calc(90vw - 2em);
+    height: calc(90vh - 2em);
     border-radius: 1em;
-    padding: 2em;
+    padding: 1em;
     overflow: scroll;
     background-color: #c0c0c0;
     color: #202020;
@@ -292,6 +292,45 @@ main {
     display: block;
 }
 
+#settings .wrapper {
+    display: flex;
+    padding: 1em 0;
+}
+
+#settings_lists {
+    width: calc(20% - 2em);
+    height: 100%;
+    padding: 0 1em;
+    /* border-right: 2px solid #202020; */
+}
+
+#settings_lists ul {
+    list-style: none;
+}
+
+#settings_lists li {
+    margin-bottom: 1em;
+    padding: .5em 1em;
+    border-radius: .2em;
+    background-color: rgba(127, 127, 127, .3);
+}
+#settings_lists li:hover{
+    background-color: rgba(127, 127, 127, .9);
+}
+#settings_lists li.active {
+    background-color: rgba(64, 64, 64, .9);
+    color: #ffffff;
+}
+
+#settings .settings_list {
+    display: none;
+    width: 80%;
+    height: 100%;
+}
+#settings .settings_list.active {
+    display: block;
+}
+
 #settings .version {
     text-align: center;
 }
@@ -322,6 +361,14 @@ main {
 
 #settings_playSound .sectionTitle {
     display: block;
+}
+
+#settings_getTypes div {
+    padding: .5em;
+}
+
+#settings_getTypes label {
+    display: inline!important;
 }
 
 #license.active {
@@ -382,5 +429,24 @@ main {
 
     #map.mobile {
         display: none;
+    }
+
+    #settings .wrapper {
+        flex-direction: column;
+    }
+
+    #settings_lists {
+        width: calc(100% - 2em);
+    }
+    
+    #settings_lists ul {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    #settings_lists li {
+        width: 15%;
+        text-align: center;
     }
 }

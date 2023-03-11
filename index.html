@@ -162,65 +162,103 @@
 
             <div class="window" id="settings">
                 <span class="material-symbols-outlined closeBtn">close</span>
-
                 <span class="title">設定</span>
-
                 <p class="version"></p>
 
-                <div class="list" id="settings_getCnt_eew">
-                    <label>緊急地震速報 取得間隔</label>
-                    <div class="content">
-                        <input type="range" min="1" max="2" step="1" value="1" id="settings_getCnt_eew_bar">
-                        <p><span id="settings_getCnt_eew_put"></span>秒ごと</p>
+                <div class="wrapper">
+                    <div id="settings_lists">
+                        <ul>
+                            <li class="active" id="settings_list_sound">音声</li>
+                            <li id="settings_list_connect">接続</li>
+                            <li id="settings_list_notify">通知</li>
+                            <li id="settings_list_other">その他</li>
+                        </ul>
                     </div>
-                </div>
 
-                <div class="list" id="settings_getCnt_eqinfo">
-                    <label>地震情報 取得間隔</label>
-                    <div class="content">
-                        <input type="range" min="2" max="10" step="2" value="8" id="settings_getCnt_eqinfo_bar">
-                        <p><span id="settings_getCnt_eqinfo_put"></span>秒ごと</p>
-                    </div>
-                </div>
+                    <div class="settings_list active" id="settings_sounds">
+                        <div class="list" id="settings_playSound">
+                            <label>音声と効果音</label>
+                            <p>一部のブラウザでは効果音が再生されない可能性があります。</p>
+                            <div id="settings_playSound_eew">
+                                <label class="sectionTitle">- 緊急地震速報 受信時</label>
+                                <div class="content" id="settings_playSound_eew_any">
+                                    <label>震度変化時</label>
+                                    <div class="content toggle-switch">
+                                        <div class="span"></div>
+                                    </div>
+                                </div>
 
-                <div class="list" id="settings_playSound">
-                    <label>音声と効果音</label>
-                    <p>一部のブラウザでは効果音が再生されない可能性があります。</p>
-                    <div id="settings_playSound_eew">
-                        <label class="sectionTitle">- 緊急地震速報 受信時</label>
-                        <div class="content" id="settings_playSound_eew_any">
-                            <label>震度変化時</label>
-                            <div class="content toggle-switch">
-                                <div class="span"></div>
+                                <div class="content" id="settings_playSound_eew_cancel">
+                                    <label>取消報</label>
+                                    <div class="content toggle-switch">
+                                        <div class="span"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="settings_playSound_eqinfo">
+                                <label class="sectionTitle">- 地震情報 受信時</label>
+                                <div class="content toggle-switch">
+                                    <div class="span"></div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="content" id="settings_playSound_eew_cancel">
-                            <label>取消報</label>
-                            <div class="content toggle-switch">
-                                <div class="span"></div>
+                        <div class="list">
+                            <button id="btn_eew_chk_sound">緊急地震速報の音声をテスト再生</button>
+                            <button id="btn_earthquake_info_chk_sound">地震情報の音声をテスト再生</button>
+                            <button id="btn_eew_cancel_chk_sound">取消報の音声をテスト再生</button>
+                        </div>
+                    </div>
+
+                    <div class="settings_list" id="settings_connect">
+                        <div class="list" id="settings_getTypes">
+                            <label>緊急地震速報 取得先</label>
+                            <div>
+                                <input type="radio" name="settings-getType-eew" value="yahoo-kmoni">
+                                <label for="contactChoice1">Yahoo! 強震モニタ</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="settings-getType-eew" value="dmdata">
+                                <label for="contactChoice2">Project DM-D.S.S (dmdata.jp)</label>
+                            </div>
+                        </div>
+
+                        <div class="list" id="settings_yahoo_kmoni">
+                            <div id="settings_getCnt_eew">
+                                <label>緊急地震速報 取得間隔</label>
+                                <div class="content">
+                                    <input type="range" min="1" max="2" step="1" value="1" id="settings_getCnt_eew_bar">
+                                    <p><span id="settings_getCnt_eew_put"></span>秒ごと</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list" id="settings_dmdata">
+                            <p style="color: #ff4040;">dmdataからの取得にはまだ対応しておりません。</p>
+                        </div>
+
+                        <div class="list" id="settings_getCnt_eqinfo">
+                            <label>地震情報 取得間隔</label>
+                            <div class="content">
+                                <input type="range" min="2" max="10" step="2" value="8" id="settings_getCnt_eqinfo_bar">
+                                <p><span id="settings_getCnt_eqinfo_put"></span>秒ごと</p>
                             </div>
                         </div>
                     </div>
 
-                    <div id="settings_playSound_eqinfo">
-                        <label class="sectionTitle">- 地震情報 受信時</label>
-                        <div class="content toggle-switch">
-                            <div class="span"></div>
+                    <div class="settings_list" id="settings_notify">
+                        <div class="list">
+                            <button id="btn_push_chk">プッシュ通知のテスト</button>
                         </div>
                     </div>
-                </div>
 
-                <div class="list">
-                    <label>設定は自動的に保存されます</label>
-                    <button id="settings_resetSettingsBtn">設定をリセット</button><br>
-                </div>
-
-                <div class="list">
-                    <button id="btn_eew_chk_sound">緊急地震速報の音声をテスト再生</button>
-                    <button id="btn_earthquake_info_chk_sound">地震情報の音声をテスト再生</button>
-                    <button id="btn_eew_cancel_chk_sound">取消報の音声をテスト再生</button>
-                    <button id="btn_push_chk">プッシュ通知のテスト</button>
+                    <div class="settings_list" id="settings_other">
+                        <div class="list">
+                            <label>設定は自動的に保存されます</label>
+                            <button id="settings_resetSettingsBtn">設定をリセット</button><br>
+                        </div>
+                    </div>
                 </div>
             </div>
 
