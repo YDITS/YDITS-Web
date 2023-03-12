@@ -68,14 +68,14 @@
     right: 0;
 
     width: 2em;
-    height: 2rem;
+    height: 1.2em;
     overflow: hidden;
 
     cursor: pointer
 }
 
 .dialog .navBar .close:hover {
-    background-color: #c0c0c0;
+    background-color: rgba(0, 0, 0, .2);
 }
 
 .dialog .content {

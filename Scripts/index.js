@@ -14,39 +14,41 @@ let settings_playSound_eew_cancel;
 let settings_playSound_eqinfo;
 
 let cnt_eew = -1;
-let EEW_flg = false;
-let EEW_data_nakn = null;
+let eew_flg = false;
+let eew_data_nakn = null;
 let eewGetType = "";
-let EEW_repDT = null;
-let EEW_origin_time = null;
-let EEW_intensity = null;
-let EEW_hypocenter = "";
-let EEW_originTimeYear = -1;
-let EEW_originTimeMonth = -1;
-let EEW_originTimeDay = -1;
-let EEW_originTimeHour = -1;
-let EEW_originTimeMinute = -1;
-let EEW_originTimeSecond = -1;
+let eew_repDT = null;
+let eew_origin_time = null;
+let eew_intensity = null;
+let eew_hypocenter = "";
+let eew_originTimeYear = -1;
+let eew_originTimeMonth = -1;
+let eew_originTimeDay = -1;
+let eew_originTimeHour = -1;
+let eew_originTimeMinute = -1;
+let eew_originTimeSecond = -1;
 
-let EEW_data = null;
-let EEW_time = 1;
-let EEW_repNum = '';
-let EEW_repNum_last = '';
-let EEW_alertFlg = '';
-let EEW_timeYear = '';
-let EEW_timeMonth = '';
-let EEW_timeDay = '';
-let EEW_timeHour = '';
-let EEW_timeMinute = '';
-let EEW_repNum_p = '';
-let EEW_calcintensity = '';
-let EEW_Region_name = '';
-let EEW_Magnitude = '';
-let EEW_depth = '';
-let EEW_isCansel = null;
-let EEW_isTraining = null;
-let EEW_bgc;
-let EEW_fntc;
+let eew_data = null;
+let eew_time = 1;
+let eew_repNum = '';
+let eew_repNum_last = '';
+let eew_alertFlg = '';
+let eew_timeYear = '';
+let eew_timeMonth = '';
+let eew_timeDay = '';
+let eew_timeHour = '';
+let eew_timeMinute = '';
+let eew_repNum_p = '';
+let eew_calcintensity = '';
+let eew_Region_name = '';
+let eew_Magnitude = '';
+let eew_depth = '';
+let eew_isCansel = null;
+let eew_isTraining = null;
+let eew_bgc;
+let eew_fntc;
+
+let dmdata_access_token = null;
 
 let p2p_data;
 let p2p_time = -1;
@@ -72,33 +74,33 @@ let hypo = null;
 let wave_s = null;
 let wave_p = null;
 let loopCnt_moni = -1;
-let EEW_waves = null;
-let EEW_wave_p = -1;
-let EEW_wave_p_last = -1;
-let EEW_wave_p_Interval = -1;
-let EEW_wave_p_put = -1;
-let EEW_wave_s = -1;
-let EEW_wave_s_last = -1;
-let EEW_wave_s_Interval = -1;
-let EEW_wave_s_put = -1;
-let EEW_lat = '';
-let EEW_lng = '';
-let EEW_hypo_LatLng = null;
+let eew_waves = null;
+let eew_wave_p = -1;
+let eew_wave_p_last = -1;
+let eew_wave_p_Interval = -1;
+let eew_wave_p_put = -1;
+let eew_wave_s = -1;
+let eew_wave_s_last = -1;
+let eew_wave_s_Interval = -1;
+let eew_wave_s_put = -1;
+let eew_lat = '';
+let eew_lng = '';
+let eew_hypo_LatLng = null;
 let loopCnt_loopWaves = -1;
 let isFullscreen_map = false;
 
-let EEW_sound
+let eew_sound
 let p2p_sound
-let EEW_1_voice
-let EEW_2_voice
-let EEW_3_voice
-let EEW_4_voice
-let EEW_5_voice
-let EEW_6_voice
-let EEW_7_voice
-let EEW_8_voice
-let EEW_9_voice
-let EEW_Cancel_voice
+let eew_1_voice
+let eew_2_voice
+let eew_3_voice
+let eew_4_voice
+let eew_5_voice
+let eew_6_voice
+let eew_7_voice
+let eew_8_voice
+let eew_9_voice
+let eew_Cancel_voice
 let p2p_1_voice
 let p2p_2_voice
 let p2p_3_voice
@@ -127,8 +129,7 @@ function mainloop() {
         clock();
     }
 
-
-    if (dateNow - cnt_eew >= 1000 * EEW_time) {
+    if (dateNow - cnt_eew >= 1000 * eew_time) {
         cnt_eew = dateNow;
         if (eewGetType === "dmdata") {
             dmdata()
@@ -151,8 +152,9 @@ function mainloop() {
 
 // ---------- Page ---------- //
 function init() {
-    initMenu();
     settings_init();
+    initDmdata();
+    initMenu();
     licence_init();
     init_map();
     init_sounds();
@@ -181,18 +183,18 @@ function getNtp() {
 
 // ---------- sounds ---------- //
 function init_sounds() {
-    EEW_sound = new Audio("https://webapp.ydits.net/Sounds/eew.wav");
+    eew_sound = new Audio("https://webapp.ydits.net/Sounds/eew.wav");
     p2p_sound = new Audio("https://webapp.ydits.net/Sounds/info.wav");
-    EEW_1_voice = new Audio("https://webapp.ydits.net/Sounds/eew_1_v.mp3");
-    EEW_2_voice = new Audio("https://webapp.ydits.net/Sounds/eew_2_v.mp3");
-    EEW_3_voice = new Audio("https://webapp.ydits.net/Sounds/eew_3_v.mp3");
-    EEW_4_voice = new Audio("https://webapp.ydits.net/Sounds/eew_4_v.mp3");
-    EEW_5_voice = new Audio("https://webapp.ydits.net/Sounds/eew_5_v.mp3");
-    EEW_6_voice = new Audio("https://webapp.ydits.net/Sounds/eew_6_v.mp3");
-    EEW_7_voice = new Audio("https://webapp.ydits.net/Sounds/eew_7_v.mp3");
-    EEW_8_voice = new Audio("https://webapp.ydits.net/Sounds/eew_8_v.mp3");
-    EEW_9_voice = new Audio("https://webapp.ydits.net/Sounds/eew_9_v.mp3");
-    EEW_Cancel_voice = new Audio("https://webapp.ydits.net/Sounds/eew_cancel_v.mp3");
+    eew_1_voice = new Audio("https://webapp.ydits.net/Sounds/eew_1_v.mp3");
+    eew_2_voice = new Audio("https://webapp.ydits.net/Sounds/eew_2_v.mp3");
+    eew_3_voice = new Audio("https://webapp.ydits.net/Sounds/eew_3_v.mp3");
+    eew_4_voice = new Audio("https://webapp.ydits.net/Sounds/eew_4_v.mp3");
+    eew_5_voice = new Audio("https://webapp.ydits.net/Sounds/eew_5_v.mp3");
+    eew_6_voice = new Audio("https://webapp.ydits.net/Sounds/eew_6_v.mp3");
+    eew_7_voice = new Audio("https://webapp.ydits.net/Sounds/eew_7_v.mp3");
+    eew_8_voice = new Audio("https://webapp.ydits.net/Sounds/eew_8_v.mp3");
+    eew_9_voice = new Audio("https://webapp.ydits.net/Sounds/eew_9_v.mp3");
+    eew_Cancel_voice = new Audio("https://webapp.ydits.net/Sounds/eew_cancel_v.mp3");
     p2p_1_voice = new Audio("https://webapp.ydits.net/Sounds/info_1_v.mp3");
     p2p_2_voice = new Audio("https://webapp.ydits.net/Sounds/info_2_v.mp3");
     p2p_3_voice = new Audio("https://webapp.ydits.net/Sounds/info_3_v.mp3");
@@ -389,8 +391,19 @@ function settings_init() {
     } else if (eewGetType === 'dmdata') {
         $('#settings_yahoo_kmoni').hide();
         $('#settings_dmdata').show();
+        
     }
-
+    
+    dmdata_access_token = localStorage.getItem('settings-dmdata-access-token');
+    console.log(dmdata_access_token);
+    if (dmdata_access_token === null) {
+        $('#settings_dmdata_init').show();
+        $('#settings_dmdata_main').hide();
+    } else {
+        $('#settings_dmdata_init').hide();
+        $('#settings_dmdata_main').show();
+    }
+    
     $(document).on('input', 'input[name="settings-getType-eew"]', () => {
         eewGetType = $('input[name="settings-getType-eew"]:checked').val();
         if (eewGetType === 'yahoo-kmoni') {
@@ -403,20 +416,22 @@ function settings_init() {
         localStorage.setItem('settings-getType-eew', eewGetType);
     });
 
-    // --- EEW get cnt
+    $(document).on('click', '#settings_dmdata_init_btn', connectDmdata)
+
+    // --- eew get cnt
     if (localStorage.getItem("settings-getCnt_eew") != null) {
-        EEW_time = Number(localStorage.getItem("settings-getCnt_eew"));
+        eew_time = Number(localStorage.getItem("settings-getCnt_eew"));
     } else {
-        EEW_time = 1;
+        eew_time = 1;
     }
 
-    $('#settings_getCnt_eew_bar').val(EEW_time);
-    $('#settings_getCnt_eew_put').text(EEW_time);
+    $('#settings_getCnt_eew_bar').val(eew_time);
+    $('#settings_getCnt_eew_put').text(eew_time);
 
     $(document).on('input', '#settings_getCnt_eew_bar', function () {
-        EEW_time = $('#settings_getCnt_eew_bar').val();
-        localStorage.setItem('settings-getCnt_eew', String(EEW_time));
-        $('#settings_getCnt_eew_put').text(EEW_time);
+        eew_time = $('#settings_getCnt_eew_bar').val();
+        localStorage.setItem('settings-getCnt_eew', String(eew_time));
+        $('#settings_getCnt_eew_put').text(eew_time);
     });
 
     // --- P2P get cnt
@@ -438,11 +453,16 @@ function settings_init() {
     // --- resetsettings
     $(document).on('click', '#settings_resetSettingsBtn', function () {
         eewGetType = "yahoo-kmoni";
+        dmdata_access_token = null;
         $(`input[value=${eewGetType}]`).prop('checked', true);
+        $('#settings_yahoo_kmoni').show();
+        $('#settings_dmdata').hide();
+        $('#settings_dmdata_init').show();
+        $('#settings_dmdata_main').hide();
 
-        EEW_time = 1;
-        $('#settings_getCnt_eew_bar').val(EEW_time);
-        $('#settings_getCnt_eew_put').text(EEW_time);
+        eew_time = 1;
+        $('#settings_getCnt_eew_bar').val(eew_time);
+        $('#settings_getCnt_eew_put').text(eew_time);
 
         p2p_time = 8;
         $('#settings_getCnt_eqinfo_bar').val(p2p_time);
@@ -488,15 +508,15 @@ function settings_init() {
     });
 
     $(document).on('click', '#btn_eew_chk_sound', function () {
-        EEW_sound.play();
-        EEW_7_voice.play();
+        eew_sound.play();
+        eew_7_voice.play();
     });
     $(document).on('click', '#btn_earthquake_info_chk_sound', function () {
         p2p_sound.play();
         p2p_7_voice.play();
     });
     $(document).on('click', '#btn_eew_cancel_chk_sound', function () {
-        EEW_Cancel_voice.play();
+        eew_Cancel_voice.play();
     });
     $(document).on('click', '#btn_push_chk', function () {
         Push.create(`YDITS for Web`, {
@@ -520,297 +540,500 @@ function licence_init() {
 }
 
 
+// dmdata initialize //
+function connectDmdata() {
+    const dmdataOAuthBaseUrl = 'https://manager.dmdata.jp/account/oauth2/v1/auth';
+    const state = "Ze4VX8";
+    const dmdataOAuthConfig = '?client_id=CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV'+
+                              '&response_type=code'+
+                              '&redirect_uri=https:%2F%2Fwebapp.ydits.net%2F'+
+                              '&scope=socket.start%20socket.list%20socket.close%20eew.get.warning%20eew.get.forecast'+
+                              `&state=${state}`
+    window.open(dmdataOAuthBaseUrl + dmdataOAuthConfig, '_self');
+}
+
+
+// dmdata redirect checking //
+function initDmdata() {
+    console.log(eewGetType);
+    if (eewGetType === 'dmdata') {
+        if (dmdata_access_token !== null) {
+            $('#settings_dmdata_init').hide();
+            $('#settings_dmdata_main').show();
+        } else {
+            const state = "Ze4VX8";
+            const resCode = getParam('code');
+            const resState = getParam('state');
+
+            if (resState === state) {
+                let resError = getParam('error');
+                let resError_description = getParam('error_description');
+
+                if (resError === null) {
+                    const dmdataFormData = {
+                        'client_id': 'CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV',
+                        'grant_type': 'authorization_code',
+                        'code': resCode
+                    }
+                    const dmdataFormBody = new URLSearchParams(dmdataFormData).toString();
+                    console.log(dmdataFormBody);
+
+                    fetch('https://manager.dmdata.jp/account/oauth2/v1/token', {
+                        method: 'POST',
+                        Host: 'manager.dmdata.jp',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: dmdataFormBody
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data['error']);
+                        if (data['error'] === undefined) {
+                            dmdata_access_token = data['access_token'];
+                            localStorage.setItem('settings-dmdata-access-token', dmdata_access_token);
+                            $('#settings_dmdata_init').hide();
+                            $('#settings_dmdata_main').show();
+                        } else if (data['error'] === 'invalid_grant') {
+                            win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
+
+                            $('#win_dmdata_oauth_error>.content').html(`
+                                <p>
+                                    dmdataとの接続を続行するにはDM-D.S.Sアカウントを再度連携をしてください。<br>
+                                    <code>
+                                        ${data['error']}<br>
+                                        ${data['error_description']}<br>
+                                    </code>
+                                </p>
+                                <button class="btn_ok">OK</button>
+                            `)
+
+                            $('#win_dmdata_oauth_error .navBar').css({
+                                'background-color': '#c04040',
+                                'color': '#ffffff'
+                            })
+
+                            $('#win_dmdata_oauth_error .content').css({
+                                'padding': '1em'
+                            })
+                
+                            $('#win_dmdata_oauth_error .content .btn_ok').css({
+                                'position': 'absolute',
+                                'right': '3em',
+                                'bottom': '3em',
+                                'width': '10em'
+                            })
+                
+                            $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
+                                $('#win_dmdata_oauth_error').remove()
+                            })
+                        } else {
+                            win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
+
+                            $('#win_dmdata_oauth_error>.content').html(`
+                                <p>
+                                    DM-D.S.S アカウント認証でエラーが発生しました。<br>
+                                    設定をリセットした場合は再度アカウント連携をしてください。<br>
+                                    <code>
+                                        ${data['error']}<br>
+                                        ${data['error_description']}<br>
+                                    </code>
+                                </p>
+                                <button class="btn_ok">OK</button>
+                            `)
+
+                            $('#win_dmdata_oauth_error .navBar').css({
+                                'background-color': '#c04040',
+                                'color': '#ffffff'
+                            })
+
+                            $('#win_dmdata_oauth_error .content').css({
+                                'padding': '1em'
+                            })
+                
+                            $('#win_dmdata_oauth_error .content .btn_ok').css({
+                                'position': 'absolute',
+                                'right': '3em',
+                                'bottom': '3em',
+                                'width': '10em'
+                            })
+                
+                            $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
+                                $('#win_dmdata_oauth_error').remove()
+                            })
+                        }
+                    })
+                    .catch(error => {
+                        win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
+
+                        $('#win_dmdata_oauth_error>.content').html(`
+                            <p>
+                                DM-D.S.S アカウント認証時にエラーが発生しました。<br>
+                                <code>${error}</code>
+                            </p>
+                            <button class="btn_ok">OK</button>
+                        `)
+
+                        $('#win_dmdata_oauth_error .navBar').css({
+                            'background-color': '#c04040',
+                            'color': '#ffffff'
+                        })
+
+                        $('#win_dmdata_oauth_error .content').css({
+                            'padding': '1em'
+                        })
+            
+                        $('#win_dmdata_oauth_error .content .btn_ok').css({
+                            'position': 'absolute',
+                            'right': '3em',
+                            'bottom': '3em',
+                            'width': '10em'
+                        })
+            
+                        $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
+                            $('#win_dmdata_oauth_error').remove()
+                        })
+                    })
+
+                } else {
+                    win('win_dmdata_oauth_error', 'DM-D.S.S アカウント連携エラー');
+
+                    $('#win_dmdata_oauth_error>.content').html(`
+                        <p>
+                            ${resError}<br>
+                            ${resError_description}
+                        </p>
+                        <button class="btn_ok">OK</button>
+                    `)
+
+                    $('#win_dmdata_oauth_error .navBar').css({
+                        'background-color': '#c04040',
+                        'color': '#ffffff'
+                    })
+
+                    $('#win_dmdata_oauth_error .content').css({
+                        'padding': '1em'
+                    })
+
+                    $('#win_dmdata_oauth_error .content .btn_ok').css({
+                        'position': 'absolute',
+                        'right': '3em',
+                        'bottom': '3em',
+                        'width': '10em'
+                    })
+
+                    $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
+                        $('#win_dmdata_oauth_error').remove()
+                    })
+                }
+            }
+        }
+    }
+}
+
+
+function getParam(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+
 // ---------- Clock ---------- //
 function clock() {
     $('#clock').text(`${timeYear}/${('0' + timeMonth).slice(-2)}/${('0' + timeDay).slice(-2)} ${('0' + timeHour).slice(-2)}:${('0' + timeMinute).slice(-2)}:${('0' + timeSecond).slice(-2)}`);
 }
 
 
-// ---------- EEW ---------- //
+// ---------- eew ---------- //
 function kmoni() {
-    yahooEewDate = makeDate_yahooEew();
-    const yahooEewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${yahooEewDate}.json`;
+    yahooeewDate = makeDate_yahooeew();
+    const yahooeewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${yahooeewDate}.json`;
 
     // --- debug
-    // const yahooEewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
-    // const yahooEewUrl = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
-    // const yahooEewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
-    // const yahooEewUrl = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
+    // const yahooeewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
+    // const yahooeewUrl = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
+    // const yahooeewUrl = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
+    // const yahooeewUrl = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
     // ---
 
-    fetch(yahooEewUrl)
+    fetch(yahooeewUrl)
 
         .then(response => { return response.json() })
 
         .then(result => {
-            EEW_data = result;
+            eew_data = result;
 
-            if (EEW_data["hypoInfo"] != null) {
-                EEW_repNum = EEW_data["hypoInfo"]["items"][0]["reportNum"];
+            if (eew_data["hypoInfo"] != null) {
+                eew_repNum = eew_data["hypoInfo"]["items"][0]["reportNum"];
 
                 // --- debug
-                // EEW_repNum = '1';  // First report
-                // EEW_repNum_last = -2;  // Difficalt report
+                // eew_repNum = '1';  // First report
+                // eew_repNum_last = -2;  // Difficalt report
                 // ---
 
-                if (EEW_repNum != EEW_repNum_last) {
-                    EEW_repNum_last = EEW_repNum;
+                if (eew_repNum != eew_repNum_last) {
+                    eew_repNum_last = eew_repNum;
 
-                    EEW_isFinal = EEW_data["hypoInfo"]["items"][0]["isFinal"];
+                    eew_isFinal = eew_data["hypoInfo"]["items"][0]["isFinal"];
 
                     // --- debug
-                    // EEW_isFinal = 'true'; 
+                    // eew_isFinal = 'true'; 
                     // ---
 
-                    if (EEW_isFinal == 'true') {
-                        EEW_repNum_p = '最終報';
+                    if (eew_isFinal == 'true') {
+                        eew_repNum_p = '最終報';
                     } else {
-                        EEW_repNum_p = `第${EEW_repNum}報`
+                        eew_repNum_p = `第${eew_repNum}報`
                     }
 
-                    EEW_origin_time = EEW_data["hypoInfo"]["items"][0]["originTime"];
-                    EEW_timeYear = EEW_origin_time.substring(0, 4);
-                    EEW_timeMonth = EEW_origin_time.substring(5, 7);
-                    EEW_timeDay = EEW_origin_time.substring(8, 10);
-                    EEW_timeHour = EEW_origin_time.substring(11, 13);
-                    EEW_timeMinute = EEW_origin_time.substring(14, 16);
-                    EEW_timeSecond = EEW_origin_time.substring(17, 19);
+                    eew_origin_time = eew_data["hypoInfo"]["items"][0]["originTime"];
+                    eew_timeYear = eew_origin_time.substring(0, 4);
+                    eew_timeMonth = eew_origin_time.substring(5, 7);
+                    eew_timeDay = eew_origin_time.substring(8, 10);
+                    eew_timeHour = eew_origin_time.substring(11, 13);
+                    eew_timeMinute = eew_origin_time.substring(14, 16);
+                    eew_timeSecond = eew_origin_time.substring(17, 19);
 
-                    EEW_Region_name = EEW_data["hypoInfo"]["items"][0]["regionName"];
+                    eew_Region_name = eew_data["hypoInfo"]["items"][0]["regionName"];
 
                     // --- debug
-                    // EEW_Region_name = '東京湾';
+                    // eew_Region_name = '東京湾';
                     // ---
 
-                    if (!EEW_Region_name) {
-                        EEW_Region_name = '不明';
+                    if (!eew_Region_name) {
+                        eew_Region_name = '不明';
                     }
 
-                    EEW_calcintensity_last = EEW_calcintensity;
+                    eew_calcintensity_last = eew_calcintensity;
 
-                    EEW_calcintensity = EEW_data["hypoInfo"]["items"][0]["calcintensity"];
+                    eew_calcintensity = eew_data["hypoInfo"]["items"][0]["calcintensity"];
 
                     // --- debug
-                    // EEW_calcintensity = '5-';
+                    // eew_calcintensity = '5-';
                     // ---
 
-                    switch (EEW_calcintensity) {
-                        case '01': EEW_calcintensity = "1"; break;
-                        case '02': EEW_calcintensity = "2"; break;
-                        case '03': EEW_calcintensity = "3"; break;
-                        case '04': EEW_calcintensity = "4"; break;
-                        case '5-': EEW_calcintensity = "5-"; break;
-                        case '5+': EEW_calcintensity = "5+"; break;
-                        case '6-': EEW_calcintensity = "6-"; break;
-                        case '6+': EEW_calcintensity = "6+"; break;
-                        case '07': EEW_calcintensity = "7"; break;
+                    switch (eew_calcintensity) {
+                        case '01': eew_calcintensity = "1"; break;
+                        case '02': eew_calcintensity = "2"; break;
+                        case '03': eew_calcintensity = "3"; break;
+                        case '04': eew_calcintensity = "4"; break;
+                        case '5-': eew_calcintensity = "5-"; break;
+                        case '5+': eew_calcintensity = "5+"; break;
+                        case '6-': eew_calcintensity = "6-"; break;
+                        case '6+': eew_calcintensity = "6+"; break;
+                        case '07': eew_calcintensity = "7"; break;
 
                         default:
-                            EEW_calcintensity = `?`;
+                            eew_calcintensity = `?`;
                             break;
                     }
 
-                    EEW_Magnitude = EEW_data["hypoInfo"]["items"][0]["magnitude"];
+                    eew_Magnitude = eew_data["hypoInfo"]["items"][0]["magnitude"];
 
                     // --- debug
-                    // EEW_Magnitude = '7.0';
+                    // eew_Magnitude = '7.0';
                     // ---
 
-                    if (EEW_Magnitude) {
-                        EEW_Magnitude = 'M' + EEW_Magnitude;
+                    if (eew_Magnitude) {
+                        eew_Magnitude = 'M' + eew_Magnitude;
                     } else {
-                        EEW_Magnitude = '不明';
+                        eew_Magnitude = '不明';
                     }
 
-                    EEW_depth = EEW_data["hypoInfo"]["items"][0]["depth"];
+                    eew_depth = eew_data["hypoInfo"]["items"][0]["depth"];
 
                     // --- debug
-                    // EEW_depth = '70km';
+                    // eew_depth = '70km';
                     // ---
 
-                    if (EEW_depth) {
-                        EEW_depth = '約' + EEW_depth;
+                    if (eew_depth) {
+                        eew_depth = '約' + eew_depth;
                     } else {
-                        EEW_depth = '不明';
+                        eew_depth = '不明';
                     }
 
                     // Yahoo 強震モニタのJSONデータに 予報・警報 のフラッグがないため 未実装
 
-                    // EEW_alertFlg = EEW_data['alertflg'];
+                    // eew_alertFlg = eew_data['alertflg'];
 
-                    // switch (EEW_alertFlg) {
+                    // switch (eew_alertFlg) {
                     //   case 'true':
-                    //     EEW_alertFlg = "警報"
+                    //     eew_alertFlg = "警報"
                     //     break;
 
                     //   case 'false':
-                    //     EEW_alertFlg = "予報"
+                    //     eew_alertFlg = "予報"
                     //     break;
 
                     //   case null:
-                    //     EEW_alertFlg = "{Null}"
+                    //     eew_alertFlg = "{Null}"
                     //     break;
 
                     //   default:
-                    //     EEW_alertFlg = "{Unknown}"
+                    //     eew_alertFlg = "{Unknown}"
                     //     break;
                     // }
 
-                    EEW_alertFlg = '';
+                    eew_alertFlg = '';
 
-                    EEW_isCansel = EEW_data["hypoInfo"]["items"][0]['isCancel'];
+                    eew_isCansel = eew_data["hypoInfo"]["items"][0]['isCancel'];
 
                     // --- debug
-                    // EEW_isCansel = 'true';
+                    // eew_isCansel = 'true';
                     // ---
 
-                    if (EEW_isCansel == 'true') {
-                        EEW_alertFlg = '取消報';
+                    if (eew_isCansel == 'true') {
+                        eew_alertFlg = '取消報';
                     }
 
-                    if (EEW_isCansel == 'true') {
+                    if (eew_isCansel == 'true') {
                         if (settings_playSound_eew_cancel == true) {
                             // 取消報 受信時
-                            EEW_Cancel_voice.play();
+                            eew_Cancel_voice.play();
                         }
                     } else {
-                        if (settings_playSound_eew_any == true && EEW_calcintensity_last != EEW_calcintensity) {
-                            switch (EEW_calcintensity) {
+                        if (settings_playSound_eew_any == true && eew_calcintensity_last != eew_calcintensity) {
+                            switch (eew_calcintensity) {
                                 case '1':
-                                    EEW_sound.play();
-                                    EEW_1_voice.play();
+                                    eew_sound.play();
+                                    eew_1_voice.play();
                                     break;
 
                                 case '2':
-                                    EEW_sound.play();
-                                    EEW_2_voice.play();
+                                    eew_sound.play();
+                                    eew_2_voice.play();
                                     break;
 
                                 case '3':
-                                    EEW_sound.play();
-                                    EEW_3_voice.play();
+                                    eew_sound.play();
+                                    eew_3_voice.play();
                                     break;
 
                                 case '4':
-                                    EEW_sound.play();
-                                    EEW_4_voice.play();
+                                    eew_sound.play();
+                                    eew_4_voice.play();
                                     break;
 
                                 case '5-':
-                                    EEW_sound.play();
-                                    EEW_5_voice.play();
+                                    eew_sound.play();
+                                    eew_5_voice.play();
                                     break;
 
                                 case '5+':
-                                    EEW_sound.play();
-                                    EEW_6_voice.play();
+                                    eew_sound.play();
+                                    eew_6_voice.play();
                                     break;
 
                                 case '6-':
-                                    EEW_sound.play();
-                                    EEW_7_voice.play();
+                                    eew_sound.play();
+                                    eew_7_voice.play();
                                     break;
 
                                 case '6+':
-                                    EEW_sound.play();
-                                    EEW_8_voice.play();
+                                    eew_sound.play();
+                                    eew_8_voice.play();
                                     break;
 
                                 case '7':
-                                    EEW_sound.play();
-                                    EEW_9_voice.play();
+                                    eew_sound.play();
+                                    eew_9_voice.play();
                                     break;
 
                                 default:
-                                    EEW_sound.play();
+                                    eew_sound.play();
                                     break;
                             }
                         }
                     }
 
                     // ----- put ----- //
-                    let EEW_bgc;
-                    let EEW_fntc;
+                    let eew_bgc;
+                    let eew_fntc;
 
-                    switch (EEW_calcintensity) {
+                    switch (eew_calcintensity) {
                         case '1':
-                            EEW_bgc = "#c0c0c0";
-                            EEW_fntc = "#010101";
+                            eew_bgc = "#c0c0c0";
+                            eew_fntc = "#010101";
                             break;
                         case '2':
-                            EEW_bgc = "#2020c0";
-                            EEW_fntc = "#ffffff";
+                            eew_bgc = "#2020c0";
+                            eew_fntc = "#ffffff";
                             break;
                         case '3':
-                            EEW_bgc = "#20c020";
-                            EEW_fntc = "#010101";
+                            eew_bgc = "#20c020";
+                            eew_fntc = "#010101";
                             break;
                         case '4':
-                            EEW_bgc = "#c0c020";
-                            EEW_fntc = "#010101";
+                            eew_bgc = "#c0c020";
+                            eew_fntc = "#010101";
                             break;
                         case '5-':
-                            EEW_bgc = "#c0a020";
-                            EEW_fntc = "#010101";
+                            eew_bgc = "#c0a020";
+                            eew_fntc = "#010101";
                             break;
                         case '5+':
-                            EEW_bgc = "#c07f20";
-                            EEW_fntc = "#010101";
+                            eew_bgc = "#c07f20";
+                            eew_fntc = "#010101";
                             break;
                         case '6-':
-                            EEW_bgc = "#e02020";
-                            EEW_fntc = "#ffffff";
+                            eew_bgc = "#e02020";
+                            eew_fntc = "#ffffff";
                             break;
                         case '6+':
-                            EEW_bgc = "#a02020";
-                            EEW_fntc = "#ffffff";
+                            eew_bgc = "#a02020";
+                            eew_fntc = "#ffffff";
                             break;
                         case '7':
-                            EEW_bgc = "#7f207f";
-                            EEW_fntc = "#ffffff";
+                            eew_bgc = "#7f207f";
+                            eew_fntc = "#ffffff";
                             break;
 
                         default:
-                            EEW_bgc = "#7f7fc0";
-                            EEW_fntc = "#010101";
+                            eew_bgc = "#7f7fc0";
+                            eew_fntc = "#010101";
                             break;
                     }
 
-                    if (EEW_isCansel == 'true') {
-                        EEW_bgc = "#7f7fc0";
-                        EEW_fntc = "#010101";
+                    if (eew_isCansel == 'true') {
+                        eew_bgc = "#7f7fc0";
+                        eew_fntc = "#010101";
                     }
 
-                    $('#eewTitle').text(`緊急地震速報 ${EEW_alertFlg}(${EEW_repNum_p})`);
-                    $('#eewCalc').text(EEW_calcintensity);
-                    $('#eewRegion').text(EEW_Region_name);
-                    $('#eewOrigin_time').text(`発生日時: ${EEW_timeYear}/${EEW_timeMonth}/${EEW_timeDay} ${EEW_timeHour}:${EEW_timeMinute}`);
-                    $('#eewMagnitude').text(`規模 ${EEW_Magnitude}`);
-                    $('#eewDepth').text(`深さ ${EEW_depth}`);
+                    $('#eewTitle').text(`緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`);
+                    $('#eewCalc').text(eew_calcintensity);
+                    $('#eewRegion').text(eew_Region_name);
+                    $('#eewOrigin_time').text(`発生日時: ${eew_timeYear}/${eew_timeMonth}/${eew_timeDay} ${eew_timeHour}:${eew_timeMinute}`);
+                    $('#eewMagnitude').text(`規模 ${eew_Magnitude}`);
+                    $('#eewDepth').text(`深さ ${eew_depth}`);
 
                     $('#eewField').css({
-                        'background-color': EEW_bgc,
-                        'color': EEW_fntc
+                        'background-color': eew_bgc,
+                        'color': eew_fntc
                     })
                 }
             } else {
-                EEW_repNum = '';
-                EEW_repNum_last = '';
-                EEW_alertFlg = '';
+                eew_repNum = '';
+                eew_repNum_last = '';
+                eew_alertFlg = '';
 
-                EEW_timeYear = '';
-                EEW_timeMonth = '';
-                EEW_timeDay = '';
-                EEW_timeHour = '';
-                EEW_timeMinute = '';
+                eew_timeYear = '';
+                eew_timeMonth = '';
+                eew_timeDay = '';
+                eew_timeHour = '';
+                eew_timeMinute = '';
 
-                EEW_calcintensity = '';
-                EEW_Region_name = '';
-                EEW_Magnitude = '';
-                EEW_depth = '';
+                eew_calcintensity = '';
+                eew_Region_name = '';
+                eew_Magnitude = '';
+                eew_depth = '';
 
-                EEW_bgc = "#404040";
-                EEW_fntc = "#ffffff";
+                eew_bgc = "#404040";
+                eew_fntc = "#ffffff";
 
                 $('#eewTitle').text("緊急地震速報は発表されていません");
 
@@ -821,8 +1044,8 @@ function kmoni() {
                 $('#eew .depth').text('');
 
                 $('#eewField').css({
-                    'background-color': EEW_bgc,
-                    'color': EEW_fntc
+                    'background-color': eew_bgc,
+                    'color': eew_fntc
                 })
             }
         })
@@ -837,24 +1060,28 @@ function kmoni() {
 };
 
 
-function makeDate_yahooEew() {
-    let yahooEewDate = new Date(gmt);
-    let second = yahooEewDate.getSeconds();
-    yahooEewDate.setSeconds(second - 2);
-    yahooEewDate = `${yahooEewDate.getFullYear()}${('0' + (yahooEewDate.getMonth() + 1)).slice(-2)}${('0' + yahooEewDate.getDate()).slice(-2)}/${yahooEewDate.getFullYear()}${('0' + (yahooEewDate.getMonth() + 1)).slice(-2)}${('0' + yahooEewDate.getDate()).slice(-2)}${('0' + yahooEewDate.getHours()).slice(-2)}${('0' + yahooEewDate.getMinutes()).slice(-2)}${('0' + yahooEewDate.getSeconds()).slice(-2)}`;
-    return yahooEewDate;
+function makeDate_yahooeew() {
+    let yahooeewDate = new Date(gmt);
+    let second = yahooeewDate.getSeconds();
+    yahooeewDate.setSeconds(second - 2);
+    yahooeewDate = `${yahooeewDate.getFullYear()}${('0' + (yahooeewDate.getMonth() + 1)).slice(-2)}${('0' + yahooeewDate.getDate()).slice(-2)}/${yahooeewDate.getFullYear()}${('0' + (yahooeewDate.getMonth() + 1)).slice(-2)}${('0' + yahooeewDate.getDate()).slice(-2)}${('0' + yahooeewDate.getHours()).slice(-2)}${('0' + yahooeewDate.getMinutes()).slice(-2)}${('0' + yahooeewDate.getSeconds()).slice(-2)}`;
+    return yahooeewDate;
 }
 
 
 function dmdata() {
-    $('#eewTitle').text("取得エラー; dmdataからの取得にはまだ対応しておりません。設定から取得先を変更してください。");
+    if (dmdata_access_token !== null) {
+        $('#eewTitle').text("接続なし; dmdataとの接続はまだ対応しておりません。");
+    } else {
+        $('#eewTitle').text("接続エラー; dmdataの接続設定を確認してください。");
+    }
 }
 
 
-// ---------- EEW push ---------- //
+// ---------- eew push ---------- //
 function eew_push() {
-    if (EEW_isCansel) {
-        Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
+    if (eew_isCansel) {
+        Push.create(`緊急地震速報 (${eew_alertFlg})  ${eew_repNum_p}`, {
             body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。\n`,
             onClick: function () {
                 window.focus();
@@ -862,8 +1089,8 @@ function eew_push() {
             }
         })
     } else {
-        Push.create(`緊急地震速報 (${EEW_alertFlg})  ${EEW_repNum_p}`, {
-            body: `${EEW_hypocenter}で地震発生。予想最大震度は${EEW_intensity}です。\nページ表示するにはここを選択してください。\n`,
+        Push.create(`緊急地震速報 (${eew_alertFlg})  ${eew_repNum_p}`, {
+            body: `${eew_hypocenter}で地震発生。予想最大震度は${eew_intensity}です。\nページ表示するにはここを選択してください。\n`,
             onClick: function () {
                 window.focus();
                 this.close();
@@ -875,56 +1102,56 @@ function eew_push() {
 
 // ---------- Monitor ---------- //
 function mapMain() {
-    if (EEW_data != null && EEW_data["hypoInfo"] != null) {
-        EEW_waves = EEW_data['psWave']['items'][0];
+    if (eew_data != null && eew_data["hypoInfo"] != null) {
+        eew_waves = eew_data['psWave']['items'][0];
 
-        if (EEW_waves !== null) {
-            EEW_lat = EEW_waves['latitude'].replace("N", "");
-            EEW_lng = EEW_waves['longitude'].replace("E", "");
-            EEW_hypo_LatLng = new L.LatLng(EEW_lat, EEW_lng);
+        if (eew_waves !== null) {
+            eew_lat = eew_waves['latitude'].replace("N", "");
+            eew_lng = eew_waves['longitude'].replace("E", "");
+            eew_hypo_LatLng = new L.LatLng(eew_lat, eew_lng);
 
-            EEW_wave_p = EEW_waves['pRadius'];
-            EEW_wave_s = EEW_waves['sRadius'];
-            EEW_wave_p *= 1000;
-            EEW_wave_s *= 1000;
+            eew_wave_p = eew_waves['pRadius'];
+            eew_wave_s = eew_waves['sRadius'];
+            eew_wave_p *= 1000;
+            eew_wave_s *= 1000;
         }
 
-        if (EEW_wave_s != EEW_wave_s_last) {
-            EEW_wave_s_Interval = (EEW_wave_s - EEW_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-            EEW_wave_s_last = EEW_wave_s;
-            EEW_wave_s_put = EEW_wave_s;
-        } else if (EEW_wave_s == EEW_wave_s_last) {
-            EEW_wave_s_put += EEW_wave_s_Interval;
+        if (eew_wave_s != eew_wave_s_last) {
+            eew_wave_s_Interval = (eew_wave_s - eew_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
+            eew_wave_s_last = eew_wave_s;
+            eew_wave_s_put = eew_wave_s;
+        } else if (eew_wave_s == eew_wave_s_last) {
+            eew_wave_s_put += eew_wave_s_Interval;
         }
 
-        if (EEW_wave_p != EEW_wave_p_last) {
-            EEW_wave_p_Interval = (EEW_wave_p - EEW_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-            EEW_wave_p_last = EEW_wave_p;
-            EEW_wave_p_put = EEW_wave_p;
+        if (eew_wave_p != eew_wave_p_last) {
+            eew_wave_p_Interval = (eew_wave_p - eew_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
+            eew_wave_p_last = eew_wave_p;
+            eew_wave_p_put = eew_wave_p;
             loopCnt_moni = dateNow;
-        } else if (EEW_wave_p == EEW_wave_p_last) {
-            EEW_wave_p_put += EEW_wave_p_Interval;
+        } else if (eew_wave_p == eew_wave_p_last) {
+            eew_wave_p_put += eew_wave_p_Interval;
         }
 
         if (dateNow - cnt_mapMove >= 1000 * 3) {
-            if (EEW_wave_p_put >= 560000) {
+            if (eew_wave_p_put >= 560000) {
                 map.setZoom(5);
-            } else if (EEW_wave_p_put >= 280000) {
+            } else if (eew_wave_p_put >= 280000) {
                 map.setZoom(6);
-            } else if (EEW_wave_p_put > 0) {
+            } else if (eew_wave_p_put > 0) {
                 map.setZoom(7);
             }
-            map.setView([EEW_lat, EEW_lng]);
+            map.setView([eew_lat, eew_lng]);
 
             cnt_mapMove = dateNow
         }
 
-        hypo.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
+        hypo.setLatLng(new L.LatLng(eew_lat, eew_lng));
 
-        wave_s.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
-        wave_s.setRadius(EEW_wave_s_put);
-        wave_p.setLatLng(new L.LatLng(EEW_lat, EEW_lng));
-        wave_p.setRadius(EEW_wave_p_put);
+        wave_s.setLatLng(new L.LatLng(eew_lat, eew_lng));
+        wave_s.setRadius(eew_wave_s_put);
+        wave_p.setLatLng(new L.LatLng(eew_lat, eew_lng));
+        wave_p.setRadius(eew_wave_p_put);
 
     } else {
         hypo.setLatLng(new L.LatLng(0, 0));

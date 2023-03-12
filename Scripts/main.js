@@ -6,12 +6,8 @@
 // No modification or reproduction of any kind is permitted.
 // 改変や複製を一切禁じます。
 //
-
-const version = "3.2.0";
-
-document.addEventListener('DOMContentLoaded', () => {
-    initPage();
-});
+const version = "3.3.0";
+document.addEventListener('DOMContentLoaded', initPage);
 
 
 // -------------------- Functions -------------------- //
@@ -27,7 +23,7 @@ function init_commonElements() {
 
 
 function win(winId, winTitle) {
-    document.body.innerHTML += `
+    $('body').append(`
         <dialog class="dialog" id=${winId}>
             <div class="navBar">
                 <p class="title"></p>
@@ -37,7 +33,7 @@ function win(winId, winTitle) {
             <div class="content">
             </div>
         </dialog>
-    `
+    `);
 
     $(`#${winId} .navBar .title`).text(winTitle);
 
