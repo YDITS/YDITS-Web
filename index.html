@@ -110,10 +110,11 @@
         </div>
 
         <div id="mapWrapper">
-            <div id="map">
-
-            </div>
+            <div id="map"></div>
             <span id="clock"></span>
+            <div id="status">
+                <span id="statusLamp"></span>
+            </div>
         </div>
 
         <div id="popup">
@@ -224,24 +225,13 @@
                             </div>
                         </div>
 
-                        <div class="list" id="settings_yahoo_kmoni">
-                            <div id="settings_getCnt_eew">
-                                <label>緊急地震速報 取得間隔</label>
-                                <div class="content">
-                                    <input type="range" min="1" max="2" step="1" value="1" id="settings_getCnt_eew_bar">
-                                    <p><span id="settings_getCnt_eew_put"></span>秒ごと</p>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="list" id="settings_dmdata">
                             <div id="settings_dmdata_init">
-                                <p style="color: #e04040;">アカウント未連携</p>
+                                <p style="color: #e04040; font-weight: bold;">アカウント未連携</p>
                                 <button id="settings_dmdata_init_btn">DM-D.S.S アカウントを連携する</button>
                             </div>
                             <div id="settings_dmdata_main">
-                                <p style="color: #4040c0;">アカウント連携済</p>
-                                <p style="color: #e04040;">dmdataとの接続はまだ対応しておりません。</p>
+                                <p style="color: #4040c0; font-weight: bold;">アカウント連携済</p>
                             </div>
                         </div>
 
