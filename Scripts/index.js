@@ -118,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-// -------------------- Functions -------------------- //
 // ---------- Mainloop ---------- //
 function mainloop() {
     dateNow = new Date();
@@ -146,49 +145,75 @@ function mainloop() {
 }
 
 
-// ---------- Page ---------- //
+// ---------- Init ---------- //
 function init() {
-    settings_init();
+    initServiceWorker();
+    initSettings();
     initDmdata();
     initMenu();
-    licence_init();
-    init_map();
-    init_sounds();
-    init_push();
+    initLicense();
+    initMap();
+    initSounds();
+    initPush();
 }
 
 
 // ------------- Get NTP datetime ---------- //
 function getNtp() {
-    axios.head(window.location.href, {
-        headers: {
-            'Cache-Control': 'no-cache'
-        }
-    }).then(res => {
-        gmt = new Date(res.headers.date); // Server datetime
+    axios.head(window.location.href, { headers: { 'Cache-Control': 'no-cache' } })
+        .then(res => {
+            gmt = new Date(res.headers.date);
 
-        timeYear = gmt.getFullYear();
-        timeMonth = gmt.getMonth() + 1;
-        timeDay = gmt.getDate();
-        timeHour = gmt.getHours();
-        timeMinute = gmt.getMinutes();
-        timeSecond = gmt.getSeconds();
+            timeYear = gmt.getFullYear();
+            timeMonth = gmt.getMonth() + 1;
+            timeDay = gmt.getDate();
+            timeHour = gmt.getHours();
+            timeMinute = gmt.getMinutes();
+            timeSecond = gmt.getSeconds();
 
-        if ($('#eewTitle').text() == "Error; インターネット接続なし" && eewGetType == 'dmdata' && dmdata_access_token !== null) {
-            dmdataSocketStart();
-        }
-    }).catch(error => {
-        if (error.code == 'ERR_NETWORK') {
-            dmdataSocket.close();
-            $('#eewTitle').text(`Error; インターネット接続なし`);
-            $('#statusLamp').css({'background-color': '#ff4040'});
-        } 
-    })
+            if ($('#eewTitle').text() == "Error; インターネット接続なし" && eewGetType == 'dmdata' && dmdata_access_token !== null) {
+                dmdataSocketStart();
+            }
+        }).catch(error => {
+            if (error.code == 'ERR_NETWORK') {
+                dmdataSocket.close();
+                $('#eewTitle').text(`Error; インターネット接続なし`);
+                $('#statusLamp').css({ 'background-color': '#ff4040' });
+            }
+        })
 }
 
 
-// ---------- sounds ---------- //
-function init_sounds() {
+// ---------- Service Worker ---------- //
+function initServiceWorker() {
+    const registerServiceWorker = async () => {
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.register(
+                    './Scripts/sw.js',
+                    {
+                        scope: './Scripts/',
+                    }
+                );
+                if (registration.installing) {
+                    console.log('Service worker installing');
+                } else if (registration.waiting) {
+                    console.log('Service worker installed');
+                } else if (registration.active) {
+                    console.log('Service worker active');
+                }
+            } catch (error) {
+                console.error(`Registration failed with ${error}`);
+            }
+        }
+    };
+
+    registerServiceWorker();
+}
+
+
+// ---------- Sounds ---------- //
+function initSounds() {
     eew_sound = new Audio("https://webapp.ydits.net/Sounds/eew.wav");
     p2p_sound = new Audio("https://webapp.ydits.net/Sounds/info.wav");
     eew_1_voice = new Audio("https://webapp.ydits.net/Sounds/eew_1_v.mp3");
@@ -214,16 +239,8 @@ function init_sounds() {
 
 
 // ---------- Push ---------- //
-function init_push() {
-    if (!Push.Permission.has()) {
-        Push.Permission.request(
-            // OK
-            () => { },
-
-            // NG
-            () => { }
-        )
-    }
+function initPush() {
+    if (!Push.Permission.has()) { Push.Permission.request(() => { }, () => { }) }
 }
 
 
@@ -247,7 +264,7 @@ function initMenu() {
     $(document).on('click', '#homeBtn', () => {
         map.setZoom(6);
         setTimeout('map.setView([38.0194092, 138.3664968])', 750);
-        
+
     });
 
     $(document).on('click', '#menuSettings', () => {
@@ -263,7 +280,7 @@ function initMenu() {
 
 
 // ---------- Settings ---------- //
-function settings_init() {
+function initSettings() {
     $('#settings .version').text(`Ver ${version}`);
 
     $(document).on('click', '#settings .closeBtn', function () {
@@ -312,7 +329,6 @@ function settings_init() {
         $('#settings_list_other').addClass('active');
     });
 
-    // --- Play sound
     if (localStorage.getItem("settings-playSound-eew-any") == 'true') {
         settings_playSound_eew_any = true;
         $('#settings_playSound_eew_any .toggle-switch').addClass('on');
@@ -382,7 +398,6 @@ function settings_init() {
         }
     })
 
-    // --- Get type
     if (localStorage.getItem("settings-getType-eew") != null) {
         eewGetType = localStorage.getItem("settings-getType-eew");
     } else {
@@ -395,9 +410,9 @@ function settings_init() {
         $('#settings_dmdata').hide();
     } else if (eewGetType === 'dmdata') {
         $('#settings_dmdata').show();
-        
+
     }
-    
+
     dmdata_access_token = localStorage.getItem('settings-dmdata-access-token');
     if (dmdata_access_token === null) {
         $('#settings_dmdata_init').show();
@@ -406,7 +421,7 @@ function settings_init() {
         $('#settings_dmdata_init').hide();
         $('#settings_dmdata_main').show();
     }
-    
+
     $(document).on('input', 'input[name="settings-getType-eew"]', () => {
         eewGetType = $('input[name="settings-getType-eew"]:checked').val();
         if (eewGetType === 'yahoo-kmoni') {
@@ -425,7 +440,6 @@ function settings_init() {
 
     $(document).on('click', '#settings_dmdata_init_btn', connectDmdata)
 
-    // --- P2P get cnt
     if (localStorage.getItem("settings-getCnt_p2p") != null) {
         p2p_time = Number(localStorage.getItem("settings-getCnt_p2p"));
     } else {
@@ -441,7 +455,6 @@ function settings_init() {
         $('#settings_getCnt_eqinfo_put').text(p2p_time);
     });
 
-    // --- resetsettings
     $(document).on('click', '#settings_resetSettingsBtn', function () {
         eewGetType = "yahoo-kmoni";
         dmdata_access_token = null;
@@ -517,8 +530,8 @@ function settings_init() {
 };
 
 
-// ---------- Info ---------- //
-function licence_init() {
+// ---------- License ---------- //
+function initLicense() {
     $(document).on('click', '#license>.closeBtn', function () {
         $('#license').removeClass('active');
         $('#menu').addClass('active')
@@ -526,20 +539,20 @@ function licence_init() {
 }
 
 
-// dmdata initialize //
+// ---------- Dmdata ---------- //
 function connectDmdata() {
     const dmdataOAuthBaseUrl = 'https://manager.dmdata.jp/account/oauth2/v1/auth';
     const state = "Ze4VX8";
-    const dmdataOAuthConfig = '?client_id=CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV'+
-                              '&response_type=code'+
-                              '&redirect_uri=https:%2F%2Fwebapp.ydits.net%2F'+
-                              '&scope=socket.start%20socket.list%20socket.close%20eew.get.warning%20eew.get.forecast'+
-                              `&state=${state}`
+    const dmdataOAuthConfig = '?client_id=CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV' +
+        '&response_type=code' +
+        '&redirect_uri=https:%2F%2Fwebapp.ydits.net%2F' +
+        '&scope=socket.start%20socket.list%20socket.close%20eew.get.warning%20eew.get.forecast' +
+        `&state=${state}`
     window.open(dmdataOAuthBaseUrl + dmdataOAuthConfig, '_self');
 }
 
 
-// dmdata redirect checking //
+// Dmdata Redirect Checking
 function initDmdata() {
     if (eewGetType === 'dmdata') {
         if (dmdata_access_token !== null) {
@@ -571,20 +584,20 @@ function initDmdata() {
                         },
                         body: dmdataFormBody
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data['error'] === undefined) {
-                            dmdata_access_token = data['access_token'];
-                            localStorage.setItem('settings-dmdata-access-token', dmdata_access_token);
-                            $('#settings_dmdata_init').hide();
-                            $('#settings_dmdata_main').show();
-                            dmdataSocketStart()
-                        } else if (data['error'] === 'invalid_grant') {
-                            $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data['error'] === undefined) {
+                                dmdata_access_token = data['access_token'];
+                                localStorage.setItem('settings-dmdata-access-token', dmdata_access_token);
+                                $('#settings_dmdata_init').hide();
+                                $('#settings_dmdata_main').show();
+                                dmdataSocketStart()
+                            } else if (data['error'] === 'invalid_grant') {
+                                $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
-                            win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
+                                win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
 
-                            $('#win_dmdata_oauth_error>.content').html(`
+                                $('#win_dmdata_oauth_error>.content').html(`
                                 <p>
                                     dmdataとの接続を続行するにはDM-D.S.Sアカウントを再度連携をしてください。<br>
                                     <code>
@@ -595,31 +608,31 @@ function initDmdata() {
                                 <button class="btn_ok">OK</button>
                             `)
 
-                            $('#win_dmdata_oauth_error .navBar').css({
-                                'background-color': '#c04040',
-                                'color': '#ffffff'
-                            })
+                                $('#win_dmdata_oauth_error .navBar').css({
+                                    'background-color': '#c04040',
+                                    'color': '#ffffff'
+                                })
 
-                            $('#win_dmdata_oauth_error .content').css({
-                                'padding': '1em'
-                            })
-                
-                            $('#win_dmdata_oauth_error .content .btn_ok').css({
-                                'position': 'absolute',
-                                'right': '3em',
-                                'bottom': '3em',
-                                'width': '10em'
-                            })
-                
-                            $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
-                                $('#win_dmdata_oauth_error').remove()
-                            })
-                        } else {
-                            $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
+                                $('#win_dmdata_oauth_error .content').css({
+                                    'padding': '1em'
+                                })
 
-                            win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
+                                $('#win_dmdata_oauth_error .content .btn_ok').css({
+                                    'position': 'absolute',
+                                    'right': '3em',
+                                    'bottom': '3em',
+                                    'width': '10em'
+                                })
 
-                            $('#win_dmdata_oauth_error>.content').html(`
+                                $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
+                                    $('#win_dmdata_oauth_error').remove()
+                                })
+                            } else {
+                                $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
+
+                                win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
+
+                                $('#win_dmdata_oauth_error>.content').html(`
                                 <p>
                                     DM-D.S.S アカウント認証でエラーが発生しました。<br>
                                     設定をリセットした場合は再度アカウント連携をしてください。<br>
@@ -631,6 +644,40 @@ function initDmdata() {
                                 <button class="btn_ok">OK</button>
                             `)
 
+                                $('#win_dmdata_oauth_error .navBar').css({
+                                    'background-color': '#c04040',
+                                    'color': '#ffffff'
+                                })
+
+                                $('#win_dmdata_oauth_error .content').css({
+                                    'padding': '1em'
+                                })
+
+                                $('#win_dmdata_oauth_error .content .btn_ok').css({
+                                    'position': 'absolute',
+                                    'right': '3em',
+                                    'bottom': '3em',
+                                    'width': '10em'
+                                })
+
+                                $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
+                                    $('#win_dmdata_oauth_error').remove()
+                                })
+                            }
+                        })
+                        .catch(error => {
+                            $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
+
+                            win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
+
+                            $('#win_dmdata_oauth_error>.content').html(`
+                            <p>
+                                DM-D.S.S アカウント認証時にエラーが発生しました。<br>
+                                <code>${error}</code>
+                            </p>
+                            <button class="btn_ok">OK</button>
+                        `)
+
                             $('#win_dmdata_oauth_error .navBar').css({
                                 'background-color': '#c04040',
                                 'color': '#ffffff'
@@ -639,52 +686,18 @@ function initDmdata() {
                             $('#win_dmdata_oauth_error .content').css({
                                 'padding': '1em'
                             })
-                
+
                             $('#win_dmdata_oauth_error .content .btn_ok').css({
                                 'position': 'absolute',
                                 'right': '3em',
                                 'bottom': '3em',
                                 'width': '10em'
                             })
-                
+
                             $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
                                 $('#win_dmdata_oauth_error').remove()
                             })
-                        }
-                    })
-                    .catch(error => {
-                        $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
-
-                        win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
-
-                        $('#win_dmdata_oauth_error>.content').html(`
-                            <p>
-                                DM-D.S.S アカウント認証時にエラーが発生しました。<br>
-                                <code>${error}</code>
-                            </p>
-                            <button class="btn_ok">OK</button>
-                        `)
-
-                        $('#win_dmdata_oauth_error .navBar').css({
-                            'background-color': '#c04040',
-                            'color': '#ffffff'
                         })
-
-                        $('#win_dmdata_oauth_error .content').css({
-                            'padding': '1em'
-                        })
-            
-                        $('#win_dmdata_oauth_error .content .btn_ok').css({
-                            'position': 'absolute',
-                            'right': '3em',
-                            'bottom': '3em',
-                            'width': '10em'
-                        })
-            
-                        $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
-                            $('#win_dmdata_oauth_error').remove()
-                        })
-                    })
 
                 } else {
                     $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
@@ -755,9 +768,7 @@ function kmoni() {
     // ---
 
     fetch(yahooeewUrl)
-
         .then(response => { return response.json() })
-
         .then(result => {
             eew_data = result;
 
@@ -951,45 +962,45 @@ function kmoni() {
 
                         switch (eew_calcintensity) {
                             case '1':
-                                eew_bgc = "#c0c0c0";
-                                eew_fntc = "#010101";
+                                eew_bgc = "#808080";
+                                eew_fntc = "#ffffff";
                                 break;
                             case '2':
-                                eew_bgc = "#2020c0";
+                                eew_bgc = "#4040c0";
                                 eew_fntc = "#ffffff";
                                 break;
                             case '3':
-                                eew_bgc = "#20c020";
-                                eew_fntc = "#010101";
+                                eew_bgc = "#40c040";
+                                eew_fntc = "#ffffff";
                                 break;
                             case '4':
-                                eew_bgc = "#c0c020";
-                                eew_fntc = "#010101";
+                                eew_bgc = "#c0c040";
+                                eew_fntc = "#ffffff";
                                 break;
                             case '5-':
-                                eew_bgc = "#c0a020";
-                                eew_fntc = "#010101";
+                                eew_bgc = "#c0a040";
+                                eew_fntc = "#ffffff";
                                 break;
                             case '5+':
-                                eew_bgc = "#c07f20";
-                                eew_fntc = "#010101";
+                                eew_bgc = "#c08040";
+                                eew_fntc = "#ffffff";
                                 break;
                             case '6-':
-                                eew_bgc = "#e02020";
+                                eew_bgc = "#c04040";
                                 eew_fntc = "#ffffff";
                                 break;
                             case '6+':
-                                eew_bgc = "#a02020";
+                                eew_bgc = "#a04040";
                                 eew_fntc = "#ffffff";
                                 break;
                             case '7':
-                                eew_bgc = "#7f207f";
+                                eew_bgc = "#804080";
                                 eew_fntc = "#ffffff";
                                 break;
 
                             default:
-                                eew_bgc = "#7f7fc0";
-                                eew_fntc = "#010101";
+                                eew_bgc = "#8080c0";
+                                eew_fntc = "#ffffff";
                                 break;
                         }
 
@@ -1043,14 +1054,16 @@ function kmoni() {
                     })
                 }
 
-                $('#statusLamp').css({'background-color': '#40ff40'});
+                $('#statusLamp').css({ 'background-color': '#40ff40' });
             }
         })
 
         .catch(error => {
-            if (error != 'TypeError: Failed to fetch') {
-                $('#eewTitle').text(`Error`);
-                $('#statusLamp').css({'background-color': '#ff4040'});
+            if (eewGetType === 'yahoo-kmoni' || dmdata_access_token === null) {
+                if (error != 'TypeError: Failed to fetch') {
+                    $('#eewTitle').text(`Error`);
+                    $('#statusLamp').css({ 'background-color': '#ff4040' });
+                }
             }
         })
 };
@@ -1065,49 +1078,45 @@ function makeDate_yahooeew() {
 }
 
 
+// ---------- Dmdata ---------- //
 function dmdataSocketStart() {
     const dmdataSocketUrl = 'https://api.dmdata.jp/v2/socket';
     const dmdataGetClassifications = ['socket.start', 'socket.list', 'socket.close', 'eew.forecast'];
-    
+
     fetch(dmdataSocketUrl, {
         method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + dmdata_access_token
-        },
-        body: JSON.stringify({
-            classifications: dmdataGetClassifications
-        })
+        headers: { 'Authorization': 'Bearer ' + dmdata_access_token },
+        body: JSON.stringify({ classifications: dmdataGetClassifications, test: 'including' })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error === undefined) {
-            dmdataSocket = new WebSocket(data.websocket.url, ['dmdata.v2']);
+        .then(response => response.json())
+        .then(data => {
+            if (data.error === undefined) {
+                dmdataSocket = new WebSocket(data.websocket.url, ['dmdata.v2']);
 
-            dmdataSocket.addEventListener('open', () => {
-                $('#eewTitle').text("緊急地震速報は発表されていません");
-                $('#statusLamp').css({'background-color': '#4040ff'});
-            });
+                dmdataSocket.addEventListener('open', () => {
+                    $('#eewTitle').text("緊急地震速報は発表されていません");
+                    $('#statusLamp').css({ 'background-color': '#4040ff' });
+                });
 
-            dmdataSocket.addEventListener('close', (event) => {
-                eewGetType = "yahoo-kmoni";
-            });
+                dmdataSocket.addEventListener('close', (event) => {
+                    eewGetType = "yahoo-kmoni";
+                });
 
-            dmdataSocket.addEventListener('message', (event) => {
-                const message = JSON.parse(event.data);
-                    
-                if(message.type === 'ping'){
-                    dmdataSocket.send(JSON.stringify({ type:'pong', pingId: message.pingId }));
-                }
-                if(message.type === 'data' && message.format === 'xml'){
-                    const xmlDoc = bodyToDocument(message.body);
-                    dmdataEew(xmlDoc);
-                }
-            });
+                dmdataSocket.addEventListener('message', (event) => {
+                    const message = JSON.parse(event.data);
 
-            dmdataSocket.onerror(event => {
-                win('win_dmdata_oauth_error', 'dmdata接続エラー');
+                    if (message.type === 'ping') {
+                        dmdataSocket.send(JSON.stringify({ type: 'pong', pingId: message.pingId }));
+                    }
+                    if (message.type === 'data' && message.format === 'xml') {
+                        dmdataEew(message.body);
+                    }
+                });
 
-                $('#win_dmdata_oauth_error>.content').html(`
+                dmdataSocket.onerror(event => {
+                    win('win_dmdata_oauth_error', 'dmdata接続エラー');
+
+                    $('#win_dmdata_oauth_error>.content').html(`
                     <p>
                         WebSocket接続中にエラーが発生しました。<br>
                         <code>
@@ -1117,34 +1126,34 @@ function dmdataSocketStart() {
                     <button class="btn_retry">再試行</button>
                 `)
 
-                $('#win_dmdata_oauth_error .navBar').css({
-                    'background-color': '#c04040',
-                    'color': '#ffffff'
-                })
+                    $('#win_dmdata_oauth_error .navBar').css({
+                        'background-color': '#c04040',
+                        'color': '#ffffff'
+                    })
 
-                $('#win_dmdata_oauth_error .content').css({
-                    'padding': '1em'
-                })
+                    $('#win_dmdata_oauth_error .content').css({
+                        'padding': '1em'
+                    })
 
-                $('#win_dmdata_oauth_error .content .btn_retry').css({
-                    'position': 'absolute',
-                    'right': '3em',
-                    'bottom': '3em',
-                    'width': '10em'
-                })
+                    $('#win_dmdata_oauth_error .content .btn_retry').css({
+                        'position': 'absolute',
+                        'right': '3em',
+                        'bottom': '3em',
+                        'width': '10em'
+                    })
 
-                $('#win_dmdata_oauth_error .content .btn_retry').on('click', function () {
-                    $('#win_dmdata_oauth_error').remove()
-                    setTimeout('dmdataSocketStart()', 500);
-                })
+                    $('#win_dmdata_oauth_error .content .btn_retry').on('click', function () {
+                        $('#win_dmdata_oauth_error').remove()
+                        setTimeout('dmdataSocketStart()', 500);
+                    })
 
-                eewGetType = "yahoo-kmoni";
-            });
-        } else {
-            if (document.getElementById('win_dmdata_oauth_error') === null) {
-                win('win_dmdata_oauth_error', 'dmdata接続エラー');
+                    eewGetType = "yahoo-kmoni";
+                });
+            } else {
+                if (document.getElementById('win_dmdata_oauth_error') === null) {
+                    win('win_dmdata_oauth_error', 'dmdata接続エラー');
 
-                $('#win_dmdata_oauth_error>.content').html(`
+                    $('#win_dmdata_oauth_error>.content').html(`
                     <p>
                         WebSocket接続に失敗しました。<br>
                         <code>
@@ -1154,41 +1163,40 @@ function dmdataSocketStart() {
                     <button class="btn_retry">再試行</button>
                 `)
 
-                $('#win_dmdata_oauth_error .navBar').css({
-                    'background-color': '#c04040',
-                    'color': '#ffffff'
-                })
+                    $('#win_dmdata_oauth_error .navBar').css({
+                        'background-color': '#c04040',
+                        'color': '#ffffff'
+                    })
 
-                $('#win_dmdata_oauth_error .content').css({
-                    'padding': '1em'
-                })
+                    $('#win_dmdata_oauth_error .content').css({
+                        'padding': '1em'
+                    })
 
-                $('#win_dmdata_oauth_error .content .btn_retry').css({
-                    'position': 'absolute',
-                    'right': '3em',
-                    'bottom': '3em',
-                    'width': '10em'
-                })
+                    $('#win_dmdata_oauth_error .content .btn_retry').css({
+                        'position': 'absolute',
+                        'right': '3em',
+                        'bottom': '3em',
+                        'width': '10em'
+                    })
 
-                $('#win_dmdata_oauth_error .content .btn_retry').on('click', function () {
-                    $('#win_dmdata_oauth_error').remove()
-                    setTimeout('dmdataSocketStart()', 500);
-                })
+                    $('#win_dmdata_oauth_error .content .btn_retry').on('click', function () {
+                        $('#win_dmdata_oauth_error').remove()
+                        setTimeout('dmdataSocketStart()', 500);
+                    })
 
-                eewGetType = "yahoo-kmoni"
+                    eewGetType = "yahoo-kmoni"
+                }
             }
-        }
-    })
-    .catch(error => {
-        // hoge
-    })
+        })
+        .catch(error => {
+            // hoge
+        })
 }
 
 
-// ---------- eew dmdata ---------- //
 function dmdataEew(data) {
-    let txt = bodyToDocument(data);
-    console.log(txt);
+    let dmdataData = bodyToDocument(data);
+    console.log(dmdataData);
 }
 
 
@@ -1285,7 +1293,7 @@ function mapMain() {
 
 
 // ---------- Init monitor map ---------- //
-function init_map() {
+function initMap() {
     map = L.map('map', {
         // center: [36.1852, 139.3442],
         // center: [35.4232, 138.2647],
@@ -1335,17 +1343,12 @@ function init_map() {
 function getInfo() {
     const url_p2p = "https://api.p2pquake.net/v2/history?codes=551&limit=40";
 
-    response = fetch(url_p2p)
-        .then(response => {
-            return response.json()
-        })
+    fetch(url_p2p)
+        .then(response => response.json())
         .then(data => {
-
             p2p_data = data;
             p2p_id = p2p_data[0]['id'];
-
         });
-
 }
 
 
@@ -1370,7 +1373,7 @@ function eqinfo() {
 
                     p2p_maxScale = p2p_data[i]['earthquake']['maxScale'];
 
-                       switch (p2p_maxScale) {
+                    switch (p2p_maxScale) {
                         case -1: p2p_maxScale = '-'; break;
                         case 10: p2p_maxScale = '1'; break;
                         case 20: p2p_maxScale = '2'; break;
@@ -1423,45 +1426,45 @@ function eqinfo() {
 
                     switch (p2p_maxScale) {
                         case '1':
-                            p2p_his_bgc = "#c0c0c0";
-                            p2p_his_fntc = "#010101";
+                            p2p_his_bgc = "#808080";
+                            p2p_his_fntc = "#ffffff";
                             break;
                         case '2':
-                            p2p_his_bgc = "#2020c0";
+                            p2p_his_bgc = "#4040c0";
                             p2p_his_fntc = "#ffffff";
                             break;
                         case '3':
-                            p2p_his_bgc = "#20c020";
-                            p2p_his_fntc = "#010101";
+                            p2p_his_bgc = "#40c040";
+                            p2p_his_fntc = "#ffffff";
                             break;
                         case '4':
-                            p2p_his_bgc = "#c0c020";
-                            p2p_his_fntc = "#010101";
+                            p2p_his_bgc = "#c0c040";
+                            p2p_his_fntc = "#ffffff";
                             break;
                         case '5-':
-                            p2p_his_bgc = "#c0a020";
-                            p2p_his_fntc = "#010101";
+                            p2p_his_bgc = "#c0a040";
+                            p2p_his_fntc = "#ffffff";
                             break;
                         case '5+':
-                            p2p_his_bgc = "#c07f20";
-                            p2p_his_fntc = "#010101";
+                            p2p_his_bgc = "#c08040";
+                            p2p_his_fntc = "#ffffff";
                             break;
                         case '6-':
-                            p2p_his_bgc = "#e02020";
-                            p2p_his_fntc = "#010101";
+                            p2p_his_bgc = "#c04040";
+                            p2p_his_fntc = "#ffffff";
                             break;
                         case '6+':
-                            p2p_his_bgc = "#a02020";
+                            p2p_his_bgc = "#a04040";
                             p2p_his_fntc = "#ffffff";
                             break;
                         case '7':
-                            p2p_his_bgc = "#7f207f";
+                            p2p_his_bgc = "#804080";
                             p2p_his_fntc = "#ffffff";
                             break;
 
                         default:
-                            p2p_his_bgc = "#7f7fc0";
-                            p2p_his_fntc = "#010101";
+                            p2p_his_bgc = "#8080c0";
+                            p2p_his_fntc = "#ffffff";
                             break;
                     }
 
@@ -1527,47 +1530,47 @@ function eqinfo() {
                             p2p_sound.play();
                             p2p_1_voice.play();
                             break;
-    
+
                         case 20:
                             p2p_sound.play();
                             p2p_2_voice.play();
                             break;
-    
+
                         case 30:
                             p2p_sound.play();
                             p2p_3_voice.play();
                             break;
-    
+
                         case 40:
                             p2p_sound.play();
                             p2p_4_voice.play();
                             break;
-    
+
                         case 45:
                             p2p_sound.play();
                             p2p_5_voice.play();
                             break;
-    
+
                         case 50:
                             p2p_sound.play();
                             p2p_6_voice.play();
                             break;
-    
+
                         case 55:
                             p2p_sound.play();
                             p2p_7_voice.play();
                             break;
-    
+
                         case 60:
                             p2p_sound.play();
                             p2p_8_voice.play();
                             break;
-    
+
                         case 70:
                             p2p_sound.play();
                             p2p_9_voice.play();
                             break;
-    
+
                         default:
                             p2p_sound.play();
                             break;
@@ -1628,45 +1631,45 @@ function eqinfo() {
 
             switch (p2p_maxScale) {
                 case '1':
-                    p2p_his_bgc = "#c0c0c0";
-                    p2p_his_fntc = "#010101";
+                    p2p_his_bgc = "#808080";
+                    p2p_his_fntc = "#ffffff";
                     break;
                 case '2':
-                    p2p_his_bgc = "#2020c0";
+                    p2p_his_bgc = "#4040c0";
                     p2p_his_fntc = "#ffffff";
                     break;
                 case '3':
-                    p2p_his_bgc = "#20c020";
-                    p2p_his_fntc = "#010101";
+                    p2p_his_bgc = "#40c040";
+                    p2p_his_fntc = "#ffffff";
                     break;
                 case '4':
-                    p2p_his_bgc = "#c0c020";
-                    p2p_his_fntc = "#010101";
+                    p2p_his_bgc = "#c0c040";
+                    p2p_his_fntc = "#ffffff";
                     break;
                 case '5-':
-                    p2p_his_bgc = "#c0a020";
-                    p2p_his_fntc = "#010101";
+                    p2p_his_bgc = "#c0a040";
+                    p2p_his_fntc = "#ffffff";
                     break;
                 case '5+':
-                    p2p_his_bgc = "#c07f20";
-                    p2p_his_fntc = "#010101";
+                    p2p_his_bgc = "#c08040";
+                    p2p_his_fntc = "#ffffff";
                     break;
                 case '6-':
-                    p2p_his_bgc = "#e02020";
-                    p2p_his_fntc = "#010101";
+                    p2p_his_bgc = "#c04040";
+                    p2p_his_fntc = "#ffffff";
                     break;
                 case '6+':
-                    p2p_his_bgc = "#a02020";
+                    p2p_his_bgc = "#a04040";
                     p2p_his_fntc = "#ffffff";
                     break;
                 case '7':
-                    p2p_his_bgc = "#7f207f";
+                    p2p_his_bgc = "#804080";
                     p2p_his_fntc = "#ffffff";
                     break;
 
                 default:
-                    p2p_his_bgc = "#7f7fc0";
-                    p2p_his_fntc = "#010101";
+                    p2p_his_bgc = "#8080c0";
+                    p2p_his_fntc = "#ffffff";
                     break;
             }
 
