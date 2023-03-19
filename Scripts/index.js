@@ -190,9 +190,9 @@ function initServiceWorker() {
         if ('serviceWorker' in navigator) {
             try {
                 const registration = await navigator.serviceWorker.register(
-                    './Scripts/sw.js',
+                    './sw.js',
                     {
-                        scope: './Scripts/',
+                        scope: './',
                     }
                 );
                 if (registration.installing) {

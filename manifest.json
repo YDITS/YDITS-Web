@@ -1,0 +1,22 @@
+{
+    "name": "YDITS for Web",
+    "short_name": "YDITS-Web",
+    "scope": "/",
+    "start_url": "/index.html",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "theme_color": "#c0c040",
+    "description": "YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。",
+    "icons": [
+        {
+            "src": "/Images/icon-512x512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        },
+        {
+            "src": "/Images/icon-192x192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        }
+    ]
+}
