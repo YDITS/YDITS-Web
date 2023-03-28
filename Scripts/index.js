@@ -89,27 +89,27 @@ let eew_hypo_LatLng = null;
 let loopCnt_loopWaves = -1;
 let isFullscreen_map = false;
 
-let eew_sound
-let p2p_sound
-let eew_1_voice
-let eew_2_voice
-let eew_3_voice
-let eew_4_voice
-let eew_5_voice
-let eew_6_voice
-let eew_7_voice
-let eew_8_voice
-let eew_9_voice
-let eew_Cancel_voice
-let p2p_1_voice
-let p2p_2_voice
-let p2p_3_voice
-let p2p_4_voice
-let p2p_5_voice
-let p2p_6_voice
-let p2p_7_voice
-let p2p_8_voice
-let p2p_9_voice
+let eew_sound;
+let p2p_sound;
+let eew_1_voice;
+let eew_2_voice;
+let eew_3_voice;
+let eew_4_voice;
+let eew_5_voice;
+let eew_6_voice;
+let eew_7_voice;
+let eew_8_voice;
+let eew_9_voice;
+let eew_Cancel_voice;
+let p2p_1_voice;
+let p2p_2_voice;
+let p2p_3_voice;
+let p2p_4_voice;
+let p2p_5_voice;
+let p2p_6_voice;
+let p2p_7_voice;
+let p2p_8_voice;
+let p2p_9_voice;
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -170,14 +170,9 @@ function getNtp() {
             timeHour = gmt.getHours();
             timeMinute = gmt.getMinutes();
             timeSecond = gmt.getSeconds();
-
-            if ($('#eewTitle').text() == "Error; インターネット接続なし" && eewGetType == 'dmdata' && dmdata_access_token !== null) {
-                dmdataSocketStart();
-            }
         }).catch(error => {
             if (error.code == 'ERR_NETWORK') {
                 dmdataSocket.close();
-                $('#eewTitle').text(`Error; インターネット接続なし`);
                 $('#statusLamp').css({ 'background-color': '#ff4040' });
             }
         })
@@ -1015,10 +1010,15 @@ function kmoni() {
                         $('#eewOrigin_time').text(`発生日時: ${eew_timeYear}/${eew_timeMonth}/${eew_timeDay} ${eew_timeHour}:${eew_timeMinute}`);
                         $('#eewMagnitude').text(`規模 ${eew_Magnitude}`);
                         $('#eewDepth').text(`深さ ${eew_depth}`);
+                        $('#eewText').text('');
 
                         $('#eewField').css({
                             'background-color': eew_bgc,
                             'color': eew_fntc
+                        })
+                        $(`#eewCalc`).css({
+                            'background-color': 'initial',
+                            'color': 'initial'
                         })
                     }
                 } else {
@@ -1040,14 +1040,6 @@ function kmoni() {
                     eew_bgc = "#404040";
                     eew_fntc = "#ffffff";
 
-                    $('#eewTitle').text("緊急地震速報は発表されていません");
-
-                    $('#eew .calcintensity_para').text('');
-                    $('#eew .region').text('');
-                    $('#eew .origin_time').text('');
-                    $('#eew .magnitude').text('');
-                    $('#eew .depth').text('');
-
                     $('#eewField').css({
                         'background-color': eew_bgc,
                         'color': eew_fntc
@@ -1061,7 +1053,6 @@ function kmoni() {
         .catch(error => {
             if (eewGetType === 'yahoo-kmoni' || dmdata_access_token === null) {
                 if (error != 'TypeError: Failed to fetch') {
-                    $('#eewTitle').text(`Error`);
                     $('#statusLamp').css({ 'background-color': '#ff4040' });
                 }
             }
@@ -1359,6 +1350,17 @@ function eqinfo() {
             for (let i = 0; i < 40; i++) {
                 p2p_type = p2p_data[i]['issue']['type'];
 
+                p2p_types = {
+                    'ScalePrompt': '震度速報',
+                    'Destination': '震源情報',
+                    'ScaleAndDestination': '震源・震度情報',
+                    'DetailScale': '各地の震度情報',
+                    'Foreign': '遠地地震情報',
+                    'Other': '地震情報'
+                };
+    
+                p2p_type_put = p2p_types[p2p_type];
+
                 if (p2p_type == 'DetailScale') {
                     p2p_latest_time = p2p_data[i]['earthquake']['time'];
                     p2p_latest_timeYear = p2p_latest_time.substring(0, 4);
@@ -1468,237 +1470,280 @@ function eqinfo() {
                             break;
                     }
 
-                    $('#eqHistoryField').append(`
-                        <li class="list list-${i}">
-                            <div class="maxScale">
-                                <p>${p2p_maxScale}</p>
-                            </div>
+                    if (p2p_id_last == -1) {
+                        $('#eewTitle').text(`${p2p_type_put}`);
+                        $('#eewCalc').text(p2p_maxScale);
+                        $('#eewRegion').text(p2p_hypocenter);
+                        $('#eewOrigin_time').text(`発生日時: ${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}`);
+                        $('#eewMagnitude').text(`規模 ${p2p_magnitude}`);
+                        $('#eewDepth').text(`深さ ${p2p_depth}`);
+                        $('#eewText').text(`${p2p_tsunami}`);
 
-                            <div class="right">
-                                <p class="hypocenter">${p2p_hypocenter}</p>
-                                <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
-                                <div class="hypoInfo">
-                                    <p>${p2p_magnitude}</p>
-                                    <p>${p2p_depth}</p>
+                        $(`#eewCalc`).css({
+                            'background-color': p2p_his_bgc,
+                            'color': p2p_his_fntc
+                        })
+                    }
+
+
+                    if (p2p_his_cnt != 0) {
+                        $('#eqHistoryField').append(`
+                            <li class="list list-${i}">
+                                <div class="maxScale">
+                                    <p>${p2p_maxScale}</p>
                                 </div>
-                                <p>${p2p_tsunami}</p>
-                            </div>
-                        </li>
-                    `)
 
-                    $(`#eqHistoryField>.list-${i}>.maxScale`).css({
-                        'background-color': p2p_his_bgc,
-                        'color': p2p_his_fntc
-                    })
+                                <div class="right">
+                                    <p class="hypocenter">${p2p_hypocenter}</p>
+                                    <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
+                                    <div class="hypoInfo">
+                                        <p>${p2p_magnitude}</p>
+                                        <p>${p2p_depth}</p>
+                                    </div>
+                                    <p>${p2p_tsunami}</p>
+                                </div>
+                            </li>
+                        `)
+
+                        $(`#eqHistoryField>.list-${i}>.maxScale`).css({
+                            'background-color': p2p_his_bgc,
+                            'color': p2p_his_fntc
+                        })
+                    }
 
                     p2p_his_cnt++;
                 }
 
+                p2p_id_last = p2p_id;
+
                 if (p2p_his_cnt >= 20) { break }
             }
         } else {
-            p2p_type = p2p_data[0]['issue']['type'];
+            for (let i = 0; i < 2; i++) {
+                p2p_type = p2p_data[i]['issue']['type'];
 
-            p2p_types = {
-                'ScalePrompt': '震度速報',
-                'Destination': '震源情報',
-                'ScaleAndDestination': '震源・震度情報',
-                'DetailScale': '各地の震度情報',
-                'Foreign': '遠地地震情報',
-                'Other': '地震情報'
-            };
+                p2p_types = {
+                    'ScalePrompt': '震度速報',
+                    'Destination': '震源情報',
+                    'ScaleAndDestination': '震源・震度情報',
+                    'DetailScale': '各地の震度情報',
+                    'Foreign': '遠地地震情報',
+                    'Other': '地震情報'
+                };
 
-            p2p_type_put = p2p_types[p2p_type];
+                p2p_type_put = p2p_types[p2p_type];
 
-            p2p_latest_time = p2p_data[0]['earthquake']['time'];
-            p2p_latest_timeYear = p2p_latest_time.substring(0, 4);
-            p2p_latest_timeMonth = p2p_latest_time.substring(5, 7);
-            p2p_latest_timeDay = p2p_latest_time.substring(8, 10);
-            p2p_latest_timeHour = p2p_latest_time.substring(11, 13);
-            p2p_latest_timeMinute = p2p_latest_time.substring(14, 16);
+                p2p_latest_time = p2p_data[i]['earthquake']['time'];
+                p2p_latest_timeYear = p2p_latest_time.substring(0, 4);
+                p2p_latest_timeMonth = p2p_latest_time.substring(5, 7);
+                p2p_latest_timeDay = p2p_latest_time.substring(8, 10);
+                p2p_latest_timeHour = p2p_latest_time.substring(11, 13);
+                p2p_latest_timeMinute = p2p_latest_time.substring(14, 16);
 
-            p2p_hypocenter = p2p_data[0]['earthquake']['hypocenter']['name'];
+                p2p_hypocenter = p2p_data[i]['earthquake']['hypocenter']['name'];
 
-            if (p2p_hypocenter == '') { p2p_hypocenter = '調査中'; }
+                if (p2p_hypocenter == '') { p2p_hypocenter = '調査中'; }
 
-            p2p_maxScale = p2p_data[0]['earthquake']['maxScale'];
+                p2p_maxScale = p2p_data[i]['earthquake']['maxScale'];
 
-            if (settings_playSound_eqinfo == true && p2p_id_last != -1) {
-                if (p2p_type == 'DetailScale' || p2p_type == 'ScalePrompt') {
-                    switch (p2p_maxScale) {
-                        case 10:
-                            p2p_sound.play();
-                            p2p_1_voice.play();
-                            break;
+                if (i == 0) {
+                    if (settings_playSound_eqinfo == true && p2p_id_last != -1) {
+                        if (p2p_type == 'DetailScale' || p2p_type == 'ScalePrompt') {
+                            switch (p2p_maxScale) {
+                                case 10:
+                                    p2p_sound.play();
+                                    p2p_1_voice.play();
+                                    break;
 
-                        case 20:
-                            p2p_sound.play();
-                            p2p_2_voice.play();
-                            break;
+                                case 20:
+                                    p2p_sound.play();
+                                    p2p_2_voice.play();
+                                    break;
 
-                        case 30:
-                            p2p_sound.play();
-                            p2p_3_voice.play();
-                            break;
+                                case 30:
+                                    p2p_sound.play();
+                                    p2p_3_voice.play();
+                                    break;
 
-                        case 40:
-                            p2p_sound.play();
-                            p2p_4_voice.play();
-                            break;
+                                case 40:
+                                    p2p_sound.play();
+                                    p2p_4_voice.play();
+                                    break;
 
-                        case 45:
-                            p2p_sound.play();
-                            p2p_5_voice.play();
-                            break;
+                                case 45:
+                                    p2p_sound.play();
+                                    p2p_5_voice.play();
+                                    break;
 
-                        case 50:
-                            p2p_sound.play();
-                            p2p_6_voice.play();
-                            break;
+                                case 50:
+                                    p2p_sound.play();
+                                    p2p_6_voice.play();
+                                    break;
 
-                        case 55:
-                            p2p_sound.play();
-                            p2p_7_voice.play();
-                            break;
+                                case 55:
+                                    p2p_sound.play();
+                                    p2p_7_voice.play();
+                                    break;
 
-                        case 60:
-                            p2p_sound.play();
-                            p2p_8_voice.play();
-                            break;
+                                case 60:
+                                    p2p_sound.play();
+                                    p2p_8_voice.play();
+                                    break;
 
-                        case 70:
-                            p2p_sound.play();
-                            p2p_9_voice.play();
-                            break;
+                                case 70:
+                                    p2p_sound.play();
+                                    p2p_9_voice.play();
+                                    break;
 
-                        default:
-                            p2p_sound.play();
-                            break;
+                                default:
+                                    p2p_sound.play();
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                switch (p2p_maxScale) {
+                    case -1: p2p_maxScale = '-'; break;
+                    case 10: p2p_maxScale = '1'; break;
+                    case 20: p2p_maxScale = '2'; break;
+                    case 30: p2p_maxScale = '3'; break;
+                    case 40: p2p_maxScale = '4'; break;
+                    case 45: p2p_maxScale = '5-'; break;
+                    case 50: p2p_maxScale = '5+'; break;
+                    case 55: p2p_maxScale = '6-'; break;
+                    case 60: p2p_maxScale = '6+'; break;
+                    case 70: p2p_maxScale = '7'; break;
+
+                    default:
+                        p2p_maxScale = `?`;
+                        break;
+                }
+
+                p2p_magnitude = p2p_data[i]['earthquake']['hypocenter']['magnitude'];
+
+                if (p2p_magnitude == -1) {
+                    p2p_magnitude = '-';
+                } else {
+                    p2p_magnitude = 'M' + String(p2p_magnitude);
+                }
+
+                p2p_depth = p2p_data[i]['earthquake']['hypocenter']['depth'];
+
+                if (p2p_depth == -1) {
+                    p2p_depth = '-';
+                } else if (p2p_depth == 0) {
+                    p2p_depth = 'ごく浅い';
+                } else {
+                    p2p_depth = '約' + String(p2p_depth) + 'km';
+                }
+
+                p2p_tsunami = p2p_data[i]['earthquake']['domesticTsunami'];
+
+                tsunamiLevels = {
+                    'None': '津波の心配はありません。',
+                    'Unknown': '津波の影響は不明です。',
+                    'Checking': '津波の影響を現在調査中です。',
+                    'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
+                    'Watch': '津波注意報が発表されています。',
+                    'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
+                };
+
+                p2p_tsunami = tsunamiLevels[p2p_tsunami];
+
+                let p2p_his_bgc;
+                let p2p_his_fntc;
+
+                switch (p2p_maxScale) {
+                    case '1':
+                        p2p_his_bgc = "#808080";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+                    case '2':
+                        p2p_his_bgc = "#4040c0";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+                    case '3':
+                        p2p_his_bgc = "#40c040";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+                    case '4':
+                        p2p_his_bgc = "#c0c040";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+                    case '5-':
+                        p2p_his_bgc = "#c0a040";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+                    case '5+':
+                        p2p_his_bgc = "#c08040";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+                    case '6-':
+                        p2p_his_bgc = "#c04040";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+                    case '6+':
+                        p2p_his_bgc = "#a04040";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+                    case '7':
+                        p2p_his_bgc = "#804080";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+
+                    default:
+                        p2p_his_bgc = "#8080c0";
+                        p2p_his_fntc = "#ffffff";
+                        break;
+                }
+
+                if (i == 0) {
+                    $('#eewTitle').text(`${p2p_type_put}`);
+                    $('#eewCalc').text(p2p_maxScale);
+                    $('#eewRegion').text(p2p_hypocenter);
+                    $('#eewOrigin_time').text(`発生日時: ${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}`);
+                    $('#eewMagnitude').text(`規模 ${p2p_magnitude}`);
+                    $('#eewDepth').text(`深さ ${p2p_depth}`);
+                    $('#eewText').text(`${p2p_tsunami}`);
+
+                    $(`#eewCalc`).css({
+                        'background-color': p2p_his_bgc,
+                        'color': p2p_his_fntc
+                    })
+
+                    eqinfo_pushNotify();
+                }
+
+                if (i == 1) {
+                    if (p2p_type == 'DetailScale') {
+                        $('#eqHistoryField').prepend(`
+                            <li class="list list-${p2p_his_cnt}">
+                                <div class="maxScale">
+                                    <p>${p2p_maxScale}</p>
+                                </div>
+
+                                <div class="right">
+                                    <p class="hypocenter">${p2p_hypocenter}</p>
+                                    <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
+                                    <div class="hypoInfo">
+                                        <p>${p2p_magnitude}</p>
+                                        <p>${p2p_depth}</p>
+                                    </div>
+                                    <p>${p2p_tsunami}</p>
+                                </div>
+                            </li>
+                        `)
+
+                        $(`#eqHistoryField>.list-${p2p_his_cnt}>.maxScale`).css({
+                            'background-color': p2p_his_bgc,
+                            'color': p2p_his_fntc
+                        })
+
+                        p2p_his_cnt++;
                     }
                 }
             }
-
-            switch (p2p_maxScale) {
-                case -1: p2p_maxScale = '-'; break;
-                case 10: p2p_maxScale = '1'; break;
-                case 20: p2p_maxScale = '2'; break;
-                case 30: p2p_maxScale = '3'; break;
-                case 40: p2p_maxScale = '4'; break;
-                case 45: p2p_maxScale = '5-'; break;
-                case 50: p2p_maxScale = '5+'; break;
-                case 55: p2p_maxScale = '6-'; break;
-                case 60: p2p_maxScale = '6+'; break;
-                case 70: p2p_maxScale = '7'; break;
-
-                default:
-                    p2p_maxScale = `?`;
-                    break;
-            }
-
-            p2p_magnitude = p2p_data[0]['earthquake']['hypocenter']['magnitude'];
-
-            if (p2p_magnitude == -1) {
-                p2p_magnitude = '-';
-            } else {
-                p2p_magnitude = 'M' + String(p2p_magnitude);
-            }
-
-            p2p_depth = p2p_data[0]['earthquake']['hypocenter']['depth'];
-
-            if (p2p_depth == -1) {
-                p2p_depth = '-';
-            } else if (p2p_depth == 0) {
-                p2p_depth = 'ごく浅い';
-            } else {
-                p2p_depth = '約' + String(p2p_depth) + 'km';
-            }
-
-            p2p_tsunami = p2p_data[0]['earthquake']['domesticTsunami'];
-
-            tsunamiLevels = {
-                'None': '津波の心配はありません。',
-                'Unknown': '津波の影響は不明です。',
-                'Checking': '津波の影響を現在調査中です。',
-                'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
-                'Watch': '津波注意報が発表されています。',
-                'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
-            };
-
-            p2p_tsunami = tsunamiLevels[p2p_tsunami];
-
-            let p2p_his_bgc;
-            let p2p_his_fntc;
-
-            switch (p2p_maxScale) {
-                case '1':
-                    p2p_his_bgc = "#808080";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-                case '2':
-                    p2p_his_bgc = "#4040c0";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-                case '3':
-                    p2p_his_bgc = "#40c040";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-                case '4':
-                    p2p_his_bgc = "#c0c040";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-                case '5-':
-                    p2p_his_bgc = "#c0a040";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-                case '5+':
-                    p2p_his_bgc = "#c08040";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-                case '6-':
-                    p2p_his_bgc = "#c04040";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-                case '6+':
-                    p2p_his_bgc = "#a04040";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-                case '7':
-                    p2p_his_bgc = "#804080";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-
-                default:
-                    p2p_his_bgc = "#8080c0";
-                    p2p_his_fntc = "#ffffff";
-                    break;
-            }
-
-            $('#eqHistoryField').prepend(`
-                <li class="list list-${p2p_his_cnt}">
-                    <div class="maxScale">
-                        <p>${p2p_maxScale}</p>
-                    </div>
-
-                    <div class="right">
-                        <p class="hypocenter">${p2p_hypocenter}</p>
-                        <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
-                        <div class="hypoInfo">
-                            <p>${p2p_magnitude}</p>
-                            <p>${p2p_depth}</p>
-                        </div>
-                        <p>${p2p_tsunami}</p>
-                    </div>
-                </li>
-            `)
-
-            $(`#eqHistoryField>.list-${p2p_his_cnt}>.maxScale`).css({
-                'background-color': p2p_his_bgc,
-                'color': p2p_his_fntc
-            })
-
-            p2p_his_cnt++;
-
-            eqinfo_pushNotify();
         }
     }
 

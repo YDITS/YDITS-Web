@@ -100,7 +100,11 @@ main {
 }
 
 #eewCalc {
-    font-size: 6em;
+    width: 6rem;
+    height: 6rem;
+    border-radius: .1em;
+    text-align: center;
+    font-size: 5em;
 }
 
 
@@ -128,11 +132,17 @@ main {
 #eewInfo .eqinfo {
     display: flex;
     justify-content: space-between;
-    font-size: 1.5em;
+    font-size: 1.2em;
 }
 
 #eewRegion {
-    font-size: 2em;
+    font-size: 1.5em;
+}
+
+#eewText {
+    padding: .2em;
+    background-color: rgb(40, 40, 40);
+    border-radius: .5em;
 }
 
 #eqHistoryField {
@@ -418,7 +428,7 @@ main {
     padding-left: 1em;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 769px) {
     main {
         flex-direction: column;
     }

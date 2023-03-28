@@ -6,7 +6,7 @@
 // No modification or reproduction of any kind is permitted.
 // 改変や複製を一切禁じます。
 //
-const version = "3.4.0";
+const version = "3.5.0";
 document.addEventListener('DOMContentLoaded', initPage);
 
 
