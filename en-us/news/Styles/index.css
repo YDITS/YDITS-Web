@@ -1,0 +1,43 @@
+/* 
+
+  index.css / news / YDITS Official site
+
+  (c) YDITS
+
+*/
+@charset "UTF-8";
+
+#main {
+  padding: 2em 0;
+}
+
+#pageTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin: .5em 0;
+}
+
+#newsList {
+  padding: 2em 10vw;
+}
+
+#newsList .lists {
+  list-style: none;
+}
+
+#newsList .list {
+  margin-bottom: 3em;
+}
+
+#newsList .list .title {
+  display: block;
+  margin-bottom: .2em;
+  font-size: 1.3em;
+}
+
+#newsList .list .date {
+  display: block;
+  font-size: 1.1em;
+}

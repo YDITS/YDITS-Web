@@ -1,0 +1,96 @@
+/* index.css / web / YDITS Official site / Yone */
+@charset "UTF-8";
+
+#main {
+  padding: 2em 0;
+}
+
+#pageTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin: .5em 0;
+}
+
+/* ----- hero ----- */
+#hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 30vh;
+
+  background-color: #cccccc;
+  color: #010101;
+
+  user-select: none;
+}
+
+#hero .title {
+  font-size: 2em;
+}
+
+/* ----- main ----- */
+#main .link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  font-size: 1.3em;
+}
+
+#main .link a {
+  color: #303030;
+  text-decoration: none;
+}
+
+#main .link a:hover {
+  text-decoration: underline;
+}
+
+#main .sections {
+  padding: 2em 0;
+}
+
+#main .sectionTitle {
+  margin: .5em 0;
+}
+
+/* --- Message --- */
+#message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 1.5em;
+}
+
+#message p {
+  text-align: center;
+}
+
+/* --- versions --- */
+#versions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- use --- */
+#use {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  #message {
+    font-size: 1em;
+  }
+}

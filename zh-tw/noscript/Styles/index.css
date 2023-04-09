@@ -1,0 +1,28 @@
+/* 
+
+    index.css | noscript | YDITS Official site
+
+    (c) YDITS
+
+    No modification or reproduction of any kind is permitted.
+    改変や複製を一切禁じます。
+
+*/
+@charset "UTF-8";
+
+#main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 2em 0;
+}
+
+#main h1 {
+    margin: .5em 0;
+}
+
+#main p {
+    margin: .5em 0;
+    text-align: center;
+}
