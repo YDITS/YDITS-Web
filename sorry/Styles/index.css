@@ -1,0 +1,23 @@
+/*
+
+    index.css | sorry | YDITS for Web
+
+    Copyright (c) YDITS, よね/Yone
+
+    No modification or reproduction of any kind is permitted.
+    改変や複製を一切禁じます。
+
+*/
+@charset "UTF-8";
+
+main {
+    width: calc(100% - 20vw);
+    padding: 2em 10vw;
+}
+
+#pageTitle {
+    display: block;
+    margin: .8em 0;
+    padding: .2em 0;
+    text-align: center;
+}
