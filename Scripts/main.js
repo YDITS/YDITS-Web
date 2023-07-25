@@ -1,26 +1,24 @@
-//
-// main.js | YDITS for Web
-//
-// (c) 2022-2023 よね/Yone
-//
-// No modification or reproduction of any kind is permitted.
-// 改変や複製を一切禁じます。
-//
+/*
+ *
+ * main.js | YDITS for Web
+ *
+ * Copyright (c) YDITS, よね/Yone
+ *
+ * No modification or reproduction of any kind is permitted.
+ * 改変や複製を一切禁じます。
+ *
+ */
+
 const version = "3.5.0";
-document.addEventListener('DOMContentLoaded', initPage);
 
-
-// -------------------- Functions -------------------- //
-function initPage() {
-    init_commonElements();
+const initPage = () => {
+    initCommonElements();
 }
 
-
-function init_commonElements() {
+const initCommonElements = () => {
     $("header").load("./elements/header.html");
     $("footer").load("./elements/footer.html");
 }
-
 
 function win(winId, winTitle) {
     $('body').append(`
@@ -35,9 +33,11 @@ function win(winId, winTitle) {
         </dialog>
     `);
 
-    $(`#${winId} .navBar .title`).text(winTitle);
+    $(`#${winId}>.navBar>.title`).text(winTitle);
 
-    $(document).on('click', `#${winId} .navBar .close`, function () {
+    $(document).on('click', `#${winId}>.navBar>.close`, (event) => {
         $(`#${winId}`).remove()
     })
 };
+
+document.addEventListener('DOMContentLoaded', initPage);

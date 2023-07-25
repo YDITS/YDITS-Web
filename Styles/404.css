@@ -1,8 +1,8 @@
 /* 
 
-    404.css | HTTP 404 | YDITS for Web
+    404.css | YDITS for Web
 
-    (c) 2022-2023 よね/Yone
+    Copyright (c) YDITS, よね/Yone
 
     No modification or reproduction of any kind is permitted.
     改変や複製を一切禁じます。
@@ -10,7 +10,6 @@
 */
 @charset "UTF-8";
 
-/* ----- Elements ----- */
 main {
     text-align: center;
 }

@@ -2,7 +2,7 @@
 
     main.css | YDITS for Web
 
-    (c) 2022-2023 よね/Yone
+    Copyright (c) YDITS, よね/Yone
 
     No modification or reproduction of any kind is permitted.
     改変や複製を一切禁じます。
@@ -13,7 +13,6 @@
 * {
     margin: 0;
     padding: 0;
-    /* list-style: none; */
 }
 
 body {
@@ -31,7 +30,6 @@ body {
         'wght' 400,
         'GRAD' 0,
         'opsz' 48;
-    /* font-size: 1em; */
 }
 
 a {

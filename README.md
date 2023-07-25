@@ -2,28 +2,33 @@
 # YDITS for Web
 
 ## About
+
 YDITS for Web
 
 ## Usage Technology
 
-#### Lagage
-- HTML/CSS
-- JavaScript
-- Leaflet
+#### Languages/Liblaries
+
+- [HTML5](https://developer.mozilla.org/ja/docs/Web/HTML)
+- [CSS3](https://developer.mozilla.org/ja/docs/Web/CSS)
+- [JavaScript](https://developer.mozilla.org/ja/docs/Web/JavaScript)
+- [jQuery](https://jquery.com/)
+- [Leaflet](https://leafletjs.com/)
 
 #### External API
-- Yahoo! JAPAN 強震モニタ JSONデータ
-- P2P地震情報 API
+
+- [Yahoo! JAPAN 強震モニタ JSONデータ](https://typhoon.yahoo.co.jp/weather/jp/earthquake/kyoshin/)
+- [P2P地震情報 JSON API v2](https://www.p2pquake.net/develop/json_api_v2/)
 
 #### Build
-- Cloudflare Pages
 
-#### Ohter
-- 音読さん
-- OpenStreetMap
+- [Cloudflare Pages](https://pages.cloudflare.com/)
 
-#### Developing Software
-- Visual Studio Code
+#### Other
 
-## LICENCE
+- [音読さん](https://ondoku3.com/ja/about/)
+- [OpenStreetMap](https://www.openstreetmap.org/copyright)
+
+## LICENSE
+
 ページ公開用のため、**ライセンスは置いておらず、改変や複製は一切禁止しています。**

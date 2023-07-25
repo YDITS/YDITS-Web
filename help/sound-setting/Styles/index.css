@@ -1,7 +1,15 @@
-/* main.css / help - sound setting / YDITS for Web / Yone */
+/* 
+
+    index.css | help/sound-settings | YDITS for Web
+
+    Copyright (c) YDITS, よね/Yone
+
+    No modification or reproduction of any kind is permitted.
+    改変や複製を一切禁じます。
+
+*/
 @charset "UTF-8";
 
-/* ----- Main ----- */
 main {
     min-height: 32em;
 }
@@ -14,8 +22,6 @@ footer {
     background-color: #cccccc;
 }
 
-/* ----- Elements ----- */
-/* --- main --- */
 main>.pageTitle {
     display: flex;
     justify-content: center;

@@ -1,12 +1,12 @@
-<!-- 
+<!--
 
     index.html | YDITS for Web
 
-    (c) 2022-2023 よね/Yone
+    Copyright (c) YDITS, よね/Yone
 
     No modification or reproduction of any kind is permitted.
     改変や複製を一切禁じます。
-  
+
 -->
 <!DOCTYPE html>
 <html lang="ja">
@@ -14,17 +14,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="application-name" content="YDITS for Web">
-    <meta name="description" content="YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。">
-    <meta name="keywords" content="YDITS">
-    <meta name="author" content="よね/Yone">
-    <meta name="generator" content="Microsoft Visual Studio Code">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="color-scheme" content="dark light">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="color-scheme" content="dark light">
+    <meta name="description" content="YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。">
+    <meta name="keywords" content="YDITS, YDITS for Web, YDITS-Web">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
     <title>YDITS for Web</title>
 
-    <meta property="og:url" content=" https://webapp.ydits.net/">
+    <meta property="og:url" content="https://webapp.ydits.net/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="YDITS for Web">
     <meta property="og:title" content="YDITS for Web">
@@ -34,16 +33,21 @@
     <meta name="twitter:card" content="summary">
 
     <base href="https://webapp.ydits.net/">
-    <link rel="manifest" href="./manifest.json">
+
     <link rel="shortcut icon" type="image/x-icon" href="./Images/icon.png">
     <link rel="apple-touch-icon-precomposed" href="./Images/icon.png">
+    <link rel="fluid-icon" href="./Images/icon.png" title="YDITS for Web">
+    <link rel="manifest" href="./manifest.json">
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
         integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
         crossorigin="">
     <link rel='stylesheet' href='./Styles/leaflet-gesture-handling.min.css'>
+
     <link rel="stylesheet" href="./Styles/main.css">
     <link rel="stylesheet" href="./Styles/ui.css">
     <link rel="stylesheet" href="./Styles/index.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -55,18 +59,19 @@
     <script src="./Scripts/jquery-3.6.0.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
-    <script src="./Scripts/main.js"></script>
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
         integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
         crossorigin=""></script>
     <script src='./Scripts/leaflet-gesture-handling.min.js'></script>
+
+    <script src="./Scripts/main.js"></script>
     <script src="./Scripts/index.js"></script>
     <noscript>
         <meta http-equiv="refresh" content="0; URL=./noscript/">
     </noscript>
 </head>
 
-<body id="pageTop">
+<body>
     <header></header>
 
     <main>
@@ -109,7 +114,9 @@
 
                 <div id="eqHistoryField"></div>
             </div>
+            <!-- /#panel -->
         </div>
+        <!-- /#control -->
 
         <div id="mapWrapper">
             <div id="map"></div>
@@ -118,6 +125,7 @@
                 <span id="statusLamp"></span>
             </div>
         </div>
+        <!-- /#mapWrapper -->
 
         <div id="popup">
             <div class="window" id="menu">
@@ -162,6 +170,7 @@
                     </a>
                 </div>
             </div>
+            <!-- /#menu -->
 
             <div class="window" id="settings">
                 <span class="material-symbols-outlined closeBtn">close</span>
@@ -263,7 +272,9 @@
                         </div>
                     </div>
                 </div>
+                <!-- /#wrapper -->
             </div>
+            <!-- /#settings -->
 
             <div class="window" id="license">
                 <span class="material-symbols-outlined closeBtn">close</span>
@@ -343,8 +354,11 @@
                         </li>
                     </ul>
                 </div>
+                <!-- /#copyright -->
             </div>
+            <!-- /#license -->
         </div>
+        <!-- /#popup -->
     </main>
 </body>
 

@@ -1,11 +1,12 @@
-//
-// index.js | YDITS for Web
-//
-// (c) 2022-2023 よね/Yone
-//
-// No modification or reproduction of any kind is permitted.
-// 改変や複製を一切禁じます。
-//
+/*
+ * index.js | YDITS for Web
+ *
+ * Copyright (c) YDITS, よね/Yone
+ *
+ * No modification or reproduction of any kind is permitted.
+ * 改変や複製を一切禁じます。
+ */
+
 let gmt;
 let cnt_getNTP = -1;
 
@@ -1358,7 +1359,7 @@ function eqinfo() {
                     'Foreign': '遠地地震情報',
                     'Other': '地震情報'
                 };
-    
+
                 p2p_type_put = p2p_types[p2p_type];
 
                 if (p2p_type == 'DetailScale') {

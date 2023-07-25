@@ -1,14 +1,21 @@
-/* main.css / help / YDITS for Web / Yone */
+/* 
+
+    index.css | help | YDITS for Web
+
+    Copyright (c) YDITS, よね/Yone
+
+    No modification or reproduction of any kind is permitted.
+    改変や複製を一切禁じます。
+
+*/
 @charset "UTF-8";
 
-/* ----- Elements ----- */
 main {
     padding: 0;
     min-height: 100vh;
 }
 
 
-/* ----- Elements ----- */
 #main {
     padding: 2em 10vw;
 }
@@ -47,7 +54,6 @@ main {
     background-color: #c0c0ffa0;
 }
 
-/* ---------- Responsive ---------- */
 @media (max-width: 511px) {
     #links .link {
         width: 75vw;

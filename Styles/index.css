@@ -1,8 +1,8 @@
 /* 
 
-    index.css | home | YDITS for Web
+    index.css | YDITS for Web
 
-    (c) 2022-2023 よね/Yone
+    Copyright (c) YDITS, よね/Yone
 
     No modification or reproduction of any kind is permitted.
     改変や複製を一切禁じます。
@@ -50,7 +50,7 @@ main {
 }
 
 #eqHistoryBtn {
-    display: none!important;
+    display: none !important;
 }
 
 #control {
@@ -59,7 +59,7 @@ main {
     height: 100%;
     background-color: #303030;
     border-bottom: 2px solid #808080;
-    transition: all .5s; 
+    transition: all .5s;
 }
 
 #panel {
@@ -346,9 +346,11 @@ main {
     border-radius: .2em;
     background-color: rgba(127, 127, 127, .3);
 }
-#settings_lists li:hover{
+
+#settings_lists li:hover {
     background-color: rgba(127, 127, 127, .9);
 }
+
 #settings_lists li.active {
     background-color: rgba(64, 64, 64, .9);
     color: #ffffff;
@@ -359,6 +361,7 @@ main {
     width: 80%;
     height: 100%;
 }
+
 #settings .settings_list.active {
     display: block;
 }
@@ -400,7 +403,7 @@ main {
 }
 
 #settings_getTypes label {
-    display: inline!important;
+    display: inline !important;
 }
 
 #license.active {
@@ -434,7 +437,7 @@ main {
     }
 
     #eqHistoryBtn {
-        display: flex!important;
+        display: flex !important;
     }
 
     #control {
@@ -470,7 +473,7 @@ main {
     #settings_lists {
         width: calc(100% - 2em);
     }
-    
+
     #settings_lists ul {
         display: flex;
         justify-content: space-between;
