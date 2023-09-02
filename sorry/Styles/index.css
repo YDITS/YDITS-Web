@@ -12,12 +12,27 @@
 
 main {
     width: calc(100% - 20vw);
-    padding: 2em 10vw;
+    padding: 10em 10vw;
 }
 
-#pageTitle {
+#icon {
     display: block;
-    margin: .8em 0;
-    padding: .2em 0;
+    margin-bottom: 2rem;
     text-align: center;
+    font-size: 8em;
+}
+
+#text {
+    text-align: center;
+    font-size: 3em;
+}
+
+@media (max-width: 769px) {
+    #icon {
+        font-size: 5em;
+    }
+
+    #text {
+        font-size: 2em;
+    }
 }
