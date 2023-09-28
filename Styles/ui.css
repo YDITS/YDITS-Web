@@ -13,15 +13,17 @@
 /* ----- Dialog ----- */
 .dialog {
     position: fixed;
-    /* top: 0; */
-    bottom: 32px;
-    left: 32px;
-    /* right: 0; */
+    top: calc(50vh - 24em);
+    /* top: 20vh; */
+    /* bottom: 20vh; */
+    left: 0;
+    /* left: 20vh; */
+    /* right: 20vh; */
     display: block;
 
-    /* margin: auto; */
-    width: 70vw;
-    height: 50vh;
+    margin: auto;
+    width: 32em;
+    height: 48em;
     border: 0;
     border-radius: .8em;
     box-shadow: 0 0 5px 5px rgba(0, 0, 0, .5);
@@ -68,7 +70,7 @@
     right: 0;
 
     width: 2em;
-    height: 1.2em;
+    height: 1.1em;
     overflow: hidden;
 
     cursor: pointer
@@ -80,6 +82,17 @@
 
 .dialog .content {
     overflow: auto;
+}
+
+@media (max-width: 769px) {
+    .dialog {
+        position: fixed;
+        top: 2vh;
+        left: 2vw;
+        margin: 0;
+        width: 96vw;
+        height: 96vh;
+    }
 }
 
 /* ----- Toggle switch ----- */

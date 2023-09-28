@@ -231,32 +231,34 @@ main {
 }
 
 #popup {
-    display: none;
+    display: block;
     position: fixed;
-    top: 0;
+    top: 100vh;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(40, 40, 40, .75);
+    background-color: #ffffff80;
+    /* background-color: rgba(40, 40, 40, .75); */
     z-index: 1;
 }
 
 #popup.active {
-    display: block;
+    top: 0;
 }
 
 .window {
     position: fixed;
-    top: 5vh;
-    left: 5vw;
-    display: none;
-    width: calc(90vw - 2em);
-    height: calc(90vh - 2em);
-    border-radius: 1em;
+    top: 100vh;
+    left: 0;
+    display: block;
+    width: calc(100% - 2em);
+    height: calc(100% - 2em);
     padding: 1em;
-    overflow: scroll;
-    background-color: #c0c0c0;
+    overflow: auto;
+    background-color: #ffffffff;
     color: #202020;
+
+    transition: all .5s;
 }
 
 .window .closeBtn {
@@ -285,7 +287,7 @@ main {
 }
 
 #menu.active {
-    display: block;
+    top: 0;
 }
 
 #menu .lists {
@@ -321,7 +323,7 @@ main {
 }
 
 #settings.active {
-    display: block;
+    top: 0;
 }
 
 #settings .wrapper {
@@ -407,7 +409,7 @@ main {
 }
 
 #license.active {
-    display: block;
+    top: 0;
 }
 
 #license>.content {
