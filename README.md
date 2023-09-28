@@ -3,11 +3,11 @@
 
 ## About
 
-YDITS for Web
+Webブラウザ上で緊急地震速報や地震情報を確認できるサイト
 
 ## Usage Technology
 
-#### Languages/Liblaries
+#### Languages / Liblaries
 
 - [HTML5](https://developer.mozilla.org/ja/docs/Web/HTML)
 - [CSS3](https://developer.mozilla.org/ja/docs/Web/CSS)
@@ -20,7 +20,7 @@ YDITS for Web
 - [Yahoo! JAPAN 強震モニタ JSONデータ](https://typhoon.yahoo.co.jp/weather/jp/earthquake/kyoshin/)
 - [P2P地震情報 JSON API v2](https://www.p2pquake.net/develop/json_api_v2/)
 
-#### Build
+#### Build & Deploy
 
 - [Cloudflare Pages](https://pages.cloudflare.com/)
 
@@ -31,4 +31,4 @@ YDITS for Web
 
 ## LICENSE
 
-ページ公開用のため、**ライセンスは置いておらず、改変や複製は一切禁止しています。**
+**ライセンスは置いておらず、改変や複製は一切禁止しています。**
