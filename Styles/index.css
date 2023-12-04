@@ -237,7 +237,7 @@ main {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #ffffff80;
+    background-color: #00000080;
     /* background-color: rgba(40, 40, 40, .75); */
     z-index: 1;
 }
@@ -255,10 +255,10 @@ main {
     height: calc(100% - 2em);
     padding: 1em;
     overflow: auto;
-    background-color: #ffffffff;
-    color: #202020;
+    background-color: #202020ff;
+    color: #ffffffff;
 
-    transition: all .5s;
+    transition: all .25s;
 }
 
 .window .closeBtn {
@@ -300,7 +300,6 @@ main {
 
 #menu .lists a {
     text-decoration: none;
-    color: #303030;
 }
 
 #menu .lists .list {
@@ -345,16 +344,16 @@ main {
 #settings_lists li {
     margin-bottom: 1em;
     padding: .5em 1em;
-    border-radius: .2em;
-    background-color: rgba(127, 127, 127, .3);
+    border-radius: 1.2em;
+    background-color: #606060ff;
 }
 
 #settings_lists li:hover {
-    background-color: rgba(127, 127, 127, .9);
+    background-color: #303030ff;
 }
 
 #settings_lists li.active {
-    background-color: rgba(64, 64, 64, .9);
+    background-color: #303030ff;
     color: #ffffff;
 }
 
@@ -362,6 +361,25 @@ main {
     display: none;
     width: 80%;
     height: 100%;
+    overflow: auto;
+}
+
+#settings .settings_list>label {
+    font-size: 1.3em;
+}
+
+#settings .settings_list .list>label {
+    font-size: 1.2em;
+}
+
+#settings .settings_list .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin: .2rem;
+    padding: .7rem;
+    background-color: #303030ff;
 }
 
 #settings .settings_list.active {
@@ -383,18 +401,35 @@ main {
 }
 
 #settings button {
+    text-align: left;
     display: block;
-    margin-top: 1em;
-    padding: .2em 1em;
+    border: none;
+    margin: .2rem;
+    padding: 1rem;
+    width: calc(100% - 1em);
+    background-color: #303030ff;
+
+    cursor: pointer;
 }
 
-#settings_playSound_eew {
+#settings button:hover {
+    background-color: #606060ff;
+}
+
+#settings select {
+    display: block;
+    border: none;
+    padding: .5rem;
+    background-color: #404040ff;
+}
+
+/* #settings_playSound_eew {
     padding: 1em 0;
 }
 
 #settings_playSound_eqinfo {
-    padding: 1em 0;
-}
+    padding: 2em 0;
+} */
 
 #settings_playSound .sectionTitle {
     display: block;
@@ -417,7 +452,7 @@ main {
 }
 
 #license>.content a {
-    color: #202020;
+    color: #c0c0f0;
     text-decoration: underline;
 }
 
@@ -470,6 +505,10 @@ main {
 
     #settings .wrapper {
         flex-direction: column;
+    }
+
+    #settings .settings_list {
+        width: 100%;
     }
 
     #settings_lists {

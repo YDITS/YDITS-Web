@@ -51,7 +51,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&family=Noto+Serif+JP:wght@300&family=Roboto:wght@300&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&family=Noto+Serif+JP:wght@400&family=Roboto:wght@300&display=swap"
         rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
@@ -92,7 +92,7 @@
 
             <div id="panel">
                 <div id="eewField">
-                    <span id="eewTitle"></span>
+                    <span id="eewTitle">読み込み中…</span>
                     <div class="content">
                         <div class="left">
                             <span class="title">最大震度</span>
@@ -188,35 +188,35 @@
                     </div>
 
                     <div class="settings_list active" id="settings_sounds">
+                        <label>音声と効果音</label>
                         <div class="list" id="settings_playSound">
-                            <label>音声と効果音</label>
+                            <label>受信時</label>
                             <p>一部のブラウザでは効果音が再生されない可能性があります。</p>
-                            <div id="settings_playSound_eew">
-                                <label class="sectionTitle">- 緊急地震速報 受信時</label>
-                                <div class="content" id="settings_playSound_eew_any">
-                                    <label>震度変化時</label>
-                                    <div class="content toggle-switch">
-                                        <div class="span"></div>
-                                    </div>
-                                </div>
 
-                                <div class="content" id="settings_playSound_eew_cancel">
-                                    <label>取消報</label>
-                                    <div class="content toggle-switch">
-                                        <div class="span"></div>
-                                    </div>
+                            <div class="item" id="settings_playSound_eew_any">
+                                <label>震度変化時</label>
+                                <div class="content toggle-switch">
+                                    <div class="span"></div>
                                 </div>
                             </div>
 
-                            <div id="settings_playSound_eqinfo">
-                                <label class="sectionTitle">- 地震情報 受信時</label>
+                            <div class="item" id="settings_playSound_eew_cancel">
+                                <label>取消報</label>
+                                <div class="content toggle-switch">
+                                    <div class="span"></div>
+                                </div>
+                            </div>
+
+                            <div class="item" id="settings_playSound_eqinfo">
+                                <label class="sectionTitle">地震情報</label>
                                 <div class="content toggle-switch">
                                     <div class="span"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="list">
+                        <div class="list test-play">
+                            <label>テスト再生</label>
                             <button id="btn_eew_chk_sound">緊急地震速報の音声をテスト再生</button>
                             <button id="btn_earthquake_info_chk_sound">地震情報の音声をテスト再生</button>
                             <button id="btn_eew_cancel_chk_sound">取消報の音声をテスト再生</button>
@@ -224,22 +224,54 @@
                     </div>
 
                     <div class="settings_list" id="settings_connect">
-                        <div class="list" id="settings_getTypes">
-                            <label>緊急地震速報 取得先</label>
-                            <div>
-                                <input type="radio" name="settings-getType-eew" value="yahoo-kmoni">
-                                <label for="contactChoice1">Yahoo! 強震モニタ</label>
-                            </div>
-                            <div>
-                                <input type="radio" name="settings-getType-eew" value="dmdata">
-                                <label for="contactChoice2">Project DM-D.S.S (dmdata.jp)</label>
-                            </div>
+                        <label for="">取得先</label>
+                        <div class="list item" id="settings_getTypes">
+                            <label>緊急地震速報</label>
+                            <select name="settings-getType-eew" id="">
+                                <option value="yahoo-kmoni" selected>Yahoo! 強震モニタ</option>
+                                <option value="dmdata">Project DM-D.S.S</option>
+                            </select>
+                        </div>
+
+                        <div class="list item" id="settings_getType_eqinfo">
+                            <label>地震情報</label>
+                            <select name="settings-getType-eqinfo" id="">
+                                <option value="p2pquake" selected>P2P地震情報</option>
+                                <option value="dmdata">【未実装】Project DM-D.S.S</option>
+                            </select>
+                        </div>
+
+                        <div class="list item" id="settingsGetTypeTsunami">
+                            <label>津波情報【未実装】</label>
+                            <select name="settings-getType-tsunami" id="">
+                                <option value="p2pquake" selected>【未実装】P2P地震情報</option>
+                                <option value="dmdata">【未実装】Project DM-D.S.S</option>
+                            </select>
+                        </div>
+
+                        <div class="list item" id="settingsGetTypeVolcanicEruption">
+                            <label>火山情報【未実装】</label>
+                            <select name="settings-getType-volcanic-eruption" id="">
+                                <option value="" selected>未実装</option>
+                            </select>
+                        </div>
+
+                        <div class="list item" id="settingsGetTypeCivilProtection">
+                            <label>国民保護情報【未実装】</label>
+                            <select name="settings-getType-civil-protection" id="">
+                                <option value="" selected>未実装</option>
+                            </select>
                         </div>
 
                         <div class="list" id="settings_dmdata">
                             <div id="settings_dmdata_init">
                                 <p style="color: #e04040; font-weight: bold;">アカウント未連携</p>
-                                <button id="settings_dmdata_init_btn">DM-D.S.S アカウントを連携する</button>
+                                <button id="settings_dmdata_init_btn">
+                                    DM-D.S.S アカウントを連携する
+                                    <span class="material-symbols-outlined open-in-new">
+                                        open_in_new
+                                    </span>
+                                </button>
                             </div>
                             <div id="settings_dmdata_main">
                                 <p style="color: #4040c0; font-weight: bold;">アカウント連携済</p>
@@ -249,7 +281,7 @@
 
                     <div class="settings_list" id="settings_notify">
                         <div class="list">
-                            <button id="btn_push_chk">プッシュ通知のテスト</button>
+                            <button id="btn_push_chk">プッシュ通知をテストするには、ここをクリックします</button>
                         </div>
                     </div>
 
@@ -260,7 +292,7 @@
                                 <span
                                     style="color: #e04040;">DM-D.S.Sアカウントとの連携情報も消去され、再度dmdataと接続するには再連携が必要になります。</span>
                             </p>
-                            <button id="settings_resetSettingsBtn">設定をリセット</button><br>
+                            <button id="settings_resetSettingsBtn">設定をリセットする</button><br>
                         </div>
                     </div>
                 </div>

@@ -87,11 +87,11 @@
 @media (max-width: 769px) {
     .dialog {
         position: fixed;
-        top: 2vh;
+        top: 4vh;
         left: 2vw;
         margin: 0;
         width: 96vw;
-        height: 96vh;
+        height: 92vh;
     }
 }
 
@@ -102,8 +102,8 @@
 
     /* display: inline-block; */
 
-    width: 64px;
-    height: 32px;
+    width: 52px;
+    height: 26px;
     border-radius: 2em;
 
     background-color: #7f7f7f;
@@ -114,13 +114,13 @@
 
 .toggle-switch>.span {
     position: relative;
-    left: 6px;
+    left: 0px;
 
     display: inline-block;
 
-    height: 24px;
-    width: 24px;
-    border-radius: 1em;
+    height: 30px;
+    width: 30px;
+    border-radius: 15px;
 
     background-color: #fff;
 
@@ -128,9 +128,9 @@
 }
 
 .toggle-switch.on {
-    background-color: #20ff20;
+    background-color: #4040ffff;
 }
 
 .toggle-switch.on>.span {
-    left: 34px;
+    left: 22px;
 }

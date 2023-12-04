@@ -286,6 +286,7 @@ function initSettings() {
         $('#menu').addClass('active')
     });
 
+    // ----- Sounds -----//
     $(document).on('click', '#settings_list_sound', () => {
         $('#settings_sounds').addClass('active');
         $('#settings_connect').removeClass('active');
@@ -396,13 +397,14 @@ function initSettings() {
         }
     })
 
+    // ----- Get Type -----//
     if (localStorage.getItem("settings-getType-eew") != null) {
         eewGetType = localStorage.getItem("settings-getType-eew");
     } else {
         eewGetType = "yahoo-kmoni";
     }
 
-    $(`input[value=${eewGetType}]`).prop('checked', true);
+    $(`select[name="settings-getType-eew"]`).val(`${eewGetType}`);
 
     if (eewGetType === 'yahoo-kmoni') {
         $('#settings_dmdata').hide();
@@ -420,8 +422,9 @@ function initSettings() {
         $('#settings_dmdata_main').show();
     }
 
-    $(document).on('input', 'input[name="settings-getType-eew"]', () => {
-        eewGetType = $('input[name="settings-getType-eew"]:checked').val();
+    $(document).on('change', 'select[name="settings-getType-eew"]', () => {
+        eewGetType = $('option:selected').val();
+        console.debug(eewGetType);
         if (eewGetType === 'yahoo-kmoni') {
             $('#settings_dmdata').hide();
             if (dmdata_access_token !== null) {
@@ -436,19 +439,51 @@ function initSettings() {
         localStorage.setItem('settings-getType-eew', eewGetType);
     });
 
-    $(document).on('click', '#settings_dmdata_init_btn', connectDmdata)
-
-    if (localStorage.getItem("settings-getCnt_p2p") != null) {
-        p2p_time = Number(localStorage.getItem("settings-getCnt_p2p"));
+    if (localStorage.getItem("settings-getType-eqinfo") != null) {
+        eqinfoGetType = localStorage.getItem("settings-getType-eqinfo");
     } else {
-        p2p_time = 8;
+        eqinfoGetType = "p2pquake";
     }
 
+    $(`select[name="settings-getType-eqinfo"]`).val(`${eqinfoGetType}`);
 
+    $(document).on('change', 'select[name="settings-getType-eqinfo"]', () => {
+        eqinfoGetType = $('option:selected').val();
+        if (eqinfoGetType === 'p2pquake') {
+        } else if (eqinfoGetType === 'dmdata') {
+        }
+        localStorage.setItem('settings-getType-eqinfo', eqinfoGetType);
+    });
+
+    if (localStorage.getItem("settings-getType-tsunami") != null) {
+        tsunamiGetType = localStorage.getItem("settings-getType-tsunami");
+    } else {
+        tsunamiGetType = "p2pquake";
+    }
+
+    $(`select[name="settings-getType-tsunami"]`).val(`${tsunamiGetType}`);
+
+    $(document).on('change', 'select[name="settings-getType-tsunami"]', () => {
+        tsunamiGetType = $('option:selected').val();
+        if (tsunamiGetType === 'p2pquake') {
+        } else if (tsunamiGetType === 'dmdata') {
+        }
+        localStorage.setItem('settings-getType-tsunami', tsunamiGetType);
+    });
+
+    // ----- dmdata -----//
+    $(document).on('click', '#settings_dmdata_init_btn', connectDmdata)
+
+    // ----- Reset -----//
     $(document).on('click', '#settings_resetSettingsBtn', function () {
         eewGetType = "yahoo-kmoni";
+        eqinfoGetType = "p2pquake";
+        tsunamiGetType = "p2pquake";
         dmdata_access_token = null;
-        $(`input[value=${eewGetType}]`).prop('checked', true);
+        $(`select[name="settings-getType-eew"]`).val(`${eewGetType}`);
+        $(`select[name="settings-getType-eqinfo"]`).val(`${eqinfoGetType}`);
+        $(`select[name="settings-getType-tsunami"]`).val(`${tsunamiGetType}`);
+
         $('#settings_dmdata').hide();
         $('#settings_dmdata_init').show();
         $('#settings_dmdata_main').hide();
@@ -492,6 +527,7 @@ function initSettings() {
         }
     });
 
+    // ----- Test Play Sounds -----//
     $(document).on('click', '#btn_eew_chk_sound', function () {
         eew_sound.play();
         eew_7_voice.play();
@@ -534,7 +570,7 @@ function connectDmdata() {
         '&redirect_uri=https:%2F%2Fwebapp.ydits.net%2F' +
         '&scope=socket.start%20socket.list%20socket.close%20eew.get.warning%20eew.get.forecast' +
         `&state=${state}`
-    window.open(dmdataOAuthBaseUrl + dmdataOAuthConfig, '_self');
+    window.open(dmdataOAuthBaseUrl + dmdataOAuthConfig, '_blank');
 }
 
 
