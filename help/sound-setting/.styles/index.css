@@ -1,0 +1,42 @@
+/* 
+
+    index.css | help/sound-settings | YDITS for Web
+
+    (c) よね/Yone
+
+    No modification or reproduction of any kind is permitted.
+    改変や複製を一切禁じます。
+
+*/
+@charset "UTF-8";
+
+main>.content {
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 0;
+}
+
+#description {
+    margin-bottom: 2rem;
+}
+
+main>.content>.content {
+    margin-bottom: 3em;
+    font-size: 1.2em;
+}
+
+main>.content>.content>img {
+    width: 40vw;
+}
+
+@media (max-width: 768px) {
+    main {
+        width: calc(100% - 20vw);
+        padding-left: 10vw;
+        padding-right: 10vw;
+    }
+
+    main>.content>.content>img {
+        width: 70vw;
+    }
+}

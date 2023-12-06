@@ -1,0 +1,81 @@
+/* 
+
+    index.css | help | YDITS for Web
+
+    (c) よね/Yone
+
+    No modification or reproduction of any kind is permitted.
+    改変や複製を一切禁じます。
+
+*/
+@charset "UTF-8";
+
+html {
+    font-size: 16px;
+}
+
+main {
+    width: calc(100% - 20vw);
+    padding: 5rem 10vw;
+    min-height: 100vh;
+    height: auto;
+}
+
+#pageIcon {
+    display: block;
+    margin-bottom: .25em;
+    font-size: 4rem;
+    text-align: center;
+}
+
+#pageTitle {
+    text-align: center;
+    font-size: 2.5rem;
+}
+
+#links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 5rem 0;
+}
+
+#links .link {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    width: 50%;
+    border-bottom: solid 1px #ffffffff;
+
+    padding: 1rem 3rem;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+#links .link:hover {
+    background-color: #ffffff40;
+}
+
+@media (max-width: 768px) {
+    main {
+        width: calc(100% - 4vw);
+
+        padding-left: 2vw;
+        padding-right: 2vw;
+    }
+
+    #links .link {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    
+        width: 80%;
+        border-bottom: solid 1px #ffffffff;
+    
+        padding: 1rem 3rem;
+        color: #ffffff;
+        text-decoration: none;
+    }
+}
