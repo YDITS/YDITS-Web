@@ -15,30 +15,16 @@
     padding: 0;
 }
 
+html {
+    font-size: 13px;
+}
+
 body {
     background-color: #202020;
     font-family: 'Noto Sans JP', 'Roboto', sans-serif;
-    font-size: 13px;
     font-weight: 400;
     color: #ffffff;
     user-select: none;
-}
-
-.material-symbols-outlined {
-    font-variation-settings:
-        'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 48;
-}
-
-.material-symbols-outlined.open-in-new {
-    font-size: 1em;
-}
-
-a {
-    text-decoration: none;
-    color: #ffffff;
 }
 
 main {
@@ -65,4 +51,25 @@ footer {
     height: 7em;
     background-color: #101010;
     color: #ffffff;
+}
+
+a {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.material-symbols-outlined {
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 48;
+}
+
+.material-symbols-outlined.open-in-new {
+    font-size: 1em;
+}
+
+#headerTitle {
+    font-size: 1rem;
 }

@@ -1,51 +1,57 @@
-/* main.css / help - support browser / YDITS for Web / Yone */
+/* 
+
+    index.css | help/support-browser | YDITS for Web
+
+    (c) よね/Yone
+
+    No modification or reproduction of any kind is permitted.
+    改変や複製を一切禁じます。
+
+*/
 @charset "UTF-8";
-
-/* ----- Main ----- */
-main {
-    min-height: 32em;
-}
-
-
-/* ----- Elements ----- */
-/* --- main --- */
-main>.pageTitle {
-    display: flex;
-    justify-content: center;
-}
-
-main>.description {
-    display: flex;
-    justify-content: center;
-}
 
 main>.content {
     display: flex;
     flex-direction: column;
-    margin: 2em 8em;
+    padding: 3rem 0;
 }
 
-main>.content>.os {
-    margin: 1em 0;
+main>.content>.description {
+    margin-bottom: 1rem;
 }
 
-main>.content>.os>h2 {
-    margin-bottom: .5em;
+main>.content>section {
+    margin-bottom: 3rem;
 }
 
-@media (max-width: 1024px) {
-    main>.content {
-        margin: 2em 4em;
-    }
+main>.content>section>h3 {
+    display: flex;
+    margin-bottom: 1em;
 }
 
-@media (max-width: 512px) {
-    main>.content {
-        margin: 2em 2em;
-    }
+main>.content>section>h3::before {
+    display: block;
+    width: 4px;
+    height: auto;
+    margin-right: 1em;
+    border-radius: 2px;
+    background-color: #ffffffff;
+    content: "";
+}
 
-    main>.content>.link {
-        padding: 1em;
-        font-size: .7em;
+main>.content ul {
+    padding-left: 2rem;
+}
+
+main>.content ul>li {
+    margin: 2rem 0;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    main {
+        width: calc(100% - 20vw);
+        padding-left: 10vw;
+        padding-right: 10vw;
     }
 }

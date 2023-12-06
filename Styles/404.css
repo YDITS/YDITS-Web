@@ -11,13 +11,16 @@
 @charset "UTF-8";
 
 main {
+    width: calc(100% - 20vw);
+    padding: 2rem 10vw;
     text-align: center;
 }
 
-main>.pageTitle {
+#pageTitle {
+    font-size: 3rem;
     margin-bottom: .5em;
 }
 
-main>p {
-    margin-bottom: .5em;
+#text {
+    margin-bottom: 2rem;
 }

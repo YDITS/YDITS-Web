@@ -212,27 +212,27 @@ function initServiceWorker() {
 
 // ---------- Sounds ---------- //
 function initSounds() {
-    eew_sound = new Audio("https://webapp.ydits.net/Sounds/eew.wav");
-    p2p_sound = new Audio("https://webapp.ydits.net/Sounds/info.wav");
-    eew_1_voice = new Audio("https://webapp.ydits.net/Sounds/eew_1_v.mp3");
-    eew_2_voice = new Audio("https://webapp.ydits.net/Sounds/eew_2_v.mp3");
-    eew_3_voice = new Audio("https://webapp.ydits.net/Sounds/eew_3_v.mp3");
-    eew_4_voice = new Audio("https://webapp.ydits.net/Sounds/eew_4_v.mp3");
-    eew_5_voice = new Audio("https://webapp.ydits.net/Sounds/eew_5_v.mp3");
-    eew_6_voice = new Audio("https://webapp.ydits.net/Sounds/eew_6_v.mp3");
-    eew_7_voice = new Audio("https://webapp.ydits.net/Sounds/eew_7_v.mp3");
-    eew_8_voice = new Audio("https://webapp.ydits.net/Sounds/eew_8_v.mp3");
-    eew_9_voice = new Audio("https://webapp.ydits.net/Sounds/eew_9_v.mp3");
-    eew_Cancel_voice = new Audio("https://webapp.ydits.net/Sounds/eew_cancel_v.mp3");
-    p2p_1_voice = new Audio("https://webapp.ydits.net/Sounds/info_1_v.mp3");
-    p2p_2_voice = new Audio("https://webapp.ydits.net/Sounds/info_2_v.mp3");
-    p2p_3_voice = new Audio("https://webapp.ydits.net/Sounds/info_3_v.mp3");
-    p2p_4_voice = new Audio("https://webapp.ydits.net/Sounds/info_4_v.mp3");
-    p2p_5_voice = new Audio("https://webapp.ydits.net/Sounds/info_5_v.mp3");
-    p2p_6_voice = new Audio("https://webapp.ydits.net/Sounds/info_6_v.mp3");
-    p2p_7_voice = new Audio("https://webapp.ydits.net/Sounds/info_7_v.mp3");
-    p2p_8_voice = new Audio("https://webapp.ydits.net/Sounds/info_8_v.mp3");
-    p2p_9_voice = new Audio("https://webapp.ydits.net/Sounds/info_9_v.mp3");
+    eew_sound = new Audio("https://webapp.ydits.net/sounds/eew.wav");
+    p2p_sound = new Audio("https://webapp.ydits.net/sounds/info.wav");
+    eew_1_voice = new Audio("https://webapp.ydits.net/sounds/eew_1_v.mp3");
+    eew_2_voice = new Audio("https://webapp.ydits.net/sounds/eew_2_v.mp3");
+    eew_3_voice = new Audio("https://webapp.ydits.net/sounds/eew_3_v.mp3");
+    eew_4_voice = new Audio("https://webapp.ydits.net/sounds/eew_4_v.mp3");
+    eew_5_voice = new Audio("https://webapp.ydits.net/sounds/eew_5_v.mp3");
+    eew_6_voice = new Audio("https://webapp.ydits.net/sounds/eew_6_v.mp3");
+    eew_7_voice = new Audio("https://webapp.ydits.net/sounds/eew_7_v.mp3");
+    eew_8_voice = new Audio("https://webapp.ydits.net/sounds/eew_8_v.mp3");
+    eew_9_voice = new Audio("https://webapp.ydits.net/sounds/eew_9_v.mp3");
+    eew_Cancel_voice = new Audio("https://webapp.ydits.net/sounds/eew_cancel_v.mp3");
+    p2p_1_voice = new Audio("https://webapp.ydits.net/sounds/info_1_v.mp3");
+    p2p_2_voice = new Audio("https://webapp.ydits.net/sounds/info_2_v.mp3");
+    p2p_3_voice = new Audio("https://webapp.ydits.net/sounds/info_3_v.mp3");
+    p2p_4_voice = new Audio("https://webapp.ydits.net/sounds/info_4_v.mp3");
+    p2p_5_voice = new Audio("https://webapp.ydits.net/sounds/info_5_v.mp3");
+    p2p_6_voice = new Audio("https://webapp.ydits.net/sounds/info_6_v.mp3");
+    p2p_7_voice = new Audio("https://webapp.ydits.net/sounds/info_7_v.mp3");
+    p2p_8_voice = new Audio("https://webapp.ydits.net/sounds/info_8_v.mp3");
+    p2p_9_voice = new Audio("https://webapp.ydits.net/sounds/info_9_v.mp3");
 }
 
 

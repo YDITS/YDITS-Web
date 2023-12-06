@@ -9,17 +9,17 @@
 
 -->
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja-jp">
 
 <head>
     <meta charset="UTF-8">
     <meta name="application-name" content="YDITS for Web">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。">
+    <meta name="keywords" content="YDITS for Web, YDITS-Web, YDITS, よね/Yone, よね, Yone">
     <meta name="color-scheme" content="dark light">
-    <meta name="description" content="YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。">
-    <meta name="keywords" content="YDITS, YDITS for Web, YDITS-Web">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
     <title>YDITS for Web</title>
 
@@ -27,26 +27,26 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="YDITS for Web">
     <meta property="og:title" content="YDITS for Web">
-    <meta property="og:description" content="YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。">
-    <meta property="og:image" content="https://webapp.ydits.net/Images/icon.png">
+    <meta property="og:description" content="『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。">
+    <meta property="og:image" content="https://webapp.ydits.net/images/icon.png">
     <meta name="twitter:site" content="@YDITS_JP">
     <meta name="twitter:card" content="summary">
 
     <base href="https://webapp.ydits.net/">
 
-    <link rel="shortcut icon" type="image/x-icon" href="./Images/icon.png">
-    <link rel="apple-touch-icon-precomposed" href="./Images/icon.png">
-    <link rel="fluid-icon" href="./Images/icon.png" title="YDITS for Web">
+    <link rel="shortcut icon" type="image/x-icon" href="./images/icon.png">
+    <link rel="apple-touch-icon-precomposed" href="./images/icon.png">
+    <link rel="fluid-icon" href="./images/icon.png" title="YDITS for Web">
     <link rel="manifest" href="./manifest.json">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
         integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
         crossorigin="">
-    <link rel='stylesheet' href='./Styles/leaflet-gesture-handling.min.css'>
+    <link rel='stylesheet' href='./styles/leaflet-gesture-handling.min.css'>
 
-    <link rel="stylesheet" href="./Styles/main.css">
-    <link rel="stylesheet" href="./Styles/ui.css">
-    <link rel="stylesheet" href="./Styles/index.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/ui.css">
+    <link rel="stylesheet" href="./styles/index.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,16 +56,16 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 
-    <script src="./Scripts/jquery-3.6.0.js"></script>
+    <script src="./scripts/jquery-3.6.0.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
         integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
         crossorigin=""></script>
-    <script src='./Scripts/leaflet-gesture-handling.min.js'></script>
+    <script src='./scripts/leaflet-gesture-handling.min.js'></script>
 
-    <script src="./Scripts/main.js"></script>
-    <script src="./Scripts/ydits-web.js"></script>
+    <script src="./scripts/main.js"></script>
+    <script src="./scripts/ydits-web.js"></script>
     <noscript>
         <meta http-equiv="refresh" content="0; URL=./noscript/">
     </noscript>
@@ -162,7 +162,7 @@
                         利用規約
                     </a>
 
-                    <a class="list" id="menuContact" target="_blank" href="https://www.yoneyo.com/site/contact/">
+                    <a class="list" id="menuContact" target="_blank" href="https://www.yoneyo.com/#contact">
                         <span class="material-symbols-outlined">
                             mail
                         </span>

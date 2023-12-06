@@ -9,19 +9,19 @@
 
 -->
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja-jp">
 
 <head>
     <meta charset="UTF-8">
     <meta name="application-name" content="YDITS for Web">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="color-scheme" content="light">
-    <meta name="description" content="YDITS for Web はWebブラウザ上で緊急地震速報や地震情報を確認できるサイトです。">
-    <meta name="keywords" content="YDITS, YDITS for Web, YDITS-Web">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。">
+    <meta name="keywords" content="YDITS for Web, YDITS-Web, YDITS, よね/Yone, よね, Yone">
+    <meta name="color-scheme" content="dark light">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <title>効果音の自動再生を有効にする - ヘルプ - YDITS for Web</title>
+    <title>効果音の自動再生を有効にする | ヘルプ | YDITS for Web</title>
 
     <base href="https://webapp.ydits.net/">
 
@@ -33,45 +33,46 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 
-    <link rel="stylesheet" href="./Styles/main.css">
-    <link rel="stylesheet" href="./Styles/ui.css">
-    <link rel="stylesheet" href="./help/sound-setting/Styles/index.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/ui.css">
+    <link rel="stylesheet" href="./help/styles/index.css">
+    <link rel="stylesheet" href="./help/sound-setting/styles/index.css">
 
-    <link rel="icon" href="./Images/icon.png">
-    <link rel="apple-touch-icon-precomposed" type="image/png" href="./Images/icon.png">
+    <link rel="icon" href="./images/icon.png">
+    <link rel="apple-touch-icon-precomposed" type="image/png" href="./images/icon.png">
 
-
-    <script src="./Scripts/jquery-3.6.0.js"></script>
-
+    <script src="./scripts/jquery-3.6.0.js"></script>
+    <script src="./scripts/main.js"></script>
     <noscript>
         <meta http-equiv="refresh" content="0; URL=./noscript/">
     </noscript>
 </head>
 
 <body>
-    <header>
-        <div class="content">
-            <p class="title">YDITS for Web</p>
-        </div>
-    </header>
+    <header></header>
 
     <main>
         <h1 class="pageTitle">効果音の自動再生を有効にする</h1>
 
         <div class="content">
+            <p id="description">
+                効果音が再生されない場合は、以下の手順を行うことで解決できます。<br>
+                画像は デスクトップ版 Google Chrome を使用していますが、他のブラウザでも、<span style="font-weight: bold; color: #ffb0b0;">サイトの設定から音声の許可</span> を行うことで可能です。
+            </p>
+
             <section class="content first">
-                <p>(1) 上部の 'サイト情報' (鍵アイコン) をクリックします。</p>
-                <img src="./help/sound-setting/Images/procedure-1.png" alt="">
+                <p>(1) 上部の 'サイト情報' (シークバーアイコン) をクリックします。</p>
+                <img src="./help/sound-setting/images/procedure-1.png" alt="">
             </section>
 
             <section class="content second">
                 <p>(2) 'サイトの設定' をクリックします。</p>
-                <img src="./help/sound-setting/Images/procedure-2.png" alt="">
+                <img src="./help/sound-setting/images/procedure-2.png" alt="">
             </section>
 
             <section class="content third">
-                <p>(3) 設定が開いたら '音声' の項目を '許可' に変更します。</p>
-                <img src="./help/sound-setting/Images/procedure-3.png" alt="">
+                <p>(3) '音声' の項目を '許可する' に変更します。</p>
+                <img src="./help/sound-setting/images/procedure-3.png" alt="">
             </section>
 
             <p>以上の手順で効果音が再生されるようになります。</p>
@@ -79,11 +80,7 @@
 
     </main>
 
-    <footer>
-        <div class="content">
-            <p class="copyrights">&copy; よね/Yone</p>
-        </div>
-    </footer>
+    <footer></footer>
 </body>
 
 </html>

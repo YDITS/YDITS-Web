@@ -10,15 +10,27 @@
 */
 @charset "UTF-8";
 
+/* ----- Button ----- */
+.button {
+    display: inline-block;
+    border: solid 1px #ffffffff;
+    border-radius: 2rem;
+    padding: 1rem;
+    background-color: #00000000;
+    font-size: 1rem;
+    transition: all .3s;
+}
+
+.button:hover {
+    background-color: #ffffff;
+    color: #404040ff;
+}
+
 /* ----- Dialog ----- */
 .dialog {
     position: fixed;
     top: calc(50vh - 24em);
-    /* top: 20vh; */
-    /* bottom: 20vh; */
     left: 0;
-    /* left: 20vh; */
-    /* right: 20vh; */
     display: block;
 
     margin: auto;
@@ -28,8 +40,8 @@
     border-radius: .8em;
     box-shadow: 0 0 5px 5px rgba(0, 0, 0, .5);
 
-    padding: 0;
     overflow: hidden;
+    padding: 0;
     background-color: #fff;
     color: #010101;
 
