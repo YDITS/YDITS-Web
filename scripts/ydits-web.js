@@ -244,6 +244,8 @@ function initPush() {
 
 // ---------- Menu ---------- //
 function initMenu() {
+    $('#menu .version').text(`Ver ${version}`);
+
     $(document).on('click', '#menuBtn', () => {
         $('#popup').addClass('active');
         $('#menu').addClass('active');
@@ -267,23 +269,48 @@ function initMenu() {
 
     $(document).on('click', '#menuSettings', () => {
         $('#settings').addClass('active');
-        $('#menu').removeClass('active')
     });
 
     $(document).on('click', '#menuLicense', () => {
         $('#license').addClass('active');
-        $('#menu').removeClass('active')
     });
 }
 
 
 // ---------- Settings ---------- //
 function initSettings() {
-    $('#settings .version').text(`Ver ${version}`);
-
     $(document).on('click', '#settings .closeBtn', function () {
         $('#settings').removeClass('active');
-        $('#menu').addClass('active')
+        $('#menu').addClass('active');
+    });
+
+    $(document).on('click', '#settings_list_sound', () => {
+        $('#settings_sounds').addClass('active');
+    });
+    $(document).on('click', '#settings_sounds .closeBtn', () => {
+        console.debug('devgy')
+        $('#settings_sounds').removeClass('active');
+    });
+
+    $(document).on('click', '#settings_list_connect', () => {
+        $('#settings_connect').addClass('active');
+    });
+    $(document).on('click', '#settings_connect .closeBtn', () => {
+        $('#settings_connect').removeClass('active');
+    });
+
+    $(document).on('click', '#settings_list_notify', () => {
+        $('#settings_notify').addClass('active');
+    });
+    $(document).on('click', '#settings_notify .closeBtn', () => {
+        $('#settings_notify').removeClass('active');
+    });
+
+    $(document).on('click', '#settings_list_other', () => {
+        $('#settings_other').addClass('active');
+    });
+    $(document).on('click', '#settings_other .closeBtn', () => {
+        $('#settings_other').removeClass('active');
     });
 
     // ----- Sounds -----//
@@ -516,9 +543,15 @@ function initSettings() {
 
             $('#win_settings_reset .content .btn_ok').css({
                 'position': 'absolute',
-                'right': '3em',
-                'bottom': '3em',
-                'width': '10em'
+                'height': '2rem',
+                'right': '2rem',
+                'bottom': '2rem',
+                'width': 'calc(100% - 4rem)',
+                'border': 'none',
+                'border-radius': '1rem',
+                'background-color': '#606060ff',
+                'color': '#ffffffff',
+                'cursor': 'pointer'
             })
 
             $(document).on('click', '#win_settings_reset .content .btn_ok', function () {
@@ -554,9 +587,8 @@ function initSettings() {
 
 // ---------- License ---------- //
 function initLicense() {
-    $(document).on('click', '#license>.closeBtn', function () {
+    $(document).on('click', '#license .closeBtn', function () {
         $('#license').removeClass('active');
-        $('#menu').addClass('active')
     })
 }
 
@@ -1440,12 +1472,12 @@ function eqinfo() {
                     p2p_tsunami = p2p_data[i]['earthquake']['domesticTsunami'];
 
                     tsunamiLevels = {
-                        'None': '津波の心配はありません。',
-                        'Unknown': '津波の影響は不明です。',
-                        'Checking': '津波の影響を現在調査中です。',
-                        'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
-                        'Watch': '津波注意報が発表されています。',
-                        'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
+                        'None': '津波の心配なし',
+                        'Unknown': '津波の影響は不明',
+                        'Checking': '津波の影響を現在調査中',
+                        'NonEffective': '若干の海面変動が予想されるが、被害の心配はなし',
+                        'Watch': '津波注意報が発表',
+                        'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表'
                     };
 
                     p2p_tsunami = tsunamiLevels[p2p_tsunami];
@@ -1668,12 +1700,12 @@ function eqinfo() {
                 p2p_tsunami = p2p_data[i]['earthquake']['domesticTsunami'];
 
                 tsunamiLevels = {
-                    'None': '津波の心配はありません。',
-                    'Unknown': '津波の影響は不明です。',
-                    'Checking': '津波の影響を現在調査中です。',
-                    'NonEffective': '若干の海面変動が予想されますが、被害の心配はありません。',
-                    'Watch': '津波注意報が発表されています。',
-                    'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表されています。'
+                    'None': '津波の心配なし',
+                    'Unknown': '津波の影響は不明',
+                    'Checking': '津波の影響を現在調査中',
+                    'NonEffective': '若干の海面変動が予想されるが、被害の心配はなし',
+                    'Watch': '津波注意報が発表',
+                    'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表'
                 };
 
                 p2p_tsunami = tsunamiLevels[p2p_tsunami];

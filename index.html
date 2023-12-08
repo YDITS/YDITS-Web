@@ -129,12 +129,13 @@
 
         <div id="popup">
             <div class="window" id="menu">
-                <span class="material-symbols-outlined closeBtn">close</span>
-
-                <span class="title">メニュー</span>
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">close</span>
+                    <span class="title">メニュー</span>
+                </div>
 
                 <div class="lists">
-                    <div class="list" id="menuSettings">
+                    <div class="list top" id="menuSettings">
                         <span class="material-symbols-outlined">
                             settings
                         </span>
@@ -162,148 +163,213 @@
                         利用規約
                     </a>
 
-                    <a class="list" id="menuContact" target="_blank" href="https://www.yoneyo.com/#contact">
+                    <a class="list" id="menuTerms" target="_blank" href="https://policies.ydits.net/privacy/site/">
+                        <span class="material-symbols-outlined">
+                            policy
+                        </span>
+                        プライバシーポリシー
+                    </a>
+
+                    <a class="list" id="menuTerms" target="_blank" href="https://github.com/YDITS/YDITS-Web/">
+                        <span class="material-symbols-outlined">
+                            code
+                        </span>
+                        GitHub リポジトリ
+                    </a>
+
+                    <a class="list bottom" id="menuContact" target="_blank" href="https://www.yoneyo.com/#contact">
                         <span class="material-symbols-outlined">
                             mail
                         </span>
                         お問い合わせ
                     </a>
                 </div>
+
+                <p class="version"></p>
             </div>
             <!-- /#menu -->
 
             <div class="window" id="settings">
-                <span class="material-symbols-outlined closeBtn">close</span>
-                <span class="title">設定</span>
-                <p class="version"></p>
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">設定</span>
+                </div>
 
                 <div class="wrapper">
-                    <div id="settings_lists">
-                        <ul>
-                            <li class="active" id="settings_list_sound">音声</li>
-                            <li id="settings_list_connect">接続</li>
-                            <li id="settings_list_notify">通知</li>
-                            <li id="settings_list_other">その他</li>
-                        </ul>
-                    </div>
-
-                    <div class="settings_list active" id="settings_sounds">
-                        <label>音声と効果音</label>
-                        <div class="list" id="settings_playSound">
-                            <label>受信時</label>
-                            <p>一部のブラウザでは効果音が再生されない可能性があります。</p>
-
-                            <div class="item" id="settings_playSound_eew_any">
-                                <label>震度変化時</label>
-                                <div class="content toggle-switch">
-                                    <div class="span"></div>
-                                </div>
-                            </div>
-
-                            <div class="item" id="settings_playSound_eew_cancel">
-                                <label>取消報</label>
-                                <div class="content toggle-switch">
-                                    <div class="span"></div>
-                                </div>
-                            </div>
-
-                            <div class="item" id="settings_playSound_eqinfo">
-                                <label class="sectionTitle">地震情報</label>
-                                <div class="content toggle-switch">
-                                    <div class="span"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="list test-play">
-                            <label>テスト再生</label>
-                            <button id="btn_eew_chk_sound">緊急地震速報の音声をテスト再生</button>
-                            <button id="btn_earthquake_info_chk_sound">地震情報の音声をテスト再生</button>
-                            <button id="btn_eew_cancel_chk_sound">取消報の音声をテスト再生</button>
-                        </div>
-                    </div>
-
-                    <div class="settings_list" id="settings_connect">
-                        <label for="">取得先</label>
-                        <div class="list item" id="settings_getTypes">
-                            <label>緊急地震速報</label>
-                            <select name="settings-getType-eew" id="">
-                                <option value="yahoo-kmoni" selected>Yahoo! 強震モニタ</option>
-                                <option value="dmdata">Project DM-D.S.S</option>
-                            </select>
-                        </div>
-
-                        <div class="list item" id="settings_getType_eqinfo">
-                            <label>地震情報</label>
-                            <select name="settings-getType-eqinfo" id="">
-                                <option value="p2pquake" selected>P2P地震情報</option>
-                                <option value="dmdata">【未実装】Project DM-D.S.S</option>
-                            </select>
-                        </div>
-
-                        <div class="list item" id="settingsGetTypeTsunami">
-                            <label>津波情報【未実装】</label>
-                            <select name="settings-getType-tsunami" id="">
-                                <option value="p2pquake" selected>【未実装】P2P地震情報</option>
-                                <option value="dmdata">【未実装】Project DM-D.S.S</option>
-                            </select>
-                        </div>
-
-                        <div class="list item" id="settingsGetTypeVolcanicEruption">
-                            <label>火山情報【未実装】</label>
-                            <select name="settings-getType-volcanic-eruption" id="">
-                                <option value="" selected>未実装</option>
-                            </select>
-                        </div>
-
-                        <div class="list item" id="settingsGetTypeCivilProtection">
-                            <label>国民保護情報【未実装】</label>
-                            <select name="settings-getType-civil-protection" id="">
-                                <option value="" selected>未実装</option>
-                            </select>
-                        </div>
-
-                        <div class="list" id="settings_dmdata">
-                            <div id="settings_dmdata_init">
-                                <p style="color: #e04040; font-weight: bold;">アカウント未連携</p>
-                                <button id="settings_dmdata_init_btn">
-                                    DM-D.S.S アカウントを連携する
-                                    <span class="material-symbols-outlined open-in-new">
-                                        open_in_new
-                                    </span>
-                                </button>
-                            </div>
-                            <div id="settings_dmdata_main">
-                                <p style="color: #4040c0; font-weight: bold;">アカウント連携済</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="settings_list" id="settings_notify">
-                        <div class="list">
-                            <button id="btn_push_chk">プッシュ通知をテストするには、ここをクリックします</button>
-                        </div>
-                    </div>
-
-                    <div class="settings_list" id="settings_other">
-                        <div class="list">
-                            <p>
-                                すべての設定をリセットします。<br>
-                                <span
-                                    style="color: #e04040;">DM-D.S.Sアカウントとの連携情報も消去され、再度dmdataと接続するには再連携が必要になります。</span>
-                            </p>
-                            <button id="settings_resetSettingsBtn">設定をリセットする</button><br>
-                        </div>
-                    </div>
+                    <ul class="lists">
+                        <li class="list top active" id="settings_list_sound">
+                            <span class="material-symbols-outlined">
+                                volume_up
+                            </span>
+                            音声と効果音
+                        </li>
+                        <li class="list" id="settings_list_connect">
+                            <span class="material-symbols-outlined">
+                                cloud
+                            </span>
+                            接続先
+                        </li>
+                        <li class="list" id="settings_list_notify">
+                            <span class="material-symbols-outlined">
+                                notifications
+                            </span>
+                            プッシュ通知
+                        </li>
+                        <li class="list bottom" id="settings_list_other">
+                            <span class="material-symbols-outlined">
+                                tune
+                            </span>
+                            その他
+                        </li>
+                    </ul>
                 </div>
                 <!-- /#wrapper -->
             </div>
+
+            <div class="window settings_list" id="settings_sounds">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">設定 - 音声と効果音</span>
+                </div>
+
+                <div class="content">
+                    <div class="list" id="settings_playSound">
+                        <label>受信時</label>
+                        <p>一部のブラウザでは効果音が再生されない可能性があります。</p>
+
+                        <div class="item" id="settings_playSound_eew_any">
+                            <label>震度変化時</label>
+                            <div class="content toggle-switch">
+                                <div class="span"></div>
+                            </div>
+                        </div>
+
+                        <div class="item" id="settings_playSound_eew_cancel">
+                            <label>取消報</label>
+                            <div class="content toggle-switch">
+                                <div class="span"></div>
+                            </div>
+                        </div>
+
+                        <div class="item" id="settings_playSound_eqinfo">
+                            <label class="sectionTitle">地震情報</label>
+                            <div class="content toggle-switch">
+                                <div class="span"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list test-play">
+                        <label>テスト再生</label>
+                        <button id="btn_eew_chk_sound">緊急地震速報の音声をテスト再生</button>
+                        <button id="btn_earthquake_info_chk_sound">地震情報の音声をテスト再生</button>
+                        <button id="btn_eew_cancel_chk_sound">取消報の音声をテスト再生</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /#settings_sounds -->
+
+            <div class="window settings_list" id="settings_connect">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">設定 - 接続先</span>
+                </div>
+
+                <div class="content">
+                    <div class="list item" id="settings_getTypes">
+                        <label>緊急地震速報</label>
+                        <select name="settings-getType-eew" id="">
+                            <option value="yahoo-kmoni" selected>Yahoo! 強震モニタ</option>
+                            <option value="dmdata">Project DM-D.S.S</option>
+                        </select>
+                    </div>
+
+                    <div class="list item" id="settings_getType_eqinfo">
+                        <label>地震情報</label>
+                        <select name="settings-getType-eqinfo" id="">
+                            <option value="p2pquake" selected>P2P地震情報</option>
+                            <option value="dmdata">【未実装】Project DM-D.S.S</option>
+                        </select>
+                    </div>
+
+                    <div class="list item" id="settingsGetTypeTsunami">
+                        <label>津波情報【未実装】</label>
+                        <select name="settings-getType-tsunami" id="">
+                            <option value="p2pquake" selected>【未実装】P2P地震情報</option>
+                            <option value="dmdata">【未実装】Project DM-D.S.S</option>
+                        </select>
+                    </div>
+
+                    <div class="list item" id="settingsGetTypeVolcanicEruption">
+                        <label>火山情報【未実装】</label>
+                        <select name="settings-getType-volcanic-eruption" id="">
+                            <option value="" selected>未実装</option>
+                        </select>
+                    </div>
+
+                    <div class="list item" id="settingsGetTypeCivilProtection">
+                        <label>国民保護情報【未実装】</label>
+                        <select name="settings-getType-civil-protection" id="">
+                            <option value="" selected>未実装</option>
+                        </select>
+                    </div>
+
+                    <div class="list" id="settings_dmdata">
+                        <div id="settings_dmdata_init">
+                            <p style="color: #e04040; font-weight: bold;">アカウント未連携</p>
+                            <button id="settings_dmdata_init_btn">
+                                DM-D.S.S アカウントを連携する
+                                <span class="material-symbols-outlined open-in-new">
+                                    open_in_new
+                                </span>
+                            </button>
+                        </div>
+                        <div id="settings_dmdata_main">
+                            <p style="color: #4040c0; font-weight: bold;">アカウント連携済</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /#settings_connect -->
+
+            <div class="window settings_list" id="settings_notify">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">設定 - プッシュ通知</span>
+                </div>
+
+                <div class="content">
+                    <div class="list">
+                        <button id="btn_push_chk">プッシュ通知をテストするには、ここをクリックします</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /#settings_notify -->
+
+            <div class="window settings_list" id="settings_other">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">設定 - その他</span>
+                </div>
+
+                <div class="content">
+                    <div class="list">
+                        <p>
+                            すべての設定をリセットします。<br>
+                            <span style="color: #e04040;">DM-D.S.Sアカウントとの連携情報も消去され、再度dmdataと接続するには再連携が必要になります。</span>
+                        </p>
+                        <button id="settings_resetSettingsBtn">設定をリセットする</button><br>
+                    </div>
+                </div>
+            </div>
+            <!-- /#settings_other -->
             <!-- /#settings -->
 
-            <div class="window" id="license">
-                <span class="material-symbols-outlined closeBtn">close</span>
-
-                <h2 class="title">ライセンス情報</h2>
+            <div class="window settings_list" id="license">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">ライセンス情報</span>
+                </div>
 
                 <div class="content" id="copyrights">
                     <ul>
@@ -383,6 +449,10 @@
             <!-- /#license -->
         </div>
         <!-- /#popup -->
+
+        <div class="notify">
+            <p></p>
+        </div>
     </main>
 </body>
 

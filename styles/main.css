@@ -16,14 +16,14 @@
 }
 
 html {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 body {
     background-color: #202020;
     font-family: 'Noto Sans JP', 'Roboto', sans-serif;
     font-weight: 400;
-    font-size: 13px;
+    font-size: 14px;
     color: #ffffff;
     user-select: none;
 }

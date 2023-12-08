@@ -9,7 +9,7 @@
  *
  */
 
-const version = "3.6.1";
+const version = "3.7.0";
 
 const initPage = () => {
     initCommonElements();

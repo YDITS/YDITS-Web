@@ -29,21 +29,21 @@
 /* ----- Dialog ----- */
 .dialog {
     position: fixed;
-    top: calc(50vh - 24em);
+    top: calc(50vh - 12rem);
     left: 0;
     display: block;
 
     margin: auto;
-    width: 32em;
-    height: 48em;
+    width: 28rem;
+    height: 24rem;
     border: 0;
-    border-radius: .8em;
+    border-radius: .8rem;
     box-shadow: 0 0 5px 5px rgba(0, 0, 0, .5);
 
     overflow: hidden;
     padding: 0;
-    background-color: #fff;
-    color: #010101;
+    background-color: #202020ff;
+    color: #ffffffff;
 
     z-index: 10;
 }
@@ -54,10 +54,10 @@
     justify-content: center;
     align-items: center;
 
-    height: 2em;
+    height: 2rem;
 
     overflow: hidden;
-    background-color: #e0e0e0;
+    background-color: #404040ff;
 }
 
 .dialog .navBar .title {
@@ -66,7 +66,7 @@
     justify-content: center;
     align-items: center;
 
-    height: 2em;
+    height: 2rem;
 
     overflow: hidden;
 }
@@ -81,8 +81,8 @@
     top: 0;
     right: 0;
 
-    width: 2em;
-    height: 1.1em;
+    width: 3rem;
+    height: 2rem;
     overflow: hidden;
 
     cursor: pointer
@@ -99,11 +99,11 @@
 @media (max-width: 769px) {
     .dialog {
         position: fixed;
-        top: 4vh;
-        left: 2vw;
+        top: 8vh;
+        left: 8vw;
         margin: 0;
-        width: 96vw;
-        height: 92vh;
+        width: 84vw;
+        height: 84vh;
     }
 }
 
@@ -145,4 +145,21 @@
 
 .toggle-switch.on>.span {
     left: 22px;
+}
+
+/* ----- Notifycation ----- */
+.notify {
+    display: none;
+
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+
+    padding: 1rem 2rem;
+    overflow: auto;
+    background-color: #404040ff;
+    color: #ffffffff;
+    box-shadow: 0 0 2px 2px #00000040;
+
+    z-index: 2;
 }

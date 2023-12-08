@@ -21,7 +21,7 @@ main {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    width: 3em;
+    width: 3rem;
     height: 100%;
     background-color: #202020;
 }
@@ -55,7 +55,7 @@ main {
 
 #control {
     display: flex;
-    width: 35em;
+    width: 35rem;
     height: 100%;
     background-color: #303030;
     border-bottom: 2px solid #808080;
@@ -100,11 +100,11 @@ main {
 }
 
 #eewCalc {
-    width: 6rem;
-    height: 6rem;
-    border-radius: .1em;
+    width: 7rem;
+    height: 7rem;
+    border-radius: 0.1em;
     text-align: center;
-    font-size: 5em;
+    font-size: 4.5em;
 }
 
 
@@ -147,40 +147,66 @@ main {
 
 #eqHistoryField {
     width: 100%;
-    height: calc(100% - 16em);
-    padding: 1em 0;
-    overflow: scroll;
+    height: calc(100%);
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    overflow: auto;
 }
 
 #eqHistoryField .list {
     display: flex;
-    justify-content: space-around;
-    width: calc(100% - 2em);
-    height: 5em;
-    padding: 1em;
+    /* justify-content: space-around; */
+    align-items: center;
+
+    width: calc(100% - 2rem);
+    padding: .5rem 1rem;
+
+    cursor: pointer;
+    transition: all .3s;
+}
+
+#eqHistoryField .list:hover {
+    background-color: #ffffff40;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+#eqHistoryField .list>* {
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
 
 #eqHistoryField .list .maxScale {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 1.75em;
-    height: 100%;
+    width: 4.5rem;
+    height: 4.5rem;
     border-radius: .2em;
-    font-size: 3em;
+    font-size: 2.75rem;
 }
 
 #eqHistoryField .list .right {
-    width: 50%;
+    width: calc(100% - 8rem);
     height: 100%;
 }
 
 #eqHistoryField .hypoInfo {
     display: flex;
+    justify-content: space-between;
 }
 
 #eqHistoryField .hypoInfo p {
     margin-right: 2em;
+}
+
+#eqHistoryField p.hypocenter {
+    font-size: 1.2rem;
+    transition: all .3s;
+}
+
+#eqHistoryField .list:hover p.hypocenter {
+    font-size: 1.3rem;
 }
 
 #mapWrapper {
@@ -201,30 +227,30 @@ main {
     left: 0;
     display: block;
     width: 10rem;
-    padding: .2em;
+    padding: .2rem;
     text-align: center;
     background-color: #202020;
-    font-size: 1.2em;
+    font-size: 1rem;
     z-index: 1;
 }
 
 #status {
     position: absolute;
     top: 0;
-    left: calc(10rem + .4em);
+    left: calc(10rem + .4rem);
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 2.2em;
-    height: 2.2em;
+    width: 1.85rem;
+    height: 1.85rem;
     background-color: #202020;
     z-index: 1;
 }
 
 #statusLamp {
-    display: block;
-    width: 1.375em;
-    height: 1.375em;
+    display: inline-block;
+    width: 60%;
+    height: 60%;
     border-radius: 100%;
     background-color: #808080;
     z-index: 1;
@@ -237,7 +263,7 @@ main {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #00000080;
+    background-color: #101010ff;
     /* background-color: rgba(40, 40, 40, .75); */
     z-index: 1;
 }
@@ -251,176 +277,182 @@ main {
     top: 100vh;
     left: 0;
     display: block;
-    width: calc(100% - 2em);
-    height: calc(100% - 2em);
-    padding: 1em;
+    width: calc(100%);
+    height: calc(100%);
+    /* padding: 1em; */
     overflow: auto;
     background-color: #202020ff;
     color: #ffffffff;
 
-    transition: all .25s;
+    transition: all .3s;
 }
 
 .window .closeBtn {
     position: absolute;
+    top: .75rem;
+    left: 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 1em;
-    right: 1em;
-    width: 1.5em;
-    height: 1.5em;
-    border-radius: .2em;
-    background-color: rgba(127, 127, 127, .3);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 100%;
+    font-size: 1.75rem;
 }
 
 .window .closeBtn:hover {
     background-color: rgba(127, 127, 127, .9);
 }
 
+.window>.titleBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #101010ff;
+    height: 4rem;
+}
+
+.window>.titleBar>.wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    width: calc(100% - 4rem);
+    max-width: 769px;
+}
+
 .window .title {
     display: block;
-    padding-top: 1em;
-    padding-bottom: .5em;
     text-align: center;
-    font-size: 1.5em;
+    font-size: 1.3rem;
+}
+
+.window>.content {
+    padding: 2rem 5%;
 }
 
 #menu.active {
     top: 0;
 }
 
-#menu .lists {
+.window .lists {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    margin-top: 2em;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
-#menu .lists a {
+.window .lists a {
     text-decoration: none;
 }
 
-#menu .lists .list {
+.window .lists .list {
     display: flex;
     align-items: center;
-    margin-bottom: 2em;
+    /* margin-bottom: 2em; */
     width: 80%;
-    height: 2em;
-    border-radius: .2em;
-    padding: 1em 2em;
+    height: 2rem;
+    border-bottom: solid 1px #505050ff;
+    /* border-radius: 2rem; */
+    padding: 1.2rem 2rem;
     background-color: rgba(127, 127, 127, .3);
 }
 
-#menu .lists .list:hover {
+.window .lists .list.top {
+    border-radius: 2rem 2rem 0 0;
+}
+
+.window .lists .list.bottom {
+    border: none;
+    border-radius: 0 0 2rem 2rem;
+}
+
+.window .lists .list:hover {
     background-color: rgba(127, 127, 127, .9);
 }
 
-#menu .lists .list span {
-    margin-right: 1em;
+.window .lists .list span {
+    margin-right: 2rem;
+}
+
+#settings {
+    top: 0;
+    left: 100vw;
 }
 
 #settings.active {
-    top: 0;
+    left: 0;
 }
 
-#settings .wrapper {
-    display: flex;
-    padding: 1em 0;
-}
-
-#settings_lists {
-    width: calc(20% - 2em);
-    height: 100%;
-    padding: 0 1em;
-    /* border-right: 2px solid #202020; */
-}
-
-#settings_lists ul {
-    list-style: none;
-}
-
-#settings_lists li {
-    margin-bottom: 1em;
-    padding: .5em 1em;
-    border-radius: 1.2em;
-    background-color: #606060ff;
-}
-
-#settings_lists li:hover {
-    background-color: #303030ff;
-}
-
-#settings_lists li.active {
-    background-color: #303030ff;
-    color: #ffffff;
-}
-
-#settings .settings_list {
-    display: none;
-    width: 80%;
+.window.settings_list {
     height: 100%;
     overflow: auto;
 }
 
-#settings .settings_list>label {
+.window.settings_list>label {
     font-size: 1.3em;
 }
 
-#settings .settings_list .list>label {
-    font-size: 1.2em;
+.window.settings_list .list>label {
+    font-size: 1rem;
 }
 
-#settings .settings_list .item {
+.window.settings_list .item {
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    margin: .2rem;
+    margin: .5rem 0;
+    border-radius: 1.7rem;
     padding: .7rem;
-    background-color: #303030ff;
+    background-color: #404040ff;
 }
 
-#settings .settings_list.active {
-    display: block;
-}
-
-#settings .version {
+.window .version {
     text-align: center;
 }
 
-#settings .list {
-    padding: 2em 0;
-    border-bottom: 1px solid #202020;
-}
-
-#settings .list label {
+.window .list label {
     display: block;
     padding: .5em;
 }
 
-#settings button {
+.window button {
     text-align: left;
     display: block;
+    margin: .5rem 0;
     border: none;
-    margin: .2rem;
-    padding: 1rem;
-    width: calc(100% - 1em);
-    background-color: #303030ff;
+    border-radius: 2rem;
+    padding: 1.2rem;
+    width: 100%;
+    background-color: #404040ff;
+    color: #ffffffff;
 
     cursor: pointer;
 }
 
-#settings button:hover {
-    background-color: #606060ff;
+.window button:hover {
+    background-color: #707070ff;
 }
 
-#settings select {
+.window select {
     display: block;
     border: none;
     padding: .5rem;
-    background-color: #404040ff;
+    border-radius: 2rem;
+    background-color: #303030ff;
+    color: #ffffffff;
+}
+
+.window.settings_list {
+    top: 0;
+    left: 100vw;
+}
+
+.window.settings_list.active {
+    left: 0;
 }
 
 /* #settings_playSound_eew {
@@ -503,7 +535,7 @@ main {
         display: none;
     }
 
-    #settings .wrapper {
+    #settings>.wrapper {
         flex-direction: column;
     }
 
@@ -524,5 +556,13 @@ main {
     #settings_lists li {
         width: 15%;
         text-align: center;
+    }
+}
+
+@media (max-width: 384px) {
+
+    html,
+    body {
+        font-size: 11px;
     }
 }
