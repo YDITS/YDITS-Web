@@ -262,14 +262,14 @@ main {
     top: 100vh;
     left: 0;
     width: 100vw;
-    height: 100vh;
-    background-color: #101010ff;
+    height: calc(100vh - 2rem);
+    background-color: #101010c0;
     /* background-color: rgba(40, 40, 40, .75); */
     z-index: 1;
 }
 
 #popup.active {
-    top: 0;
+    top: 2rem;
 }
 
 .window {
@@ -278,7 +278,7 @@ main {
     left: 0;
     display: block;
     width: calc(100%);
-    height: calc(100%);
+    height: calc(100% - 2rem);
     /* padding: 1em; */
     overflow: auto;
     background-color: #202020ff;
@@ -328,20 +328,21 @@ main {
 }
 
 .window>.content {
+    height: calc(100vh - 2rem - 4rem - 4rem);
     padding: 2rem 5%;
+    overflow: auto;
 }
 
 #menu.active {
-    top: 0;
+    top: 2rem;
 }
 
 .window .lists {
     display: flex;
     flex-direction: column;
+    padding-bottom: 2rem;
     align-items: center;
     text-decoration: none;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
 }
 
 .window .lists a {
@@ -378,7 +379,7 @@ main {
 }
 
 #settings {
-    top: 0;
+    top: 2rem;
     left: 100vw;
 }
 
@@ -408,6 +409,15 @@ main {
     border-radius: 1.7rem;
     padding: .7rem;
     background-color: #404040ff;
+}
+
+.window.settings_list .item h3 {
+    font-size: 1.2rem;
+}
+
+.window.settings_list .item>.content {
+    display: flex;
+    padding: 0 1rem;
 }
 
 .window .version {
@@ -447,7 +457,7 @@ main {
 }
 
 .window.settings_list {
-    top: 0;
+    top: 2rem;
     left: 100vw;
 }
 
@@ -475,12 +485,28 @@ main {
     display: inline !important;
 }
 
-#license.active {
-    top: 0;
+#debugLogLists {
+    padding: 2rem 0;
+    font-family: monospace;
+    list-style: none;
 }
 
-#license>.content {
-    margin: 2em 2em;
+#debugLogLists>li {
+    margin-bottom: 1rem;
+}
+
+#debugLogLists .title {
+    text-align: left;
+    font-size: 1.1rem;
+}
+
+#debugLogLists .text {
+    text-align: left;
+    font-size: 1rem;
+}
+
+#license.active {
+    top: 2rem;
 }
 
 #license>.content a {

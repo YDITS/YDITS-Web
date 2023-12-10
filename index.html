@@ -134,58 +134,61 @@
                     <span class="title">メニュー</span>
                 </div>
 
-                <div class="lists">
-                    <div class="list top" id="menuSettings">
-                        <span class="material-symbols-outlined">
-                            settings
-                        </span>
-                        設定
+                <div class="content">
+                    <div class="lists">
+                        <div class="list top" id="menuSettings">
+                            <span class="material-symbols-outlined">
+                                settings
+                            </span>
+                            設定
+                        </div>
+
+                        <div class="list" id="menuLicense">
+                            <span class="material-symbols-outlined">
+                                info
+                            </span>
+                            ライセンス情報
+                        </div>
+
+                        <a class="list" id="menuHelp" target="_blank" href="./help/">
+                            <span class="material-symbols-outlined">
+                                help
+                            </span>
+                            ヘルプ
+                        </a>
+
+                        <a class="list" id="menuTerms" target="_blank" href="https://policies.ydits.net/terms/webapp/">
+                            <span class="material-symbols-outlined">
+                                article
+                            </span>
+                            利用規約
+                        </a>
+
+                        <a class="list" id="menuTerms" target="_blank" href="https://policies.ydits.net/privacy/site/">
+                            <span class="material-symbols-outlined">
+                                policy
+                            </span>
+                            プライバシーポリシー
+                        </a>
+
+                        <a class="list" id="menuTerms" target="_blank" href="https://github.com/YDITS/YDITS-Web/">
+                            <span class="material-symbols-outlined">
+                                code
+                            </span>
+                            GitHub リポジトリ
+                        </a>
+
+                        <a class="list bottom" id="menuContact" target="_blank" href="https://www.yoneyo.com/#contact">
+                            <span class="material-symbols-outlined">
+                                mail
+                            </span>
+                            お問い合わせ
+                        </a>
                     </div>
 
-                    <div class="list" id="menuLicense">
-                        <span class="material-symbols-outlined">
-                            info
-                        </span>
-                        ライセンス情報
-                    </div>
-
-                    <a class="list" id="menuHelp" target="_blank" href="./help/">
-                        <span class="material-symbols-outlined">
-                            help
-                        </span>
-                        ヘルプ
-                    </a>
-
-                    <a class="list" id="menuTerms" target="_blank" href="https://policies.ydits.net/terms/webapp/">
-                        <span class="material-symbols-outlined">
-                            article
-                        </span>
-                        利用規約
-                    </a>
-
-                    <a class="list" id="menuTerms" target="_blank" href="https://policies.ydits.net/privacy/site/">
-                        <span class="material-symbols-outlined">
-                            policy
-                        </span>
-                        プライバシーポリシー
-                    </a>
-
-                    <a class="list" id="menuTerms" target="_blank" href="https://github.com/YDITS/YDITS-Web/">
-                        <span class="material-symbols-outlined">
-                            code
-                        </span>
-                        GitHub リポジトリ
-                    </a>
-
-                    <a class="list bottom" id="menuContact" target="_blank" href="https://www.yoneyo.com/#contact">
-                        <span class="material-symbols-outlined">
-                            mail
-                        </span>
-                        お問い合わせ
-                    </a>
+                    <p class="version"></p>
                 </div>
 
-                <p class="version"></p>
             </div>
             <!-- /#menu -->
 
@@ -195,7 +198,7 @@
                     <span class="title">設定</span>
                 </div>
 
-                <div class="wrapper">
+                <div class="content">
                     <ul class="lists">
                         <li class="list top active" id="settings_list_sound">
                             <span class="material-symbols-outlined">
@@ -203,11 +206,11 @@
                             </span>
                             音声と効果音
                         </li>
-                        <li class="list" id="settings_list_connect">
+                        <li class="list" id="settings_list_map">
                             <span class="material-symbols-outlined">
-                                cloud
+                                map
                             </span>
-                            接続先
+                            マップ
                         </li>
                         <li class="list" id="settings_list_notify">
                             <span class="material-symbols-outlined">
@@ -215,11 +218,23 @@
                             </span>
                             プッシュ通知
                         </li>
-                        <li class="list bottom" id="settings_list_other">
+                        <li class="list" id="settings_list_connect">
                             <span class="material-symbols-outlined">
-                                tune
+                                cloud
                             </span>
-                            その他
+                            接続先
+                        </li>
+                        <li class="list" id="settings_list_other">
+                            <span class="material-symbols-outlined">
+                                reset_wrench
+                            </span>
+                            リセット
+                        </li>
+                        <li class="list bottom" id="openDebugLogsButton">
+                            <span class="material-symbols-outlined">
+                                bug_report
+                            </span>
+                            デバッグログ
                         </li>
                     </ul>
                 </div>
@@ -229,32 +244,39 @@
             <div class="window settings_list" id="settings_sounds">
                 <div class="titleBar">
                     <span class="material-symbols-outlined closeBtn">arrow_back</span>
-                    <span class="title">設定 - 音声と効果音</span>
+                    <span class="title">音声と効果音の設定</span>
                 </div>
 
                 <div class="content">
                     <div class="list" id="settings_playSound">
-                        <label>受信時</label>
                         <p>一部のブラウザでは効果音が再生されない可能性があります。</p>
 
+                        <label>緊急地震速報 受信時</label>
                         <div class="item" id="settings_playSound_eew_any">
                             <label>震度変化時</label>
-                            <div class="content toggle-switch">
-                                <div class="span"></div>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="item" id="settings_playSound_eew_cancel">
                             <label>取消報</label>
-                            <div class="content toggle-switch">
-                                <div class="span"></div>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
                             </div>
                         </div>
 
+                        <label>地震情報 受信時</label>
                         <div class="item" id="settings_playSound_eqinfo">
                             <label class="sectionTitle">地震情報</label>
-                            <div class="content toggle-switch">
-                                <div class="span"></div>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -269,10 +291,34 @@
             </div>
             <!-- /#settings_sounds -->
 
+            <div class="window settings_list" id="settings_map">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">マップの設定</span>
+                </div>
+
+                <div class="content">
+                    <div class="list" id="settings_map">
+                        <div class="item" id="settings_map_auto_move">
+                            <label>
+                                <h3>マップの自動移動</h3>
+                                <p>オンにすると、緊急地震速報の受信時に自動でマップを震央位置に移動、拡大します。<br>マップを任意の場所に固定したい場合はオフにしてください。</p>
+                            </label>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /#settings_map -->
+
             <div class="window settings_list" id="settings_connect">
                 <div class="titleBar">
                     <span class="material-symbols-outlined closeBtn">arrow_back</span>
-                    <span class="title">設定 - 接続先</span>
+                    <span class="title">接続先の設定</span>
                 </div>
 
                 <div class="content">
@@ -316,7 +362,7 @@
 
                     <div class="list" id="settings_dmdata">
                         <div id="settings_dmdata_init">
-                            <p style="color: #e04040; font-weight: bold;">アカウント未連携</p>
+                            <p style="color: #ff6060; font-weight: bold;">アカウント未連携</p>
                             <button id="settings_dmdata_init_btn">
                                 DM-D.S.S アカウントを連携する
                                 <span class="material-symbols-outlined open-in-new">
@@ -335,7 +381,7 @@
             <div class="window settings_list" id="settings_notify">
                 <div class="titleBar">
                     <span class="material-symbols-outlined closeBtn">arrow_back</span>
-                    <span class="title">設定 - プッシュ通知</span>
+                    <span class="title">プッシュ通知の設定</span>
                 </div>
 
                 <div class="content">
@@ -349,17 +395,31 @@
             <div class="window settings_list" id="settings_other">
                 <div class="titleBar">
                     <span class="material-symbols-outlined closeBtn">arrow_back</span>
-                    <span class="title">設定 - その他</span>
+                    <span class="title">設定のリセット</span>
                 </div>
 
                 <div class="content">
                     <div class="list">
                         <p>
                             すべての設定をリセットします。<br>
-                            <span style="color: #e04040;">DM-D.S.Sアカウントとの連携情報も消去され、再度dmdataと接続するには再連携が必要になります。</span>
+                            <span style="color: #ff6060;">DM-D.S.Sアカウントとの連携情報も削除され、再度dmdataと接続するには再連携が必要になります。</span>
                         </p>
-                        <button id="settings_resetSettingsBtn">設定をリセットする</button><br>
+                        <button id="settings_resetSettingsBtn">設定をリセット</button>
                     </div>
+                </div>
+            </div>
+            <!-- /#settings_other -->
+
+            <div class="window settings_list" id="debugLogsWindow">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">デバッグログ</span>
+                </div>
+
+                <div class="content">
+                    <p>デバッグログが送信されることはありません。</p>
+                    <button id="deleteDebugLogsButton">デバッグログを削除</button>
+                    <ul id="debugLogLists"></ul>
                 </div>
             </div>
             <!-- /#settings_other -->

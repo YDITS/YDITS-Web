@@ -10,6 +10,10 @@
  */
 
 
+// ---------- Debug Logs ---------- //
+let debugLogs = [];
+
+
 // ---------- Timers ---------- //
 let gmt;
 let cnt_eew = -1;
@@ -32,6 +36,7 @@ let settings_playSound_eew_cancel;
 // ---------- EEW ---------- //
 let eewGetType = "";
 let eew_origin_time = null;
+let mapItem = [];
 let eew_intensity = null;
 let eew_hypocenter = "";
 let eew_data = null;
@@ -76,6 +81,9 @@ let loopCnt_loopWaves = -1;
 let hypo = null;
 let wave_s = null;
 let wave_p = null;
+let hypo2 = null;
+let wave_s2 = null;
+let wave_p2 = null;
 let eew_waves = null;
 let eew_wave_p = -1;
 let eew_wave_p_last = -1;
@@ -115,8 +123,8 @@ let p2p_9_voice;
 
 
 // ---------- Main ---------- //
-$(() => {
-    init();
+$(async () => {
+    await init();
     requestAnimationFrame(mainloop);
 });
 
@@ -149,7 +157,10 @@ function mainloop() {
 
 
 // ---------- Initialize ---------- //
-function init() {
+async function init() {
+    await getNtp();
+
+    initDebugLogs();
     initServiceWorker();
     initSettings();
     initDmdata();
@@ -158,12 +169,14 @@ function init() {
     initMap();
     initSounds();
     initPush();
+
+    addDebugLogs("INFO", "[INFO]", "Application initialized.")
 }
 
 
 // ------------- Get NTP datetime ---------- //
-function getNtp() {
-    axios.head(window.location.href, { headers: { 'Cache-Control': 'no-cache' } })
+async function getNtp() {
+    await axios.head(window.location.href, { headers: { 'Cache-Control': 'no-cache' } })
         .then(res => {
             gmt = new Date(res.headers.date);
 
@@ -182,6 +195,72 @@ function getNtp() {
 }
 
 
+// ---------- Debug Logs ---------- //
+function initDebugLogs() {
+    debugLogsRaw = localStorage.getItem("debugLogs");
+
+    if (debugLogsRaw === null) {
+        addDebugLogs("START", "[START]", "- Start log -");
+    } else {
+        debugLogs = JSON.parse(debugLogsRaw);
+        debugLogs.forEach(log => {
+            addDebugLogsHtml(log.type, log.title, log.text);
+        });
+    }
+
+}
+
+function addDebugLogs(type, title, text) {
+    debugLogs.push({
+        "type": type,
+        "title": title,
+        "text": text
+    });
+
+    localStorage.setItem("debugLogs", JSON.stringify(debugLogs));
+
+    addDebugLogsHtml(type, title, text);
+}
+
+function addDebugLogsHtml(type, title, text) {
+    switch (type) {
+        case "INFO":
+            color = "#ffffffff";
+            break;
+
+        case "START":
+            color = "#6060ffff";
+            break;
+
+        case "ERROR":
+            color = "#ff6060ff";
+            break;
+
+        case "NETWORK":
+            color = "#60ff60ff";
+            break;
+
+        default:
+            color = "#ffffffff";
+            break;
+    }
+
+    $('#debugLogLists').prepend(`
+        <li>
+            <h3 class="title" style="color: ${color};">${title} ${timeYear}/${('0' + timeMonth).slice(-2)}/${('0' + timeDay).slice(-2)} ${('0' + timeHour).slice(-2)}:${('0' + timeMinute).slice(-2)}:${('0' + timeSecond).slice(-2)}</h3>
+            <p class="text">${text}</p>
+        </li>
+    `);
+}
+
+function deleteDebugLogs() {
+    debugLogs = [];
+    debugLogsRaw = null;
+    $('#debugLogLists').html("");
+    localStorage.removeItem("debugLogs");
+}
+
+
 // ---------- Service Worker ---------- //
 function initServiceWorker() {
     const registerServiceWorker = async () => {
@@ -194,15 +273,17 @@ function initServiceWorker() {
                     }
                 );
                 if (registration.installing) {
-                    console.log('Service worker installing');
+                    addDebugLogs("INFO", `[INFO]`, "Service worker installing.");
                 } else if (registration.waiting) {
-                    console.log('Service worker installed');
+                    addDebugLogs("INFO", `[INFO]`, "Service worker installed.");
                 } else if (registration.active) {
-                    console.log('Service worker active');
+                    // addDebugLogs(`[INFO ]`, "Service worker active.");
                 }
             } catch (error) {
-                console.error(`Registration failed with ${error}`);
+                addDebugLogs("ERROR", `[ERROR]`, `Registration failed with ${error}`);
             }
+        } else {
+            addDebugLogs("INFO", `[INFO]`, "Service worker is not installed.");
         }
     };
 
@@ -288,8 +369,14 @@ function initSettings() {
         $('#settings_sounds').addClass('active');
     });
     $(document).on('click', '#settings_sounds .closeBtn', () => {
-        console.debug('devgy')
         $('#settings_sounds').removeClass('active');
+    });
+
+    $(document).on('click', '#settings_list_map', () => {
+        $('#settings_map').addClass('active');
+    });
+    $(document).on('click', '#settings_map .closeBtn', () => {
+        $('#settings_map').removeClass('active');
     });
 
     $(document).on('click', '#settings_list_connect', () => {
@@ -424,6 +511,31 @@ function initSettings() {
         }
     })
 
+    // ----- Map ----- //
+    if (localStorage.getItem("settings-map-auto-move") == 'true') {
+        settings_map_auto_move = true;
+        $('#settings_map_auto_move .toggle-switch').addClass('on');
+    } else if (localStorage.getItem("settings-map-auto-move") == 'false') {
+        settings_map_auto_move = false;
+        $('#settings_map_auto_move .toggle-switch').removeClass('on');
+    } else {
+        settings_map_auto_move = true;
+        $('#settings_map_auto_move .toggle-switch').addClass('on');
+    }
+
+    $(document).on('click', '#settings_map_auto_move .toggle-switch', function () {
+        if (settings_map_auto_move == false) {
+            settings_map_auto_move = true;
+            localStorage.setItem('settings-map-auto-move', 'true');
+            $('#settings_map_auto_move .toggle-switch').addClass('on');
+        } else if (settings_map_auto_move == true) {
+            settings_map_auto_move = false;
+            localStorage.setItem('settings-map-auto-move', 'false');
+            $('#settings_map_auto_move .toggle-switch').removeClass('on');
+        }
+    })
+
+
     // ----- Get Type -----//
     if (localStorage.getItem("settings-getType-eew") != null) {
         eewGetType = localStorage.getItem("settings-getType-eew");
@@ -451,7 +563,6 @@ function initSettings() {
 
     $(document).on('change', 'select[name="settings-getType-eew"]', () => {
         eewGetType = $('option:selected').val();
-        console.debug(eewGetType);
         if (eewGetType === 'yahoo-kmoni') {
             $('#settings_dmdata').hide();
             if (dmdata_access_token !== null) {
@@ -506,11 +617,14 @@ function initSettings() {
         eewGetType = "yahoo-kmoni";
         eqinfoGetType = "p2pquake";
         tsunamiGetType = "p2pquake";
-        dmdata_access_token = null;
         $(`select[name="settings-getType-eew"]`).val(`${eewGetType}`);
         $(`select[name="settings-getType-eqinfo"]`).val(`${eqinfoGetType}`);
         $(`select[name="settings-getType-tsunami"]`).val(`${tsunamiGetType}`);
 
+        settings_map_auto_move = true;
+        $('#settings_map_auto_move .toggle-switch').addClass('on');
+
+        dmdata_access_token = null;
         $('#settings_dmdata').hide();
         $('#settings_dmdata_init').show();
         $('#settings_dmdata_main').hide();
@@ -525,6 +639,7 @@ function initSettings() {
         $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
 
         localStorage.clear()
+        localStorage.setItem("debugLogs", JSON.stringify(debugLogs));
 
         if (document.getElementById('win_settings_reset') == null) {
 
@@ -558,6 +673,8 @@ function initSettings() {
                 $('#win_settings_reset').remove()
             })
         }
+
+        addDebugLogs("INFO", `[INFO]`, "Settings were reset.");
     });
 
     // ----- Test Play Sounds -----//
@@ -582,7 +699,54 @@ function initSettings() {
             }
         })
     });
-};
+
+    // ----- Debug Logs -----//
+    $(document).on("click", "#openDebugLogsButton", () => {
+        $("#debugLogsWindow").addClass("active");
+    });
+    $(document).on("click", "#debugLogsWindow .closeBtn", () => {
+        $("#debugLogsWindow").removeClass("active");
+    });
+
+    // ----- Delete Debug Logs -----//
+    $(document).on('click', '#deleteDebugLogsButton', function () {
+        deleteDebugLogs();
+        addDebugLogs("START", "[START]", "- Start log -");
+
+        if (document.getElementById('windowDebugLogsDeleted') == null) {
+
+            win('windowDebugLogsDeleted', 'デバッグログの削除');
+
+            $('#windowDebugLogsDeleted>.content').html(`
+                <p>
+                    デバッグログを削除しました。
+                </p>
+                <button class="btn_ok">OK</button>
+            `)
+
+            $('#windowDebugLogsDeleted .content').css({
+                'padding': '1em'
+            })
+
+            $('#windowDebugLogsDeleted .content .btn_ok').css({
+                'position': 'absolute',
+                'height': '2rem',
+                'right': '2rem',
+                'bottom': '2rem',
+                'width': 'calc(100% - 4rem)',
+                'border': 'none',
+                'border-radius': '1rem',
+                'background-color': '#606060ff',
+                'color': '#ffffffff',
+                'cursor': 'pointer'
+            })
+
+            $(document).on('click', '#windowDebugLogsDeleted .content .btn_ok', function () {
+                $('#windowDebugLogsDeleted').remove()
+            })
+        }
+    });
+}
 
 
 // ---------- License ---------- //
@@ -602,6 +766,8 @@ function connectDmdata() {
         '&redirect_uri=https:%2F%2Fwebapp.ydits.net%2F' +
         '&scope=socket.start%20socket.list%20socket.close%20eew.get.warning%20eew.get.forecast' +
         `&state=${state}`
+
+    addDebugLogs("NETWORK", "[NETWORK]", "OAuth authentication to dmdata.jp.")
     window.open(dmdataOAuthBaseUrl + dmdataOAuthConfig, '_blank');
 }
 
@@ -610,6 +776,7 @@ function connectDmdata() {
 function initDmdata() {
     if (eewGetType === 'dmdata') {
         if (dmdata_access_token !== null) {
+            addDebugLogs("NETWORK", "[NETWORK]", "The access token for dmdata.jp is correct.")
             $('#settings_dmdata_init').hide();
             $('#settings_dmdata_main').show();
             dmdataSocketStart()
@@ -647,6 +814,8 @@ function initDmdata() {
                                 $('#settings_dmdata_main').show();
                                 dmdataSocketStart()
                             } else if (data['error'] === 'invalid_grant') {
+                                addDebugLogs("ERROR", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+
                                 $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
                                 win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
@@ -682,6 +851,8 @@ function initDmdata() {
                                     $('#win_dmdata_oauth_error').remove()
                                 })
                             } else {
+                                addDebugLogs("ERROR", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+
                                 $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
                                 win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
@@ -720,6 +891,8 @@ function initDmdata() {
                             }
                         })
                         .catch(error => {
+                            addDebugLogs("ERROR", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+
                             $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
                             win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
@@ -754,6 +927,8 @@ function initDmdata() {
                         })
 
                 } else {
+                    addDebugLogs("ERROR", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+
                     $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
                     win('win_dmdata_oauth_error', 'DM-D.S.S アカウント連携エラー');
@@ -1111,6 +1286,8 @@ function kmoni() {
 
         .catch(error => {
             if (eewGetType === 'yahoo-kmoni' || dmdata_access_token === null) {
+                addDebugLogs("ERROR", "[NETWORK]", `${error}; ${result}`)
+
                 if (error != 'TypeError: Failed to fetch') {
                     $('#statusLamp').css({ 'background-color': '#ff4040' });
                 }
@@ -1144,11 +1321,13 @@ function dmdataSocketStart() {
                 dmdataSocket = new WebSocket(data.websocket.url, ['dmdata.v2']);
 
                 dmdataSocket.addEventListener('open', () => {
+                    addDebugLogs("NETWORK", `[NETWORK]`, "Successfully connected to dmdata.jp and WebSocket opened.");
                     $('#eewTitle').text("緊急地震速報は発表されていません");
                     $('#statusLamp').css({ 'background-color': '#4040ff' });
                 });
 
                 dmdataSocket.addEventListener('close', (event) => {
+                    addDebugLogs("NETWORK", `[NETWORK]`, "Successfully disconnected from dmdata.jp and WebSocket closed.");
                     eewGetType = "yahoo-kmoni";
                 });
 
@@ -1164,6 +1343,8 @@ function dmdataSocketStart() {
                 });
 
                 dmdataSocket.onerror(event => {
+                    addDebugLogs("ERROR", `[NETWORK]`, `Failed to connect to dmdata.jp.: ${event}`);
+
                     win('win_dmdata_oauth_error', 'dmdata接続エラー');
 
                     $('#win_dmdata_oauth_error>.content').html(`
@@ -1201,6 +1382,8 @@ function dmdataSocketStart() {
                 });
             } else {
                 if (document.getElementById('win_dmdata_oauth_error') === null) {
+                    addDebugLogs("ERROR", `[NETWORK]`, `Failed to connect to dmdata.jp.: ${data.error.message}`);
+
                     win('win_dmdata_oauth_error', 'dmdata接続エラー');
 
                     $('#win_dmdata_oauth_error>.content').html(`
@@ -1281,12 +1464,13 @@ function eew_push() {
 // ---------- Monitor ---------- //
 function mapMain() {
     if (eew_data != null && eew_data["hypoInfo"] != null) {
+        // 1
         eew_waves = eew_data['psWave']['items'][0];
 
         if (eew_waves !== null) {
-            eew_lat = eew_waves['latitude'].replace("N", "");
-            eew_lng = eew_waves['longitude'].replace("E", "");
-            eew_hypo_LatLng = new L.LatLng(eew_lat, eew_lng);
+            mapItem[0].eew_lat = eew_waves['latitude'].replace("N", "");
+            mapItem[0].eew_lng = eew_waves['longitude'].replace("E", "");
+            eew_hypo_LatLng = new L.LatLng(mapItem[0].eew_lat, mapItem[0].eew_lng);
 
             eew_wave_p = eew_waves['pRadius'];
             eew_wave_s = eew_waves['sRadius'];
@@ -1294,50 +1478,111 @@ function mapMain() {
             eew_wave_s *= 1000;
         }
 
-        if (eew_wave_s != eew_wave_s_last) {
-            eew_wave_s_Interval = (eew_wave_s - eew_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-            eew_wave_s_last = eew_wave_s;
-            eew_wave_s_put = eew_wave_s;
-        } else if (eew_wave_s == eew_wave_s_last) {
-            eew_wave_s_put += eew_wave_s_Interval;
+        if (eew_wave_s != mapItem[0].eew_wave_s_last) {
+            mapItem[0].eew_wave_s_Interval = (eew_wave_s - mapItem[0].eew_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
+            mapItem[0].eew_wave_s_last = eew_wave_s;
+            mapItem[0].eew_wave_s_put = eew_wave_s;
+        } else if (eew_wave_s == mapItem[0].eew_wave_s_last) {
+            mapItem[0].eew_wave_s_put += mapItem[0].eew_wave_s_Interval;
         }
 
-        if (eew_wave_p != eew_wave_p_last) {
-            eew_wave_p_Interval = (eew_wave_p - eew_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-            eew_wave_p_last = eew_wave_p;
-            eew_wave_p_put = eew_wave_p;
+        if (eew_wave_p != mapItem[0].eew_wave_p_last) {
+            mapItem[0].eew_wave_p_Interval = (eew_wave_p - mapItem[0].eew_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
+            mapItem[0].eew_wave_p_last = eew_wave_p;
+            mapItem[0].eew_wave_p_put = eew_wave_p;
             loopCnt_moni = dateNow;
-        } else if (eew_wave_p == eew_wave_p_last) {
-            eew_wave_p_put += eew_wave_p_Interval;
+        } else if (eew_wave_p == mapItem[0].eew_wave_p_last) {
+            mapItem[0].eew_wave_p_put += mapItem[0].eew_wave_p_Interval;
         }
 
-        if (dateNow - cnt_mapMove >= 1000 * 3) {
-            if (eew_wave_p_put >= 560000) {
-                map.setZoom(5);
-            } else if (eew_wave_p_put >= 280000) {
-                map.setZoom(6);
-            } else if (eew_wave_p_put > 0) {
-                map.setZoom(7);
+        if (settings_map_auto_move) {
+            if (dateNow - cnt_mapMove >= 1000 * 3) {
+                if (mapItem[0].eew_wave_p_put >= 560000) {
+                    map.setZoom(5);
+                } else if (mapItem[0].eew_wave_p_put >= 280000) {
+                    map.setZoom(6);
+                } else if (mapItem[0].eew_wave_p_put > 0) {
+                    map.setZoom(7);
+                }
+                map.setView([mapItem[0].eew_lat, mapItem[0].eew_lng]);
+
+                cnt_mapMove = dateNow
             }
-            map.setView([eew_lat, eew_lng]);
-
-            cnt_mapMove = dateNow
         }
 
-        hypo.setLatLng(new L.LatLng(eew_lat, eew_lng));
+        // 2
+        if (eew_data['psWave']['items'][1] !== undefined) {
+            eew_waves = eew_data['psWave']['items'][1];
 
-        wave_s.setLatLng(new L.LatLng(eew_lat, eew_lng));
-        wave_s.setRadius(eew_wave_s_put);
-        wave_p.setLatLng(new L.LatLng(eew_lat, eew_lng));
-        wave_p.setRadius(eew_wave_p_put);
+            mapItem[1].eew_lat = eew_waves['latitude'].replace("N", "");
+            mapItem[1].eew_lng = eew_waves['longitude'].replace("E", "");
+            eew_hypo_LatLng = new L.LatLng(mapItem[1].eew_lat, mapItem[1].eew_lng);
+
+            eew_wave_p = eew_waves['pRadius'];
+            eew_wave_s = eew_waves['sRadius'];
+            eew_wave_p *= 1000;
+            eew_wave_s *= 1000;
+
+            //
+            if (eew_wave_s != mapItem[1].eew_wave_s_last) {
+                mapItem[1].eew_wave_s_Interval = (eew_wave_s - mapItem[1].eew_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
+                mapItem[1].eew_wave_s_last = eew_wave_s;
+                mapItem[1].eew_wave_s_put = eew_wave_s;
+            } else if (eew_wave_s == mapItem[1].eew_wave_s_last) {
+                mapItem[1].eew_wave_s_put += mapItem[1].eew_wave_s_Interval;
+            }
+    
+            if (eew_wave_p != mapItem[1].eew_wave_p_last) {
+                mapItem[1].eew_wave_p_Interval = (eew_wave_p - mapItem[1].eew_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
+                mapItem[1].eew_wave_p_last = eew_wave_p;
+                mapItem[1].eew_wave_p_put = eew_wave_p;
+                loopCnt_moni = dateNow;
+            } else if (eew_wave_p == mapItem[1].eew_wave_p_last) {
+                mapItem[1].eew_wave_p_put += mapItem[1].eew_wave_p_Interval;
+            }
+    
+            if (settings_map_auto_move) {
+                if (dateNow - cnt_mapMove >= 1000 * 3) {
+                    if (mapItem[1].eew_wave_p_put >= 560000) {
+                        map.setZoom(5);
+                    } else if (mapItem[1].eew_wave_p_put >= 280000) {
+                        map.setZoom(6);
+                    } else if (mapItem[1].eew_wave_p_put > 0) {
+                        map.setZoom(7);
+                    }
+                    map.setView([mapItem[1].eew_lat, mapItem[1].eew_lng]);
+    
+                    cnt_mapMove = dateNow
+                }
+            }
+        }
+        
+        mapItem[0].hypo.setLatLng(new L.LatLng(mapItem[0].eew_lat, mapItem[0].eew_lng));
+        mapItem[0].wave_s.setLatLng(new L.LatLng(mapItem[0].eew_lat, mapItem[0].eew_lng));
+        mapItem[0].wave_s.setRadius(mapItem[0].eew_wave_s_put);
+        mapItem[0].wave_p.setLatLng(new L.LatLng(mapItem[0].eew_lat, mapItem[0].eew_lng));
+        mapItem[0].wave_p.setRadius(mapItem[0].eew_wave_p_put);
+        
+        mapItem[1].hypo.setLatLng(new L.LatLng(mapItem[1].eew_lat, mapItem[1].eew_lng));
+        mapItem[1].wave_s.setLatLng(new L.LatLng(mapItem[1].eew_lat, mapItem[1].eew_lng));
+        mapItem[1].wave_s.setRadius(mapItem[1].eew_wave_s_put);
+        mapItem[1].wave_p.setLatLng(new L.LatLng(mapItem[1].eew_lat, mapItem[1].eew_lng));
+        mapItem[1].wave_p.setRadius(mapItem[1].eew_wave_p_put);
 
     } else {
-        hypo.setLatLng(new L.LatLng(0, 0));
-        wave_s.setLatLng(new L.LatLng(0, 0));
-        wave_p.setLatLng(new L.LatLng(0, 0));
+        mapItem[0].hypo.setLatLng(new L.LatLng(0, 0));
+        mapItem[0].wave_s.setLatLng(new L.LatLng(0, 0));
+        mapItem[0].wave_p.setLatLng(new L.LatLng(0, 0));
+        mapItem[0].wave_s.setRadius(0);
+        mapItem[0].wave_p.setRadius(0);
+        mapItem[1].hypo.setLatLng(new L.LatLng(0, 0));
+        mapItem[1].wave_s.setLatLng(new L.LatLng(0, 0));
+        mapItem[1].wave_p.setLatLng(new L.LatLng(0, 0));
+        mapItem[1].wave_s.setRadius(0);
+        mapItem[1].wave_p.setRadius(0);
 
-        wave_s.setRadius(0);
-        wave_p.setRadius(0);
+        mapItem[0].eew_origin_time = null;
+        mapItem[1].eew_origin_time = null;
     }
 }
 
@@ -1361,31 +1606,51 @@ function initMap() {
         attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    hypo = L.circle([0, 0], {
-        radius: 5000,
-        weight: 2,
-        color: '#ff2010',
-        fillColor: '#ff2010',
-        fillOpacity: 1,
-    }).addTo(map);
-
-    wave_s = L.circle([0, 0], {
-        radius: -1,
-        weight: 1,
-        color: '#ff4020',
-        fillColor: '#ff4020',
-        fillOpacity: 0.25,
-    }).addTo(map);
-
-    wave_p = L.circle([0, 0], {
-        radius: -1,
-        weight: 1,
-        color: '#4080ff',
-        fillColor: '#00000000',
-        fillOpacity: 0,
-    }).addTo(map);
+    mapItem[0] = new MapItem();
+    mapItem[1] = new MapItem();
 
     // loopCnt_loopWaves = new Date();
+}
+
+// ---------- Map Items ---------- //
+class MapItem {
+    constructor() {
+        this.isCurrent = false;
+        this.eew_origin_time = null;
+
+        this.hypo = L.circle([0, 0], {
+            radius: 5000,
+            weight: 2,
+            color: '#ff2010',
+            fillColor: '#ff2010',
+            fillOpacity: 1,
+        }).addTo(map);
+
+        this.wave_s = L.circle([0, 0], {
+            radius: -1,
+            weight: 1,
+            color: '#ff4020',
+            fillColor: '#ff4020',
+            fillOpacity: 0.25,
+        }).addTo(map);
+
+        this.wave_p = L.circle([0, 0], {
+            radius: -1,
+            weight: 1,
+            color: '#4080ff',
+            fillColor: '#00000000',
+            fillOpacity: 0,
+        }).addTo(map);
+
+        this.eew_lat = 0;
+        this.eew_lng = 0;
+        this.eew_wave_p_last = null;
+        this.eew_wave_p_Interval = null;
+        this.eew_wave_p_put = null;
+        this.eew_wave_s_last = null;
+        this.eew_wave_s_Interval = null;
+        this.eew_wave_s_put = null;
+    }
 }
 
 
@@ -1556,8 +1821,8 @@ function eqinfo() {
                                     <p class="hypocenter">${p2p_hypocenter}</p>
                                     <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
                                     <div class="hypoInfo">
-                                        <p>${p2p_magnitude}</p>
                                         <p>${p2p_depth}</p>
+                                        <p>${p2p_magnitude}</p>
                                     </div>
                                     <p>${p2p_tsunami}</p>
                                 </div>
@@ -1786,8 +2051,8 @@ function eqinfo() {
                                     <p class="hypocenter">${p2p_hypocenter}</p>
                                     <p>${p2p_latest_timeYear}/${p2p_latest_timeMonth}/${p2p_latest_timeDay} ${p2p_latest_timeHour}:${p2p_latest_timeMinute}</p>
                                     <div class="hypoInfo">
-                                        <p>${p2p_magnitude}</p>
                                         <p>${p2p_depth}</p>
+                                        <p>${p2p_magnitude}</p>
                                     </div>
                                     <p>${p2p_tsunami}</p>
                                 </div>
@@ -1820,4 +2085,3 @@ function eqinfo_pushNotify() {
         }
     })
 }
-
