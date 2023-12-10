@@ -204,14 +204,17 @@ function initDebugLogs() {
     } else {
         debugLogs = JSON.parse(debugLogsRaw);
         debugLogs.forEach(log => {
-            addDebugLogsHtml(log.type, log.title, log.text);
+            addDebugLogsHtml(log.time, log.type, log.title, log.text);
         });
     }
 
 }
 
 function addDebugLogs(type, title, text) {
+    time = `${timeYear}/${('0' + timeMonth).slice(-2)}/${('0' + timeDay).slice(-2)} ${('0' + timeHour).slice(-2)}:${('0' + timeMinute).slice(-2)}:${('0' + timeSecond).slice(-2)}`;
+
     debugLogs.push({
+        "time": time,
         "type": type,
         "title": title,
         "text": text
@@ -219,10 +222,10 @@ function addDebugLogs(type, title, text) {
 
     localStorage.setItem("debugLogs", JSON.stringify(debugLogs));
 
-    addDebugLogsHtml(type, title, text);
+    addDebugLogsHtml(time, type, title, text);
 }
 
-function addDebugLogsHtml(type, title, text) {
+function addDebugLogsHtml(time, type, title, text) {
     switch (type) {
         case "INFO":
             color = "#ffffffff";
@@ -247,7 +250,7 @@ function addDebugLogsHtml(type, title, text) {
 
     $('#debugLogLists').prepend(`
         <li>
-            <h3 class="title" style="color: ${color};">${title} ${timeYear}/${('0' + timeMonth).slice(-2)}/${('0' + timeDay).slice(-2)} ${('0' + timeHour).slice(-2)}:${('0' + timeMinute).slice(-2)}:${('0' + timeSecond).slice(-2)}</h3>
+            <h3 class="title" style="color: ${color};">${title} ${time}</h3>
             <p class="text">${text}</p>
         </li>
     `);
