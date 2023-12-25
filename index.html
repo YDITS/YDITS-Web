@@ -56,6 +56,15 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TWBJ0TEFRJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-TWBJ0TEFRJ');
+    </script>
+
     <script src="./scripts/jquery-3.6.0.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
@@ -65,7 +74,7 @@
     <script src='./scripts/leaflet-gesture-handling.min.js'></script>
 
     <script src="./scripts/main.js"></script>
-    <script src="./scripts/ydits-web.js"></script>
+    <script src="./scripts/ydits-web.mjs" type="module"></script>
     <noscript>
         <meta http-equiv="refresh" content="0; URL=./noscript/">
     </noscript>
@@ -92,7 +101,7 @@
 
             <div id="panel">
                 <div id="eewField">
-                    <span id="eewTitle">読み込み中…</span>
+                    <span id="eewTitle"></span>
                     <div class="content">
                         <div class="left">
                             <span class="title">最大震度</span>
@@ -107,16 +116,13 @@
                                     <span id="eewDepth"></span>
                                 </div>
                             </div>
-                            <span id="eewText"></span>
                         </div>
                     </div>
                 </div>
 
                 <div id="eqHistoryField"></div>
             </div>
-            <!-- /#panel -->
         </div>
-        <!-- /#control -->
 
         <div id="mapWrapper">
             <div id="map"></div>
@@ -125,7 +131,6 @@
                 <span id="statusLamp"></span>
             </div>
         </div>
-        <!-- /#mapWrapper -->
 
         <div id="popup">
             <div class="window" id="menu">
@@ -135,6 +140,15 @@
                 </div>
 
                 <div class="content">
+                    <div class="lists">
+                        <div class="list top bottom" id="menuJmaDataFeed">
+                            <span class="material-symbols-outlined">
+                                database
+                            </span>
+                            気象庁 電文
+                        </div>
+                    </div>
+
                     <div class="lists">
                         <div class="list top" id="menuSettings">
                             <span class="material-symbols-outlined">
@@ -188,9 +202,51 @@
 
                     <p class="version"></p>
                 </div>
-
             </div>
-            <!-- /#menu -->
+
+            <div class="window" id="jmaDataFeed">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">気象庁防災情報電文</span>
+                </div>
+
+                <div class="content">
+                    <ul class="lists">
+                        <li class="list top active" id="openJmaDataFeedEqvol">
+                            高頻度フィード 地震火山
+                        </li>
+                        <li class="list bottom" id="openJmaDataFeedEqvolLong">
+                            長期フィード 地震火山
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="window" id="jmaDataFeedEqvol">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">気象庁防災情報電文 &gt; 高頻度フィード 地震火山</span>
+                </div>
+
+                <div class="content">
+                    <ul id="jmaDataFeedEqvolList">
+                        <li>未実装</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="window" id="jmaDataFeedEqvolLong">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">気象庁防災情報電文 &gt; 高頻度フィード 地震火山</span>
+                </div>
+
+                <div class="content">
+                    <ul id="jmaDataFeedEqvolLongList">
+                        <li>未実装</li>
+                    </ul>
+                </div>
+            </div>
 
             <div class="window" id="settings">
                 <div class="titleBar">
@@ -238,7 +294,6 @@
                         </li>
                     </ul>
                 </div>
-                <!-- /#wrapper -->
             </div>
 
             <div class="window settings_list" id="settings_sounds">
@@ -289,7 +344,6 @@
                     </div>
                 </div>
             </div>
-            <!-- /#settings_sounds -->
 
             <div class="window settings_list" id="settings_map">
                 <div class="titleBar">
@@ -313,7 +367,6 @@
                     </div>
                 </div>
             </div>
-            <!-- /#settings_map -->
 
             <div class="window settings_list" id="settings_connect">
                 <div class="titleBar">
@@ -376,7 +429,6 @@
                     </div>
                 </div>
             </div>
-            <!-- /#settings_connect -->
 
             <div class="window settings_list" id="settings_notify">
                 <div class="titleBar">
@@ -390,7 +442,6 @@
                     </div>
                 </div>
             </div>
-            <!-- /#settings_notify -->
 
             <div class="window settings_list" id="settings_other">
                 <div class="titleBar">
@@ -408,7 +459,6 @@
                     </div>
                 </div>
             </div>
-            <!-- /#settings_other -->
 
             <div class="window settings_list" id="debugLogsWindow">
                 <div class="titleBar">
@@ -422,8 +472,6 @@
                     <ul id="debugLogLists"></ul>
                 </div>
             </div>
-            <!-- /#settings_other -->
-            <!-- /#settings -->
 
             <div class="window settings_list" id="license">
                 <div class="titleBar">
@@ -437,21 +485,22 @@
                             <h3><a target="_blank" href="https://ondoku3.com/ja/about/">音読さん</a></h3>
                             <p>
                                 警報音声の提供<br>
-                                &copy; 2022 Ondoku3
+                                &copy; Ondoku3
                             </p>
                         </li>
 
                         <li>
                             <h3><a target="_blank" href="https://twitter.com/xl9rmushvoCZ8oG/">MENqE721</a> 様</h3>
                             <p>
-                                警報音の提供
+                                緊急地震速報 警報の効果音、地震情報発表時の効果音の提供
                             </p>
                         </li>
 
                         <li>
                             <h3><a href="https://www.jma.go.jp/jma/">国土交通省 気象庁</a></h3>
                             <p>
-                                緊急地震速報，地震情報の提供<br>
+                                緊急地震速報、地震情報の提供<br>
+                                気象庁防災情報XMLフォーマット形式電文（PULL型）の提供<br>
                                 <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY
                                     4.0 ライセンス準拠</a><br>
                                 この情報の利用には，<a href="https://www.jma.go.jp/jma/kishou/info/coment.html">気象庁ホームページの利用規約</a>
@@ -462,8 +511,8 @@
                         <li>
                             <h3><a target="_blank" href="https://dmdata.jp/">Project DM-D.S.S</a></h3>
                             <p>
-                                緊急地震速報データ WebSocketの提供<br>
-                                Copyright &copy; 2023 dmdata.jp
+                                緊急地震速報データ WebSocket API の提供<br>
+                                &copy; dmdata.jp
                             </p>
                         </li>
 
@@ -502,17 +551,20 @@
                                 OpenStreetMapならびに拡大鏡のロゴおよびState of the MapはOpenStreetMap財団の登録商標です。
                             </p>
                         </li>
+
+                        <li>
+                            <p>
+                                本サイトのコンテンツの著作権は、その著作者に帰属します。
+                                改変や複製を一切禁じます。
+                            </p>
+                            <p>&copy; よね/Yone</p>
+                        </li>
                     </ul>
                 </div>
-                <!-- /#copyright -->
             </div>
-            <!-- /#license -->
         </div>
-        <!-- /#popup -->
 
-        <div class="notify">
-            <p></p>
-        </div>
+        <div id="notify"></div>
     </main>
 </body>
 

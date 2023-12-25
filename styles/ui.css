@@ -38,7 +38,7 @@
     height: 24rem;
     border: 0;
     border-radius: .8rem;
-    box-shadow: 0 0 5px 5px rgba(0, 0, 0, .5);
+    box-shadow: 0 0 2px 2px #00000040;
 
     overflow: hidden;
     padding: 0;
@@ -93,6 +93,7 @@
 }
 
 .dialog .content {
+    padding: 1rem;
     overflow: auto;
 }
 
@@ -148,18 +149,27 @@
 }
 
 /* ----- Notifycation ----- */
-.notify {
-    display: none;
+#notify {
+    display: inline-block;
 
     position: fixed;
     bottom: 2rem;
-    right: 2rem;
+    right: calc(100% * -1);
 
-    padding: 1rem 2rem;
+    margin-left: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 2px 2px #00000040;
+    max-width: calc(100vw - 4rem);
     overflow: auto;
+    padding: 1rem 2rem;
     background-color: #404040ff;
     color: #ffffffff;
-    box-shadow: 0 0 2px 2px #00000040;
+    font-weight: bold;
 
     z-index: 2;
+    transition: all .4s;
+}
+
+#notify.active {
+    right: 2rem;
 }

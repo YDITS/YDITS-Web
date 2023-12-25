@@ -362,12 +362,14 @@ main {
 }
 
 .window .lists .list.top {
-    border-radius: 2rem 2rem 0 0;
+    border-top-left-radius: 2rem;
+    border-top-right-radius: 2rem;
 }
 
 .window .lists .list.bottom {
     border: none;
-    border-radius: 0 0 2rem 2rem;
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
 }
 
 .window .lists .list:hover {
@@ -377,6 +379,49 @@ main {
 .window .lists .list span {
     margin-right: 2rem;
 }
+
+#jmaDataFeed {
+    top: 2rem;
+    left: 100vw;
+}
+
+#jmaDataFeed.active {
+    left: 0;
+}
+
+#jmaDataFeedEqvol {
+    top: 2rem;
+    left: 100vw;
+}
+
+#jmaDataFeedEqvol.active {
+    left: 0;
+}
+
+#jmaDataFeedEqvolLong {
+    top: 2rem;
+    left: 100vw;
+}
+
+#jmaDataFeedEqvolLong.active {
+    left: 0;
+}
+
+#jmaDataFeedEqvol>.titleBar>.title,
+#jmaDataFeedEqvolLong>.titleBar>.title {
+    font-size: 1rem;
+}
+
+#jmaDataFeedEqvol .title,
+#jmaDataFeedEqvolLong .title {
+    text-align: left;
+}
+
+#jmaDataFeedEqvolList,
+#jmaDataFeedEqvolLongList {
+    list-style: none;
+}
+
 
 #settings {
     top: 2rem;
