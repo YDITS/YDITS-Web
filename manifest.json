@@ -9,12 +9,12 @@
     "description": "YDITS for Web は緊急地震速報や地震情報を確認できるWebアプリです。",
     "icons": [
         {
-            "src": "/images/icon-512x512.png",
+            "src": "https://cdn.ydits.net/images/ydits_logos/ydits_icon_512px.png",
             "type": "image/png",
             "sizes": "512x512"
         },
         {
-            "src": "/images/icon-192x192.png",
+            "src": "https://cdn.ydits.net/images/ydits_logos/ydits_icon_192px.png",
             "type": "image/png",
             "sizes": "192x192"
         }
