@@ -1081,7 +1081,7 @@ function eqinfo() {
                             break;
                     }
 
-                    $('#eqHistoryField').prepend(`
+                    $('#eqHistoryField').append(`
                         <li class="list list-${i}">
                             <div class="maxScale">
                                 <p>${p2p_maxScale}</p>
@@ -1195,6 +1195,8 @@ function eqinfo() {
                         }
                     }
                 }
+
+                if (p2p_type == 'DetailScale') { return }
 
                 switch (p2p_maxScale) {
                     case -1: p2p_maxScale = '-'; break;
