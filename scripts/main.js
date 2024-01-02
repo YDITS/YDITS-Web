@@ -9,7 +9,7 @@
  *
  */
 
-const version = "3.9.0";
+const version = "3.10.0";
 
 function initCommonElements() {
     $("header").load("./elements/header.html");

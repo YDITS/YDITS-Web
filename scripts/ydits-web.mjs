@@ -43,7 +43,10 @@ const jmaDataFeedGetInterval = (1000 * 60) // 1min
 
 
 // ---------- EEW ---------- //
+let eewNum = 1;
 let eew_origin_time = null;
+let eewReportId = null;
+let eewReportIdLast = null;
 let eew_intensity = null;
 let eew_hypocenter = "";
 let eew_data = null;
@@ -183,7 +186,7 @@ async function init() {
                 debugLogs.add("ERROR", "[NETWORK]", "Network disconnected.");
                 $('#statusLamp').css({ 'background-color': '#ff4040' });
                 notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
-                
+
                 win(
                     "error",
                     "windownErrorOffline",
@@ -303,6 +306,7 @@ function kmoni() {
     // const url = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
     // const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
     // const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20200212/202002121937${zeroPadding(datetime.second)}.json`;  //2020-2-12-19:36 double eew
+    // const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20240101/202401011610${zeroPadding(datetime.second)}.json`;  //2024-1-1-16:10 Ishikawa
     // const url = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
     // ---
 
@@ -317,7 +321,7 @@ function kmoni() {
 
                     if (eew_repNum != eew_repNum_last) {
                         eew_repNum_last = eew_repNum;
-                        
+
                         eew_isFinal = eew_data["hypoInfo"]["items"][0]["isFinal"];
 
                         if (eew_isFinal == 'true') {
@@ -325,7 +329,7 @@ function kmoni() {
                         } else {
                             eew_repNum_p = `第${eew_repNum}報`
                         }
-                        
+
                         eew_origin_time = eew_data["hypoInfo"]["items"][0]["originTime"];
                         eew_timeYear = eew_origin_time.substring(0, 4);
                         eew_timeMonth = eew_origin_time.substring(5, 7);
@@ -333,13 +337,15 @@ function kmoni() {
                         eew_timeHour = eew_origin_time.substring(11, 13);
                         eew_timeMinute = eew_origin_time.substring(14, 16);
                         eew_timeSecond = eew_origin_time.substring(17, 19);
-                        
+
+                        eewReportId = eew_data["hypoInfo"]["items"][0]["reportId"];
+
                         eew_Region_name = eew_data["hypoInfo"]["items"][0]["regionName"];
 
                         if (!eew_Region_name) {
                             eew_Region_name = '不明';
                         }
-                        
+
                         eew_calcintensity_last = eew_calcintensity;
 
                         eew_calcintensity = eew_data["hypoInfo"]["items"][0]["calcintensity"];
@@ -359,15 +365,15 @@ function kmoni() {
                                 eew_calcintensity = `?`;
                                 break;
                         }
-                        
+
                         eew_Magnitude = eew_data["hypoInfo"]["items"][0]["magnitude"];
-                        
+
                         if (eew_Magnitude) {
                             eew_Magnitude = 'M' + eew_Magnitude;
                         } else {
                             eew_Magnitude = '不明';
                         }
-                        
+
                         eew_depth = eew_data["hypoInfo"]["items"][0]["depth"];
 
                         if (eew_depth) {
@@ -401,7 +407,7 @@ function kmoni() {
                         */
 
                         eew_alertFlg = '';
-                        
+
                         eew_isCancel = eew_data["hypoInfo"]["items"][0]['isCancel'];
 
                         if (eew_isCancel == 'true') {
@@ -416,22 +422,18 @@ function kmoni() {
                             if (settings.sound.eewAny == true && eew_calcintensity_last != eew_calcintensity) {
                                 switch (eew_calcintensity) {
                                     case '1':
-                                        sounds.eew.play();
                                         sounds.eewVoice1.play();
                                         break;
 
                                     case '2':
-                                        sounds.eew.play();
                                         sounds.eewVoice2.play();
                                         break;
 
                                     case '3':
-                                        sounds.eew.play();
                                         sounds.eewVoice3.play();
                                         break;
 
                                     case '4':
-                                        sounds.eew.play();
                                         sounds.eewVoice4.play();
                                         break;
 
@@ -523,7 +525,7 @@ function kmoni() {
                         $('#eewTitle').text(`緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`);
                         $('#eewCalc').text(eew_calcintensity);
                         $('#eewRegion').text(eew_Region_name);
-                        $('#eewOrigin_time').text(`発生日時: ${eew_timeYear}/${eew_timeMonth}/${eew_timeDay} ${eew_timeHour}:${eew_timeMinute}`);
+                        $('#eewOrigin_time').text(`発生日時: ${eew_timeYear}/${eew_timeMonth}/${eew_timeDay} ${eew_timeHour}:${eew_timeMinute}:${eew_timeSecond}`);
                         $('#eewMagnitude').text(`規模 ${eew_Magnitude}`);
                         $('#eewDepth').text(`深さ ${eew_depth}`);
 
@@ -785,123 +787,78 @@ function eew_push() {
 // ---------- Monitor ---------- //
 function mapMain() {
     if (eew_data != null && eew_data["hypoInfo"] != null) {
-        // 1
-        eew_waves = eew_data['psWave']['items'][0];
-
-        if (eew_waves !== null) {
-            mapItem[0].eew_lat = eew_waves['latitude'].replace("N", "");
-            mapItem[0].eew_lng = eew_waves['longitude'].replace("E", "");
-            eew_hypo_LatLng = new L.LatLng(mapItem[0].eew_lat, mapItem[0].eew_lng);
-
-            eew_wave_p = eew_waves['pRadius'];
-            eew_wave_s = eew_waves['sRadius'];
-            eew_wave_p *= 1000;
-            eew_wave_s *= 1000;
+        if (eewReportId !== eewReportIdLast && eewReportIdLast !== null) {
+            eewNum++;
         }
 
-        if (eew_wave_s != mapItem[0].eew_wave_s_last) {
-            mapItem[0].eew_wave_s_Interval = (eew_wave_s - mapItem[0].eew_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-            mapItem[0].eew_wave_s_last = eew_wave_s;
-            mapItem[0].eew_wave_s_put = eew_wave_s;
-        } else if (eew_wave_s == mapItem[0].eew_wave_s_last) {
-            mapItem[0].eew_wave_s_put += mapItem[0].eew_wave_s_Interval;
-        }
+        eewReportIdLast = eewReportId;
 
-        if (eew_wave_p != mapItem[0].eew_wave_p_last) {
-            mapItem[0].eew_wave_p_Interval = (eew_wave_p - mapItem[0].eew_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-            mapItem[0].eew_wave_p_last = eew_wave_p;
-            mapItem[0].eew_wave_p_put = eew_wave_p;
-            loopCnt_moni = dateNow;
-        } else if (eew_wave_p == mapItem[0].eew_wave_p_last) {
-            mapItem[0].eew_wave_p_put += mapItem[0].eew_wave_p_Interval;
+        for (let cnt = 0; cnt <= eewNum; cnt++) {
+            if (cnt === eewNum) {
+                eew_waves = eew_data['psWave']['items'][0];
+
+                if (eew_waves !== null) {
+                    mapItem[eewNum].eew_lat = eew_waves['latitude'].replace("N", "");
+                    mapItem[eewNum].eew_lng = eew_waves['longitude'].replace("E", "");
+                    eew_hypo_LatLng = new L.LatLng(mapItem[eewNum].eew_lat, mapItem[eewNum].eew_lng);
+
+                    eew_wave_p = eew_waves['pRadius'];
+                    eew_wave_s = eew_waves['sRadius'];
+                    eew_wave_p *= 1000;
+                    eew_wave_s *= 1000;
+                }
+
+                if (eew_wave_s != mapItem[eewNum].eew_wave_s_last) {
+                    mapItem[eewNum].eew_wave_s_Interval = (eew_wave_s - mapItem[eewNum].eew_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
+                    mapItem[eewNum].eew_wave_s_last = eew_wave_s;
+                    mapItem[eewNum].eew_wave_s_put = eew_wave_s;
+                } else if (eew_wave_s == mapItem[eewNum].eew_wave_s_last) {
+                    mapItem[eewNum].eew_wave_s_put += mapItem[eewNum].eew_wave_s_Interval;
+                }
+
+                if (eew_wave_p != mapItem[eewNum].eew_wave_p_last) {
+                    mapItem[eewNum].eew_wave_p_Interval = (eew_wave_p - mapItem[eewNum].eew_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
+                    mapItem[eewNum].eew_wave_p_last = eew_wave_p;
+                    mapItem[eewNum].eew_wave_p_put = eew_wave_p;
+                    loopCnt_moni = dateNow;
+                } else if (eew_wave_p == mapItem[eewNum].eew_wave_p_last) {
+                    mapItem[eewNum].eew_wave_p_put += mapItem[eewNum].eew_wave_p_Interval;
+                }
+            } else {
+                mapItem[cnt].eew_wave_s_put += mapItem[cnt].eew_wave_s_Interval;
+                mapItem[cnt].eew_wave_p_put += mapItem[cnt].eew_wave_p_Interval;
+            }
+
+            mapItem[cnt].hypo.setLatLng(new L.LatLng(mapItem[cnt].eew_lat, mapItem[cnt].eew_lng));
+            mapItem[cnt].wave_s.setLatLng(new L.LatLng(mapItem[cnt].eew_lat, mapItem[cnt].eew_lng));
+            mapItem[cnt].wave_s.setRadius(mapItem[cnt].eew_wave_s_put);
+            mapItem[cnt].wave_p.setLatLng(new L.LatLng(mapItem[cnt].eew_lat, mapItem[cnt].eew_lng));
+            mapItem[cnt].wave_p.setRadius(mapItem[cnt].eew_wave_p_put);
         }
 
         if (settings.map.autoMove) {
             if (dateNow - mapAutoMoveCnt >= 1000 * 3) {
-                if (mapItem[0].eew_wave_p_put >= 560000) {
-                    map.setView([mapItem[0].eew_lat, mapItem[0].eew_lng], 5);
-                } else if (mapItem[0].eew_wave_p_put >= 280000) {
-                    map.setView([mapItem[0].eew_lat, mapItem[0].eew_lng], 6);
-                } else if (mapItem[0].eew_wave_p_put > 0) {
-                    map.setView([mapItem[0].eew_lat, mapItem[0].eew_lng], 7);
+                if (mapItem[eewNum].eew_wave_p_put >= 560000) {
+                    map.setView([mapItem[eewNum].eew_lat, mapItem[eewNum].eew_lng], 5);
+                } else if (mapItem[eewNum].eew_wave_p_put >= 280000) {
+                    map.setView([mapItem[eewNum].eew_lat, mapItem[eewNum].eew_lng], 6);
+                } else if (mapItem[eewNum].eew_wave_p_put > 0) {
+                    map.setView([mapItem[eewNum].eew_lat, mapItem[eewNum].eew_lng], 7);
                 }
 
                 mapAutoMoveCnt = dateNow
             }
         }
-
-        // 2
-        if (eew_data['psWave']['items'][1] !== undefined) {
-            eew_waves = eew_data['psWave']['items'][1];
-
-            mapItem[1].eew_lat = eew_waves['latitude'].replace("N", "");
-            mapItem[1].eew_lng = eew_waves['longitude'].replace("E", "");
-            eew_hypo_LatLng = new L.LatLng(mapItem[1].eew_lat, mapItem[1].eew_lng);
-
-            eew_wave_p = eew_waves['pRadius'];
-            eew_wave_s = eew_waves['sRadius'];
-            eew_wave_p *= 1000;
-            eew_wave_s *= 1000;
-
-            //
-            if (eew_wave_s != mapItem[1].eew_wave_s_last) {
-                mapItem[1].eew_wave_s_Interval = (eew_wave_s - mapItem[1].eew_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-                mapItem[1].eew_wave_s_last = eew_wave_s;
-                mapItem[1].eew_wave_s_put = eew_wave_s;
-            } else if (eew_wave_s == mapItem[1].eew_wave_s_last) {
-                mapItem[1].eew_wave_s_put += mapItem[1].eew_wave_s_Interval;
-            }
-
-            if (eew_wave_p != mapItem[1].eew_wave_p_last) {
-                mapItem[1].eew_wave_p_Interval = (eew_wave_p - mapItem[1].eew_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-                mapItem[1].eew_wave_p_last = eew_wave_p;
-                mapItem[1].eew_wave_p_put = eew_wave_p;
-                loopCnt_moni = dateNow;
-            } else if (eew_wave_p == mapItem[1].eew_wave_p_last) {
-                mapItem[1].eew_wave_p_put += mapItem[1].eew_wave_p_Interval;
-            }
-
-            if (settings.map.autoMove) {
-                if (dateNow - mapAutoMoveCnt >= 1000 * 3) {
-                    if (mapItem[1].eew_wave_p_put >= 560000) {
-                        map.setView([mapItem[1].eew_lat, mapItem[1].eew_lng], 5);
-                    } else if (mapItem[1].eew_wave_p_put >= 280000) {
-                        map.setView([mapItem[1].eew_lat, mapItem[1].eew_lng], 6);
-                    } else if (mapItem[1].eew_wave_p_put > 0) {
-                        map.setView([mapItem[1].eew_lat, mapItem[1].eew_lng], 7);
-                    }
-
-                    mapAutoMoveCnt = dateNow
-                }
-            }
-        }
-
-        mapItem[0].hypo.setLatLng(new L.LatLng(mapItem[0].eew_lat, mapItem[0].eew_lng));
-        mapItem[0].wave_s.setLatLng(new L.LatLng(mapItem[0].eew_lat, mapItem[0].eew_lng));
-        mapItem[0].wave_s.setRadius(mapItem[0].eew_wave_s_put);
-        mapItem[0].wave_p.setLatLng(new L.LatLng(mapItem[0].eew_lat, mapItem[0].eew_lng));
-        mapItem[0].wave_p.setRadius(mapItem[0].eew_wave_p_put);
-
-        mapItem[1].hypo.setLatLng(new L.LatLng(mapItem[1].eew_lat, mapItem[1].eew_lng));
-        mapItem[1].wave_s.setLatLng(new L.LatLng(mapItem[1].eew_lat, mapItem[1].eew_lng));
-        mapItem[1].wave_s.setRadius(mapItem[1].eew_wave_s_put);
-        mapItem[1].wave_p.setLatLng(new L.LatLng(mapItem[1].eew_lat, mapItem[1].eew_lng));
-        mapItem[1].wave_p.setRadius(mapItem[1].eew_wave_p_put);
-
     } else {
-        mapItem[0].hypo.setLatLng(new L.LatLng(0, 0));
-        mapItem[0].wave_s.setLatLng(new L.LatLng(0, 0));
-        mapItem[0].wave_p.setLatLng(new L.LatLng(0, 0));
-        mapItem[0].wave_s.setRadius(0);
-        mapItem[0].wave_p.setRadius(0);
-        mapItem[1].hypo.setLatLng(new L.LatLng(0, 0));
-        mapItem[1].wave_s.setLatLng(new L.LatLng(0, 0));
-        mapItem[1].wave_p.setLatLng(new L.LatLng(0, 0));
-        mapItem[1].wave_s.setRadius(0);
-        mapItem[1].wave_p.setRadius(0);
+        eewNum = 0;
 
-        mapItem[0].eew_origin_time = null;
-        mapItem[1].eew_origin_time = null;
+        for (let cnt = 0; cnt < 5; cnt++) {
+            mapItem[cnt].hypo.setLatLng(new L.LatLng(0, 0));
+            mapItem[cnt].wave_s.setLatLng(new L.LatLng(0, 0));
+            mapItem[cnt].wave_p.setLatLng(new L.LatLng(0, 0));
+            mapItem[cnt].wave_s.setRadius(0);
+            mapItem[cnt].wave_p.setRadius(0);
+        }
     }
 }
 
@@ -909,12 +866,12 @@ function mapMain() {
 // ---------- Init monitor map ---------- //
 function initMap() {
     map = L.map('map', {
-        // center: [36.1852, 139.3442],
-        // center: [35.4232, 138.2647],
         center: [38.0194092, 138.3664968],
         zoom: 6,
         maxZoom: 10,
         minZoom: 4,
+        zoomSnap: 0,
+        zoomDelta: 0,
         zoomControl: false
     });
 
@@ -923,15 +880,15 @@ function initMap() {
         attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    mapItem[0] = new MapItem();
-    mapItem[1] = new MapItem();
+    for (let cnt = 0; cnt < 5; cnt++) {
+        mapItem[cnt] = new MapItem();
+    }
 }
 
 // ---------- Map Items ---------- //
 class MapItem {
     constructor() {
         this.isCurrent = false;
-        this.eew_origin_time = null;
 
         this.hypo = L.circle([0, 0], {
             radius: 5000,
@@ -945,7 +902,7 @@ class MapItem {
             radius: -1,
             weight: 1,
             color: '#ff4020',
-            fillColor: '#ff4020',
+            fillColor: '#ff402080',
             fillOpacity: 0.25,
         }).addTo(map);
 
@@ -1124,7 +1081,7 @@ function eqinfo() {
                             break;
                     }
 
-                    $('#eqHistoryField').append(`
+                    $('#eqHistoryField').prepend(`
                         <li class="list list-${i}">
                             <div class="maxScale">
                                 <p>${p2p_maxScale}</p>
