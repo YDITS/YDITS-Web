@@ -52,8 +52,8 @@ export class Notify {
             this.hide();
         }, deleteAfter);
     }
-    
-    
+
+
     hide() {
         this.notifyEle.removeClass("active");
     }

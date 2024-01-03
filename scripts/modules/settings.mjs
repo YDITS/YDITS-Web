@@ -97,7 +97,7 @@ export class Settings {
             $('#settings_list_notify').removeClass('active');
             $('#settings_list_other').addClass('active');
         });
-    
+
         if (localStorage.getItem("settings-playSound-eew-any") == 'true') {
             sound.eewAny = true;
             $('#settings_playSound_eew_any .toggle-switch').addClass('on');
@@ -108,7 +108,7 @@ export class Settings {
             sound.eewAny = true;
             $('#settings_playSound_eew_any .toggle-switch').addClass('on');
         }
-    
+
         $(document).on('click', '#settings_playSound_eew_any .toggle-switch', function () {
             if (sound.eewAny == false) {
                 sound.eewAny = true;
@@ -120,7 +120,7 @@ export class Settings {
                 $('#settings_playSound_eew_any .toggle-switch').removeClass('on');
             }
         })
-    
+
         if (localStorage.getItem("settings-playSound-eew-cancel") == 'true') {
             sound.eewCancel = true;
             $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
@@ -131,7 +131,7 @@ export class Settings {
             sound.eewCancel = true;
             $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
         }
-    
+
         $(document).on('click', '#settings_playSound_eew_cancel .toggle-switch', function () {
             if (sound.eewCancel == false) {
                 sound.eewCancel = true;
@@ -143,7 +143,7 @@ export class Settings {
                 $('#settings_playSound_eew_cancel .toggle-switch').removeClass('on');
             }
         })
-    
+
         if (localStorage.getItem("settings-playSound-info") == 'true') {
             sound.eqinfo = true;
             $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
@@ -154,7 +154,7 @@ export class Settings {
             sound.eqinfo = true;
             $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
         }
-    
+
         $(document).on('click', '#settings_playSound_eqinfo .toggle-switch', function () {
             if (sound.eqinfo == false) {
                 sound.eqinfo = true;
@@ -179,7 +179,7 @@ export class Settings {
             map.autoMove = true;
             $('#settings_map_auto_move .toggle-switch').addClass('on');
         }
-    
+
         $(document).on('click', '#settings_map_auto_move .toggle-switch', function () {
             if (map.autoMove == false) {
                 map.autoMove = true;
@@ -199,16 +199,16 @@ export class Settings {
         } else {
             connect.eew = "yahoo-kmoni";
         }
-    
+
         $(`select[name="settings-getType-eew"]`).val(`${connect.eew}`);
-    
+
         if (connect.eew === 'yahoo-kmoni') {
             $('#settings_dmdata').hide();
         } else if (connect.eew === 'dmdata') {
             $('#settings_dmdata').show();
-    
+
         }
-    
+
         dmdata.accessToken = localStorage.getItem('settings-dmdata-access-token');
         if (dmdata.accessToken === null) {
             $('#settings_dmdata_init').show();
@@ -217,8 +217,8 @@ export class Settings {
             $('#settings_dmdata_init').hide();
             $('#settings_dmdata_main').show();
         }
-    
-        $(document).on('change', 'select[name="settings-getType-eew"]', function() {
+
+        $(document).on('change', 'select[name="settings-getType-eew"]', function () {
             connect.eew = $('option:selected').val();
             if (connect.eew === 'yahoo-kmoni') {
                 $('#settings_dmdata').hide();
@@ -233,32 +233,32 @@ export class Settings {
             }
             localStorage.setItem('settings-getType-eew', connect.eew);
         });
-    
+
         if (localStorage.getItem("settings-getType-eqinfo") != null) {
             connect.eqinfo = localStorage.getItem("settings-getType-eqinfo");
         } else {
             connect.eqinfo = "p2pquake";
         }
-    
+
         $(`select[name="settings-getType-eqinfo"]`).val(`${connect.eqinfo}`);
-    
-        $(document).on('change', 'select[name="settings-getType-eqinfo"]', function() {
+
+        $(document).on('change', 'select[name="settings-getType-eqinfo"]', function () {
             connect.eqinfo = $('option:selected').val();
             if (connect.eqinfo === 'p2pquake') {
             } else if (connect.eqinfo === 'dmdata') {
             }
             localStorage.setItem('settings-getType-eqinfo', connect.eqinfo);
         });
-    
+
         if (localStorage.getItem("settings-getType-tsunami") != null) {
             connect.tsunami = localStorage.getItem("settings-getType-tsunami");
         } else {
             connect.tsunami = "p2pquake";
         }
-    
+
         $(`select[name="settings-getType-tsunami"]`).val(`${connect.tsunami}`);
-    
-        $(document).on('change', 'select[name="settings-getType-tsunami"]', function() {
+
+        $(document).on('change', 'select[name="settings-getType-tsunami"]', function () {
             connect.tsunami = $('option:selected').val();
             if (connect.tsunami === 'p2pquake') {
             } else if (connect.tsunami === 'dmdata') {
@@ -279,27 +279,27 @@ export class Settings {
             $(`select[name="settings-getType-eew"]`).val(`${connect.eew}`);
             $(`select[name="settings-getType-eqinfo"]`).val(`${connect.eqinfo}`);
             $(`select[name="settings-getType-tsunami"]`).val(`${connect.tsunami}`);
-    
+
             map.autoMove = true;
             $('#settings_map_auto_move .toggle-switch').addClass('on');
-    
+
             dmdata.accessToken = null;
             $('#settings_dmdata').hide();
             $('#settings_dmdata_init').show();
             $('#settings_dmdata_main').hide();
-    
+
             sound.eewAny = true;
             $('#settings_playSound_eew_any .toggle-switch').addClass('on');
-    
+
             sound.eewCancel = true;
             $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
-    
+
             sound.eqinfo = true;
             $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
-    
+
             localStorage.clear()
             localStorage.setItem("debugLogs", JSON.stringify(debugLogs));
-    
+
             sounds.notify.play();
             notify.show("message", "設定のリセット", "設定をリセットしました。");
             debugLogs.add("INFO", `[INFO]`, "Settings were reset.");
@@ -321,7 +321,7 @@ export class Settings {
         $(document).on('click', '#btn_push_chk', function () {
             sounds.notify.play();
             notify.show("message", "プッシュ通知のテスト", "これはページ内通知です。プッシュ通知とは別に表示されます。");
-    
+
             Push.create(`YDITS for Web`, {
                 body: `これはプッシュ通知のテストです。`,
                 timeout: 10000,
@@ -331,7 +331,7 @@ export class Settings {
                 }
             })
         });
-    
+
 
         // ----- Debug Logs -----//
         $(document).on("click", "#openDebugLogsButton", () => {
@@ -340,13 +340,13 @@ export class Settings {
         $(document).on("click", "#debugLogsWindow .closeBtn", () => {
             $("#debugLogsWindow").removeClass("active");
         });
-    
+
 
         // ----- Delete Debug Logs -----//
         $(document).on('click', '#deleteDebugLogsButton', function (e) {
             debugLogs.delete();
             debugLogs.add("START", "[START]", "- Start log -");
-    
+
             sounds.notify.play();
             notify.show("message", "デバッグログの削除", "デバッグログを削除しました。");
         });

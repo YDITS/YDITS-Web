@@ -24,7 +24,7 @@ export class DebugLogs {
                 this.addDebugLogsHtml(log.time, log.type, log.title, log.text);
             });
         }
-    
+
     }
 
 
@@ -59,7 +59,7 @@ export class DebugLogs {
             case "ERROR":
                 color = "#ff6060ff";
                 break;
-    
+
             case "NETWORK":
                 color = "#60ff60ff";
                 break;

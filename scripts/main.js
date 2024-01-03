@@ -9,7 +9,7 @@
  *
  */
 
-const version = "3.10.0";
+const version = "3.11.0 ベータ版";
 
 function initCommonElements() {
     $("header").load("./elements/header.html");
