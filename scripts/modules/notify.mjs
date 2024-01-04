@@ -30,7 +30,7 @@ export class Notify {
 
             case "error":
                 color = "#ff5050ff";
-                hideAfter = 8000;
+                hideAfter = 5000;
                 break;
 
             default:

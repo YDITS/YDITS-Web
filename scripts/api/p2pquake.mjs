@@ -294,14 +294,14 @@ export class P2pquake {
         this.notify.show(
             "error",
             "WebSocket切断",
-            "P2P地震情報 (p2pquake.net) から切断されました。10秒後に再接続します。"
+            "P2P地震情報 (p2pquake.net) から切断されました。5秒後に再接続します。"
         );
         this.retryTimeout = setTimeout(
             () => {
                 this.startSocket();
                 this.socketRetryCount++;
             },
-            10 * 1000
+            5 * 1000
         );
 
         // clearTimeout(this.retryTimeout);
@@ -510,14 +510,14 @@ export class P2pquake {
             this.notify.show(
                 "error",
                 "エラー",
-                "P2P地震情報 (p2pquake.net) に接続できません。15秒後に再試行します。"
+                "P2P地震情報 (p2pquake.net) に接続できません。10秒後に再試行します。"
             );
             this.retryTimeout = setTimeout(
                 () => {
                     this.startSocket();
                     this.socketRetryCount++;
                 },
-                15 * 1000
+                10 * 1000
             );
         } else {
             this.notify.show(
