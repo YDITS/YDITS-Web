@@ -178,15 +178,15 @@ export class P2pquake {
                         let hypocenter = list['earthquake']['hypocenter']['name'];
 
                         if (hypocenter == '') {
-                            hypocenter = '不明または調査中';
+                            hypocenter = '震源 調査中';
                         }
 
                         let magnitude = list['earthquake']['hypocenter']['magnitude'];
 
                         if (magnitude == -1) {
-                            magnitude = 'M -';
+                            magnitude = 'M調査中または不明';
                         } else {
-                            magnitude = `M ${magnitude}`;
+                            magnitude = `M${magnitude}`;
                         }
 
                         let depth = list['earthquake']['hypocenter']['depth'];
