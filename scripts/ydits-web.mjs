@@ -11,15 +11,18 @@
 
 import { DebugLogs } from "./modules/debug-logs.mjs";
 import { Notify } from "./modules/notify.mjs";
+import { ServiceWorker } from "./service-worker.mjs";
 import { Datetime } from "./modules/datetime.mjs";
 import { Sounds } from "./modules/sounds.mjs";
-import { ServiceWorker } from "./modules/service-worker.mjs";
 import { Settings } from "./modules/settings.mjs";
 import { PushNotify } from "./modules/push-notify.mjs";
 import { Eqinfo } from "./eqinfo/eqinfo.mjs";
-import { Dmdata } from "./dmdata/dmdata.mjs";
+import { Dmdata } from "./api/dmdata.mjs";
 import { JmaDataFeed } from "./jma/jma-data-feed.mjs";
+import { MapItem } from "./map/map-item.mjs"
 
+
+const jmaDataFeedGetInterval = (1000 * 60) // 1min
 
 let debugLogs = null;
 let isOnline = true;
@@ -39,8 +42,6 @@ let eewGetCnt = -1;
 let ntpGetCnt = -1;
 let jmaDataFeedGetCnt = -1;
 let mapAutoMoveCnt = -1;
-
-const jmaDataFeedGetInterval = (1000 * 60) // 1min
 
 
 // ---------- EEW ---------- //
@@ -67,7 +68,7 @@ let eew_Region_name = '';
 let eew_Magnitude = '';
 let eew_depth = '';
 let eew_isFinal;
-let eew_isCancel = null;
+let eew_isCancel = false;
 let eew_bgc;
 let eew_fntc;
 let eew_hypo_LatLng;
@@ -160,10 +161,11 @@ async function init() {
             });
 
             debugLogs.add("INFO", "[INFO]", "Application initialized.");
-            notify.show("message", `YDITS for Web Ver ${version}`, "");
+            notify.show("message", `YDITS for Web Ver ${VERSION}`, "");
 
             $("#eewTitle").text("読み込み中…");
         } catch (error) {
+            console.error(error);
             debugLogs.add("INFO", "[INFO]", `Failed Application initialization: ${error}`);
 
             notify.show(
@@ -193,7 +195,7 @@ async function init() {
 
 // ---------- Menu ---------- //
 function initMenu() {
-    $('#menu .version').text(`Ver ${version}`);
+    $('#menu .version').text(`Ver ${VERSION}`);
 
     $(document).on('click', '#menuBtn', () => {
         $('#popup').addClass('active');
@@ -273,8 +275,17 @@ function kmoni() {
     // ---
 
     fetch(url)
-        .then(response => { return response.json() })
+        .then(response => {
+            if (!response.ok) {
+                errorKmoni(`Status Code: HTTP ${response.status}`);
+                return null
+            }
+
+            return response.json()
+        })
         .then(data => {
+            if (data === null) { return }
+
             eew_data = data;
 
             if (settings.connect.eew === 'yahoo-kmoni' || dmdata_access_token === null) {
@@ -542,22 +553,40 @@ function kmoni() {
                 }
             }
         })
-
         .catch(error => {
-            if (settings.connect.eew === 'yahoo-kmoni' || dmdata_access_token === null) {
-                if (error != 'TypeError: Failed to fetch') {
-                    $('#statusLamp').css({ 'background-color': '#ff4040' });
-
-                    if (kmoniLastStatus) {
-                        debugLogs.add("ERROR", "[NETWORK]", `${error};}`)
-                        notify.show("error", "エラー", "Yahoo! 強震モニタ (storage-yahoo.jp) に接続できません。<br>強震モニタが一時的に利用できないか、ネットワークが低速な可能性があります。");
-                    }
-
-                    kmoniLastStatus = false;
-                }
-            }
-        })
+            errorKmoni(error);
+        });
 };
+
+
+function errorKmoni(error) {
+    if (
+        (settings.connect.eew === 'yahoo-kmoni') ||
+        (dmdata.accessToken === null)
+    ) {
+        $('#statusLamp').css({ 'background-color': '#ff4040' });
+
+        if (kmoniLastStatus) {
+            debugLogs.add(
+                "ERROR",
+                "[NETWORK]",
+                `Failed to connect to weather-kyoshin.east.edge.storage-yahoo.jp.<br>${error}`
+            );
+
+            notify.show(
+                "error",
+                "エラー",
+                `
+                    Yahoo! 強震モニタ (storage-yahoo.jp) に接続できません。<br>
+                    強震モニタが一時的に利用できないか、ネットワークが低速な可能性があります。<br>
+                    <code>${error}</code>
+                `
+            );
+        }
+
+        kmoniLastStatus = false;
+    }
+}
 
 
 function makeKmoniDatetime() {
@@ -725,8 +754,8 @@ function bodyToDocument(data) {
 
 // ---------- eew push ---------- //
 function eew_push() {
-    if (eew_isCancel) {
-        Push.create(`緊急地震速報 (${eew_alertFlg})  ${eew_repNum_p}`, {
+    if (eew_isCancel === "true") {
+        Push.create(`緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`, {
             body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。\n`,
             onClick: function () {
                 window.focus();
@@ -734,7 +763,7 @@ function eew_push() {
             }
         })
     } else {
-        Push.create(`緊急地震速報 (${eew_alertFlg})  ${eew_repNum_p}`, {
+        Push.create(`緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`, {
             body: `${eew_hypocenter}で地震発生。予想最大震度は${eew_intensity}です。\nページ表示するにはここを選択してください。\n`,
             onClick: function () {
                 window.focus();
@@ -842,46 +871,6 @@ function initMap() {
     }).addTo(map);
 
     for (let cnt = 0; cnt < 9; cnt++) {
-        mapItem[cnt] = new MapItem();
-    }
-}
-
-// ---------- Map Items ---------- //
-class MapItem {
-    constructor() {
-        this.isCurrent = false;
-
-        this.hypo = L.circle([0, 0], {
-            radius: 5000,
-            weight: 2,
-            color: '#ff2010',
-            fillColor: '#ff2010',
-            fillOpacity: 1,
-        }).addTo(map);
-
-        this.wave_s = L.circle([0, 0], {
-            radius: -1,
-            weight: 1,
-            color: '#ff4020',
-            fillColor: '#ff402080',
-            fillOpacity: 0.25,
-        }).addTo(map);
-
-        this.wave_p = L.circle([0, 0], {
-            radius: -1,
-            weight: 1,
-            color: '#4080ff',
-            fillColor: '#00000000',
-            fillOpacity: 0,
-        }).addTo(map);
-
-        this.eew_lat = 0;
-        this.eew_lng = 0;
-        this.eew_wave_p_last = null;
-        this.eew_wave_p_Interval = null;
-        this.eew_wave_p_put = null;
-        this.eew_wave_s_last = null;
-        this.eew_wave_s_Interval = null;
-        this.eew_wave_s_put = null;
+        mapItem[cnt] = new MapItem(map);
     }
 }

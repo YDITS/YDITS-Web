@@ -10,25 +10,15 @@
  */
 
 export class P2pquake {
-    constructor(debugLogs, notify, settings, sounds, addToList) {
-        this.debugLogs = debugLogs;
-        this.notify = notify;
-        this.settings = settings;
-        this.sounds = sounds;
-        this.addToList = addToList;
-        this.eqinfoNum = 0;
-        this.urlRest = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
-        this.urlSocketStart = new URL("wss://api.p2pquake.net/v2/ws");
-        // this.urlSocketStart = new URL("wss://api-realtime-sandbox.p2pquake.net/v2/ws");
-        this.data = [];
-        this.socket = null;
-        this.socketRetryCount = 0;
-        this.latestId = null;
-        this.lastId = null;
-
-        this.initial()
-        this.startSocket();
-    }
+    eqinfoNum = 0;
+    urlRest = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
+    urlSocket = new URL("wss://api.p2pquake.net/v2/ws");
+    // urlSocket = new URL("wss://api-realtime-sandbox.p2pquake.net/v2/ws");
+    data = [];
+    socket = null;
+    socketRetryCount = 0;
+    latestId = null;
+    lastId = null;
 
 
     typesToJp = {
@@ -99,11 +89,21 @@ export class P2pquake {
     }
 
 
+    constructor(debugLogs, notify, settings, sounds, addToList) {
+        this.debugLogs = debugLogs;
+        this.notify = notify;
+        this.settings = settings;
+        this.sounds = sounds;
+        this.addToList = addToList;
+
+        this.initial()
+        this.startSocket();
+    }
+
+
     List = class {
-        constructor() {
-            this.id = null;
-            this.type = null;
-        }
+        id = null;
+        type = null;
     }
 
 
@@ -253,7 +253,7 @@ export class P2pquake {
 
 
     startSocket() {
-        this.socket = new WebSocket(this.urlSocketStart);
+        this.socket = new WebSocket(this.urlSocket);
         this.socket.addEventListener("open", (event) => this.socketOpened(event));
         this.socket.addEventListener("close", (event) => this.socketClosed(event));
         this.socket.addEventListener("message", (event) => this.socketGotMessage(event));
@@ -268,6 +268,8 @@ export class P2pquake {
             "Successfully connected to api.p2pquake.net and WebSocket opened."
         );
 
+        this.keepAlive();
+
         if (this.socketRetryCount > 0) {
             this.notify.show(
                 "message",
@@ -281,196 +283,219 @@ export class P2pquake {
 
 
     socketClosed(event) {
+        this.socket = null;
+
         this.debugLogs.add(
             "NETWORK",
             `[NETWORK]`,
             "Successfully disconnected from api.p2pquake.net and WebSocket closed."
         );
 
-        clearTimeout(this.retryTimeout);
+        this.notify.show(
+            "error",
+            "WebSocket切断",
+            "P2P地震情報 (p2pquake.net) から切断されました。10秒後に再接続します。"
+        );
+        this.retryTimeout = setTimeout(
+            () => {
+                this.startSocket();
+                this.socketRetryCount++;
+            },
+            10 * 1000
+        );
+
+        // clearTimeout(this.retryTimeout);
     }
 
 
     socketGotMessage(message) {
         try {
+            let data = JSON.parse(message.data);
+
             this.debugLogs.add(
                 "NETWORK",
                 `[NETWORK]`,
-                "Got new message from Socket api.p2pquake.net."
+                `
+                    Got new message from Socket api.p2pquake.net.<br>
+                    Code: ${data["code"]}
+                `
             );
 
-            let data = JSON.parse(message.data);
             this.latestId = data["_id"];
 
-            console.log(data);
+            if (this.latestId !== null && this.latestId === this.lastId) { return }
 
-            if (
-                (data["code"] !== 551) ||
-                (data['issue']['type'] !== "DetailScale") ||
-
-                // IDに変化がない場合は処理を行わない
-                (this.latestId !== null && this.latestId === this.lastId)
-            ) {
-                return
-            }
-
-            if (data["issue"]["type"] in this.typesToJp) {
-                data["issue"]["typeJp"] = this.typesToJp[data["issue"]["type"]];
-            } else {
-                data["issue"]["typeJp"] = "";
-            }
-
-            let datetime = new Date(data["earthquake"]["time"]);
-
-            if (datetime.second === null) {
-                datetime = "----/--/-- --:--:--";
-            } else {
-                datetime =
-                    `${datetime.getFullYear()}/` +
-                    `${this.zeroPadding(datetime.getMonth() + 1)}/` +
-                    `${this.zeroPadding(datetime.getDate())} ` +
-                    `${this.zeroPadding(datetime.getHours())}:` +
-                    `${this.zeroPadding(datetime.getMinutes())}:` +
-                    `${this.zeroPadding(datetime.getSeconds())}`;
-            }
-
-            let maxInt = data['earthquake']['maxScale'];
-
-            switch (maxInt) {
-                case -1: maxInt = '-'; break;
-                case 10: maxInt = '1'; break;
-                case 20: maxInt = '2'; break;
-                case 30: maxInt = '3'; break;
-                case 40: maxInt = '4'; break;
-                case 45: maxInt = '5-'; break;
-                case 50: maxInt = '5+'; break;
-                case 55: maxInt = '6-'; break;
-                case 60: maxInt = '6+'; break;
-                case 70: maxInt = '7'; break;
+            switch (data["code"]) {
+                case 551:
+                    this.eqinfo(data);
+                    break;
 
                 default:
-                    maxInt = `?`;
-                    break;
+                    return;
             }
-
-            let hypocenter = data['earthquake']['hypocenter']['name'];
-
-            if (hypocenter == '') {
-                hypocenter = '不明または調査中';
-            }
-
-            let magnitude = data['earthquake']['hypocenter']['magnitude'];
-
-            if (magnitude == -1) {
-                magnitude = 'M -';
-            } else {
-                magnitude = `M ${magnitude}`;
-            }
-
-            let depth = data['earthquake']['hypocenter']['depth'];
-
-            if (depth == -1) {
-                depth = '-';
-            } else if (depth == 0) {
-                depth = 'ごく浅い';
-            } else {
-                depth = `約${depth}km`;
-            }
-
-            let tsunami = data['earthquake']['domesticTsunami'];
-
-            if (tsunami in this.tsunamiLevels) {
-                tsunami = this.tsunamiLevels[tsunami];
-            } else {
-                tsunami = "津波の影響は不明";
-            }
-
-            let bgcolor;
-            let color;
-
-            if (maxInt in this.colors) {
-                bgcolor = this.colors[maxInt]["bgcolor"];
-                color = this.colors[maxInt]["color"];
-            } else {
-                bgcolor = "#404040ff";
-                color = "#ffffffff";
-            }
-
-            this.data.push(data);
-            this.lastId = this.latestId;
-            let d = {
-                "isFirst": false,
-                "num": this.eqinfoNum,
-                "type": data["issue"]["typeJp"],
-                "maxInt": maxInt,
-                "hypocenter": hypocenter,
-                "datetime": datetime,
-                "magnitude": magnitude,
-                "depth": depth,
-                "tsunami": tsunami,
-                "bgcolor": bgcolor,
-                "color": color
-            }
-            this.addToList(d);
-            this.eqinfoNum++;
-
-            if (this.settings.sound.eqinfo == true) {
-                switch (maxInt) {
-                    case "1":
-                        this.sounds.eqinfo.play();
-                        this.sounds.eqinfoVoice1.play();
-                        break;
-
-                    case "2":
-                        this.sounds.eqinfo.play();
-                        this.sounds.eqinfoVoice2.play();
-                        break;
-
-                    case "3":
-                        this.sounds.eqinfo.play();
-                        this.sounds.eqinfoVoice3.play();
-                        break;
-
-                    case "4":
-                        this.sounds.eqinfo.play();
-                        this.sounds.eqinfoVoice4.play();
-                        break;
-
-                    case "5-":
-                        this.sounds.eqinfo.play();
-                        this.sounds.eqinfoVoice5.play();
-                        break;
-
-                    case "5+":
-                        this.sounds.eqinfo.play();
-                        this.sounds.eqinfoVoice6.play();
-                        break;
-
-                    case "6-":
-                        this.sounds.eqinfo.play();
-                        this.sounds.eqinfoVoice7.play();
-                        break;
-
-                    case "6+":
-                        this.sounds.eqinfo.play();
-                        this.sounds.eqinfoVoice8.play();
-                        break;
-
-                    case "7":
-                        this.sounds.eqinfo.play();
-                        this.sounds.eqinfoVoice9.play();
-                        break;
-
-                    default:
-                        this.sounds.eqinfo.play();
-                        break;
-                }
-            }
-
-            this.push(d);
         } catch (error) {
             console.error(error);
         }
+    }
+
+
+    eqinfo(data) {
+        if (data['issue']['type'] !== "DetailScale") { return }
+
+        if (data["issue"]["type"] in this.typesToJp) {
+            data["issue"]["typeJp"] = this.typesToJp[data["issue"]["type"]];
+        } else {
+            data["issue"]["typeJp"] = "";
+        }
+
+        let datetime = new Date(data["earthquake"]["time"]);
+
+        if (datetime.second === null) {
+            datetime = "----/--/-- --:--:--";
+        } else {
+            datetime =
+                `${datetime.getFullYear()}/` +
+                `${this.zeroPadding(datetime.getMonth() + 1)}/` +
+                `${this.zeroPadding(datetime.getDate())} ` +
+                `${this.zeroPadding(datetime.getHours())}:` +
+                `${this.zeroPadding(datetime.getMinutes())}:` +
+                `${this.zeroPadding(datetime.getSeconds())}`;
+        }
+
+        let maxInt = data['earthquake']['maxScale'];
+
+        switch (maxInt) {
+            case -1: maxInt = '-'; break;
+            case 10: maxInt = '1'; break;
+            case 20: maxInt = '2'; break;
+            case 30: maxInt = '3'; break;
+            case 40: maxInt = '4'; break;
+            case 45: maxInt = '5-'; break;
+            case 50: maxInt = '5+'; break;
+            case 55: maxInt = '6-'; break;
+            case 60: maxInt = '6+'; break;
+            case 70: maxInt = '7'; break;
+
+            default:
+                maxInt = `?`;
+                break;
+        }
+
+        let hypocenter = data['earthquake']['hypocenter']['name'];
+
+        if (hypocenter == '') {
+            hypocenter = '不明または調査中';
+        }
+
+        let magnitude = data['earthquake']['hypocenter']['magnitude'];
+
+        if (magnitude == -1) {
+            magnitude = 'M -';
+        } else {
+            magnitude = `M ${magnitude}`;
+        }
+
+        let depth = data['earthquake']['hypocenter']['depth'];
+
+        if (depth == -1) {
+            depth = '-';
+        } else if (depth == 0) {
+            depth = 'ごく浅い';
+        } else {
+            depth = `約${depth}km`;
+        }
+
+        let tsunami = data['earthquake']['domesticTsunami'];
+
+        if (tsunami in this.tsunamiLevels) {
+            tsunami = this.tsunamiLevels[tsunami];
+        } else {
+            tsunami = "津波の影響は不明";
+        }
+
+        let bgcolor;
+        let color;
+
+        if (maxInt in this.colors) {
+            bgcolor = this.colors[maxInt]["bgcolor"];
+            color = this.colors[maxInt]["color"];
+        } else {
+            bgcolor = "#404040ff";
+            color = "#ffffffff";
+        }
+
+        this.data.push(data);
+        this.lastId = this.latestId;
+        let d = {
+            "isFirst": false,
+            "num": this.eqinfoNum,
+            "type": data["issue"]["typeJp"],
+            "maxInt": maxInt,
+            "hypocenter": hypocenter,
+            "datetime": datetime,
+            "magnitude": magnitude,
+            "depth": depth,
+            "tsunami": tsunami,
+            "bgcolor": bgcolor,
+            "color": color
+        }
+        this.addToList(d);
+        this.eqinfoNum++;
+
+        if (this.settings.sound.eqinfo == true) {
+            switch (maxInt) {
+                case "1":
+                    this.sounds.eqinfo.play();
+                    this.sounds.eqinfoVoice1.play();
+                    break;
+
+                case "2":
+                    this.sounds.eqinfo.play();
+                    this.sounds.eqinfoVoice2.play();
+                    break;
+
+                case "3":
+                    this.sounds.eqinfo.play();
+                    this.sounds.eqinfoVoice3.play();
+                    break;
+
+                case "4":
+                    this.sounds.eqinfo.play();
+                    this.sounds.eqinfoVoice4.play();
+                    break;
+
+                case "5-":
+                    this.sounds.eqinfo.play();
+                    this.sounds.eqinfoVoice5.play();
+                    break;
+
+                case "5+":
+                    this.sounds.eqinfo.play();
+                    this.sounds.eqinfoVoice6.play();
+                    break;
+
+                case "6-":
+                    this.sounds.eqinfo.play();
+                    this.sounds.eqinfoVoice7.play();
+                    break;
+
+                case "6+":
+                    this.sounds.eqinfo.play();
+                    this.sounds.eqinfoVoice8.play();
+                    break;
+
+                case "7":
+                    this.sounds.eqinfo.play();
+                    this.sounds.eqinfoVoice9.play();
+                    break;
+
+                default:
+                    this.sounds.eqinfo.play();
+                    break;
+            }
+        }
+
+        this.push(d);
     }
 
 
@@ -478,7 +503,7 @@ export class P2pquake {
         this.debugLogs.add(
             "ERROR",
             `[NETWORK]`,
-            `Failed to connect to dmdata.jp.: ${event}`
+            `Failed to connect to api.p2pquake.net.<br>${event}`
         );
 
         if (this.socketRetryCount < 3) {
@@ -492,7 +517,7 @@ export class P2pquake {
                     this.startSocket();
                     this.socketRetryCount++;
                 },
-                15000
+                15 * 1000
             );
         } else {
             this.notify.show(
@@ -501,5 +526,22 @@ export class P2pquake {
                 "P2P地震情報 (p2pquake.net) に接続できませんでした。"
             );
         }
+
+        this.socket = null;
+    }
+
+
+    keepAlive() {
+        const KEEP_ALIVE_INTERVAL_ID = setInterval(
+            () => {
+                if (this.socket) {
+                    this.socket.send('ping');
+                } else {
+                    clearInterval(KEEP_ALIVE_INTERVAL_ID);
+                }
+            },
+            // Set the interval to 20 seconds to prevent the service worker from becoming inactive.
+            20 * 1000
+        );
     }
 }

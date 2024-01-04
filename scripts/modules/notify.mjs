@@ -10,34 +10,36 @@
  */
 
 export class Notify {
+    lastNotifyId = null;
+
+
     constructor() {
-        this.notifyEle = $("#notify");
-        this.lastNotifyId = null;
+        this.$notifyEle = $("#notify");
     }
 
 
     show(type, title, text) {
         let color = null;
-        let deleteAfter = null;
+        let hideAfter = null;
 
         switch (type) {
             case "message":
                 color = "#404040ff";
-                deleteAfter = 5000;
+                hideAfter = 5000;
                 break;
 
             case "error":
                 color = "#ff5050ff";
-                deleteAfter = 8000;
+                hideAfter = 8000;
                 break;
 
             default:
                 color = "#404040ff";
-                deleteAfter = 5000;
+                hideAfter = 5000;
                 break;
         }
 
-        this.notifyEle
+        this.$notifyEle
             .html(`
                 <h3>${title}</h3>
                 <p>${text}</p>
@@ -50,11 +52,11 @@ export class Notify {
         clearTimeout(this.lastNotifyId);
         this.lastNotifyId = setTimeout(() => {
             this.hide();
-        }, deleteAfter);
+        }, hideAfter);
     }
 
 
     hide() {
-        this.notifyEle.removeClass("active");
+        this.$notifyEle.removeClass("active");
     }
 }

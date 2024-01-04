@@ -9,12 +9,14 @@
  *
  */
 
-import { P2pquake } from "./p2pquake.mjs";
+import { P2pquake } from "../api/p2pquake.mjs";
 
 
 export class Eqinfo {
+    eqinfoNum = 0;
+
+
     constructor(debugLogs, notify, settings, sounds) {
-        this.eqinfoNum = 0;
         this.p2pquake = new P2pquake(debugLogs, notify, settings, sounds, this.addToList);
     }
 
@@ -39,8 +41,6 @@ export class Eqinfo {
 
 
     addToList(data) {
-        console.debug("Added");
-
         let html = `
             <li class="list list-${data["num"]}">
                 <div class="maxScale">

@@ -9,12 +9,14 @@
  *
  */
 
-const version = "3.11.0 ベータ版";
+const VERSION = "3.11.0 ベータ版";
 
-function initCommonElements() {
+
+document.addEventListener('DOMContentLoaded', () => {
     $("header").load("./elements/header.html");
     $("footer").load("./elements/footer.html");
-}
+});
+
 
 function win(type, winId, winTitle, content) {
     let color = null;
@@ -33,29 +35,24 @@ function win(type, winId, winTitle, content) {
             break;
     }
 
-    $('body')
-        .append(`
-            <dialog class="dialog" id=${winId}>
-                <div class="navBar">
-                    <p class="title">${winTitle}</p>
-                    <span class="close material-symbols-outlined">close</span>
-                </div>
-            
-                <div class="content">
-                    ${content}
-                </div>
-            </dialog>
-        `);
+    $('body').append(`
+        <dialog class="dialog" id=${winId}>
+            <div class="navBar">
+                <p class="title">${winTitle}</p>
+                <span class="close material-symbols-outlined">close</span>
+            </div>
+        
+            <div class="content">
+                ${content}
+            </div>
+        </dialog>
+    `);
 
     $(document).on('click', `#${winId}>.navBar>.close`, (event) => {
         $(`#${winId}`).remove()
-    })
+    });
 
     $(`#${winId}>.navBar`).css({
         "background-color": color
-    })
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    initCommonElements();
-});
+    });
+}

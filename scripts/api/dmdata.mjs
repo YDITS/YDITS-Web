@@ -10,9 +10,10 @@
  */
 
 export class Dmdata {
-    constructor() {
-        this.accessToken = null;
-    }
+    accessToken = null;
+
+
+    constructor() { }
 
 
     async init(settings) {

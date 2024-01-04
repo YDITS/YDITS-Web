@@ -1,12 +1,12 @@
 {
     "name": "YDITS for Web",
     "short_name": "YDITS-Web",
+    "description": "YDITS for Web は緊急地震速報や地震情報を確認できるWebアプリです。",
     "scope": "/",
     "start_url": "/index.html",
-    "background_color": "#ffffff",
     "display": "standalone",
+    "background_color": "#ffffff",
     "theme_color": "#e0c040",
-    "description": "YDITS for Web は緊急地震速報や地震情報を確認できるWebアプリです。",
     "icons": [
         {
             "src": "https://cdn.ydits.net/images/ydits_logos/ydits_icon_512px.png",
@@ -18,5 +18,10 @@
             "type": "image/png",
             "sizes": "192x192"
         }
-    ]
+    ],
+    "minimum_chrome_version": "116",
+    "background": {
+        "service_worker": "./sw.js",
+        "type": "module"
+    }
 }

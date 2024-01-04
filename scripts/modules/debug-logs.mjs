@@ -10,10 +10,12 @@
  */
 
 export class DebugLogs {
+    debugLogs = [];
+
+
     constructor(datetime) {
         this.datetime = datetime;
 
-        this.debugLogs = [];
         let debugLogsRaw = localStorage.getItem("debugLogs");
 
         if (debugLogsRaw === null) {
@@ -24,7 +26,6 @@ export class DebugLogs {
                 this.addDebugLogsHtml(log.time, log.type, log.title, log.text);
             });
         }
-
     }
 
 

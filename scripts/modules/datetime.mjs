@@ -10,15 +10,17 @@
  */
 
 export class Datetime {
-    constructor() {
-        this.gmt = null;
-        this.year = null;
-        this.month = null;
-        this.day = null;
-        this.hour = null;
-        this.minute = null;
-        this.second = null;
-    }
+    gmt = null;
+    year = null;
+    month = null;
+    day = null;
+    hour = null;
+    minute = null;
+    second = null;
+
+
+    constructor() { }
+
 
     async update() {
         await axios.head(window.location.href, { headers: { 'Cache-Control': 'no-cache' } })
