@@ -260,8 +260,10 @@ function clock() {
 
 // ---------- eew ---------- //
 function kmoni() {
+    if (!navigator.onLine) { return }
+
     let kmoniDatetime = makeKmoniDatetime();
-    if (kmoniDatetime === null) { return null }
+    if (kmoniDatetime === null) { return }
 
     let url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${kmoniDatetime}.json`;
 

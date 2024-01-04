@@ -253,6 +253,7 @@ export class P2pquake {
 
 
     startSocket() {
+        if (!navigator.onLine) { return }
         this.socket = new WebSocket(this.urlSocket);
         this.socket.addEventListener("open", (event) => this.socketOpened(event));
         this.socket.addEventListener("close", (event) => this.socketClosed(event));
@@ -291,18 +292,20 @@ export class P2pquake {
             "Successfully disconnected from api.p2pquake.net and WebSocket closed."
         );
 
-        this.notify.show(
-            "error",
-            "WebSocket切断",
-            "P2P地震情報 (p2pquake.net) から切断されました。10秒後に再接続します。"
-        );
-        this.retryTimeout = setTimeout(
-            () => {
-                this.startSocket();
-                this.socketRetryCount++;
-            },
-            10 * 1000
-        );
+        if (navigator.onLine) {
+            this.notify.show(
+                "error",
+                "WebSocket切断",
+                "P2P地震情報 (p2pquake.net) から切断されました。10秒後に再接続します。"
+            );
+            this.retryTimeout = setTimeout(
+                () => {
+                    this.startSocket();
+                    this.socketRetryCount++;
+                },
+                10 * 1000
+            );
+        }
 
         // clearTimeout(this.retryTimeout);
     }

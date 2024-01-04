@@ -36,17 +36,17 @@ function win(type, winId, winTitle, content) {
     }
 
     $('body').append(`
-        <dialog class="dialog" id=${winId}>
-            <div class="navBar">
-                <p class="title">${winTitle}</p>
-                <span class="close material-symbols-outlined">close</span>
-            </div>
-        
-            <div class="content">
-                ${content}
-            </div>
-        </dialog>
-    `);
+            <dialog class="dialog" id=${winId}>
+                <div class="navBar">
+                    <p class="title">${winTitle}</p>
+                    <span class="close material-symbols-outlined">close</span>
+                </div>
+            
+                <div class="content">
+                    ${content}
+                </div>
+            </dialog>
+        `);
 
     $(document).on('click', `#${winId}>.navBar>.close`, (event) => {
         $(`#${winId}`).remove()
