@@ -16,6 +16,8 @@ import { Datetime } from "./modules/datetime.mjs";
 import { Sounds } from "./modules/sounds.mjs";
 import { Settings } from "./modules/settings.mjs";
 import { PushNotify } from "./modules/push-notify.mjs";
+import { P2pquake } from "./api/p2pquake.mjs";
+import { Eew } from "./eew/eew.mjs";
 import { Eqinfo } from "./eqinfo/eqinfo.mjs";
 import { Dmdata } from "./api/dmdata.mjs";
 import { JmaDataFeed } from "./jma/jma-data-feed.mjs";
@@ -31,6 +33,8 @@ let datetime = null;
 let sounds = null;
 let serviceWorker = null;
 let settings = null;
+let p2pquake = null;
+let eew = null;
 let eqinfo = null;
 let dmdata = null;
 let push = null;
@@ -136,8 +140,11 @@ async function init() {
             try { push = new PushNotify() } catch { }
             dmdata = new Dmdata();
             settings = new Settings(debugLogs, notify, sounds, dmdata);
-            eqinfo = new Eqinfo(debugLogs, notify, settings, sounds);
-            eqinfo.init(settings);
+            eew = new Eew();
+            eqinfo = new Eqinfo();
+            p2pquake = new P2pquake(debugLogs, notify, settings, sounds, eew, eqinfo);
+            eew.init(settings);
+            eqinfo.init(settings, p2pquake);
             dmdata.init(settings);
 
             initMenu();
@@ -265,7 +272,7 @@ function kmoni() {
     let kmoniDatetime = makeKmoniDatetime();
     if (kmoniDatetime === null) { return }
 
-    let url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${kmoniDatetime}.json`;
+    const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${kmoniDatetime}.json`;
 
     // --- debug
     // const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
@@ -758,20 +765,32 @@ function bodyToDocument(data) {
 function eew_push() {
     if (eew_isCancel === "true") {
         Push.create(`緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`, {
-            body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。\n`,
+            body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。`,
             onClick: function () {
                 window.focus();
                 this.close();
             }
-        })
+        });
+
+        notify.show(
+            "message",
+            `緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`,
+            `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。`
+        );
     } else {
         Push.create(`緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`, {
-            body: `${eew_hypocenter}で地震発生。予想最大震度は${eew_intensity}です。\nページ表示するにはここを選択してください。\n`,
+            body: `${eew_Region_name}で地震発生。予想最大震度は${eew_calcintensity}です。\nページ表示するにはここを選択してください。`,
             onClick: function () {
                 window.focus();
                 this.close();
             }
-        })
+        });
+
+        notify.show(
+            "message",
+            `緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`,
+            `${eew_Region_name}で地震発生。予想最大震度は${eew_calcintensity}です。`
+        );
     }
 }
 

@@ -9,20 +9,16 @@
  *
  */
 
-import { P2pquake } from "../api/p2pquake.mjs";
-
-
 export class Eqinfo {
     eqinfoNum = 0;
 
 
-    constructor(debugLogs, notify, settings, sounds) {
-        this.p2pquake = new P2pquake(debugLogs, notify, settings, sounds, this.addToList);
-    }
+    constructor() { }
 
 
-    init(settings) {
+    init(settings, p2pquake) {
         this.settings = settings;
+        this.p2pquake = p2pquake;
         switch (this.settings.connect.eqinfo) {
             case "p2pquake":
                 break;

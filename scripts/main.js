@@ -35,7 +35,8 @@ function win(type, winId, winTitle, content) {
             break;
     }
 
-    $('body').append(`
+    $('body')
+        .append(`
             <dialog class="dialog" id=${winId}>
                 <div class="navBar">
                     <p class="title">${winTitle}</p>

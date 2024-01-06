@@ -11,16 +11,19 @@
 
 export class Notify {
     lastNotifyId = null;
+    lastEewNotifyId = null;
 
 
     constructor() {
-        this.$notifyEle = $("#notify");
+        this.$notify = $("#notify");
+        this.$eewNotify = $("#eewNotify");
     }
 
 
     show(type, title, text) {
         let color = null;
         let hideAfter = null;
+        let eewHideAfter = null;
 
         switch (type) {
             case "message":
@@ -33,30 +36,50 @@ export class Notify {
                 hideAfter = 5000;
                 break;
 
+            case "eew":
+                color = "#f04040ff";
+                eewHideAfter = 90 * 1000;
+                break;
+
             default:
                 color = "#404040ff";
                 hideAfter = 5000;
                 break;
         }
 
-        this.$notifyEle
-            .html(`
-                <h3>${title}</h3>
-                <p>${text}</p>
-            `)
-            .css({
-                "background-color": color
-            })
-            .addClass("active");
-
-        clearTimeout(this.lastNotifyId);
-        this.lastNotifyId = setTimeout(() => {
-            this.hide();
-        }, hideAfter);
+        if (type === "eew") {
+            this.$eewNotify
+                .html(`
+                    <h3>${title}</h3>
+                    <p>${text}</p>
+                `)
+                .css({
+                    "background-color": color
+                })
+                .addClass("active");
+            clearTimeout(this.lastEewNotifyId);
+            this.lastEewNotifyId = setTimeout(() => {
+                this.hide(this.$eewNotify);
+            }, eewHideAfter);
+        } else {
+            this.$notify
+                .html(`
+                    <h3>${title}</h3>
+                    <p>${text}</p>
+                `)
+                .css({
+                    "background-color": color
+                })
+                .addClass("active");
+            clearTimeout(this.lastNotifyId);
+            this.lastNotifyId = setTimeout(() => {
+                this.hide(this.$notify);
+            }, hideAfter);
+        }
     }
 
 
-    hide() {
-        this.$notifyEle.removeClass("active");
+    hide(element) {
+        element.removeClass("active");
     }
 }

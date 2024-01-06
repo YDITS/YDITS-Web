@@ -89,12 +89,13 @@ export class P2pquake {
     }
 
 
-    constructor(debugLogs, notify, settings, sounds, addToList) {
+    constructor(debugLogs, notify, settings, sounds, eew, eqinfo) {
         this.debugLogs = debugLogs;
         this.notify = notify;
         this.settings = settings;
         this.sounds = sounds;
-        this.addToList = addToList;
+        this.eew = eew;
+        this.eqinfo = eqinfo;
 
         this.initial()
         this.startSocket();
@@ -115,15 +116,57 @@ export class P2pquake {
 
 
     push(data) {
-        Push.create(
-            data["type"],
-            {
-                body: `${data["hypocenter"]}を震源とする、最大震度${data["maxInt"]}の地震がありました。\n規模は${data["magnitude"]}、深さは${data["depth"]}と推定されます。\n${data["tsunami"]}\nページ表示するにはここを選択してください。\n`,
-                onClick: function () {
-                    window.focus();
-                    this.close();
-                }
-            })
+        switch (data["code"]) {
+            case 551:
+                Push.create(
+                    data["type"],
+                    {
+                        body: `${data["hypocenter"]}を震源とする、最大震度${data["maxInt"]}の地震がありました。\n規模は${data["magnitude"]}、深さは${data["depth"]}と推定されます。\n${data["tsunami"]}\nページ表示するにはここを選択してください。`,
+                        onClick: function () {
+                            window.focus();
+                            this.close();
+                        }
+                    }
+                );
+
+                this.notify.show(
+                    "message",
+                    data["type"],
+                    `
+                        ${data["hypocenter"]}を震源とする、最大震度${data["maxInt"]}の地震がありました。<br>
+                        規模は${data["magnitude"]}、深さは${data["depth"]}と推定されます。<br>
+                        ${data["tsunami"]}
+                    `
+                );
+                break;
+
+            case 556:
+                try {
+                    Push.create(
+                        `緊急地震速報 (警報)`,
+                        {
+                            body: `《次の地域では強い揺れに備えてください。》\n${data["areas"]}`,
+                            onClick: function () {
+                                window.focus();
+                                this.close();
+                            }
+                        }
+                    );
+                } catch (error) { console.error(error); }
+
+                this.notify.show(
+                    "eew",
+                    `緊急地震速報 (警報)`,
+                    `
+                        《次の地域では強い揺れに備えてください。》<br>
+                        ${data["areas"]}
+                    `
+                );
+                break;
+
+            default:
+                return;
+        }
     }
 
 
@@ -220,6 +263,7 @@ export class P2pquake {
 
                         this.data.push(list);
                         let d = {
+                            "code": data["code"],
                             "isFirst": true,
                             "num": this.eqinfoNum,
                             "type": list["issue"]["typeJp"],
@@ -232,7 +276,7 @@ export class P2pquake {
                             "bgcolor": bgcolor,
                             "color": color
                         }
-                        this.addToList(d)
+                        this.eqinfo.addToList(d)
                         this.eqinfoNum++;
                     }
                 });
@@ -328,9 +372,16 @@ export class P2pquake {
 
             if (this.latestId !== null && this.latestId === this.lastId) { return }
 
+            // DEBUG
+            // data["code"] = 556;
+
             switch (data["code"]) {
                 case 551:
-                    this.eqinfo(data);
+                    this.whenEqinfo(data);
+                    break;
+
+                case 556:
+                    this.whenEew(data);
                     break;
 
                 default:
@@ -342,7 +393,195 @@ export class P2pquake {
     }
 
 
-    eqinfo(data) {
+    whenEew(data) {
+        if (data["test"]) { return }
+
+        // DEBUG
+        /*
+        data = {
+            "areas": [
+                {
+                    "arrivalTime": null,
+                    "kindCode": "11",
+                    "name": "石川県能登",
+                    "pref": "石川",
+                    "scaleFrom": 55,
+                    "scaleTo": 70
+                },
+                {
+                    "arrivalTime": "2024/01/01 16:10:43",
+                    "kindCode": "19",
+                    "name": "富山県西部",
+                    "pref": "富山",
+                    "scaleFrom": 45,
+                    "scaleTo": 45
+                },
+                {
+                    "arrivalTime": null,
+                    "kindCode": "11",
+                    "name": "新潟県上越",
+                    "pref": "新潟",
+                    "scaleFrom": 40,
+                    "scaleTo": 40
+                },
+                {
+                    "arrivalTime": null,
+                    "kindCode": "11",
+                    "name": "富山県東部",
+                    "pref": "富山",
+                    "scaleFrom": 40,
+                    "scaleTo": 40
+                },
+                {
+                    "arrivalTime": null,
+                    "kindCode": "11",
+                    "name": "石川県加賀",
+                    "pref": "石川",
+                    "scaleFrom": 40,
+                    "scaleTo": 40
+                },
+                {
+                    "arrivalTime": null,
+                    "kindCode": "11",
+                    "name": "新潟県佐渡",
+                    "pref": "新潟",
+                    "scaleFrom": 40,
+                    "scaleTo": 40
+                },
+                {
+                    "arrivalTime": null,
+                    "kindCode": "11",
+                    "name": "長野県北部",
+                    "pref": "長野",
+                    "scaleFrom": 40,
+                    "scaleTo": 40
+                },
+                {
+                    "arrivalTime": "2024/01/01 16:10:44",
+                    "kindCode": "10",
+                    "name": "新潟県中越",
+                    "pref": "新潟",
+                    "scaleFrom": 40,
+                    "scaleTo": 40
+                },
+                {
+                    "arrivalTime": "2024/01/01 16:10:46",
+                    "kindCode": "10",
+                    "name": "岐阜県飛騨",
+                    "pref": "岐阜",
+                    "scaleFrom": 40,
+                    "scaleTo": 40
+                },
+                {
+                    "arrivalTime": "2024/01/01 16:11:01",
+                    "kindCode": "10",
+                    "name": "群馬県南部",
+                    "pref": "群馬",
+                    "scaleFrom": 30,
+                    "scaleTo": 40
+                }
+            ],
+            "cancelled": false,
+            "code": 556,
+            "earthquake": {
+                "arrivalTime": "2024/01/01 16:10:10",
+                "condition": "",
+                "hypocenter": {
+                    "depth": 10,
+                    "latitude": 37.5,
+                    "longitude": 137.2,
+                    "magnitude": 6.6,
+                    "name": "石川県能登地方",
+                    "reduceName": "石川県"
+                },
+                "originTime": "2024/01/01 16:10:08"
+            },
+            "id": "65926573d616be440743c88e",
+            "issue": {
+                "eventId": "20240101161010",
+                "serial": "2",
+                "time": "2024/01/01 16:10:43"
+            },
+            "time": "2024/01/01 16:10:43.245",
+            "timestamp": {
+                "convert": "2024/01/01 16:10:43.242",
+                "register": "2024/01/01 16:10:43.245"
+            },
+            "user_agent": "jmaxml-seis-parser-go, relay, register-api",
+            "ver": "20231023"
+        }
+        */
+
+        let datetime = new Date(data["earthquake"]["time"]);
+
+        if (datetime.second === null) {
+            datetime = "----/--/-- --:--";
+        } else {
+            datetime =
+                `${datetime.getFullYear()}/` +
+                `${this.zeroPadding(datetime.getMonth() + 1)}/` +
+                `${this.zeroPadding(datetime.getDate())} ` +
+                `${this.zeroPadding(datetime.getHours())}:` +
+                `${this.zeroPadding(datetime.getMinutes())}`
+        }
+
+        let hypocenter = data['earthquake']['hypocenter']['name'];
+
+        if (hypocenter == '') {
+            hypocenter = '不明または調査中';
+        }
+
+        let magnitude = data['earthquake']['hypocenter']['magnitude'];
+
+        if (magnitude == -1) {
+            magnitude = 'M -';
+        } else {
+            magnitude = `M ${magnitude}`;
+        }
+
+        let depth = data['earthquake']['hypocenter']['depth'];
+
+        if (depth == -1) {
+            depth = '-';
+        } else if (depth == 0) {
+            depth = 'ごく浅い';
+        } else {
+            depth = `約${depth}km`;
+        }
+
+        let areas = [];
+        let areasText = "";
+
+        data["areas"].forEach(area => {
+            if (areas.includes(area["pref"])) { return }
+            areas.push(area["pref"]);
+        });
+
+        areas.forEach(area => {
+            areasText += `${area}　`;
+        });
+
+        let d = {
+            "code": data["code"],
+            "num": this.eqinfoNum,
+            // "maxInt": maxInt,
+            "hypocenter": hypocenter,
+            "datetime": datetime,
+            "magnitude": magnitude,
+            "depth": depth,
+            "areas": areasText
+        }
+
+        if (this.settings.sound.eewAny == true) {
+            this.sounds.eew.play();
+        }
+
+        this.eew.displayWarn(d);
+        this.push(d);
+    }
+
+
+    whenEqinfo(data) {
         if (data['issue']['type'] !== "DetailScale") { return }
 
         if (data["issue"]["type"] in this.typesToJp) {
@@ -354,15 +593,14 @@ export class P2pquake {
         let datetime = new Date(data["earthquake"]["time"]);
 
         if (datetime.second === null) {
-            datetime = "----/--/-- --:--:--";
+            datetime = "----/--/-- --:--";
         } else {
             datetime =
                 `${datetime.getFullYear()}/` +
                 `${this.zeroPadding(datetime.getMonth() + 1)}/` +
                 `${this.zeroPadding(datetime.getDate())} ` +
                 `${this.zeroPadding(datetime.getHours())}:` +
-                `${this.zeroPadding(datetime.getMinutes())}:` +
-                `${this.zeroPadding(datetime.getSeconds())}`;
+                `${this.zeroPadding(datetime.getMinutes())}`
         }
 
         let maxInt = data['earthquake']['maxScale'];
@@ -430,6 +668,7 @@ export class P2pquake {
         this.data.push(data);
         this.lastId = this.latestId;
         let d = {
+            "code": data["code"],
             "isFirst": false,
             "num": this.eqinfoNum,
             "type": data["issue"]["typeJp"],
@@ -442,7 +681,7 @@ export class P2pquake {
             "bgcolor": bgcolor,
             "color": color
         }
-        this.addToList(d);
+        this.eqinfo.addToList(d);
         this.eqinfoNum++;
 
         if (this.settings.sound.eqinfo == true) {
