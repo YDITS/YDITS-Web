@@ -340,14 +340,14 @@ export class P2pquake {
             this.notify.show(
                 "error",
                 "WebSocket切断",
-                "P2P地震情報 (p2pquake.net) から切断されました。10秒後に再接続します。"
+                "P2P地震情報 (p2pquake.net) から切断されました。再接続を試行します。"
             );
             this.retryTimeout = setTimeout(
                 () => {
                     this.startSocket();
                     this.socketRetryCount++;
                 },
-                10 * 1000
+                3 * 1000
             );
         }
 
