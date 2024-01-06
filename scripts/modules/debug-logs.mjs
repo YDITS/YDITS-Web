@@ -50,7 +50,7 @@ export class DebugLogs {
 
         switch (type) {
             case "INFO":
-                color = "#ffffffff";
+                color = "#6060ffff";
                 break;
 
             case "START":
