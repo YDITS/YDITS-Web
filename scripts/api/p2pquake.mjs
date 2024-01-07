@@ -184,7 +184,7 @@ export class P2pquake {
                 let issueTime = new Date(data.issue.time).getTime();
 
                 // EEW発表から3分以下の場合は警報処理をする
-                // if ((dateNow - issueTime / (1000)) >= 180) { return }
+                if ((dateNow - issueTime / (1000)) >= 180) { return }
 
                 let datetime = new Date(data["earthquake"]["time"]);
 
