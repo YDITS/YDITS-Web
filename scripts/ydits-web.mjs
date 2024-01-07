@@ -17,11 +17,12 @@ import { Sounds } from "./modules/sounds.mjs";
 import { Settings } from "./modules/settings.mjs";
 import { PushNotify } from "./modules/push-notify.mjs";
 import { P2pquake } from "./api/p2pquake.mjs";
+import { YahooKmoni } from "./api/yahoo-kmoni.mjs";
 import { Eew } from "./eew/eew.mjs";
 import { Eqinfo } from "./eqinfo/eqinfo.mjs";
 import { Dmdata } from "./api/dmdata.mjs";
 import { JmaDataFeed } from "./jma/jma-data-feed.mjs";
-import { MapItem } from "./map/map-item.mjs"
+import { Map } from "./map/map.mjs";
 
 
 const jmaDataFeedGetInterval = (1000 * 60) // 1min
@@ -33,6 +34,7 @@ let datetime = null;
 let sounds = null;
 let serviceWorker = null;
 let settings = null;
+let yahooKmoni = null;
 let p2pquake = null;
 let eew = null;
 let eqinfo = null;
@@ -40,7 +42,6 @@ let dmdata = null;
 let push = null;
 let jmaDataFeed = null;
 let kmoniLastStatus = true;
-let eqinfoLastStatus = false;
 let dateNow;
 let eewGetCnt = -1;
 let ntpGetCnt = -1;
@@ -110,7 +111,7 @@ function mainloop() {
     }
 
     if (dateNow - eewGetCnt >= 1000) {
-        kmoni();
+        yahooKmoni.get();
         eewGetCnt = dateNow;
     }
 
@@ -119,7 +120,7 @@ function mainloop() {
         jmaDataFeedGetCnt = dateNow;
     }
 
-    mapMain();
+    map.update(eew, dateNow);
 
     requestAnimationFrame(mainloop);
 }
@@ -142,15 +143,16 @@ async function init() {
             settings = new Settings(debugLogs, notify, sounds, dmdata);
             eew = new Eew();
             eqinfo = new Eqinfo();
-            p2pquake = new P2pquake(debugLogs, notify, settings, sounds, eew, eqinfo);
-            eew.init(settings);
-            eqinfo.init(settings, p2pquake);
-            dmdata.init(settings);
+            yahooKmoni = new YahooKmoni(debugLogs, notify, datetime, settings, sounds, eew, dmdata);
+            p2pquake = new P2pquake(debugLogs, notify, datetime, settings, sounds, eew, eqinfo);
+            eew.initialize(settings);
+            eqinfo.initialize(settings, p2pquake);
+            dmdata.initialize(settings);
 
             initMenu();
             jmaDataFeed = new JmaDataFeed();
             initLicense();
-            initMap();
+            map = new Map(settings);
 
             window.addEventListener("online", () => {
                 isOnline = true;
@@ -262,361 +264,6 @@ function clock() {
     }
 
     $("#clock").text(clock);
-}
-
-
-// ---------- eew ---------- //
-function kmoni() {
-    if (!navigator.onLine) { return }
-
-    let kmoniDatetime = makeKmoniDatetime();
-    if (kmoniDatetime === null) { return }
-
-    const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${kmoniDatetime}.json`;
-
-    // --- debug
-    // const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
-    // const url = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
-    // const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
-    // const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20200212/202002121937${zeroPadding(datetime.second)}.json`;  //2020-2-12-19:36 double eew
-    // const url = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20240101/202401011610${zeroPadding(datetime.second)}.json`;  //2024-1-1-16:10 Ishikawa
-    // const url = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
-    // ---
-
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                errorKmoni(`Status Code: HTTP ${response.status}`);
-                return null
-            }
-
-            return response.json()
-        })
-        .then(data => {
-            if (data === null) { return }
-
-            eew_data = data;
-
-            if (settings.connect.eew === 'yahoo-kmoni' || dmdata_access_token === null) {
-                if (eew_data["hypoInfo"] != null) {
-                    eew_repNum = eew_data["hypoInfo"]["items"][0]["reportNum"];
-
-                    if (eew_repNum != eew_repNum_last) {
-                        eew_repNum_last = eew_repNum;
-
-                        eew_isFinal = eew_data["hypoInfo"]["items"][0]["isFinal"];
-
-                        if (eew_isFinal == 'true') {
-                            eew_repNum_p = '最終報';
-                        } else {
-                            eew_repNum_p = `第${eew_repNum}報`
-                        }
-
-                        eew_origin_time = eew_data["hypoInfo"]["items"][0]["originTime"];
-                        eew_timeYear = eew_origin_time.substring(0, 4);
-                        eew_timeMonth = eew_origin_time.substring(5, 7);
-                        eew_timeDay = eew_origin_time.substring(8, 10);
-                        eew_timeHour = eew_origin_time.substring(11, 13);
-                        eew_timeMinute = eew_origin_time.substring(14, 16);
-                        eew_timeSecond = eew_origin_time.substring(17, 19);
-
-                        eewReportId = eew_data["hypoInfo"]["items"][0]["reportId"];
-
-                        eew_Region_name = eew_data["hypoInfo"]["items"][0]["regionName"];
-
-                        if (!eew_Region_name) {
-                            eew_Region_name = '不明';
-                        }
-
-                        eew_calcintensity_last = eew_calcintensity;
-
-                        eew_calcintensity = eew_data["hypoInfo"]["items"][0]["calcintensity"];
-
-                        switch (eew_calcintensity) {
-                            case '01': eew_calcintensity = "1"; break;
-                            case '02': eew_calcintensity = "2"; break;
-                            case '03': eew_calcintensity = "3"; break;
-                            case '04': eew_calcintensity = "4"; break;
-                            case '5-': eew_calcintensity = "5-"; break;
-                            case '5+': eew_calcintensity = "5+"; break;
-                            case '6-': eew_calcintensity = "6-"; break;
-                            case '6+': eew_calcintensity = "6+"; break;
-                            case '07': eew_calcintensity = "7"; break;
-
-                            default:
-                                eew_calcintensity = `?`;
-                                break;
-                        }
-
-                        eew_Magnitude = eew_data["hypoInfo"]["items"][0]["magnitude"];
-
-                        if (eew_Magnitude) {
-                            eew_Magnitude = 'M' + eew_Magnitude;
-                        } else {
-                            eew_Magnitude = '不明';
-                        }
-
-                        eew_depth = eew_data["hypoInfo"]["items"][0]["depth"];
-
-                        if (eew_depth) {
-                            eew_depth = '約' + eew_depth;
-                        } else {
-                            eew_depth = '不明';
-                        }
-
-                        /*
-                        // Yahoo 強震モニタのJSONデータに 予報・警報 のフラッグがないため 未実装
-                        
-                        eew_alertFlg = eew_data['alertflg'];
-
-                        switch (eew_alertFlg) {
-                            case 'true':
-                                eew_alertFlg = "警報"
-                                break;
-
-                            case 'false':
-                                eew_alertFlg = "予報"
-                                break;
-
-                            case null:
-                                eew_alertFlg = "{Null}"
-                                break;
-
-                            default:
-                                eew_alertFlg = "{Unknown}"
-                                break;
-                        }
-                        */
-
-                        eew_alertFlg = '';
-
-                        eew_isCancel = eew_data["hypoInfo"]["items"][0]['isCancel'];
-
-                        if (eew_isCancel == 'true') {
-                            eew_alertFlg = '取消報';
-                        }
-
-                        if (eew_isCancel == 'true') {
-                            if (settings.sound.eewCancel == true) {
-                                sounds.eewVoiceCancel.play();
-                            }
-                        } else {
-                            if (settings.sound.eewAny == true && eew_calcintensity_last != eew_calcintensity) {
-                                switch (eew_calcintensity) {
-                                    case '1':
-                                        sounds.eewVoice1.play();
-                                        break;
-
-                                    case '2':
-                                        sounds.eewVoice2.play();
-                                        break;
-
-                                    case '3':
-                                        sounds.eewVoice3.play();
-                                        break;
-
-                                    case '4':
-                                        sounds.eewVoice4.play();
-                                        break;
-
-                                    case '5-':
-                                        sounds.eew.play();
-                                        sounds.eewVoice5.play();
-                                        break;
-
-                                    case '5+':
-                                        sounds.eew.play();
-                                        sounds.eewVoice6.play();
-                                        break;
-
-                                    case '6-':
-                                        sounds.eew.play();
-                                        sounds.eewVoice7.play();
-                                        break;
-
-                                    case '6+':
-                                        sounds.eew.play();
-                                        sounds.eewVoice8.play();
-                                        break;
-
-                                    case '7':
-                                        sounds.eew.play();
-                                        sounds.eewVoice9.play();
-                                        break;
-
-                                    default:
-                                        sounds.eew.play();
-                                        break;
-                                }
-                            }
-                        }
-
-                        eew_push()
-
-                        // ----- put ----- //
-                        let eew_bgc;
-                        let eew_fntc;
-
-                        switch (eew_calcintensity) {
-                            case '1':
-                                eew_bgc = "#808080";
-                                eew_fntc = "#ffffff";
-                                break;
-                            case '2':
-                                eew_bgc = "#4040c0";
-                                eew_fntc = "#ffffff";
-                                break;
-                            case '3':
-                                eew_bgc = "#40c040";
-                                eew_fntc = "#ffffff";
-                                break;
-                            case '4':
-                                eew_bgc = "#c0c040";
-                                eew_fntc = "#ffffff";
-                                break;
-                            case '5-':
-                                eew_bgc = "#c0a040";
-                                eew_fntc = "#ffffff";
-                                break;
-                            case '5+':
-                                eew_bgc = "#c08040";
-                                eew_fntc = "#ffffff";
-                                break;
-                            case '6-':
-                                eew_bgc = "#c04040";
-                                eew_fntc = "#ffffff";
-                                break;
-                            case '6+':
-                                eew_bgc = "#a04040";
-                                eew_fntc = "#ffffff";
-                                break;
-                            case '7':
-                                eew_bgc = "#804080";
-                                eew_fntc = "#ffffff";
-                                break;
-
-                            default:
-                                eew_bgc = "#8080c0";
-                                eew_fntc = "#ffffff";
-                                break;
-                        }
-
-                        if (eew_isCancel == 'true') {
-                            eew_bgc = "#7f7fc0";
-                            eew_fntc = "#010101";
-                        }
-
-                        $('#eewTitle').text(`緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`);
-                        $('#eewCalc').text(eew_calcintensity);
-                        $('#eewRegion').text(eew_Region_name);
-                        $('#eewOrigin_time').text(`発生日時: ${eew_timeYear}/${eew_timeMonth}/${eew_timeDay} ${eew_timeHour}:${eew_timeMinute}:${eew_timeSecond}`);
-                        $('#eewMagnitude').text(`規模 ${eew_Magnitude}`);
-                        $('#eewDepth').text(`深さ ${eew_depth}`);
-
-                        $('#eewField').css({
-                            'background-color': eew_bgc,
-                            'color': eew_fntc
-                        })
-                        $(`#eewCalc`).css({
-                            'background-color': 'initial',
-                            'color': 'initial'
-                        })
-                    }
-                } else {
-                    eew_repNum = '';
-                    eew_repNum_last = '';
-                    eew_alertFlg = '';
-                    eew_timeYear = '';
-                    eew_timeMonth = '';
-                    eew_timeDay = '';
-                    eew_timeHour = '';
-                    eew_timeMinute = '';
-                    eew_calcintensity = '';
-                    eew_Region_name = '';
-                    eew_Magnitude = '';
-                    eew_depth = '';
-                    eew_bgc = "#404040";
-                    eew_fntc = "#ffffff";
-
-                    $('#eewTitle').text(`緊急地震速報は発表されていません`);
-                    $('#eewCalc').text("");
-                    $('#eewRegion').text("");
-                    $('#eewOrigin_time').text("");
-                    $('#eewMagnitude').text("");
-                    $('#eewDepth').text("");
-
-                    $('#eewField').css({
-                        'background-color': eew_bgc,
-                        'color': eew_fntc
-                    })
-                    $(`#eewCalc`).css({
-                        'background-color': 'initial',
-                        'color': 'initial'
-                    })
-                }
-
-                $('#statusLamp').css({ 'background-color': '#40ff40' });
-
-                if (!kmoniLastStatus) {
-                    kmoniLastStatus = true;
-                }
-            }
-        })
-        .catch(error => {
-            errorKmoni(error);
-        });
-};
-
-
-function errorKmoni(error) {
-    if (
-        (settings.connect.eew === 'yahoo-kmoni') ||
-        (dmdata.accessToken === null)
-    ) {
-        $('#statusLamp').css({ 'background-color': '#ff4040' });
-
-        if (kmoniLastStatus) {
-            debugLogs.add(
-                "ERROR",
-                "[NETWORK]",
-                `Failed to connect to weather-kyoshin.east.edge.storage-yahoo.jp.<br>${error}`
-            );
-
-            notify.show(
-                "error",
-                "エラー",
-                `
-                    Yahoo! 強震モニタ (storage-yahoo.jp) に接続できません。<br>
-                    強震モニタが一時的に利用できないか、ネットワークが低速な可能性があります。<br>
-                    <code>${error}</code>
-                `
-            );
-        }
-
-        kmoniLastStatus = false;
-    }
-}
-
-
-function makeKmoniDatetime() {
-    if (datetime.gmt === null) { return null }
-
-    let kmoniDatetime = datetime.gmt;
-
-    kmoniDatetime.setSeconds(datetime.second - 2);
-    kmoniDatetime =
-        `${kmoniDatetime.getFullYear()}` +
-        `${zeroPadding(kmoniDatetime.getMonth() + 1)}` +
-        `${zeroPadding(kmoniDatetime.getDate())}` +
-        `/` +
-        `${kmoniDatetime.getFullYear()}` +
-        `${zeroPadding(kmoniDatetime.getMonth() + 1)}` +
-        `${zeroPadding(kmoniDatetime.getDate())}` +
-        `${zeroPadding(kmoniDatetime.getHours())}` +
-        `${zeroPadding(kmoniDatetime.getMinutes())}` +
-        `${zeroPadding(kmoniDatetime.getSeconds())}`;
-
-    return kmoniDatetime;
 }
 
 
@@ -758,140 +405,4 @@ function dmdataEew(data) {
 function bodyToDocument(data) {
     const buffer = new Uint8Array(atob(data).split('').map(c => c.charCodeAt(0)));
     return new DOMParser().parseFromString(new TextDecoder().decode(new Zlib.Gunzip(buffer).decompress()), 'application/xml');
-}
-
-
-// ---------- eew push ---------- //
-function eew_push() {
-    if (eew_isCancel === "true") {
-        Push.create(`緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`, {
-            body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。`,
-            onClick: function () {
-                window.focus();
-                this.close();
-            }
-        });
-
-        notify.show(
-            "message",
-            `緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`,
-            `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。`
-        );
-    } else {
-        Push.create(`緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`, {
-            body: `${eew_Region_name}で地震発生。予想最大震度は${eew_calcintensity}です。\nページ表示するにはここを選択してください。`,
-            onClick: function () {
-                window.focus();
-                this.close();
-            }
-        });
-
-        notify.show(
-            "message",
-            `緊急地震速報 ${eew_alertFlg}(${eew_repNum_p})`,
-            `${eew_Region_name}で地震発生。予想最大震度は${eew_calcintensity}です。`
-        );
-    }
-}
-
-
-// ---------- Monitor ---------- //
-function mapMain() {
-    if (eew_data != null && eew_data["hypoInfo"] != null) {
-        if (eewReportId !== eewReportIdLast && eewReportIdLast !== null) {
-            eewNum++;
-        }
-
-        eewReportIdLast = eewReportId;
-
-        for (let cnt = 0; cnt <= eewNum; cnt++) {
-            if (cnt === eewNum) {
-                eew_waves = eew_data['psWave']['items'][0];
-
-                if (eew_waves !== null) {
-                    mapItem[eewNum].eew_lat = eew_waves['latitude'].replace("N", "");
-                    mapItem[eewNum].eew_lng = eew_waves['longitude'].replace("E", "");
-                    eew_hypo_LatLng = new L.LatLng(mapItem[eewNum].eew_lat, mapItem[eewNum].eew_lng);
-
-                    eew_wave_p = eew_waves['pRadius'];
-                    eew_wave_s = eew_waves['sRadius'];
-                    eew_wave_p *= 1000;
-                    eew_wave_s *= 1000;
-                }
-
-                if (eew_wave_s != mapItem[eewNum].eew_wave_s_last) {
-                    mapItem[eewNum].eew_wave_s_Interval = (eew_wave_s - mapItem[eewNum].eew_wave_s_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-                    mapItem[eewNum].eew_wave_s_last = eew_wave_s;
-                    mapItem[eewNum].eew_wave_s_put = eew_wave_s;
-                } else if (eew_wave_s == mapItem[eewNum].eew_wave_s_last) {
-                    mapItem[eewNum].eew_wave_s_put += mapItem[eewNum].eew_wave_s_Interval;
-                }
-
-                if (eew_wave_p != mapItem[eewNum].eew_wave_p_last) {
-                    mapItem[eewNum].eew_wave_p_Interval = (eew_wave_p - mapItem[eewNum].eew_wave_p_last) / (60 * ((dateNow - loopCnt_moni) / 1000));
-                    mapItem[eewNum].eew_wave_p_last = eew_wave_p;
-                    mapItem[eewNum].eew_wave_p_put = eew_wave_p;
-                    loopCnt_moni = dateNow;
-                } else if (eew_wave_p == mapItem[eewNum].eew_wave_p_last) {
-                    mapItem[eewNum].eew_wave_p_put += mapItem[eewNum].eew_wave_p_Interval;
-                }
-            } else {
-                mapItem[cnt].eew_wave_s_put += mapItem[cnt].eew_wave_s_Interval;
-                mapItem[cnt].eew_wave_p_put += mapItem[cnt].eew_wave_p_Interval;
-            }
-
-            mapItem[cnt].hypo.setLatLng(new L.LatLng(mapItem[cnt].eew_lat, mapItem[cnt].eew_lng));
-            mapItem[cnt].wave_s.setLatLng(new L.LatLng(mapItem[cnt].eew_lat, mapItem[cnt].eew_lng));
-            mapItem[cnt].wave_s.setRadius(mapItem[cnt].eew_wave_s_put);
-            mapItem[cnt].wave_p.setLatLng(new L.LatLng(mapItem[cnt].eew_lat, mapItem[cnt].eew_lng));
-            mapItem[cnt].wave_p.setRadius(mapItem[cnt].eew_wave_p_put);
-        }
-
-        if (settings.map.autoMove) {
-            if (dateNow - mapAutoMoveCnt >= 1000 * 3) {
-                if (mapItem[eewNum].eew_wave_p_put >= 560000) {
-                    map.setView([mapItem[eewNum].eew_lat, mapItem[eewNum].eew_lng], 5);
-                } else if (mapItem[eewNum].eew_wave_p_put >= 280000) {
-                    map.setView([mapItem[eewNum].eew_lat, mapItem[eewNum].eew_lng], 6);
-                } else if (mapItem[eewNum].eew_wave_p_put > 0) {
-                    map.setView([mapItem[eewNum].eew_lat, mapItem[eewNum].eew_lng], 7);
-                }
-
-                mapAutoMoveCnt = dateNow
-            }
-        }
-    } else {
-        eewNum = 0;
-
-        for (let cnt = 0; cnt < 9; cnt++) {
-            mapItem[cnt].hypo.setLatLng(new L.LatLng(0, 0));
-            mapItem[cnt].wave_s.setLatLng(new L.LatLng(0, 0));
-            mapItem[cnt].wave_p.setLatLng(new L.LatLng(0, 0));
-            mapItem[cnt].wave_s.setRadius(0);
-            mapItem[cnt].wave_p.setRadius(0);
-        }
-    }
-}
-
-
-// ---------- Init monitor map ---------- //
-function initMap() {
-    map = L.map('map', {
-        center: [38.0194092, 138.3664968],
-        zoom: 6,
-        maxZoom: 10,
-        minZoom: 4,
-        zoomSnap: 0,
-        zoomDelta: 0,
-        zoomControl: false
-    });
-
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-        apikey: 'c168fc2f-2f64-4f13-874c-ce2dcec92819',
-        attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    for (let cnt = 0; cnt < 9; cnt++) {
-        mapItem[cnt] = new MapItem(map);
-    }
 }

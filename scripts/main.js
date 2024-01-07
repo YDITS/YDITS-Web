@@ -12,7 +12,7 @@
 const VERSION = "3.11.0 ベータ版";
 
 
-document.addEventListener('DOMContentLoaded', () => {
+$(() => {
     $("header").load("./elements/header.html");
     $("footer").load("./elements/footer.html");
 });

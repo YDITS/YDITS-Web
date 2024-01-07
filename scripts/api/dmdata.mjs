@@ -16,7 +16,7 @@ export class Dmdata {
     constructor() { }
 
 
-    async init(settings) {
+    async initialize(settings) {
         /* 
          * 
          * Dmdata Redirect Checking

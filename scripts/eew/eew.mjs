@@ -10,6 +10,9 @@
  */
 
 export class Eew {
+    data = null;
+
+
     constructor() {
         this.$eewWarn = $("#eewWarn");
 
@@ -18,10 +21,10 @@ export class Eew {
     }
 
 
-    init(settings) {
+    initialize(settings) {
         this.settings = settings;
-        switch (this.settings.connect.eqinfo) {
-            case "p2pquake":
+        switch (this.settings.connect.eew) {
+            case "yahoo-kmoni":
                 break;
         }
     }

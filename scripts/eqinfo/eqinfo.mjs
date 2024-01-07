@@ -16,7 +16,7 @@ export class Eqinfo {
     constructor() { }
 
 
-    init(settings, p2pquake) {
+    initialize(settings, p2pquake) {
         this.settings = settings;
         this.p2pquake = p2pquake;
         switch (this.settings.connect.eqinfo) {

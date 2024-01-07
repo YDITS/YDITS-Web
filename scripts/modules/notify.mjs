@@ -38,7 +38,7 @@ export class Notify {
 
             case "eew":
                 color = "#f04040ff";
-                eewHideAfter = 90 * 1000;
+                eewHideAfter = 180 * 1000;
                 break;
 
             default:

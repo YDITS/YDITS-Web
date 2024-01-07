@@ -11,12 +11,15 @@
 
 export class P2pquake {
     eqinfoNum = 0;
-    urlRest = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
+    urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1");
+    // urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1&offset=16");
+    urlRestEqinfo = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
     urlSocket = new URL("wss://api.p2pquake.net/v2/ws");
     // urlSocket = new URL("wss://api-realtime-sandbox.p2pquake.net/v2/ws");
     data = [];
     socket = null;
     socketRetryCount = 0;
+    isError = false;
     latestId = null;
     lastId = null;
 
@@ -89,15 +92,16 @@ export class P2pquake {
     }
 
 
-    constructor(debugLogs, notify, settings, sounds, eew, eqinfo) {
+    constructor(debugLogs, notify, datetime, settings, sounds, eew, eqinfo) {
         this.debugLogs = debugLogs;
         this.notify = notify;
+        this.datetime = datetime;
         this.settings = settings;
         this.sounds = sounds;
         this.eew = eew;
         this.eqinfo = eqinfo;
 
-        this.initial()
+        this.initialize()
         this.startSocket();
     }
 
@@ -170,8 +174,99 @@ export class P2pquake {
     }
 
 
-    initial() {
-        fetch(this.urlRest)
+    initialize() {
+        fetch(this.urlRestEew)
+            .then((response) => response.json())
+            .then((data) => {
+                data = data[0];
+
+                let dateNow = this.datetime.gmt.getTime();
+                let issueTime = new Date(data.issue.time).getTime();
+
+                // EEW発表から3分以下の場合は警報処理をする
+                // if ((dateNow - issueTime / (1000)) >= 180) { return }
+
+                let datetime = new Date(data["earthquake"]["time"]);
+
+                if (datetime.second === null) {
+                    datetime = "----/--/-- --:--";
+                } else {
+                    datetime =
+                        `${datetime.getFullYear()}/` +
+                        `${this.zeroPadding(datetime.getMonth() + 1)}/` +
+                        `${this.zeroPadding(datetime.getDate())} ` +
+                        `${this.zeroPadding(datetime.getHours())}:` +
+                        `${this.zeroPadding(datetime.getMinutes())}`
+                }
+
+                let hypocenter = data['earthquake']['hypocenter']['name'];
+
+                if (hypocenter == '') {
+                    hypocenter = '不明または調査中';
+                }
+
+                let magnitude = data['earthquake']['hypocenter']['magnitude'];
+
+                if (magnitude == -1) {
+                    magnitude = 'M -';
+                } else {
+                    magnitude = `M ${magnitude}`;
+                }
+
+                let depth = data['earthquake']['hypocenter']['depth'];
+
+                if (depth == -1) {
+                    depth = '-';
+                } else if (depth == 0) {
+                    depth = 'ごく浅い';
+                } else {
+                    depth = `約${depth}km`;
+                }
+
+                let areas = [];
+                let areasText = "";
+
+                data["areas"].forEach(area => {
+                    if (areas.includes(area["pref"])) { return }
+                    areas.push(area["pref"]);
+                });
+
+                areas.forEach(area => {
+                    areasText += `${area}　`;
+                });
+
+                let d = {
+                    "code": data["code"],
+                    "num": this.eqinfoNum,
+                    // "maxInt": maxInt,
+                    "hypocenter": hypocenter,
+                    "datetime": datetime,
+                    "magnitude": magnitude,
+                    "depth": depth,
+                    "areas": areasText
+                }
+
+                if (this.settings.sound.eewAny == true) {
+                    this.sounds.eew.play();
+                }
+
+                this.eew.displayWarn(d);
+                this.push(d);
+            })
+            .catch((error) => {
+                if (error != 'TypeError: Failed to fetch') {
+                    this.notify.show(
+                        "error",
+                        "エラー",
+                        `
+                            P2P地震情報 (p2pquake.net) に接続できません。<br>
+                            <code>${error}</code>
+                        `
+                    );
+                }
+            });
+
+        fetch(this.urlRestEqinfo)
             .then((response) => response.json())
             .then((data) => {
                 data.forEach((list) => {
@@ -188,15 +283,14 @@ export class P2pquake {
                         let datetime = new Date(list["earthquake"]["time"]);
 
                         if (datetime.second === null) {
-                            datetime = "----/--/-- --:--:--";
+                            datetime = "----/--/-- --:--";
                         } else {
                             datetime =
                                 `${datetime.getFullYear()}/` +
                                 `${this.zeroPadding(datetime.getMonth() + 1)}/` +
                                 `${this.zeroPadding(datetime.getDate())} ` +
                                 `${this.zeroPadding(datetime.getHours())}:` +
-                                `${this.zeroPadding(datetime.getMinutes())}:` +
-                                `${this.zeroPadding(datetime.getSeconds())}`;
+                                `${this.zeroPadding(datetime.getMinutes())}`
                         }
 
                         let maxInt = list['earthquake']['maxScale'];
@@ -292,7 +386,7 @@ export class P2pquake {
                         `
                     );
                 }
-            })
+            });
     }
 
 
@@ -312,6 +406,8 @@ export class P2pquake {
             `[NETWORK]`,
             "Successfully connected to api.p2pquake.net and WebSocket opened."
         );
+
+        this.isError = false;
 
         this.keepAlive();
 
@@ -336,18 +432,21 @@ export class P2pquake {
             "Successfully disconnected from api.p2pquake.net and WebSocket closed."
         );
 
-        if (navigator.onLine) {
+        if (!this.isError && this.socketRetryCount < 3) {
             this.notify.show(
                 "error",
                 "WebSocket切断",
                 "P2P地震情報 (p2pquake.net) から切断されました。再接続を試行します。"
             );
+        }
+
+        if (navigator.onLine && this.socketRetryCount < 3) {
             this.retryTimeout = setTimeout(
                 () => {
                     this.startSocket();
                     this.socketRetryCount++;
                 },
-                3 * 1000
+                10 * 1000
             );
         }
 
@@ -372,9 +471,6 @@ export class P2pquake {
 
             if (this.latestId !== null && this.latestId === this.lastId) { return }
 
-            // DEBUG
-            // data["code"] = 556;
-
             switch (data["code"]) {
                 case 551:
                     this.whenEqinfo(data);
@@ -395,122 +491,6 @@ export class P2pquake {
 
     whenEew(data) {
         if (data["test"]) { return }
-
-        // DEBUG
-        /*
-        data = {
-            "areas": [
-                {
-                    "arrivalTime": null,
-                    "kindCode": "11",
-                    "name": "石川県能登",
-                    "pref": "石川",
-                    "scaleFrom": 55,
-                    "scaleTo": 70
-                },
-                {
-                    "arrivalTime": "2024/01/01 16:10:43",
-                    "kindCode": "19",
-                    "name": "富山県西部",
-                    "pref": "富山",
-                    "scaleFrom": 45,
-                    "scaleTo": 45
-                },
-                {
-                    "arrivalTime": null,
-                    "kindCode": "11",
-                    "name": "新潟県上越",
-                    "pref": "新潟",
-                    "scaleFrom": 40,
-                    "scaleTo": 40
-                },
-                {
-                    "arrivalTime": null,
-                    "kindCode": "11",
-                    "name": "富山県東部",
-                    "pref": "富山",
-                    "scaleFrom": 40,
-                    "scaleTo": 40
-                },
-                {
-                    "arrivalTime": null,
-                    "kindCode": "11",
-                    "name": "石川県加賀",
-                    "pref": "石川",
-                    "scaleFrom": 40,
-                    "scaleTo": 40
-                },
-                {
-                    "arrivalTime": null,
-                    "kindCode": "11",
-                    "name": "新潟県佐渡",
-                    "pref": "新潟",
-                    "scaleFrom": 40,
-                    "scaleTo": 40
-                },
-                {
-                    "arrivalTime": null,
-                    "kindCode": "11",
-                    "name": "長野県北部",
-                    "pref": "長野",
-                    "scaleFrom": 40,
-                    "scaleTo": 40
-                },
-                {
-                    "arrivalTime": "2024/01/01 16:10:44",
-                    "kindCode": "10",
-                    "name": "新潟県中越",
-                    "pref": "新潟",
-                    "scaleFrom": 40,
-                    "scaleTo": 40
-                },
-                {
-                    "arrivalTime": "2024/01/01 16:10:46",
-                    "kindCode": "10",
-                    "name": "岐阜県飛騨",
-                    "pref": "岐阜",
-                    "scaleFrom": 40,
-                    "scaleTo": 40
-                },
-                {
-                    "arrivalTime": "2024/01/01 16:11:01",
-                    "kindCode": "10",
-                    "name": "群馬県南部",
-                    "pref": "群馬",
-                    "scaleFrom": 30,
-                    "scaleTo": 40
-                }
-            ],
-            "cancelled": false,
-            "code": 556,
-            "earthquake": {
-                "arrivalTime": "2024/01/01 16:10:10",
-                "condition": "",
-                "hypocenter": {
-                    "depth": 10,
-                    "latitude": 37.5,
-                    "longitude": 137.2,
-                    "magnitude": 6.6,
-                    "name": "石川県能登地方",
-                    "reduceName": "石川県"
-                },
-                "originTime": "2024/01/01 16:10:08"
-            },
-            "id": "65926573d616be440743c88e",
-            "issue": {
-                "eventId": "20240101161010",
-                "serial": "2",
-                "time": "2024/01/01 16:10:43"
-            },
-            "time": "2024/01/01 16:10:43.245",
-            "timestamp": {
-                "convert": "2024/01/01 16:10:43.242",
-                "register": "2024/01/01 16:10:43.245"
-            },
-            "user_agent": "jmaxml-seis-parser-go, relay, register-api",
-            "ver": "20231023"
-        }
-        */
 
         let datetime = new Date(data["earthquake"]["time"]);
 
@@ -748,18 +728,13 @@ export class P2pquake {
             `Failed to connect to api.p2pquake.net.<br>${event}`
         );
 
+        this.isError = true;
+
         if (this.socketRetryCount < 3) {
             this.notify.show(
                 "error",
                 "エラー",
-                "P2P地震情報 (p2pquake.net) に接続できません。10秒後に再試行します。"
-            );
-            this.retryTimeout = setTimeout(
-                () => {
-                    this.startSocket();
-                    this.socketRetryCount++;
-                },
-                10 * 1000
+                "P2P地震情報 (p2pquake.net) に接続できません。10秒後に再接続を試行します。"
             );
         } else {
             this.notify.show(
