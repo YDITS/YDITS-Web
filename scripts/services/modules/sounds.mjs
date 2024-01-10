@@ -9,7 +9,13 @@
  *
  */
 
-export class Sounds {
+import { Service } from "../../service.mjs"
+
+
+/**
+ * サウンドを扱うサービスです。
+ */
+export class Sounds extends Service {
     notify = new Audio("https://webapp.ydits.net/sounds/notify-sound.m4a");
     eew = new Audio("https://webapp.ydits.net/sounds/eew.wav");
     eqinfo = new Audio("https://webapp.ydits.net/sounds/info.wav");
@@ -34,5 +40,14 @@ export class Sounds {
     eqinfoVoice9 = new Audio("https://webapp.ydits.net/sounds/info_9_v.mp3");
 
 
-    constructor() { }
+    constructor(app) {
+        super(app, {
+            id: "sounds",
+            name: "Sound Service",
+            description: "サウンドを扱うサービスです。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        });
+    }
 }

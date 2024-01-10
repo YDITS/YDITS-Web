@@ -250,3 +250,42 @@
     font-size: 2.5rem;
     font-weight: bold;
 }
+
+#eewAreas {
+    width: calc(100% - 10vw);
+    padding: 2rem 5vw;
+    font-size: 1.3rem;
+}
+
+#eewAreas>.label {
+    display: block;
+}
+
+#eewForecast {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+#eewForecast>.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    text-align: center;
+}
+
+#eewForecast .value {
+    font-size: 4rem;
+    font-weight: bold;
+}
+
+#eewForecastDes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    text-align: center;
+}

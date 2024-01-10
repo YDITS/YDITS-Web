@@ -9,26 +9,48 @@
  *
  */
 
-export class DebugLogs {
+import { Service } from "../../service.mjs";
+
+
+/**
+ * デバッグログを管理するサービスです。
+ */
+export class DebugLogs extends Service {
     debugLogs = [];
 
 
-    constructor(datetime) {
-        this.datetime = datetime;
+    constructor(app) {
+        super(app, {
+            name: "debugLogs",
+            description: "デバッグログを管理するサービスです。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        })
 
-        let debugLogsRaw = localStorage.getItem("debugLogs");
+        this.datetime = app.services.datetime;
 
-        if (debugLogsRaw === null) {
+        const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
+
+        if (DEBUG_LOGS_DATA === null) {
             this.add("START", "[START]", "- Start log -");
         } else {
-            this.debugLogs = JSON.parse(debugLogsRaw);
+            this.debugLogs = JSON.parse(DEBUG_LOGS_DATA);
             this.debugLogs.forEach(log => {
-                this.addDebugLogsHtml(log.time, log.type, log.title, log.text);
+                this.addDebugLogsHtml({
+                    time: log.time,
+                    type: log.type,
+                    title: log.title,
+                    text: log.text
+                });
             });
         }
     }
 
 
+    /**
+     * ログを追加します。
+     */
     add(type, title, text) {
         let time = `${this.datetime.year}/${('0' + this.datetime.month).slice(-2)}/${('0' + this.datetime.day).slice(-2)} ${('0' + this.datetime.hour).slice(-2)}:${('0' + this.datetime.minute).slice(-2)}:${('0' + this.datetime.second).slice(-2)}`;
 
@@ -45,23 +67,26 @@ export class DebugLogs {
     }
 
 
-    addDebugLogsHtml(time, type, title, text) {
+    /**
+     * ログをページに追加します。
+     */
+    addDebugLogsHtml(log) {
         let color = null;
 
-        switch (type) {
-            case "INFO":
+        switch (log.type) {
+            case "info":
                 color = "#6060ffff";
                 break;
 
-            case "START":
+            case "start":
                 color = "#6060ffff";
                 break;
 
-            case "ERROR":
+            case "error":
                 color = "#ff6060ff";
                 break;
 
-            case "NETWORK":
+            case "network":
                 color = "#60ff60ff";
                 break;
 
@@ -72,16 +97,18 @@ export class DebugLogs {
 
         $('#debugLogLists').prepend(`
             <li>
-                <h3 class="title" style="color: ${color};">${title} ${time}</h3>
-                <p class="text">${text}</p>
+                <h3 class="title" style="color: ${color};">${log.title} ${log.time}</h3>
+                <p class="text">${log.text}</p>
             </li>
         `);
     }
 
 
+    /**
+     * ログをすべて削除します。
+     */
     delete() {
         this.debugLogs = [];
-
         $('#debugLogLists').html("");
         localStorage.removeItem("debugLogs");
     }

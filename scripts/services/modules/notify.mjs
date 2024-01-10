@@ -9,12 +9,26 @@
  *
  */
 
-export class Notify {
+import { Service } from "../../service.mjs";
+
+
+/**
+ * ページ内通知のサービスです。
+ */
+export class Notify extends Service {
     lastNotifyId = null;
     lastEewNotifyId = null;
 
 
-    constructor() {
+    constructor(app) {
+        super(app, {
+            name: "debugLogs",
+            description: "ページ内通知のサービスです。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        })
+
         this.$notify = $("#notify");
         this.$eewNotify = $("#eewNotify");
     }

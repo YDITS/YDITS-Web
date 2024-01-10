@@ -542,12 +542,12 @@ main {
 
 #debugLogLists .title {
     text-align: left;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 #debugLogLists .text {
     text-align: left;
-    font-size: 1rem;
+    font-size: .9rem;
 }
 
 #license.active {

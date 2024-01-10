@@ -9,10 +9,24 @@
  *
  */
 
-export class JmaDataFeed {
+import { Service } from "../../service.mjs";
+
+
+/**
+ * 気象庁防災情報電文を扱うサービスです。
+ */
+export class JmaDataFeed extends Service {
     url = "https://www.data.jma.go.jp/developer/xml/feed/eqvol.xml";
 
-    constructor() {
+    constructor(app) {
+        super(app, {
+            name: "jmaDataFeed",
+            description: "気象庁防災情報電文を扱うサービスです。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        });
+
         $(document).on('click', '#jmaDataFeed .closeBtn', function () {
             $('#jmaDataFeed').removeClass('active');
         });
@@ -36,6 +50,9 @@ export class JmaDataFeed {
     }
 
 
+    /**
+     * 気象庁防災情報電文を更新します。
+     */
     update() {
         /*
         fetch(this.url)

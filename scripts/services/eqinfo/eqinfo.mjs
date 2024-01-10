@@ -9,16 +9,36 @@
  *
  */
 
-export class Eqinfo {
+import { Service } from "../../service.mjs";
+
+
+/**
+ * 地震情報を扱うサービスです。
+ */
+export class Eqinfo extends Service {
     eqinfoNum = 0;
 
 
-    constructor() { }
+    constructor(app) {
+        super(app, {
+            name: "eqinfo",
+            description: "地震情報を扱うサービスです。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        });
+
+        document.addEventListener("build", () => initialize());
+    }
 
 
-    initialize(settings, p2pquake) {
-        this.settings = settings;
-        this.p2pquake = p2pquake;
+    /**
+     * 初期化を行います。
+     */
+    initialize() {
+        this.settings = this._app.services.settings;
+        this.p2pquake = this._app.services.p2pquake;
+
         switch (this.settings.connect.eqinfo) {
             case "p2pquake":
                 break;
@@ -26,16 +46,25 @@ export class Eqinfo {
     }
 
 
+    /**
+     * 地震情報に関連するすべての通信を再接続します。
+     */
     reconnect() {
         this.p2pquake.startSocket();
     }
 
 
+    /**
+     * 地震情報に関連するすべての接続を切断します。
+     */
     disconnect() {
         this.p2pquake.socket.close();
     }
 
 
+    /**
+     * 地震履歴に地震情報を追加します。
+     */
     addToList(data) {
         let html = `
             <li class="list list-${data["num"]}">
