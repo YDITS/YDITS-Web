@@ -132,7 +132,7 @@ export class Map extends Service {
             }
         } else {
             Object.keys(this._app.services.eew.reports).forEach((id) => {
-                if (id === undefined || this._app.services.eew.reports[id].isWarning) { return }
+                if (this._app.services.eew.reports[id] === undefined || this._app.services.eew.reports[id].isWarning) { return }
                 this._app.services.eew.reports[id].region.setLatLng(new L.LatLng(0, 0));
                 this._app.services.eew.reports[id].sWave.setLatLng(new L.LatLng(0, 0));
                 this._app.services.eew.reports[id].pWave.setLatLng(new L.LatLng(0, 0));

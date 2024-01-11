@@ -499,9 +499,6 @@ export class P2pquake extends Service {
 
             if (this.latestId !== null && this.latestId === this.lastId) { return }
 
-            // DEBUG
-            DATA["code"] = 556;
-
             switch (DATA["code"]) {
                 case 551:
                     this.whenEqinfo(DATA);
