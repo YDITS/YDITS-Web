@@ -36,8 +36,8 @@ export class ServiceWorker extends Service {
         if ("serviceWorker" in navigator) {
             try {
                 const registration = await navigator.serviceWorker.register(
-                    "./sw.js",
-                    { scope: "./", }
+                    "./scripts/sw.mjs",
+                    { scope: "./scripts/", }
                 );
 
                 if (registration.installing) {

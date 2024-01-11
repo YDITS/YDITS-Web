@@ -11,6 +11,7 @@
 
 import { Service } from "../../service.mjs";
 
+
 /**
  * 緊急地震速報を扱うサービスです。
  */
@@ -124,7 +125,7 @@ export class Eew extends Service {
         let areas = [];
 
         this.warnAreas.forEach(area => {
-            areas.push(this.addPref(area.pref));
+            areas.push(area.name);
         });
 
         if (areas.includes(this._app.services.geoLocation.area)) {
@@ -289,9 +290,8 @@ export class Eew extends Service {
      * 警報画面の表示を更新します。
      */
     updateWarn() {
-        // this.warnAreas.forEach(area => {
-        this.warnAreas.reverse().forEach(area => {
-            if (this.addPref(area.pref) === this._app.services.geoLocation.area) {
+        this.warnAreas.forEach(area => {
+            if (area.name === this._app.services.geoLocation.area) {
                 if (area.scaleTo === 99) {
                     this.scale = this.parseScale(area.scaleFrom);
                     this.$scaleAbout.text("程度以上");
@@ -300,21 +300,22 @@ export class Eew extends Service {
                     this.$scaleAbout.text("程度");
                 }
 
-                // let dateNow = this._app.services.datetime.gmt.getTime();
-                let arrivalTime = new Date(area.arrivalTime).getTime();
-
-                // DEBUG
-                let debugDatetime = new Date(area.arrivalTime);
-                debugDatetime.setSeconds(debugDatetime.getSeconds() + 12);
-                let dateNow = debugDatetime.getTime();
-                this.arrivalTime = (arrivalTime - dateNow) / 1000;
-
-                if (this.arrivalTime < 0) {
+                if (area.arrivalTime === null) {
                     this.arrivalTime = "到達と推測";
                     this.$arrivalTimeAboud.text("");
                 } else {
-                    this.arrivalTime = `${this.arrivalTime}秒`;
-                    this.$arrivalTimeAboud.text("およそ");
+                    let dateNow = this._app.services.datetime.gmt.getTime();
+                    let arrivalTime = new Date(area.arrivalTime).getTime();
+
+                    this.arrivalTime = (arrivalTime - dateNow) / 1000;
+
+                    if (this.arrivalTime < 0) {
+                        this.arrivalTime = "到達と推測";
+                        this.$arrivalTimeAboud.text("");
+                    } else {
+                        this.arrivalTime = `${this.arrivalTime}秒`;
+                        this.$arrivalTimeAboud.text("およそ");
+                    }
                 }
 
                 this.$scale.text(this.scale);

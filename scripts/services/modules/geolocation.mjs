@@ -30,16 +30,19 @@ export class GeoLocation extends Service {
             copyright: "Copyright © よね/Yone"
         })
 
+
+        this.$locationStatus = $("#locationStatus");
+        this.$locationArea = $("#locationArea");
+
         if ("geolocation" in navigator) {
             this.isSupport = true;
+            this.$locationStatus.text("有効");
         } else {
             this.isSupport = false;
-            this.isGot = true;
-            document.dispatchEvent(this._app.buildEvent);
+            this.$locationStatus.text("無効");
         }
 
         this.getLocation();
-
     }
 
 
@@ -48,10 +51,6 @@ export class GeoLocation extends Service {
     */
     async getLocation() {
         if (!this.isSupport) { return }
-
-        // this.area = "石川県";
-        // document.dispatchEvent(this._app.buildEvent);
-        // return;
 
         navigator.geolocation.getCurrentPosition(
             async (position) => await this.onGet(position),
@@ -65,37 +64,75 @@ export class GeoLocation extends Service {
      * 取得した現在位置情報から市区町村または都道府県を取得します。
      */
     async onGet(position) {
-        const url = "https://nominatim.openstreetmap.org/reverse?"
+        const urlPref = "https://nominatim.openstreetmap.org/reverse?"
             + "format=json"
             + "&lat=" + position.coords.latitude
             + "&lon=" + position.coords.longitude
             + "&zoom=8"
-            // + "&zoom=12"
             + "&addressdetails=1";
 
-        await fetch(url)
+        const urlCity = "https://nominatim.openstreetmap.org/reverse?"
+            + "format=json"
+            + "&lat=" + position.coords.latitude
+            + "&lon=" + position.coords.longitude
+            + "&zoom=12"
+            + "&addressdetails=1";
+
+        await fetch(urlCity)
             .then((response) => response.json())
-            .then((data) => {
-                if (data === null || data.address === null) { return }
+            .then(async (data) => {
+                if (data === null || data.address === undefined) { return }
                 if (data.address.country_code !== "jp") { return }
 
                 if (data.address.city) {
-                    // 市町村
-                    this.area = data.address.city;
+                    // 市区
+                    this.city = data.address.city;
+
+                    // 同じ市名が複数の地域で存在するため、その処理
+                    if (["府中市", "伊達市"].includes(this.city)) {
+                        await fetch(urlPref)
+                            .then((response) => response.json())
+                            .then((data) => {
+                                this.pref = data.address.province;
+
+                                switch (this.pref) {
+                                    case "東京都":
+                                        this.city = "東京府中市";
+                                        break;
+
+                                    case "広島県":
+                                        this.city = "広島府中市";
+                                        break;
+
+                                    case "北海道":
+                                        this.city = "胆振伊達市";
+                                        break;
+
+                                    case "福島県":
+                                        this.city = "福島伊達市";
+                                        break;
+                                }
+                            });
+                    }
                 } else if (data.address.suburb) {
                     // 区
-                    this.area = data.address.suburb;
-                } else if (data.address.province) {
-                    // 都道府県
-                    this.area = data.address.province;
+                    this.city = data.address.suburb;
+                } else if (data.address.town) {
+                    // 町村
+                    this.city = data.address.town;
                 }
-
+            })
+            .then(() => {
+                this.getJmaForecastArea(this.city);
             })
             .then(() => {
                 if (!(this.isGot)) {
                     this.isGot = true;
                     document.dispatchEvent(this._app.buildEvent);
                 }
+            })
+            .catch((error) => {
+                console.error(error);
             });
     }
 
@@ -104,6 +141,29 @@ export class GeoLocation extends Service {
      * 位置情報を取得できない際の処理を行います。
      */
     onError(error) {
-        console.error(error);
+        this.$locationStatus.text("無効");
+
+        if (!(this.isGot)) {
+            this.isGot = true;
+            document.dispatchEvent(this._app.buildEvent);
+        }
+    }
+
+
+    /**
+    * 取得した市区町村から、気象庁 緊急地震速報/地方予報区 を取得します。
+    */
+    getJmaForecastArea(city) {
+        fetch("./data/jma_area_forecast_local_e.json")
+            .then((response) => response.json())
+            .then((data) => {
+                if (data === null) { return }
+
+                if (city in data) {
+                    this.area = data[city];
+                }
+
+                this.$locationArea.text(this.area);
+            });
     }
 }

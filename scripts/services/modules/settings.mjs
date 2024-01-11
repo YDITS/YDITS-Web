@@ -70,6 +70,12 @@ export class Settings extends Service {
         $(document).on('click', '#settings_map .closeBtn', () => {
             $('#settings_map').removeClass('active');
         });
+        $(document).on('click', '#settings_list_location', () => {
+            $('#settings_location').addClass('active');
+        });
+        $(document).on('click', '#settings_location .closeBtn', () => {
+            $('#settings_location').removeClass('active');
+        });
         $(document).on('click', '#settings_list_notify', () => {
             $('#settings_notify').addClass('active');
         });

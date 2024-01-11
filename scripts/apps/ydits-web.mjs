@@ -85,16 +85,16 @@ export class YditsWeb extends App {
                 this.initLicense();
 
                 window.addEventListener("online", () => {
-                    this.debugLogs.add("network", "[NETWORK]", "Reconnected to the network.");
-                    this.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
-                    this.eqinfo.reconnect();
+                    this._services.debugLogs.add("network", "[NETWORK]", "Reconnected to the network.");
+                    this._services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
+                    this._services.eqinfo.reconnect();
                 });
 
                 window.addEventListener("offline", () => {
                     $('#statusLamp').css({ 'background-color': '#ff4040' });
-                    this.debugLogs.add("error", "[NETWORK]", "Network disconnected.");
-                    this.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
-                    this.eqinfo.disconnect();
+                    this._services.debugLogs.add("error", "[NETWORK]", "Network disconnected.");
+                    this._services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
+                    this._services.eqinfo.disconnect();
                 });
 
                 $("#eewTitle").text("読み込み中…");
@@ -142,6 +142,7 @@ export class YditsWeb extends App {
         }
 
         if (this.dateNow - this.eewGetCnt >= 1000) {
+            this._services.eew.updateWarn();
             this._services.api.yahooKmoni.get();
             this.eewGetCnt = this.dateNow;
         }
@@ -149,10 +150,6 @@ export class YditsWeb extends App {
         if ((this.dateNow - this.jmaDataFeedGetCnt >= this.jmaDataFeedGetInterval)) {
             this._services.jmaDataFeed.update();
             this._services.jmaDataFeedGetCnt = this.dateNow;
-        }
-
-        if (this._services.eew.isWarning) {
-            this._services.eew.update();
         }
 
         this._services.map.update(this.dateNow);

@@ -1,6 +1,6 @@
 /*
  *
- * index.mjs | YDITS for Web
+ * sw.js | YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -9,9 +9,5 @@
  *
  */
 
-import { YditsWeb } from "./apps/ydits-web.mjs";
-
-
-(function () {
-    const app = new YditsWeb();
-})();
+self.addEventListener("install", (event) => { });
+self.addEventListener('fetch', (event) => { });

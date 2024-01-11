@@ -470,7 +470,7 @@ export class P2pquake extends Service {
         this.keepAlive();
 
         if (this.socketRetryCount > 0) {
-            this.notify.show(
+            this._app.services.notify.show(
                 "message",
                 "WebSocket再接続",
                 "P2P地震情報 (p2pquake.net) に再接続しました。"
@@ -484,14 +484,14 @@ export class P2pquake extends Service {
     socketClosed(event) {
         this.socket = null;
 
-        this.debugLogs.add(
+        this._app.services.debugLogs.add(
             "network",
             `[NETWORK]`,
             "Successfully disconnected from api.p2pquake.net and WebSocket closed."
         );
 
         if (!this.isError && this.socketRetryCount < 3) {
-            this.notify.show(
+            this._app.services.notify.show(
                 "error",
                 "WebSocket切断",
                 "P2P地震情報 (p2pquake.net) から切断されました。再接続を試行します。"

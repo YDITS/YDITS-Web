@@ -16,7 +16,7 @@ export class Service {
     constructor(app, config) {
         this._app = app;
         this._name = config.name;
-        this._description = config.author;
+        this._description = config.description;
         this._version = config.version;
         this._author = config.author;
         this._copyright = config.copyright;

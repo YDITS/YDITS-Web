@@ -261,24 +261,35 @@
                             </span>
                             音声と効果音
                         </li>
+
                         <li class="list" id="settings_list_map">
                             <span class="material-symbols-outlined">
                                 map
                             </span>
                             マップ
                         </li>
+
+                        <li class="list" id="settings_list_location">
+                            <span class="material-symbols-outlined">
+                                location_on
+                            </span>
+                            位置情報
+                        </li>
+                        
                         <li class="list" id="settings_list_notify">
                             <span class="material-symbols-outlined">
                                 notifications
                             </span>
                             プッシュ通知
                         </li>
+
                         <li class="list" id="settings_list_other">
                             <span class="material-symbols-outlined">
                                 reset_wrench
                             </span>
                             リセット
                         </li>
+
                         <li class="list bottom" id="openDebugLogsButton">
                             <span class="material-symbols-outlined">
                                 bug_report
@@ -355,6 +366,33 @@
                                 <div class="toggle-switch">
                                     <div class="span"></div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="window settings_list" id="settings_location">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">位置情報の設定</span>
+                </div>
+
+                <div class="content">
+                    <p>位置情報データが送信されることはありません。</p>
+
+                    <div class="list" id="settings_map">
+                        <div class="item">
+                            <label><h3>位置情報サービス</h3></label>
+                            <div class="content">
+                                <span id="locationStatus"></span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <label><h3>現在地の緊急地震速報/地区予報区</h3></label>
+                            <div class="content">
+                                <span id="locationArea"></span>
                             </div>
                         </div>
                     </div>
@@ -492,7 +530,7 @@
                         <li>
                             <h3><a target="_blank" href="https://nominatim.org/">Nominatim API</a></h3>
                             <p>
-                                現在位置から市区町村の取得に利用<br>
+                                緯度経度からの市区町村の取得に利用<br>
                                 &copy; Nominatim developer community
                             </p>
                         </li>
@@ -545,7 +583,7 @@
             <div id="eewForecastDes">
                 <p>
                     推定震度と主要動到達予想時刻は、<br>
-                    現在地［<span id="eewLocate"></span>］の情報です。
+                    現在地の地区予報区［<span id="eewLocate"></span>］の情報です。
                 </p>
             </div>
         </div>
