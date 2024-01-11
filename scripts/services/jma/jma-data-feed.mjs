@@ -18,6 +18,7 @@ import { Service } from "../../service.mjs";
 export class JmaDataFeed extends Service {
     url = "https://www.data.jma.go.jp/developer/xml/feed/eqvol.xml";
 
+
     constructor(app) {
         super(app, {
             name: "jmaDataFeed",

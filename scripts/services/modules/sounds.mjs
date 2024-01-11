@@ -42,8 +42,7 @@ export class Sounds extends Service {
 
     constructor(app) {
         super(app, {
-            id: "sounds",
-            name: "Sound Service",
+            name: "sounds",
             description: "サウンドを扱うサービスです。",
             version: "0.0.0",
             author: "よね/Yone",

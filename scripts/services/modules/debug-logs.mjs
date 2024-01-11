@@ -28,7 +28,7 @@ export class DebugLogs extends Service {
             copyright: "Copyright © よね/Yone"
         })
 
-        this.datetime = app.services.datetime;
+        this.datetime = this._app._services.datetime;
 
         const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
 

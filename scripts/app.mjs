@@ -9,9 +9,6 @@
  *
  */
 
-import { ServiceManager } from "./service-manager.mjs";
-
-
 /**
  * アプリケーションを作成します。
  */
@@ -25,7 +22,6 @@ export class App {
         this._version = config.version;
         this._author = config.author;
         this._copyright = config.copyright;
-        this._services.serviceManager = new ServiceManager(this);
     }
 
 
@@ -56,5 +52,14 @@ export class App {
 
     get services() {
         return this._services;
+    }
+
+
+    /**
+     * 新規のサービスを登録します。
+     */
+    register(service) {
+        const newService = new service(this);
+        this._services[newService.name] = newService;
     }
 }

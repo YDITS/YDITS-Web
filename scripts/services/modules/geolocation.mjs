@@ -11,11 +11,13 @@
 
 import { Service } from "../../service.mjs";
 
+
 /**
  * 位置情報を管理するサービスです。
  */
 export class GeoLocation extends Service {
     isSupport = null;
+    isGot = false;
     area = null;
 
 
@@ -32,17 +34,24 @@ export class GeoLocation extends Service {
             this.isSupport = true;
         } else {
             this.isSupport = false;
+            this.isGot = true;
+            document.dispatchEvent(this._app.buildEvent);
         }
 
         this.getLocation();
+
     }
 
 
     /**
      * 現在位置を取得します。
-     */
+    */
     async getLocation() {
         if (!this.isSupport) { return }
+
+        this.area = "石川県";
+        document.dispatchEvent(this._app.buildEvent);
+        return;
 
         navigator.geolocation.getCurrentPosition(
             async (position) => await this.onGet(position),
@@ -61,6 +70,7 @@ export class GeoLocation extends Service {
             + "&lat=" + position.coords.latitude
             + "&lon=" + position.coords.longitude
             + "&zoom=8"
+            // + "&zoom=12"
             + "&addressdetails=1";
 
         await fetch(url)
@@ -69,6 +79,7 @@ export class GeoLocation extends Service {
                 if (data === null || data.address === null) { return }
                 if (data.address.country_code !== "jp") { return }
 
+                this.area = "石川県"; return
                 if (data.address.city) {
                     // 市町村
                     this.area = data.address.city;
@@ -78,7 +89,13 @@ export class GeoLocation extends Service {
                 } else if (data.address.province) {
                     // 都道府県
                     this.area = data.address.province;
-                    return
+                }
+
+            })
+            .then(() => {
+                if (!(this.isGot)) {
+                    this.isGot = true;
+                    document.dispatchEvent(this._app.buildEvent);
                 }
             });
     }

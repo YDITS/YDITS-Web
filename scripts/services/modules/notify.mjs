@@ -22,7 +22,7 @@ export class Notify extends Service {
 
     constructor(app) {
         super(app, {
-            name: "debugLogs",
+            name: "notify",
             description: "ページ内通知のサービスです。",
             version: "0.0.0",
             author: "よね/Yone",

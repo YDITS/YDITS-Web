@@ -16,6 +16,7 @@ import { Service } from "../../service.mjs";
  * 現在時刻を管理するサービスです。
  */
 export class Datetime extends Service {
+    isGotTime = false;
     gmt = null;
     year = null;
     month = null;
@@ -33,21 +34,21 @@ export class Datetime extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
-
-        document.addEventListener("build", () => console.log("a"))
     }
 
 
     /**
      * 現在時刻を取得します。
      */
-    async update() {
+    update() {
         try {
             if (navigator.onLine) {
-                this.gmt = this.getGmt();
+                this.getGmt();
             } else {
                 this.gmt = new Date();
             }
+
+            if (!(this.gmt instanceof Date)) { return }
 
             this.year = this.gmt.getFullYear();
             this.month = this.gmt.getMonth() + 1;
@@ -64,16 +65,18 @@ export class Datetime extends Service {
     /**
      * サーバーヘッダーから現在時刻を取得します。
      */
-    async getGmt() {
-        await axios.head(
+    getGmt() {
+        axios.head(
             window.location.href,
             {
                 headers: { 'Cache-Control': 'no-cache' }
             }
         )
             .then((response) => {
-                return new Date(response.headers.date);
+                this.gmt = new Date(response.headers.date);
             })
-            .catch((error) => { });
+            .catch((error) => {
+                return null;
+            });
     }
 }

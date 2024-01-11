@@ -273,12 +273,6 @@
                             </span>
                             プッシュ通知
                         </li>
-                        <li class="list" id="settings_list_connect">
-                            <span class="material-symbols-outlined">
-                                cloud
-                            </span>
-                            接続先
-                        </li>
                         <li class="list" id="settings_list_other">
                             <span class="material-symbols-outlined">
                                 reset_wrench
@@ -362,68 +356,6 @@
                                     <div class="span"></div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="window settings_list" id="settings_connect">
-                <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
-                    <span class="title">接続先の設定</span>
-                </div>
-
-                <div class="content">
-                    <div class="list item" id="settings_getTypes">
-                        <label>緊急地震速報</label>
-                        <select name="settings-getType-eew" id="">
-                            <option value="yahoo-kmoni" selected>Yahoo! 強震モニタ</option>
-                            <option value="dmdata">Project DM-D.S.S</option>
-                        </select>
-                    </div>
-
-                    <div class="list item" id="settings_getType_eqinfo">
-                        <label>地震情報</label>
-                        <select name="settings-getType-eqinfo" id="">
-                            <option value="p2pquake" selected>P2P地震情報</option>
-                            <option value="dmdata">【未実装】Project DM-D.S.S</option>
-                        </select>
-                    </div>
-
-                    <div class="list item" id="settingsGetTypeTsunami">
-                        <label>津波情報【未実装】</label>
-                        <select name="settings-getType-tsunami" id="">
-                            <option value="p2pquake" selected>【未実装】P2P地震情報</option>
-                            <option value="dmdata">【未実装】Project DM-D.S.S</option>
-                        </select>
-                    </div>
-
-                    <div class="list item" id="settingsGetTypeVolcanicEruption">
-                        <label>火山情報【未実装】</label>
-                        <select name="settings-getType-volcanic-eruption" id="">
-                            <option value="" selected>未実装</option>
-                        </select>
-                    </div>
-
-                    <div class="list item" id="settingsGetTypeCivilProtection">
-                        <label>国民保護情報【未実装】</label>
-                        <select name="settings-getType-civil-protection" id="">
-                            <option value="" selected>未実装</option>
-                        </select>
-                    </div>
-
-                    <div class="list" id="settings_dmdata">
-                        <div id="settings_dmdata_init">
-                            <p style="color: #ff6060; font-weight: bold;">アカウント未連携</p>
-                            <button id="settings_dmdata_init_btn">
-                                DM-D.S.S アカウントを連携する
-                                <span class="material-symbols-outlined open-in-new">
-                                    open_in_new
-                                </span>
-                            </button>
-                        </div>
-                        <div id="settings_dmdata_main">
-                            <p style="color: #4040c0; font-weight: bold;">アカウント連携済</p>
                         </div>
                     </div>
                 </div>
@@ -604,8 +536,8 @@
                 <div class="item" style="width: 52%; border-left: 1px solid #808080ff;">
                     <span class="label">主要動到達まで</span>
                     <div>
-                        <span class="about">およそ</span>
-                        <span id="eewArrivalTime" class="value">4秒</span>
+                        <span id="eewArrivalTimeAbout" class="about">およそ</span>
+                        <span id="eewArrivalTime" class="value"></span>
                     </div>
                 </div>
             </div>

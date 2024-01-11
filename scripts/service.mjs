@@ -1,6 +1,6 @@
 /*
  *
- * Service.mjs | YDITS for Web
+ * service.mjs | YDITS for Web
  *
  * (c) よね/Yone
  *

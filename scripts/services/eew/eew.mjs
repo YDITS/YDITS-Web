@@ -18,8 +18,22 @@ export class Eew extends Service {
     isEew = false;
     currentId = null;
     reports = {};
-    warnAreasText = null;
+    warnAreasText = "";
     warnAreas = [];
+
+    maxScaleText = {
+        "-1": "?",
+        "0": "0",
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5-": "5弱",
+        "5+": "5強",
+        "6-": "6弱",
+        "6+": "6強",
+        "7": "7"
+    }
 
     Report = class {
         isWarning = false;
@@ -42,9 +56,13 @@ export class Eew extends Service {
         latitude = null;
         longitude = null;
         psWave = {
-            pRadius: null,
-            sRadius: null
+            sRadius: null,
+            pRadius: null
         }
+        sWave = null;
+        pWave = null;
+        lastSWave = null;
+        lastPWave = null;
     }
 
     WarnArea = class {
@@ -54,18 +72,13 @@ export class Eew extends Service {
         scaleFrom = null
         scaleTo = null;
 
-        constructor(
-            name,
-            pref,
-            arrivalTime,
-            scaleFrom,
-            scaleTo
-        ) {
-            this.name = name;
-            this.pref = pref;
-            this.arrivalTime = arrivalTime;
-            this.scaleFrom = scaleFrom;
-            this.scaleTo = scaleTo;
+        constructor(eew, data) {
+            this.name = data.name;
+            this.pref = data.pref;
+            this.arrivalTime = data.arrivalTime;
+            this.scaleFrom = data.scaleFrom;
+            this.scaleTo = data.scaleTo;
+            eew.warnAreasText += `${data.pref}　`;
         }
     }
 
@@ -85,22 +98,19 @@ export class Eew extends Service {
         this.$scale = $("#eewScale");
         this.$scaleAbout = $("#eewScaleAbout");
         this.$arrivalTime = $("#eewArrivalTime");
+        this.$arrivalTimeAboud = $("#eewArrivalTimeAbout");
         this.$locate = $("#eewLocate");
 
         $(document).on("click", "#eewNotify", () => this.displayWarn());
         $(document).on("click", "#eewWarn .closeBtn", () => this.hideWarn());
-
-        document.addEventListener("build", () => initialize());
     }
 
 
     /**
      * 初期化を行います。
-     */
+    */
     initialize() {
-        this.settings = this._app.services.settings;
-
-        switch (this.settings.connect.eew) {
+        switch (this._app.services.settings) {
             case "yahoo-kmoni":
                 break;
         }
@@ -111,8 +121,8 @@ export class Eew extends Service {
      * 緊急地震速報（警報）発表時の処理を行います。
      */
     warning(data) {
-        this.updateWarn(data);
         this.displayWarn();
+        this.updateWarn(data);
     }
 
 
@@ -120,7 +130,6 @@ export class Eew extends Service {
      * フィールドの表示を更新します。
      */
     updateField() {
-        console.debug(this.reports);
         if (this.isEew) {
             const REPORT = this.reports[this.currentId];
             let bgcolor = null;
@@ -283,16 +292,17 @@ export class Eew extends Service {
     updateWarn() {
         let areas = [];
 
-        this.warnData["areasList"].forEach(area => {
-            areas.push(this.format(area));
+        this.warnAreas.forEach(area => {
+            areas.push(this.addPref(area.pref));
         });
 
-        if (!areas.includes(this.geolocation.area)) {
+        if (!(areas.includes(this._app.services.geoLocation.area))) {
             this.hideWarn();
         }
 
-        this.warnData.areas.forEach(area => {
-            if (this.format(area.pref) === this.geolocation.area) {
+        // this.warnAreas.forEach(area => {
+        this.warnAreas.reverse().forEach(area => {
+            if (this.addPref(area.pref) === this._app.services.geoLocation.area) {
                 if (area.scaleTo === 99) {
                     this.scale = this.parseScale(area.scaleFrom);
                     this.$scaleAbout.text("程度以上");
@@ -300,20 +310,30 @@ export class Eew extends Service {
                     this.scale = this.parseScale(area.scaleTo);
                     this.$scaleAbout.text("程度");
                 }
-                console.debug(this.scale);
 
-                let dateNow = this.datetime.gmt.getTime();
-                // let arrivalTime = new Date(area.arrivalTime).getTime();
-                let debugDatetime = this.datetime.gmt;
-                debugDatetime.setSeconds(this.datetime.second + 12);
-                let arrivalTime = debugDatetime.getTime();
+                // let dateNow = this._app.services.datetime.gmt.getTime();
+                let arrivalTime = new Date(area.arrivalTime).getTime();
+
+                // DEBUG
+                let debugDatetime = new Date(area.arrivalTime);
+                debugDatetime.setSeconds(debugDatetime.getSeconds() + 12);
+                let dateNow = debugDatetime.getTime();
                 this.arrivalTime = (arrivalTime - dateNow) / 1000;
+
+                if (this.arrivalTime < 0) {
+                    this.arrivalTime = "到達と推測";
+                    this.$arrivalTimeAboud.text("");
+                } else {
+                    this.arrivalTime = `${this.arrivalTime}秒`;
+                    this.$arrivalTimeAboud.text("およそ");
+                }
+
+                this.$scale.text(this.scale);
+                this.$arrivalTime.text(this.arrivalTime);
+                this.$locate.text(this._app.services.geoLocation.area);
             }
         });
 
-        this.$scale.text(this.scale);
-        this.$arrivalTime.text(`${this.arrivalTime}秒`);
-        this.$locate.text(this.geolocation.area);
     }
 
 
@@ -321,6 +341,7 @@ export class Eew extends Service {
      * 警報画面を表示します。
      */
     displayWarn() {
+        if (!this._app.services.geoLocation.isSupport) { return }
         this.$warn.addClass("active");
     }
 
@@ -334,19 +355,28 @@ export class Eew extends Service {
 
 
     /**
-     * 緊急地震速報イベントを終了します。
+     * すべての緊急地震速報イベントを終了します。
      */
     end() {
         this.isEew = false;
         this.reports = {};
+        this.endWarn();
+    }
+
+    /**
+     * 緊急地震速報（警報）イベントを終了します。
+    */
+    endWarn() {
+        this.hideWarn();
         this.warnAreas = [];
+        this.updateWarn();
     }
 
 
     /**
-     * 文字列の末尾に都道府県を付与します。
+     * 文字列の末尾に都府県を付与します。
      */
-    format(string) {
+    addPref(string) {
         switch (string) {
             case "東京":
                 return "東京都";
@@ -362,6 +392,29 @@ export class Eew extends Service {
 
             default:
                 return `${string}県`;
+        }
+    }
+
+
+    /**
+     * 文字列の末尾から都府県を削除します。
+     */
+    removePref(string) {
+        switch (string) {
+            case "東京都":
+                return "東京";
+
+            case "北海道":
+                return string;
+
+            case "大阪府":
+                return "大阪";
+
+            case "京都府":
+                return "京都";
+
+            default:
+                return string.replace("県", "");
         }
     }
 
@@ -383,7 +436,7 @@ export class Eew extends Service {
             case 60: return "6強";
             case 70: return "7";
             case 99: return;
-            default: return;
+            default: return "e";
         }
     }
 

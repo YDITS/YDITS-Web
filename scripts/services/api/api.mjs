@@ -9,11 +9,6 @@ import { Dmdata } from "./dmdata.mjs";
  * APIを扱うサービスです。
  */
 export class Api extends Service {
-    yahooKmoni = null;
-    p2pquake = null;
-    dmdata = null;
-
-
     constructor(app) {
         super(app, {
             name: "api",

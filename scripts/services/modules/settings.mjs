@@ -18,7 +18,9 @@ export class Settings extends Service {
     connect = {
         eew: null,
         eqinfo: null,
-        tsunami: null
+        tsunami: null,
+        volcanicEruption: null,
+        civilProtection: null
     }
 
 
@@ -36,17 +38,20 @@ export class Settings extends Service {
 
     constructor(app) {
         super(app, {
-            name: "settigns",
+            name: "settings",
             description: "設定を扱うサービスです。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+    }
 
-        let dmdata = app.services.dmdata;
-        let debugLogs = app.services.debugLogs;
-        let notify = app.services.notify;
-        let sounds = app.services.sounds;
+
+    initialize() {
+        let dmdata = this._app.services.api.dmdata;
+        let debugLogs = this._app.services.debugLogs;
+        let notify = this._app.services.notify;
+        let sounds = this._app.services.sounds;
 
         // ----- Events ----- //
         $(document).on('click', '#settings .closeBtn', () => {
@@ -64,12 +69,6 @@ export class Settings extends Service {
         });
         $(document).on('click', '#settings_map .closeBtn', () => {
             $('#settings_map').removeClass('active');
-        });
-        $(document).on('click', '#settings_list_connect', () => {
-            $('#settings_connect').addClass('active');
-        });
-        $(document).on('click', '#settings_connect .closeBtn', () => {
-            $('#settings_connect').removeClass('active');
         });
         $(document).on('click', '#settings_list_notify', () => {
             $('#settings_notify').addClass('active');
@@ -138,7 +137,7 @@ export class Settings extends Service {
             $('#settings_playSound_eew_any .toggle-switch').addClass('on');
         }
 
-        $(document).on('click', '#settings_playSound_eew_any .toggle-switch', function () {
+        $(document).on('click', '#settings_playSound_eew_any .toggle-switch', () => {
             if (this.sound.eewAny == false) {
                 this.sound.eewAny = true;
                 localStorage.setItem('settings-playSound-eew-any', 'true');
@@ -161,7 +160,7 @@ export class Settings extends Service {
             $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
         }
 
-        $(document).on('click', '#settings_playSound_eew_cancel .toggle-switch', function () {
+        $(document).on('click', '#settings_playSound_eew_cancel .toggle-switch', () => {
             if (this.sound.eewCancel == false) {
                 this.sound.eewCancel = true;
                 localStorage.setItem('settings-playSound-eew-cancel', 'true');
@@ -184,7 +183,7 @@ export class Settings extends Service {
             $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
         }
 
-        $(document).on('click', '#settings_playSound_eqinfo .toggle-switch', function () {
+        $(document).on('click', '#settings_playSound_eqinfo .toggle-switch', () => {
             if (this.sound.eqinfo == false) {
                 this.sound.eqinfo = true;
                 localStorage.setItem('settings-playSound-info', 'true');
@@ -209,95 +208,24 @@ export class Settings extends Service {
             $('#settings_map_auto_move .toggle-switch').addClass('on');
         }
 
-        $(document).on('click', '#settings_map_auto_move .toggle-switch', function () {
+        $(document).on('click', '#settings_map_auto_move .toggle-switch', () => {
             if (this.map.autoMove == false) {
                 this.map.autoMove = true;
                 localStorage.setItem('settings-map-auto-move', 'true');
                 $('#settings_map_auto_move .toggle-switch').addClass('on');
-            } else if (map.autoMove == true) {
+            } else if (this.map.autoMove == true) {
                 this.map.autoMove = false;
                 localStorage.setItem('settings-map-auto-move', 'false');
                 $('#settings_map_auto_move .toggle-switch').removeClass('on');
             }
         })
 
-
-        // ----- Get Type -----//
-        if (localStorage.getItem("settings-getType-eew") != null) {
-            this.connect.eew = localStorage.getItem("settings-getType-eew");
-        } else {
-            this.connect.eew = "yahoo-kmoni";
-        }
-
-        $(`select[name="settings-getType-eew"]`).val(`${this.connect.eew}`);
-
-        if (this.connect.eew === 'yahoo-kmoni') {
-            $('#settings_dmdata').hide();
-        } else if (this.connect.eew === 'dmdata') {
-            $('#settings_dmdata').show();
-
-        }
-
-        dmdata.accessToken = localStorage.getItem('settings-dmdata-access-token');
-        if (dmdata.accessToken === null) {
-            $('#settings_dmdata_init').show();
-            $('#settings_dmdata_main').hide();
-        } else {
-            $('#settings_dmdata_init').hide();
-            $('#settings_dmdata_main').show();
-        }
-
-        $(document).on('change', 'select[name="settings-getType-eew"]', function () {
-            this.connect.eew = $('option:selected').val();
-            if (this.connect.eew === 'yahoo-kmoni') {
-                $('#settings_dmdata').hide();
-                if (dmdata.accessToken !== null) {
-                    dmdataSocket.close();
-                }
-            } else if (connect.eew === 'dmdata') {
-                $('#settings_dmdata').show();
-                if (dmdata.accessToken !== null) {
-                    dmdataSocketStart();
-                }
-            }
-            localStorage.setItem('settings-getType-eew', connect.eew);
-        });
-
-        if (localStorage.getItem("settings-getType-eqinfo") != null) {
-            this.connect.eqinfo = localStorage.getItem("settings-getType-eqinfo");
-        } else {
-            this.connect.eqinfo = "p2pquake";
-        }
-
-        $(`select[name="settings-getType-eqinfo"]`).val(`${this.connect.eqinfo}`);
-
-        $(document).on('change', 'select[name="settings-getType-eqinfo"]', function () {
-            this.connect.eqinfo = $('option:selected').val();
-            if (this.connect.eqinfo === 'p2pquake') {
-            } else if (this.connect.eqinfo === 'dmdata') {
-            }
-            localStorage.setItem('settings-getType-eqinfo', this.connect.eqinfo);
-        });
-
-        if (localStorage.getItem("settings-getType-tsunami") != null) {
-            this.connect.tsunami = localStorage.getItem("settings-getType-tsunami");
-        } else {
-            this.connect.tsunami = "p2pquake";
-        }
-
-        $(`select[name="settings-getType-tsunami"]`).val(`${this.connect.tsunami}`);
-
-        $(document).on('change', 'select[name="settings-getType-tsunami"]', function () {
-            this.connect.tsunami = $('option:selected').val();
-            if (this.connect.tsunami === 'p2pquake') {
-            } else if (this.connect.tsunami === 'dmdata') {
-            }
-            localStorage.setItem('settings-getType-tsunami', this.connect.tsunami);
-        });
-
-
-        // ----- dmdata -----//
-        $(document).on('click', '#settings_dmdata_init_btn', () => dmdata.connect(debugLogs));
+        // ----- Connection ----- //
+        this.connect.eew = "yahoo-kmoni";
+        this.connect.eqinfo = "p2pquake";
+        this.connect.tsunami = "dmdata";
+        this.connect.volcanicEruption = "dmdata";
+        this.connect.civilProtection = "dmdata";
 
 
         // ----- Reset -----//
@@ -336,18 +264,18 @@ export class Settings extends Service {
 
 
         // ----- Test Play Sounds -----//
-        $(document).on('click', '#btn_eew_chk_sound', function () {
+        $(document).on('click', '#btn_eew_chk_sound', () => {
             sounds.eew.play();
             sounds.eewVoice7.play();
         });
-        $(document).on('click', '#btn_earthquake_info_chk_sound', function () {
+        $(document).on('click', '#btn_earthquake_info_chk_sound', () => {
             sounds.eqinfo.play();
             sounds.eqinfoVoice7.play();
         });
-        $(document).on('click', '#btn_eew_cancel_chk_sound', function () {
+        $(document).on('click', '#btn_eew_cancel_chk_sound', () => {
             sounds.eewVoiceCancel.play();
         });
-        $(document).on('click', '#btn_push_chk', function () {
+        $(document).on('click', '#btn_push_chk', () => {
             sounds.notify.play();
             notify.show("message", "プッシュ通知のテスト", "これはページ内通知です。プッシュ通知とは別に表示されます。");
 
@@ -372,7 +300,7 @@ export class Settings extends Service {
 
 
         // ----- Delete Debug Logs -----//
-        $(document).on('click', '#deleteDebugLogsButton', function (e) {
+        $(document).on('click', '#deleteDebugLogsButton', () => {
             debugLogs.delete();
             debugLogs.add("START", "[START]", "- Start log -");
 

@@ -26,8 +26,6 @@ export class Dmdata extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
-
-        this.initialize();
     }
 
 

@@ -9,11 +9,11 @@
  *
  */
 
-import { Service } from "./service.mjs";
+import { Service } from "../service.mjs";
 
 
 /**
- * サービスワーカを管理するサービスです。
+ * サービスワーカーを管理するサービスです。
  */
 export class ServiceWorker extends Service {
     constructor(app) {
@@ -25,7 +25,6 @@ export class ServiceWorker extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
-        this.debugLogs = app.services.debugLogs;
         this.register();
     }
 
@@ -42,15 +41,15 @@ export class ServiceWorker extends Service {
                 );
 
                 if (registration.installing) {
-                    this.debugLogs.add("INFO", `[INFO]`, "Service worker installing.");
+                    this._app.services.debugLogs.add("info", `[INFO]`, "Service worker installing.");
                 } else if (registration.waiting) {
-                    this.debugLogs.add("INFO", `[INFO]`, "Service worker installed.");
+                    this._app.services.debugLogs.add("info", `[INFO]`, "Service worker installed.");
                 } else if (registration.active) { }
             } catch (error) {
-                this.debugLogs.add("ERROR", `[ERROR]`, `Registration failed with ${error}`);
+                this._app.services.debugLogs.add("error", `[ERROR]`, `Registration failed with ${error}`);
             }
         } else {
-            this.debugLogs.add("INFO", `[INFO]`, "Service worker is not supported on this browser.");
+            this._app.services.debugLogs.add("INFO", `[info]`, "Service worker is not supported on this browser.");
         }
     }
 }

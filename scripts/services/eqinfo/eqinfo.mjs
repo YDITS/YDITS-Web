@@ -17,6 +17,18 @@ import { Service } from "../../service.mjs";
  */
 export class Eqinfo extends Service {
     eqinfoNum = 0;
+    type = null;
+    originTime = null;
+    originTimeText = null;
+    regionName = null;
+    maxScale = null;
+    maxScaleText = null;
+    magnitude = null;
+    magnitudeText = null;
+    depth = null;
+    depthText = null;
+    tsunami = null;
+    tsunamiText = null;
 
 
     constructor(app) {
@@ -27,8 +39,6 @@ export class Eqinfo extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
-
-        document.addEventListener("build", () => initialize());
     }
 
 
@@ -65,34 +75,45 @@ export class Eqinfo extends Service {
     /**
      * 地震履歴に地震情報を追加します。
      */
-    addToList(data) {
+    addToList(isFirst, num) {
         let html = `
-            <li class="list list-${data["num"]}">
+            <li class="list list-${num}">
                 <div class="maxScale">
-                    <p>${data["maxInt"]}</p>
+                    <p>${this.maxScaleText}</p>
                 </div>
 
                 <div class="right">
-                    <p class="hypocenter">${data["hypocenter"]}</p>
-                    <p>${data["datetime"]}</p>
+                    <p class="hypocenter">${this.regionName}</p>
+                    <p>${this.originTimeText}</p>
                     <div class="hypoInfo">
-                        <p>${data["depth"]}</p>
-                        <p>${data["magnitude"]}</p>
+                        <p>${this.depthText}</p>
+                        <p>${this.magnitudeText}</p>
                     </div>
-                    <p>${data["tsunami"]}</p>
+                    <p>${this.tsunamiJp}</p>
                 </div>
             </li>
         `;
 
-        if (data["isFirst"]) {
+        if (isFirst) {
             $('#eqHistoryField').append(html);
         } else {
             $('#eqHistoryField').prepend(html);
         }
 
-        $(`#eqHistoryField>.list-${data["num"]}>.maxScale`).css({
-            'background-color': data["bgcolor"],
-            'color': data["color"]
+        let bgcolor;
+        let color;
+
+        if (this.maxScale in this._app.services.api.p2pquake.colors) {
+            bgcolor = this._app.services.api.p2pquake.colors[this.maxScale]["bgcolor"];
+            color = this._app.services.api.p2pquake.colors[this.maxScale]["color"];
+        } else {
+            bgcolor = "#404040ff";
+            color = "#ffffffff";
+        }
+
+        $(`#eqHistoryField>.list-${num}>.maxScale`).css({
+            'background-color': bgcolor,
+            'color': color
         });
     }
 }
