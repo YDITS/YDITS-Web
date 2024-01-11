@@ -116,4 +116,60 @@ export class Eqinfo extends Service {
             'color': color
         });
     }
+
+
+    sound() {
+        if (!(this._app.services.settings.sound.eqinfo)) { return }
+
+        switch (this._app.services.eqinfo.maxScale) {
+            case 10:
+                this._app.services.sounds.eqinfo.play();
+                this._app.services.sounds.eqinfoVoice1.play();
+                break;
+
+            case 20:
+                this._app.services.sounds.eqinfo.play();
+                this._app.services.sounds.eqinfoVoice2.play();
+                break;
+
+            case 30:
+                this._app.services.sounds.eqinfo.play();
+                this._app.services.sounds.eqinfoVoice3.play();
+                break;
+
+            case 40:
+                this._app.services.sounds.eqinfo.play();
+                this._app.services.sounds.eqinfoVoice4.play();
+                break;
+
+            case 45:
+                this._app.services.sounds.eqinfo.play();
+                this._app.services.sounds.eqinfoVoice5.play();
+                break;
+
+            case 50:
+                this._app.services.sounds.eqinfo.play();
+                this._app.services.sounds.eqinfoVoice6.play();
+                break;
+
+            case 55:
+                this._app.services.sounds.eqinfo.play();
+                this._app.services.sounds.eqinfoVoice7.play();
+                break;
+
+            case 60:
+                this._app.services.sounds.eqinfo.play();
+                this._app.services.sounds.eqinfoVoice8.play();
+                break;
+
+            case 70:
+                this._app.services.sounds.eqinfo.play();
+                this._app.services.sounds.eqinfoVoice9.play();
+                break;
+
+            default:
+                this._app.services.sounds.eqinfo.play();
+                break;
+        }
+    }
 }

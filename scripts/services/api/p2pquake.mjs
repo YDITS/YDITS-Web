@@ -150,26 +150,55 @@ export class P2pquake extends Service {
             switch (code) {
                 // eqinfo
                 case 551:
-                    Push.create(
-                        this._app.services.eqinfo.typeJp,
-                        {
-                            body: `${this._app.services.eqinfo.regionName}を震源とする、最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。\n規模は${this._app.services.eqinfo.magnitudeText}、深さは${this._app.services.eqinfo.depthText}と推定されます。\n${this._app.services.eqinfo.tsunamiJp}`,
-                            onClick: function () {
-                                window.focus();
-                                this.close();
-                            }
-                        }
-                    );
+                    switch (this._app.services.eqinfo.type) {
+                        case "DetailScale":
+                            Push.create(
+                                this._app.services.eqinfo.typeJp,
+                                {
+                                    body: `${this._app.services.eqinfo.regionName}を震源とする、最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。\n規模は${this._app.services.eqinfo.magnitudeText}、深さは${this._app.services.eqinfo.depthText}と推定されます。\n${this._app.services.eqinfo.tsunamiJp}`,
+                                    onClick: function () {
+                                        window.focus();
+                                        this.close();
+                                    }
+                                }
+                            );
 
-                    this.notify.show(
-                        "message",
-                        data["type"],
-                        `
-                            ${this._app.services.eqinfo.regionName}を震源とする、最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。<br>
-                            規模は${this._app.services.eqinfo.magnitudeText}、深さは${this._app.services.eqinfo.depthText}と推定されます。<br>
-                            ${this._app.services.eqinfo.tsunamiJp}
-                        `
-                    );
+                            this._app.services.notify.show(
+                                "message",
+                                this._app.services.eqinfo.typeJp,
+                                `
+                                    ${this._app.services.eqinfo.regionName}を震源とする、最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。<br>
+                                    規模は${this._app.services.eqinfo.magnitudeText}、深さは${this._app.services.eqinfo.depthText}と推定されます。<br>
+                                    ${this._app.services.eqinfo.tsunamiJp}
+                                `
+                            );
+                            break;
+
+                        case "ScalePrompt":
+                            Push.create(
+                                this._app.services.eqinfo.typeJp,
+                                {
+                                    body: `最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。\n${this._app.services.eqinfo.tsunamiJp}`,
+                                    onClick: function () {
+                                        window.focus();
+                                        this.close();
+                                    }
+                                }
+                            );
+
+                            this._app.services.notify.show(
+                                "message",
+                                this._app.services.eqinfo.typeJp,
+                                `
+                                    最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。<br>
+                                    ${this._app.services.eqinfo.tsunamiJp}
+                                `
+                            );
+                            break;
+
+                        default:
+                            return;
+                    }
                     break;
 
                 // EEW
@@ -298,6 +327,7 @@ export class P2pquake extends Service {
                     this._app.services.eew.warnAreasText = warnAreasText;
 
                     this._app.services.eew.warning();
+                    this._app.services.eew.sound();
                     this.push(556);
                 } catch (error) {
                     console.error(error);
@@ -364,7 +394,7 @@ export class P2pquake extends Service {
                     this._app.services.eqinfo.magnitude = list['earthquake']['hypocenter']['magnitude'];
 
                     if (this._app.services.eqinfo.magnitude == -1) {
-                        magnitudeText = 'M調査中または不明';
+                        this._app.services.eqinfo.magnitudeText = 'M調査中または不明';
                     } else {
                         this._app.services.eqinfo.magnitudeText = `M${this._app.services.eqinfo.magnitude}`;
                     }
@@ -578,11 +608,6 @@ export class P2pquake extends Service {
                 break;
         }
 
-        if (this._app.services.settings.sound.eewAny == true) {
-            this._app.services.sounds.eew.play();
-        }
-
-
         data.areas.forEach((area) => {
             this._app.services.eew.warnAreas.push(
                 new this._app.services.eew.WarnArea(
@@ -608,165 +633,92 @@ export class P2pquake extends Service {
         this._app.services.eew.warnAreasText = warnAreasText;
 
         this._app.services.eew.warning();
+        this._app.services.eqinfo.sound();
         this.push(556);
     }
 
 
     whenEqinfo(data) {
-        if (data['issue']['type'] !== "DetailScale") { return }
+        this._app.services.eqinfo.type = data['issue']['type'];
 
-        if (data["issue"]["type"] in this.typesJp) {
-            data["issue"]["typeJp"] = this.typesJp[data["issue"]["type"]];
+        if (this._app.services.eqinfo.type in this.typesJp) {
+            this._app.services.eqinfo.typeJp = this.typesJp[this._app.services.eqinfo.type];
         } else {
-            data["issue"]["typeJp"] = "";
+            this._app.services.eqinfo.typeJp = "";
         }
 
-        let datetime = new Date(data["earthquake"]["time"]);
+        this._app.services.eqinfo.originTime = new Date(data["earthquake"]["time"]);
 
-        if (datetime.second === null) {
-            datetime = "----/--/-- --:--";
+        if (!(this._app.services.eqinfo.originTime instanceof Date)) {
+            this._app.services.eqinfo.originTimeText = "----/--/-- --:--";
         } else {
-            datetime =
-                `${datetime.getFullYear()}/` +
-                `${this.zeroPadding(datetime.getMonth() + 1)}/` +
-                `${this.zeroPadding(datetime.getDate())} ` +
-                `${this.zeroPadding(datetime.getHours())}:` +
-                `${this.zeroPadding(datetime.getMinutes())}`
+            this._app.services.eqinfo.originTimeText =
+                `${this._app.services.eqinfo.originTime.getFullYear()}/` +
+                `${this.zeroPadding(this._app.services.eqinfo.originTime.getMonth() + 1)}/` +
+                `${this.zeroPadding(this._app.services.eqinfo.originTime.getDate())} ` +
+                `${this.zeroPadding(this._app.services.eqinfo.originTime.getHours())}:` +
+                `${this.zeroPadding(this._app.services.eqinfo.originTime.getMinutes())}`
         }
 
-        let maxInt = data['earthquake']['maxScale'];
+        this._app.services.eqinfo.maxScale = data['earthquake']['maxScale'];
 
-        switch (maxInt) {
-            case -1: maxInt = '-'; break;
-            case 10: maxInt = '1'; break;
-            case 20: maxInt = '2'; break;
-            case 30: maxInt = '3'; break;
-            case 40: maxInt = '4'; break;
-            case 45: maxInt = '5-'; break;
-            case 50: maxInt = '5+'; break;
-            case 55: maxInt = '6-'; break;
-            case 60: maxInt = '6+'; break;
-            case 70: maxInt = '7'; break;
-
-            default:
-                maxInt = `?`;
-                break;
-        }
-
-        let hypocenter = data['earthquake']['hypocenter']['name'];
-
-        if (hypocenter == '') {
-            hypocenter = '震源 調査中';
-        }
-
-        let magnitude = data['earthquake']['hypocenter']['magnitude'];
-
-        if (magnitude == -1) {
-            magnitude = 'M調査中または不明';
+        if (this._app.services.eqinfo.maxScale in this.maxScaleText) {
+            this._app.services.eqinfo.maxScaleText = this.maxScaleText[String(this._app.services.eqinfo.maxScale)];
         } else {
-            magnitude = `M${magnitude}`;
+            this._app.services.eqinfo.maxScaleText = "?";
         }
 
-        let depth = data['earthquake']['hypocenter']['depth'];
+        this._app.services.eqinfo.regionName = data['earthquake']['hypocenter']['name'];
 
-        if (depth == -1) {
-            depth = '-';
-        } else if (depth == 0) {
-            depth = 'ごく浅い';
-        } else {
-            depth = `約${depth}km`;
+        if (this._app.services.eqinfo.regionName == '') {
+            this._app.services.eqinfo.regionName = '震源 調査中';
         }
 
-        let tsunami = data['earthquake']['domesticTsunami'];
+        this._app.services.eqinfo.magnitude = data['earthquake']['hypocenter']['magnitude'];
 
-        if (tsunami in this.tsunamiLevels) {
-            tsunami = this.tsunamiLevels[tsunami];
+        if (this._app.services.eqinfo.magnitude == -1) {
+            this._app.services.eqinfo.magnitudeText = 'M調査中';
         } else {
-            tsunami = "津波の影響は不明";
+            this._app.services.eqinfo.magnitudeText = `M${this._app.services.eqinfo.magnitude}`;
+        }
+
+        this._app.services.eqinfo.depth = data['earthquake']['hypocenter']['depth'];
+
+        if (this._app.services.eqinfo.depth == -1) {
+            this._app.services.eqinfo.depthText = '深さ 調査中';
+        } else if (this._app.services.eqinfo.depth == 0) {
+            this._app.services.eqinfo.depthText = 'ごく浅い';
+        } else {
+            this._app.services.eqinfo.depthText = `約${this._app.services.eqinfo.depth}km`;
+        }
+
+        this._app.services.eqinfo.tsunami = data['earthquake']['domesticTsunami'];
+
+        if (this._app.services.eqinfo.tsunami in this.tsunamiLevels) {
+            this._app.services.eqinfo.tsunamiJp = this.tsunamiLevels[this._app.services.eqinfo.tsunami];
+        } else {
+            this._app.services.eqinfo.tsunamiJp = "津波の影響は不明";
         }
 
         let bgcolor;
         let color;
 
-        if (maxInt in this.colors) {
-            bgcolor = this.colors[maxInt]["bgcolor"];
-            color = this.colors[maxInt]["color"];
+        if (this._app.services.eqinfo.maxScale in this.colors) {
+            bgcolor = this.colors[this._app.services.eqinfo.maxScale]["bgcolor"];
+            color = this.colors[this._app.services.eqinfo.maxScale]["color"];
         } else {
             bgcolor = "#404040ff";
             color = "#ffffffff";
         }
 
         this.lastId = this.latestId;
-        let d = {
-            "code": data["code"],
-            "isFirst": false,
-            "num": this.eqinfoNum,
-            "type": this._app.d,
-            "datetime": datetime,
-            "regionName": hypocenter,
-            "maxScale": maxInt,
-            "magnitude": magnitude,
-            "depth": depth,
-            "tsunami": tsunami,
-            "bgcolor": bgcolor,
-            "color": color
-        }
-        this.eqinfo.addToList(d);
-        this.eqinfoNum++;
 
-        if (this.settings.sound.eqinfo == true) {
-            switch (maxInt) {
-                case "1":
-                    this.sounds.eqinfo.play();
-                    this.sounds.eqinfoVoice1.play();
-                    break;
-
-                case "2":
-                    this.sounds.eqinfo.play();
-                    this.sounds.eqinfoVoice2.play();
-                    break;
-
-                case "3":
-                    this.sounds.eqinfo.play();
-                    this.sounds.eqinfoVoice3.play();
-                    break;
-
-                case "4":
-                    this.sounds.eqinfo.play();
-                    this.sounds.eqinfoVoice4.play();
-                    break;
-
-                case "5-":
-                    this.sounds.eqinfo.play();
-                    this.sounds.eqinfoVoice5.play();
-                    break;
-
-                case "5+":
-                    this.sounds.eqinfo.play();
-                    this.sounds.eqinfoVoice6.play();
-                    break;
-
-                case "6-":
-                    this.sounds.eqinfo.play();
-                    this.sounds.eqinfoVoice7.play();
-                    break;
-
-                case "6+":
-                    this.sounds.eqinfo.play();
-                    this.sounds.eqinfoVoice8.play();
-                    break;
-
-                case "7":
-                    this.sounds.eqinfo.play();
-                    this.sounds.eqinfoVoice9.play();
-                    break;
-
-                default:
-                    this.sounds.eqinfo.play();
-                    break;
-            }
+        if (this._app.services.eqinfo.type === "DetailScale") {
+            this._app.services.eqinfo.addToList(false, this.eqinfoNum);
+            this.eqinfoNum++;
         }
 
+        this._app.services.eqinfo.sound();
         this.push(551);
     }
 

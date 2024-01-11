@@ -44,7 +44,7 @@ export class YahooKmoni extends Service {
         // const URL = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
         // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
         // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20200212/202002121937${this.zeroPadding(this._app.services.datetime.second)}.json`;  //2020-2-12-19:36 double eew
-        // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20240101/202401011610${this.zeroPadding(this.datetime.second)}.json`;  //2024-1-1-16:10 Ishikawa
+        // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20240101/202401011610${this.zeroPadding(this._app.services.datetime.second)}.json`;  //2024-1-1-16:10 Ishikawa
         // const URL = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
         // ---
 
@@ -197,6 +197,7 @@ export class YahooKmoni extends Service {
                             this._app.services.eew.reports[DATA.reportId].psWave.sRadius = data.psWave.items[0].sRadius;
 
                             this._app.services.eew.updateField();
+                            this._app.services.eew.sound();
                         } catch (error) {
                             console.error(error);
                         }
@@ -221,19 +222,19 @@ export class YahooKmoni extends Service {
 
     fetchError(error) {
         if (
-            (this.app.services.settings.connect.eew === 'yahoo-kmoni') ||
-            (this.app.services.api.dmdata.accessToken === null)
+            (this._app.services.settings.connect.eew === 'yahoo-kmoni') ||
+            (this._app.services.api.dmdata.accessToken === null)
         ) {
             $('#statusLamp').css({ 'background-color': '#ff4040' });
 
             if (this.fetchLastStatus) {
-                this.debugLogs.add(
+                this._app.services.debugLogs.add(
                     "error",
                     "[NETWORK]",
                     `Failed to connect to weather-kyoshin.east.edge.storage-yahoo.jp.<br>${error}`
                 );
 
-                this.notify.show(
+                this._app.services.notify.show(
                     "error",
                     "エラー",
                     `

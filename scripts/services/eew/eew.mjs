@@ -121,7 +121,16 @@ export class Eew extends Service {
      * 緊急地震速報（警報）発表時の処理を行います。
      */
     warning(data) {
-        this.displayWarn();
+        let areas = [];
+
+        this.warnAreas.forEach(area => {
+            areas.push(this.addPref(area.pref));
+        });
+
+        if (areas.includes(this._app.services.geoLocation.area)) {
+            this.displayWarn();
+        }
+
         this.updateWarn(data);
     }
 
@@ -201,10 +210,6 @@ export class Eew extends Service {
                 'background-color': bgcolor,
                 'color': fontColor
             })
-            $(`#eewCalc`).css({
-                'background-color': 'initial',
-                'color': 'initial'
-            });
         } else {
             $('#eewTitle').text(`緊急地震速報は発表されていません`);
             $('#eewCalc').text("");
@@ -217,10 +222,6 @@ export class Eew extends Service {
                 'background-color': "#404040ff",
                 'color': "#ffffffff"
             });
-            $(`#eewCalc`).css({
-                'background-color': 'initial',
-                'color': 'initial'
-            });
         }
     }
 
@@ -229,58 +230,56 @@ export class Eew extends Service {
      * 情報に応じてサウンドを再生します。
      */
     sound() {
-        if (report.isCancel == 'true') {
-            if (this.settings.sound.eewCancel == true) {
-                this.sounds.eewVoiceCancel.play();
+        if (this.reports[this.currentId].isCancel == true) {
+            if (this._app.services.settings.sound.eewCancel == true) {
+                this._app.services.sounds.eewVoiceCancel.play();
             }
         } else {
-            if (this.settings.sound.eewAny == true && this.maxIntLast != maxInt) {
-                switch (maxInt) {
-                    case '1':
-                        this.sounds.eewVoice1.play();
-                        break;
+            if (!(this._app.services.settings.sound.eewAny)) { return }
 
-                    case '2':
-                        this.sounds.eewVoice2.play();
-                        break;
+            if (this.reports[this.currentId].isWarning) {
+                this._app.services.sounds.eew.play();
+            }
 
-                    case '3':
-                        this.sounds.eewVoice3.play();
-                        break;
+            switch (this.reports[this.currentId].maxScale) {
+                case '1':
+                    this._app.services.sounds.eewVoice1.play();
+                    break;
 
-                    case '4':
-                        this.sounds.eewVoice4.play();
-                        break;
+                case '2':
+                    this._app.services.sounds.eewVoice2.play();
+                    break;
 
-                    case '5-':
-                        this.sounds.eew.play();
-                        this.sounds.eewVoice5.play();
-                        break;
+                case '3':
+                    this._app.services.sounds.eewVoice3.play();
+                    break;
 
-                    case '5+':
-                        this.sounds.eew.play();
-                        this.sounds.eewVoice6.play();
-                        break;
+                case '4':
+                    this._app.services.sounds.eewVoice4.play();
+                    break;
 
-                    case '6-':
-                        this.sounds.eew.play();
-                        this.sounds.eewVoice7.play();
-                        break;
+                case '5-':
+                    this._app.services.sounds.eewVoice5.play();
+                    break;
 
-                    case '6+':
-                        this.sounds.eew.play();
-                        this.sounds.eewVoice8.play();
-                        break;
+                case '5+':
+                    this._app.services.sounds.eewVoice6.play();
+                    break;
 
-                    case '7':
-                        this.sounds.eew.play();
-                        this.sounds.eewVoice9.play();
-                        break;
+                case '6-':
+                    this._app.services.sounds.eewVoice7.play();
+                    break;
 
-                    default:
-                        this.sounds.eew.play();
-                        break;
-                }
+                case '6+':
+                    this._app.services.sounds.eewVoice8.play();
+                    break;
+
+                case '7':
+                    this._app.services.sounds.eewVoice9.play();
+                    break;
+
+                default:
+                    break;
             }
         }
     }
@@ -290,16 +289,6 @@ export class Eew extends Service {
      * 警報画面の表示を更新します。
      */
     updateWarn() {
-        let areas = [];
-
-        this.warnAreas.forEach(area => {
-            areas.push(this.addPref(area.pref));
-        });
-
-        if (!(areas.includes(this._app.services.geoLocation.area))) {
-            this.hideWarn();
-        }
-
         // this.warnAreas.forEach(area => {
         this.warnAreas.reverse().forEach(area => {
             if (this.addPref(area.pref) === this._app.services.geoLocation.area) {
@@ -333,7 +322,6 @@ export class Eew extends Service {
                 this.$locate.text(this._app.services.geoLocation.area);
             }
         });
-
     }
 
 

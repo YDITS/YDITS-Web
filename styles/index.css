@@ -105,6 +105,7 @@ main {
     border-radius: 0.1em;
     text-align: center;
     font-size: 4.5rem;
+    color: #ffffffff;
 }
 
 
@@ -583,7 +584,7 @@ main {
     #control {
         display: flex;
         width: 100vw;
-        height: 17em;
+        height: 14em;
     }
 
     #map {

@@ -49,9 +49,9 @@ export class GeoLocation extends Service {
     async getLocation() {
         if (!this.isSupport) { return }
 
-        this.area = "石川県";
-        document.dispatchEvent(this._app.buildEvent);
-        return;
+        // this.area = "石川県";
+        // document.dispatchEvent(this._app.buildEvent);
+        // return;
 
         navigator.geolocation.getCurrentPosition(
             async (position) => await this.onGet(position),
@@ -79,7 +79,6 @@ export class GeoLocation extends Service {
                 if (data === null || data.address === null) { return }
                 if (data.address.country_code !== "jp") { return }
 
-                this.area = "石川県"; return
                 if (data.address.city) {
                     // 市町村
                     this.area = data.address.city;
