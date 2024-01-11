@@ -47,7 +47,7 @@ export class Eqinfo extends Service {
      */
     initialize() {
         this.settings = this._app.services.settings;
-        this.p2pquake = this._app.services.p2pquake;
+        this.p2pquake = this._app.services.api.p2pquake;
 
         switch (this.settings.connect.eqinfo) {
             case "p2pquake":
@@ -60,7 +60,7 @@ export class Eqinfo extends Service {
      * 地震情報に関連するすべての通信を再接続します。
      */
     reconnect() {
-        this.p2pquake.startSocket();
+        this._app.services.api.p2pquake.startSocket();
     }
 
 
@@ -68,7 +68,7 @@ export class Eqinfo extends Service {
      * 地震情報に関連するすべての接続を切断します。
      */
     disconnect() {
-        this.p2pquake.socket.close();
+        this._app.services.api.p2pquake.socket.close();
     }
 
 
