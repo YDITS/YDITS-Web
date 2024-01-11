@@ -35,7 +35,7 @@ export class Dmdata extends Service {
         if (settings.connect.eew !== 'dmdata') { return }
 
         if (this.accessToken !== null) {
-            debugLogs.add("NETWORK", "[NETWORK]", "The access token for dmdata.jp is correct.")
+            debugLogs.add("network", "[NETWORK]", "The access token for dmdata.jp is correct.")
             $('#settings_dmdata_init').hide();
             $('#settings_dmdata_main').show();
             dmdataSocketStart();
@@ -73,7 +73,7 @@ export class Dmdata extends Service {
                                 $('#settings_dmdata_main').show();
                                 dmdataSocketStart()
                             } else if (data['error'] === 'invalid_grant') {
-                                debugLogs.add("ERROR", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+                                debugLogs.add("error", "[NETWORK]", "DM-D.S.S Account authentication failed.")
 
                                 $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
@@ -110,7 +110,7 @@ export class Dmdata extends Service {
                                     $('#win_dmdata_oauth_error').remove()
                                 })
                             } else {
-                                debugLogs.add("ERROR", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+                                debugLogs.add("error", "[NETWORK]", "DM-D.S.S Account authentication failed.")
 
                                 $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
@@ -151,7 +151,7 @@ export class Dmdata extends Service {
                         })
                         .catch(error => {
                             console.error(error);
-                            debugLogs.add("ERROR", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+                            debugLogs.add("error", "[NETWORK]", "DM-D.S.S Account authentication failed.")
 
                             $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
@@ -187,7 +187,7 @@ export class Dmdata extends Service {
                         })
 
                 } else {
-                    debugLogs.add("ERROR", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+                    debugLogs.add("error", "[NETWORK]", "DM-D.S.S Account authentication failed.")
 
                     $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
@@ -236,7 +236,7 @@ export class Dmdata extends Service {
             '&scope=socket.start%20socket.list%20socket.close%20eew.get.warning%20eew.get.forecast' +
             `&state=${state}`
 
-        debugLogs.add("NETWORK", "[NETWORK]", "OAuth authentication to dmdata.jp.")
+        debugLogs.add("network", "[NETWORK]", "OAuth authentication to dmdata.jp.")
         window.open(dmdataOAuthBaseUrl + dmdataOAuthConfig, '_blank');
     }
 
@@ -270,13 +270,13 @@ export class Dmdata extends Service {
                     dmdataSocket = new WebSocket(data.websocket.url, ['dmdata.v2']);
 
                     dmdataSocket.addEventListener('open', () => {
-                        debugLogs.add("NETWORK", `[NETWORK]`, "Successfully connected to dmdata.jp and WebSocket opened.");
+                        debugLogs.add("network", `[NETWORK]`, "Successfully connected to dmdata.jp and WebSocket opened.");
                         $('#eewTitle').text("緊急地震速報は発表されていません");
                         $('#statusLamp').css({ 'background-color': '#4040ff' });
                     });
 
                     dmdataSocket.addEventListener('close', (event) => {
-                        debugLogs.add("NETWORK", `[NETWORK]`, "Successfully disconnected from dmdata.jp and WebSocket closed.");
+                        debugLogs.add("network", `[NETWORK]`, "Successfully disconnected from dmdata.jp and WebSocket closed.");
                         settings.connect.eew = "yahoo-kmoni";
                     });
 
@@ -292,7 +292,7 @@ export class Dmdata extends Service {
                     });
 
                     dmdataSocket.onerror(event => {
-                        debugLogs.add("ERROR", `[NETWORK]`, `Failed to connect to dmdata.jp.: ${event}`);
+                        debugLogs.add("error", `[NETWORK]`, `Failed to connect to dmdata.jp.: ${event}`);
 
                         win('win_dmdata_oauth_error', 'dmdata接続エラー');
 
@@ -331,7 +331,7 @@ export class Dmdata extends Service {
                     });
                 } else {
                     if (document.getElementById('win_dmdata_oauth_error') === null) {
-                        debugLogs.add("ERROR", `[NETWORK]`, `Failed to connect to dmdata.jp.: ${data.error.message}`);
+                        debugLogs.add("error", `[NETWORK]`, `Failed to connect to dmdata.jp.: ${data.error.message}`);
 
                         win('win_dmdata_oauth_error', 'dmdata接続エラー');
 

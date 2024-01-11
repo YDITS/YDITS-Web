@@ -30,8 +30,6 @@ export class Map extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
-        this.settings = app.services.settings;
-
         this.map = L.map('map', {
             center: [38.0194092, 138.3664968],
             zoom: 6,
@@ -117,7 +115,7 @@ export class Map extends Service {
                 this._app.services.eew.reports[id].pWave.setRadius(this._app.services.eew.reports[id].pWavePut);
             });
 
-            if (this.settings.map.autoMove) {
+            if (this._app.services.settings.map.autoMove) {
                 if (dateNow - this.autoMoveCount >= 1000 * 3) {
                     if (this._app.services.eew.reports[this._app.services.eew.currentId].pWavePut >= 560000) {
                         this.map.setView([this._app.services.eew.reports[this._app.services.eew.currentId].latitude, this._app.services.eew.reports[id].longitude], 5);
@@ -132,7 +130,7 @@ export class Map extends Service {
             }
         } else {
             Object.keys(this._app.services.eew.reports).forEach((id) => {
-                if (this._app.services.eew.reports[id] === undefined || this._app.services.eew.reports[id].isWarning) { return }
+                if (id === "undefined" || this._app.services.eew.reports[id].isWarning) { return; }
                 this._app.services.eew.reports[id].region.setLatLng(new L.LatLng(0, 0));
                 this._app.services.eew.reports[id].sWave.setLatLng(new L.LatLng(0, 0));
                 this._app.services.eew.reports[id].pWave.setLatLng(new L.LatLng(0, 0));

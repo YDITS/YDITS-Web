@@ -232,26 +232,18 @@ export class Settings extends Service {
         $(document).on('click', '#settings_resetSettingsBtn', (e) => {
             this.connect.eew = "yahoo-kmoni";
             this.connect.eqinfo = "p2pquake";
-            this.connect.tsunami = "p2pquake";
-            $(`select[name="settings-getType-eew"]`).val(`${this.connect.eew}`);
-            $(`select[name="settings-getType-eqinfo"]`).val(`${this.onnect.eqinfo}`);
-            $(`select[name="settings-getType-tsunami"]`).val(`${this.connect.tsunami}`);
+            this.connect.tsunami = "dmdata";
+            this.connect.volcanicEruption = "dmdata";
+            this.connect.civilProtection = "dmdata";
 
             this.map.autoMove = true;
-            $('#settings_map_auto_move .toggle-switch').addClass('on');
-
-            dmdata.accessToken = null;
-            $('#settings_dmdata').hide();
-            $('#settings_dmdata_init').show();
-            $('#settings_dmdata_main').hide();
-
             this.sound.eewAny = true;
-            $('#settings_playSound_eew_any .toggle-switch').addClass('on');
-
             this.sound.eewCancel = true;
-            $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
-
             this.sound.eqinfo = true;
+
+            $('#settings_map_auto_move .toggle-switch').addClass('on');
+            $('#settings_playSound_eew_any .toggle-switch').addClass('on');
+            $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
             $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
 
             localStorage.clear()
@@ -259,7 +251,7 @@ export class Settings extends Service {
 
             sounds.notify.play();
             notify.show("message", "設定のリセット", "設定をリセットしました。");
-            debugLogs.add("INFO", `[INFO]`, "Settings were reset.");
+            this._app.services.debugLogs.add("info", `[INFO]`, "Settings were reset.");
         });
 
 
@@ -302,7 +294,7 @@ export class Settings extends Service {
         // ----- Delete Debug Logs -----//
         $(document).on('click', '#deleteDebugLogsButton', () => {
             debugLogs.delete();
-            debugLogs.add("START", "[START]", "- Start log -");
+            debugLogs.add("start", "[START]", "- Start log -");
 
             sounds.notify.play();
             notify.show("message", "デバッグログの削除", "デバッグログを削除しました。");

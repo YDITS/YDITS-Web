@@ -228,7 +228,7 @@ export class YahooKmoni extends Service {
 
             if (this.fetchLastStatus) {
                 this.debugLogs.add(
-                    "ERROR",
+                    "error",
                     "[NETWORK]",
                     `Failed to connect to weather-kyoshin.east.edge.storage-yahoo.jp.<br>${error}`
                 );

@@ -49,7 +49,7 @@ export class ServiceWorker extends Service {
                 this._app.services.debugLogs.add("error", `[ERROR]`, `Registration failed with ${error}`);
             }
         } else {
-            this._app.services.debugLogs.add("INFO", `[info]`, "Service worker is not supported on this browser.");
+            this._app.services.debugLogs.add("info", `[info]`, "Service worker is not supported on this browser.");
         }
     }
 }

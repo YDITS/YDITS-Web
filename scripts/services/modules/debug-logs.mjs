@@ -28,18 +28,16 @@ export class DebugLogs extends Service {
             copyright: "Copyright © よね/Yone"
         })
 
-        this.datetime = this._app._services.datetime;
-
         const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
 
         if (DEBUG_LOGS_DATA === null) {
-            this.add("START", "[START]", "- Start log -");
+            this.add("start", "[START]", "- Start log -");
         } else {
             this.debugLogs = JSON.parse(DEBUG_LOGS_DATA);
             this.debugLogs.forEach(log => {
                 this.addDebugLogsHtml({
-                    time: log.time,
                     type: log.type,
+                    time: log.time,
                     title: log.title,
                     text: log.text
                 });
@@ -52,18 +50,29 @@ export class DebugLogs extends Service {
      * ログを追加します。
      */
     add(type, title, text) {
-        let time = `${this.datetime.year}/${('0' + this.datetime.month).slice(-2)}/${('0' + this.datetime.day).slice(-2)} ${('0' + this.datetime.hour).slice(-2)}:${('0' + this.datetime.minute).slice(-2)}:${('0' + this.datetime.second).slice(-2)}`;
+        let time =
+            `${this._app._services.datetime.year}/` +
+            `${('0' + this._app._services.datetime.month).slice(-2)}/` +
+            `${('0' + this._app._services.datetime.day).slice(-2)} ` +
+            `${('0' + this._app._services.datetime.hour).slice(-2)}:` +
+            `${('0' + this._app._services.datetime.minute).slice(-2)}:` +
+            `${('0' + this._app._services.datetime.second).slice(-2)}`;
 
         this.debugLogs.push({
-            "time": time,
             "type": type,
+            "time": time,
             "title": title,
             "text": text
         });
 
         localStorage.setItem("debugLogs", JSON.stringify(this.debugLogs));
 
-        this.addDebugLogsHtml(time, type, title, text);
+        this.addDebugLogsHtml({
+            "type": type,
+            "time": time,
+            "title": title,
+            "text": text
+        });
     }
 
 

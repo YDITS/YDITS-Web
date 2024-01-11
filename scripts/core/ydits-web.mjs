@@ -50,13 +50,14 @@ export class YditsWeb extends App {
             this._services.api.p2pquake.initialize();
             this._services.eew.initialize();
             this._services.eqinfo.initialize();
-            this._services.debugLogs.add("INFO", "[INFO]", "Application initialized.");
+            this._services.debugLogs.add("info", "[INFO]", "Application initialized.");
             this._services.notify.show("message", `YDITS for Web Ver ${this._version}`, "");
             requestAnimationFrame(() => this.mainloop());
         });
 
         try {
             this.register(Datetime);
+            this._services.datetime.gmt = new Date();
             this._services.datetime.update();
             this.register(DebugLogs);
             this.register(Notify);
@@ -76,7 +77,7 @@ export class YditsWeb extends App {
                 } catch (error) {
                     // Without Webkit
                     console.error(error);
-                    this._services.debugLogs.add("ERROR", "[ERROR]", error);
+                    this._services.debugLogs.add("error", "[ERROR]", error);
                 }
 
                 this.register(GeoLocation);
@@ -84,14 +85,14 @@ export class YditsWeb extends App {
                 this.initLicense();
 
                 window.addEventListener("online", () => {
-                    this.debugLogs.add("NETWORK", "[NETWORK]", "Reconnected to the network.");
+                    this.debugLogs.add("network", "[NETWORK]", "Reconnected to the network.");
                     this.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
                     this.eqinfo.reconnect();
                 });
 
                 window.addEventListener("offline", () => {
                     $('#statusLamp').css({ 'background-color': '#ff4040' });
-                    this.debugLogs.add("ERROR", "[NETWORK]", "Network disconnected.");
+                    this.debugLogs.add("error", "[NETWORK]", "Network disconnected.");
                     this.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
                     this.eqinfo.disconnect();
                 });
@@ -99,7 +100,7 @@ export class YditsWeb extends App {
                 $("#eewTitle").text("読み込み中…");
             } catch (error) {
                 console.error(error);
-                this._services.debugLogs.add("INFO", "[INFO]", `Failed Application initialization: ${error}`);
+                this._services.debugLogs.add("info", "[INFO]", `Failed Application initialization: ${error}`);
 
                 this._services.notify.show(
                     "error",
