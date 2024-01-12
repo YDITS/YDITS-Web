@@ -33,7 +33,7 @@ export class Map extends Service {
         this.map = L.map('map', {
             center: [38.0194092, 138.3664968],
             zoom: 6,
-            maxZoom: 10,
+            maxZoom: 16,
             minZoom: 4,
             zoomSnap: 0,
             zoomDelta: 0,
@@ -47,22 +47,69 @@ export class Map extends Service {
     }
 
 
+    initialize() {
+        if (!this.app.services.geoLocation.isSupport) { return }
+
+        this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
+            icon: L.icon({
+                iconUrl: "./images/user_point.png",
+                iconSize: [24, 24]
+            })
+        }).addTo(this.map);
+
+        this.userPointCircle = L.circle([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
+            radius: this.app.services.geoLocation.accuracy,
+            weight: 1,
+            color: '#00000000',
+            fillColor: '#4080ff80',
+            fillOpacity: 0.25,
+        }).addTo(this.map);
+    }
+
+
+    updateUserPoint() {
+        if (!this.app.services.geoLocation.isSupport) { return }
+
+        if (this.app.services.settings.map.displayUserPoint) {
+            this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
+                icon: L.icon({
+                    iconUrl: "./images/user_point.png",
+                    iconSize: [24, 24]
+                })
+            }).addTo(this.map);
+
+            this.userPointCircle = L.circle([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
+                radius: this.app.services.geoLocation.accuracy,
+                weight: 1,
+                color: '#00000000',
+                fillColor: '#4080ff80',
+                fillOpacity: 0.25,
+            }).addTo(this.map);
+        } else {
+            this.map.removeLayer(this.userPoint);
+            this.map.removeLayer(this.userPointCircle);
+            this.userPoint = null;
+            this.userPointCircle = null;
+        }
+    }
+
+
     update(dateNow) {
         try {
-            if (this._app.services.api.yahooKmoni.isEew) {
-                Object.keys(this._app.services.eew.reports).forEach((id) => {
-                    if (id === "undefined" || this._app.services.eew.reports[id].isWarning) { return }
+            if (this.app.services.api.yahooKmoni.isEew) {
+                Object.keys(this.app.services.eew.reports).forEach((id) => {
+                    if (id === "undefined" || this.app.services.eew.reports[id].isWarning) { return }
 
-                    if (this._app.services.eew.currentId === id) {
-                        if (!this._app.services.eew.reports[id].region) {
-                            this._app.services.eew.reports[id].region = L.marker([0, 0], {
+                    if (this.app.services.eew.currentId === id) {
+                        if (!this.app.services.eew.reports[id].region) {
+                            this.app.services.eew.reports[id].region = L.marker([0, 0], {
                                 icon: L.icon({
                                     iconUrl: "./images/hypocenter.png",
                                     iconSize: [24, 24]
                                 })
                             }).addTo(this.map);
 
-                            this._app.services.eew.reports[id].sWave = L.circle([0, 0], {
+                            this.app.services.eew.reports[id].sWave = L.circle([0, 0], {
                                 radius: -1,
                                 weight: 1,
                                 color: '#ff4020',
@@ -70,7 +117,7 @@ export class Map extends Service {
                                 fillOpacity: 0.25,
                             }).addTo(this.map);
 
-                            this._app.services.eew.reports[id].pWave = L.circle([0, 0], {
+                            this.app.services.eew.reports[id].pWave = L.circle([0, 0], {
                                 radius: -1,
                                 weight: 1,
                                 color: '#4080ff',
@@ -79,67 +126,67 @@ export class Map extends Service {
                             }).addTo(this.map);
                         }
 
-                        this._app.services.eew.reports[id].latitude = this._app.services.eew.reports[id].latitude.replace("N", "");
-                        this._app.services.eew.reports[id].longitude = this._app.services.eew.reports[id].longitude.replace("E", "");
+                        this.app.services.eew.reports[id].latitude = this.app.services.eew.reports[id].latitude.replace("N", "");
+                        this.app.services.eew.reports[id].longitude = this.app.services.eew.reports[id].longitude.replace("E", "");
 
-                        this._app.services.eew.reports[id].sRadius = this._app.services.eew.reports[id].psWave.sRadius * 1000;
-                        this._app.services.eew.reports[id].pRadius = this._app.services.eew.reports[id].psWave.pRadius * 1000;
+                        this.app.services.eew.reports[id].sRadius = this.app.services.eew.reports[id].psWave.sRadius * 1000;
+                        this.app.services.eew.reports[id].pRadius = this.app.services.eew.reports[id].psWave.pRadius * 1000;
 
-                        if (this._app.services.eew.reports[id].sRadius != this._app.services.eew.reports[id].lastSWave) {
-                            this._app.services.eew.reports[id].sWaveInterval = (this._app.services.eew.reports[id].sRadius - this._app.services.eew.reports[id].lastSWave) / (60 * ((dateNow - this.loopCount) / 1000));
-                            this._app.services.eew.reports[id].lastSWave = this._app.services.eew.reports[id].sRadius;
-                            this._app.services.eew.reports[id].sWavePut = this._app.services.eew.reports[id].sRadius;
-                        } else if (this._app.services.eew.reports[id].sRadius == this._app.services.eew.reports[id].lastSWave) {
-                            this._app.services.eew.reports[id].sWavePut += this._app.services.eew.reports[id].sWaveInterval;
+                        if (this.app.services.eew.reports[id].sRadius != this.app.services.eew.reports[id].lastSWave) {
+                            this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / (60 * ((dateNow - this.loopCount) / 1000));
+                            this.app.services.eew.reports[id].lastSWave = this.app.services.eew.reports[id].sRadius;
+                            this.app.services.eew.reports[id].sWavePut = this.app.services.eew.reports[id].sRadius;
+                        } else if (this.app.services.eew.reports[id].sRadius == this.app.services.eew.reports[id].lastSWave) {
+                            this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
                         }
 
-                        if (this._app.services.eew.reports[id].pRadius != this._app.services.eew.reports[id].lastPWave) {
-                            this._app.services.eew.reports[id].pWaveInterval = (this._app.services.eew.reports[id].pRadius - this._app.services.eew.reports[id].lastPWave) / (60 * ((dateNow - this.loopCount) / 1000));
-                            this._app.services.eew.reports[id].lastPWave = this._app.services.eew.reports[id].pRadius;
-                            this._app.services.eew.reports[id].pWavePut = this._app.services.eew.reports[id].pRadius;
+                        if (this.app.services.eew.reports[id].pRadius != this.app.services.eew.reports[id].lastPWave) {
+                            this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / (60 * ((dateNow - this.loopCount) / 1000));
+                            this.app.services.eew.reports[id].lastPWave = this.app.services.eew.reports[id].pRadius;
+                            this.app.services.eew.reports[id].pWavePut = this.app.services.eew.reports[id].pRadius;
                             this.loopCount = dateNow;
-                        } else if (this._app.services.eew.reports[id].pRadius == this._app.services.eew.reports[id].lastPWave) {
-                            this._app.services.eew.reports[id].pWavePut += this._app.services.eew.reports[id].pWaveInterval;
+                        } else if (this.app.services.eew.reports[id].pRadius == this.app.services.eew.reports[id].lastPWave) {
+                            this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
                         }
                     } else {
-                        this._app.services.eew.reports[id].sWavePut += this._app.services.eew.reports[id].sWaveInterval;
-                        this._app.services.eew.reports[id].pWavePut += this._app.services.eew.reports[id].pWaveInterval;
+                        this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
+                        this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
                     }
 
-                    const REGION_LATLNG = new L.LatLng(this._app.services.eew.reports[id].latitude, this._app.services.eew.reports[id].longitude);
-                    this._app.services.eew.reports[id].region.setLatLng(REGION_LATLNG);
-                    this._app.services.eew.reports[id].sWave.setLatLng(REGION_LATLNG);
-                    this._app.services.eew.reports[id].pWave.setLatLng(REGION_LATLNG);
-                    this._app.services.eew.reports[id].sWave.setRadius(this._app.services.eew.reports[id].sWavePut);
-                    this._app.services.eew.reports[id].pWave.setRadius(this._app.services.eew.reports[id].pWavePut);
+                    const REGION_LATLNG = new L.LatLng(this.app.services.eew.reports[id].latitude, this.app.services.eew.reports[id].longitude);
+                    this.app.services.eew.reports[id].region.setLatLng(REGION_LATLNG);
+                    this.app.services.eew.reports[id].sWave.setLatLng(REGION_LATLNG);
+                    this.app.services.eew.reports[id].pWave.setLatLng(REGION_LATLNG);
+                    this.app.services.eew.reports[id].sWave.setRadius(this.app.services.eew.reports[id].sWavePut);
+                    this.app.services.eew.reports[id].pWave.setRadius(this.app.services.eew.reports[id].pWavePut);
                 });
 
-                if (this._app.services.settings.map.autoMove) {
+                if (this.app.services.settings.map.autoMove) {
                     if (dateNow - this.autoMoveCount >= 1000 * 3) {
-                        if (this._app.services.eew.reports[this._app.services.eew.currentId].pWavePut >= 560000) {
-                            this.map.setView([this._app.services.eew.reports[this._app.services.eew.currentId].latitude, this._app.services.eew.reports[this._app.services.eew.currentId].longitude], 5);
-                        } else if (this._app.services.eew.reports[this._app.services.eew.currentId].pWavePut >= 280000) {
-                            this.map.setView([this._app.services.eew.reports[this._app.services.eew.currentId].latitude, this._app.services.eew.reports[this._app.services.eew.currentId].longitude], 6);
-                        } else if (this._app.services.eew.reports[this._app.services.eew.currentId].pWavePut > 0) {
-                            this.map.setView([this._app.services.eew.reports[this._app.services.eew.currentId].latitude, this._app.services.eew.reports[this._app.services.eew.currentId].longitude], 7);
+                        if (this.app.services.eew.reports[this.app.services.eew.currentId].pWavePut >= 560000) {
+                            this.map.setView([this.app.services.eew.reports[this.app.services.eew.currentId].latitude, this.app.services.eew.reports[this.app.services.eew.currentId].longitude], 5);
+                        } else if (this.app.services.eew.reports[this.app.services.eew.currentId].pWavePut >= 280000) {
+                            this.map.setView([this.app.services.eew.reports[this.app.services.eew.currentId].latitude, this.app.services.eew.reports[this.app.services.eew.currentId].longitude], 6);
+                        } else if (this.app.services.eew.reports[this.app.services.eew.currentId].pWavePut > 0) {
+                            this.map.setView([this.app.services.eew.reports[this.app.services.eew.currentId].latitude, this.app.services.eew.reports[this.app.services.eew.currentId].longitude], 7);
                         }
 
                         this.autoMoveCount = dateNow
                     }
                 }
             } else {
-                Object.keys(this._app.services.eew.reports).forEach((id) => {
-                    if (id === "undefined" || this._app.services.eew.reports[id].isWarning) { return; }
-                    this._app.services.eew.reports[id].region.setLatLng(new L.LatLng(0, 0));
-                    this._app.services.eew.reports[id].sWave.setLatLng(new L.LatLng(0, 0));
-                    this._app.services.eew.reports[id].pWave.setLatLng(new L.LatLng(0, 0));
-                    this._app.services.eew.reports[id].sWave.setRadius(0);
-                    this._app.services.eew.reports[id].pWave.setRadius(0);
+                Object.keys(this.app.services.eew.reports).forEach((id) => {
+                    if (id === "undefined" || this.app.services.eew.reports[id].isWarning) { return; }
+                    this.app.services.eew.reports[id].region.setLatLng(new L.LatLng(0, 0));
+                    this.app.services.eew.reports[id].sWave.setLatLng(new L.LatLng(0, 0));
+                    this.app.services.eew.reports[id].pWave.setLatLng(new L.LatLng(0, 0));
+                    this.app.services.eew.reports[id].sWave.setRadius(0);
+                    this.app.services.eew.reports[id].pWave.setRadius(0);
                 });
             }
         } catch (error) {
             console.error(error);
-            this._app.services.debugLogs.add("error", "[ERROR]", `Map error: ${error}`);
+            this.app.services.debugLogs.add("error", "[ERROR]", `Map error: ${error}`);
         }
     }
 

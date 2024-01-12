@@ -26,11 +26,10 @@ import { Map } from "../services/map/map.mjs";
 
 
 export class YditsWeb extends App {
-    buildEvent = null;
     eewGetCnt = -1;
     ntpGetCnt = -1;
     jmaDataFeedGetCnt = -1;
-    jmaDataFeedGetInterval = (1000 * 60);
+    JMA_DATA_FEED_GET_INTERVAL = (1000 * 60);
 
 
     constructor() {
@@ -43,22 +42,12 @@ export class YditsWeb extends App {
         });
 
         this.buildEvent = new Event("build");
-
-        document.addEventListener("build", () => {
-            this._services.settings.initialize();
-            this._services.api.dmdata.initialize();
-            this._services.api.p2pquake.initialize();
-            this._services.eew.initialize();
-            this._services.eqinfo.initialize();
-            this._services.debugLogs.add("info", "[INFO]", "Application initialized.");
-            this._services.notify.show("message", `YDITS for Web Ver ${this._version}`, "");
-            requestAnimationFrame(() => this.mainloop());
-        });
+        document.addEventListener("build", () => this.onBuild());
 
         try {
             this.register(Datetime);
-            this._services.datetime.gmt = new Date();
-            this._services.datetime.update();
+            this.services.datetime.gmt = new Date();
+            this.services.datetime.update();
             this.register(DebugLogs);
             this.register(Notify);
 
@@ -77,7 +66,7 @@ export class YditsWeb extends App {
                 } catch (error) {
                     // Without Webkit
                     console.error(error);
-                    this._services.debugLogs.add("error", "[ERROR]", error);
+                    this.services.debugLogs.add("error", "[ERROR]", error);
                 }
 
                 this.register(GeoLocation);
@@ -85,24 +74,25 @@ export class YditsWeb extends App {
                 this.initLicense();
 
                 window.addEventListener("online", () => {
-                    this._services.debugLogs.add("network", "[NETWORK]", "Reconnected to the network.");
-                    this._services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
-                    this._services.eqinfo.reconnect();
+                    this.services.debugLogs.add("network", "[NETWORK]", "Reconnected to the network.");
+                    this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
+                    this.services.eqinfo.reconnect();
                 });
 
                 window.addEventListener("offline", () => {
                     $('#statusLamp').css({ 'background-color': '#ff4040' });
-                    this._services.debugLogs.add("error", "[NETWORK]", "Network disconnected.");
-                    this._services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
-                    this._services.eqinfo.disconnect();
+                    this.services.debugLogs.add("error", "[NETWORK]", "Network disconnected.");
+                    this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
+                    this.services.eqinfo.disconnect();
                 });
 
                 $("#eewTitle").text("読み込み中…");
+                $("#clock").text("----/--/-- --:--:--");
             } catch (error) {
                 console.error(error);
-                this._services.debugLogs.add("info", "[INFO]", `Failed Application initialization: ${error}`);
+                this.services.debugLogs.add("info", "[INFO]", `Failed Application initialization: ${error}`);
 
-                this._services.notify.show(
+                this.services.notify.show(
                     "error",
                     "エラー",
                     `
@@ -124,7 +114,30 @@ export class YditsWeb extends App {
         } catch (error) {
             console.error(`[ERROR] An unhandled exception has occurred:\n    ${error}`);
         }
+    }
 
+
+    /**
+     * 説明が記載されていません。
+     */
+    onBuild() {
+        this.initialize();
+        this.services.debugLogs.add("info", "[INFO]", "Application initialized.");
+        this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
+        requestAnimationFrame(() => this.mainloop());
+    }
+
+
+    /**
+     * 説明が記載されていません。
+     */
+    initialize() {
+        this.services.settings.initialize();
+        this.services.api.dmdata.initialize();
+        this.services.api.p2pquake.initialize();
+        this.services.eew.initialize();
+        this.services.eqinfo.initialize();
+        this.services.map.initialize();
     }
 
 
@@ -133,26 +146,26 @@ export class YditsWeb extends App {
      * 処理落ちしない限り60FPSでループします。
      */
     mainloop() {
-        this.dateNow = new Date();
+        const DATE_DOW = new Date();
 
-        if (this.dateNow - this.ntpGetCnt >= 1000) {
-            this._services.datetime.update();
-            this.clock();
-            this.ntpGetCnt = this.dateNow;
+        if (DATE_DOW - this.ntpGetCnt >= 1000) {
+            this.services.datetime.update();
+            this.clock(this.services.datetime);
+            this.ntpGetCnt = DATE_DOW;
         }
 
-        if (this.dateNow - this.eewGetCnt >= 1000) {
-            this._services.eew.updateWarn();
-            this._services.api.yahooKmoni.get();
-            this.eewGetCnt = this.dateNow;
+        if (DATE_DOW - this.eewGetCnt >= 1000) {
+            this.services.eew.updateWarn();
+            this.services.api.yahooKmoni.get();
+            this.eewGetCnt = DATE_DOW;
         }
 
-        if ((this.dateNow - this.jmaDataFeedGetCnt >= this.jmaDataFeedGetInterval)) {
-            this._services.jmaDataFeed.update();
-            this._services.jmaDataFeedGetCnt = this.dateNow;
+        if ((DATE_DOW - this.jmaDataFeedGetCnt >= this.JMA_DATA_FEED_GET_INTERVAL)) {
+            this.services.jmaDataFeed.update();
+            this.jmaDataFeedGetCnt = DATE_DOW;
         }
 
-        this._services.map.update(this.dateNow);
+        this.services.map.update(DATE_DOW);
 
         requestAnimationFrame(() => this.mainloop());
     }
@@ -162,7 +175,7 @@ export class YditsWeb extends App {
      * メニュー項目をイニシャライズします。
      */
     initMenu() {
-        $('#menu .version').text(`Ver ${this._version}`);
+        $('#menu .version').text(`Ver ${this.version}`);
 
         $(document).on('click', '#menuBtn', () => {
             $('#popup').addClass('active');
@@ -180,7 +193,7 @@ export class YditsWeb extends App {
         });
 
         $(document).on('click', '#homeBtn', () => {
-            this._services.map.setView([38.0194092, 138.3664968], 6);
+            this.services.map.setView([38.0194092, 138.3664968], 6);
         });
 
         $(document).on('click', '#menuJmaDataFeed', () => {
@@ -210,19 +223,19 @@ export class YditsWeb extends App {
     /**
      * クロックの表示を更新します。
      */
-    clock() {
+    clock(time) {
         let clock;
 
-        if (this._services.datetime.gmt === null) {
+        if (!(time instanceof Datetime) || !(time.gmt instanceof Date)) {
             clock = "----/--/-- --:--:--";
         } else {
             clock =
-                `${this._services.datetime.year}/` +
-                `${this.zeroPadding(this._services.datetime.month)}/` +
-                `${this.zeroPadding(this._services.datetime.day)} ` +
-                `${this.zeroPadding(this._services.datetime.hour)}:` +
-                `${this.zeroPadding(this._services.datetime.minute)}:` +
-                `${this.zeroPadding(this._services.datetime.second)}`;
+                `${time.fullYear}/` +
+                `${this.zeroPadding(time.month)}/` +
+                `${this.zeroPadding(time.date)} ` +
+                `${this.zeroPadding(time.hours)}:` +
+                `${this.zeroPadding(time.minutes)}:` +
+                `${this.zeroPadding(time.seconds)}`;
         }
 
         $("#clock").text(clock);

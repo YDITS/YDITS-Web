@@ -30,7 +30,7 @@ export class Dmdata extends Service {
 
 
     async initialize() {
-        let settings = this._app.services.settings;
+        let settings = this.app.services.settings;
 
         if (settings.connect.eew !== 'dmdata') { return }
 

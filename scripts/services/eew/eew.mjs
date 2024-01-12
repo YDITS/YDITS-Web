@@ -111,7 +111,7 @@ export class Eew extends Service {
      * 初期化を行います。
     */
     initialize() {
-        switch (this._app.services.settings) {
+        switch (this.app.services.settings) {
             case "yahoo-kmoni":
                 break;
         }
@@ -128,7 +128,7 @@ export class Eew extends Service {
             areas.push(area.name);
         });
 
-        if (areas.includes(this._app.services.geoLocation.area)) {
+        if (areas.includes(this.app.services.geoLocation.area)) {
             this.displayWarn();
         }
 
@@ -232,51 +232,51 @@ export class Eew extends Service {
      */
     sound() {
         if (this.reports[this.currentId].isCancel == true) {
-            if (this._app.services.settings.sound.eewCancel == true) {
-                this._app.services.sounds.eewVoiceCancel.play();
+            if (this.app.services.settings.sound.eewCancel == true) {
+                this.app.services.sounds.eewVoiceCancel.play();
             }
         } else {
-            if (!(this._app.services.settings.sound.eewAny)) { return }
+            if (!(this.app.services.settings.sound.eewAny)) { return }
 
             if (this.reports[this.currentId].isWarning) {
-                this._app.services.sounds.eew.play();
+                this.app.services.sounds.eew.play();
             }
 
             switch (this.reports[this.currentId].maxScale) {
                 case '1':
-                    this._app.services.sounds.eewVoice1.play();
+                    this.app.services.sounds.eewVoice1.play();
                     break;
 
                 case '2':
-                    this._app.services.sounds.eewVoice2.play();
+                    this.app.services.sounds.eewVoice2.play();
                     break;
 
                 case '3':
-                    this._app.services.sounds.eewVoice3.play();
+                    this.app.services.sounds.eewVoice3.play();
                     break;
 
                 case '4':
-                    this._app.services.sounds.eewVoice4.play();
+                    this.app.services.sounds.eewVoice4.play();
                     break;
 
                 case '5-':
-                    this._app.services.sounds.eewVoice5.play();
+                    this.app.services.sounds.eewVoice5.play();
                     break;
 
                 case '5+':
-                    this._app.services.sounds.eewVoice6.play();
+                    this.app.services.sounds.eewVoice6.play();
                     break;
 
                 case '6-':
-                    this._app.services.sounds.eewVoice7.play();
+                    this.app.services.sounds.eewVoice7.play();
                     break;
 
                 case '6+':
-                    this._app.services.sounds.eewVoice8.play();
+                    this.app.services.sounds.eewVoice8.play();
                     break;
 
                 case '7':
-                    this._app.services.sounds.eewVoice9.play();
+                    this.app.services.sounds.eewVoice9.play();
                     break;
 
                 default:
@@ -291,7 +291,7 @@ export class Eew extends Service {
      */
     updateWarn() {
         this.warnAreas.forEach(area => {
-            if (area.name === this._app.services.geoLocation.area) {
+            if (area.name === this.app.services.geoLocation.area) {
                 if (area.scaleTo === 99) {
                     this.scale = this.parseScale(area.scaleFrom);
                     this.$scaleAbout.text("程度以上");
@@ -304,12 +304,12 @@ export class Eew extends Service {
                     this.arrivalTime = "到達と推測";
                     this.$arrivalTimeAboud.text("");
                 } else {
-                    let dateNow = this._app.services.datetime.gmt.getTime();
+                    let dateNow = this.app.services.datetime.gmt.getTime();
                     let arrivalTime = new Date(area.arrivalTime).getTime();
 
                     this.arrivalTime = (arrivalTime - dateNow) / 1000;
 
-                    if (this.arrivalTime < 0) {
+                    if (this.arrivalTime <= 0) {
                         this.arrivalTime = "到達と推測";
                         this.$arrivalTimeAboud.text("");
                     } else {
@@ -320,7 +320,7 @@ export class Eew extends Service {
 
                 this.$scale.text(this.scale);
                 this.$arrivalTime.text(this.arrivalTime);
-                this.$locate.text(this._app.services.geoLocation.area);
+                this.$locate.text(this.app.services.geoLocation.area);
             }
         });
     }
@@ -330,7 +330,7 @@ export class Eew extends Service {
      * 警報画面を表示します。
      */
     displayWarn() {
-        if (!this._app.services.geoLocation.isSupport) { return }
+        if (!this.app.services.geoLocation.isSupport) { return }
         this.$warn.addClass("active");
     }
 

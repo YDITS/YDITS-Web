@@ -51,27 +51,27 @@ export class DebugLogs extends Service {
      */
     add(type, title, text) {
         let time =
-            `${this._app._services.datetime.year}/` +
-            `${('0' + this._app._services.datetime.month).slice(-2)}/` +
-            `${('0' + this._app._services.datetime.day).slice(-2)} ` +
-            `${('0' + this._app._services.datetime.hour).slice(-2)}:` +
-            `${('0' + this._app._services.datetime.minute).slice(-2)}:` +
-            `${('0' + this._app._services.datetime.second).slice(-2)}`;
+            `${this.app.services.datetime.fullYear}/` +
+            `${('0' + this.app.services.datetime.month).slice(-2)}/` +
+            `${('0' + this.app.services.datetime.date).slice(-2)} ` +
+            `${('0' + this.app.services.datetime.hours).slice(-2)}:` +
+            `${('0' + this.app.services.datetime.minutes).slice(-2)}:` +
+            `${('0' + this.app.services.datetime.seconds).slice(-2)}`;
 
         this.debugLogs.push({
-            "type": type,
-            "time": time,
-            "title": title,
-            "text": text
+            type: type,
+            time: time,
+            title: title,
+            text: text
         });
 
         localStorage.setItem("debugLogs", JSON.stringify(this.debugLogs));
 
         this.addDebugLogsHtml({
-            "type": type,
-            "time": time,
-            "title": title,
-            "text": text
+            type: type,
+            time: time,
+            title: title,
+            text: text
         });
     }
 

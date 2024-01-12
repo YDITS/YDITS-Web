@@ -356,11 +356,25 @@
                 </div>
 
                 <div class="content">
-                    <div class="list" id="settings_map">
+                    <div class="list">
                         <div class="item" id="settings_map_auto_move">
                             <label>
                                 <h3>マップの自動移動</h3>
                                 <p>オンにすると、緊急地震速報の受信時に自動でマップを震央位置に移動、拡大します。<br>マップを任意の場所に固定したい場合はオフにしてください。</p>
+                            </label>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list">
+                        <div class="item" id="settings_map_user_point">
+                            <label>
+                                <h3>現在地の表示</h3>
+                                <p>※現在地の周辺に表示される青色半透明の円は、位置情報の精度範囲を表しています。</p>
                             </label>
                             <div class="content">
                                 <div class="toggle-switch">
@@ -386,6 +400,13 @@
                             <label><h3>位置情報サービス</h3></label>
                             <div class="content">
                                 <span id="locationStatus"></span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <label><h3>位置情報の精度</h3></label>
+                            <div class="content">
+                                <span id="locationAccuracy"></span>
                             </div>
                         </div>
 

@@ -150,12 +150,12 @@ export class P2pquake extends Service {
             switch (code) {
                 // eqinfo
                 case 551:
-                    switch (this._app.services.eqinfo.type) {
+                    switch (this.app.services.eqinfo.type) {
                         case "DetailScale":
                             Push.create(
-                                this._app.services.eqinfo.typeJp,
+                                this.app.services.eqinfo.typeJp,
                                 {
-                                    body: `${this._app.services.eqinfo.regionName}を震源とする、最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。\n規模は${this._app.services.eqinfo.magnitudeText}、深さは${this._app.services.eqinfo.depthText}と推定されます。\n${this._app.services.eqinfo.tsunamiJp}`,
+                                    body: `${this.app.services.eqinfo.regionName}を震源とする、最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。\n規模は${this.app.services.eqinfo.magnitudeText}、深さは${this.app.services.eqinfo.depthText}と推定されます。\n${this.app.services.eqinfo.tsunamiJp}`,
                                     onClick: function () {
                                         window.focus();
                                         this.close();
@@ -163,22 +163,22 @@ export class P2pquake extends Service {
                                 }
                             );
 
-                            this._app.services.notify.show(
+                            this.app.services.notify.show(
                                 "message",
-                                this._app.services.eqinfo.typeJp,
+                                this.app.services.eqinfo.typeJp,
                                 `
-                                    ${this._app.services.eqinfo.regionName}を震源とする、最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。<br>
-                                    規模は${this._app.services.eqinfo.magnitudeText}、深さは${this._app.services.eqinfo.depthText}と推定されます。<br>
-                                    ${this._app.services.eqinfo.tsunamiJp}
+                                    ${this.app.services.eqinfo.regionName}を震源とする、最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。<br>
+                                    規模は${this.app.services.eqinfo.magnitudeText}、深さは${this.app.services.eqinfo.depthText}と推定されます。<br>
+                                    ${this.app.services.eqinfo.tsunamiJp}
                                 `
                             );
                             break;
 
                         case "ScalePrompt":
                             Push.create(
-                                this._app.services.eqinfo.typeJp,
+                                this.app.services.eqinfo.typeJp,
                                 {
-                                    body: `最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。\n${this._app.services.eqinfo.tsunamiJp}`,
+                                    body: `最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。\n${this.app.services.eqinfo.tsunamiJp}`,
                                     onClick: function () {
                                         window.focus();
                                         this.close();
@@ -186,12 +186,12 @@ export class P2pquake extends Service {
                                 }
                             );
 
-                            this._app.services.notify.show(
+                            this.app.services.notify.show(
                                 "message",
-                                this._app.services.eqinfo.typeJp,
+                                this.app.services.eqinfo.typeJp,
                                 `
-                                    最大震度${this._app.services.eqinfo.maxScaleText}の地震がありました。<br>
-                                    ${this._app.services.eqinfo.tsunamiJp}
+                                    最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。<br>
+                                    ${this.app.services.eqinfo.tsunamiJp}
                                 `
                             );
                             break;
@@ -207,7 +207,7 @@ export class P2pquake extends Service {
                         Push.create(
                             `緊急地震速報 (警報)`,
                             {
-                                body: `《次の地域では強い揺れに備えてください。》\n${this._app.services.eew.warnAreasText}`,
+                                body: `《次の地域では強い揺れに備えてください。》\n${this.app.services.eew.warnAreasText}`,
                                 onClick: function () {
                                     window.focus();
                                     this.close();
@@ -218,12 +218,12 @@ export class P2pquake extends Service {
                         console.error(error);
                     }
 
-                    this._app.services.notify.show(
+                    this.app.services.notify.show(
                         "eew",
                         `緊急地震速報 (警報)`,
                         `
                             《次の地域では強い揺れに備えてください。》<br>
-                            ${this._app.services.eew.warnAreasText}
+                            ${this.app.services.eew.warnAreasText}
                         `
                     );
                     break;
@@ -244,68 +244,68 @@ export class P2pquake extends Service {
                 try {
                     const DATA = data[0];
 
-                    if (this._app.services.eew.reports[DATA._id] === undefined) {
-                        this._app.services.eew.reports[DATA._id] = new this._app.services.eew.Report();
+                    if (this.app.services.eew.reports[DATA._id] === undefined) {
+                        this.app.services.eew.reports[DATA._id] = new this.app.services.eew.Report();
                     }
 
-                    this._app.services.eew.currentId = DATA._id;
+                    this.app.services.eew.currentId = DATA._id;
 
-                    const NOW_TIME = this._app.services.datetime.gmt.getTime();
+                    const NOW_TIME = this.app.services.datetime.gmt.getTime();
                     const ISSUE_TIME = new Date(DATA.issue.time).getTime();
 
                     // EEW発表から3分以下の場合は警報処理をする
                     if (((NOW_TIME - ISSUE_TIME) / 1000) >= 180) { return }
 
-                    this._app.services.eew.isEew = true;
-                    this._app.services.eew.reports[DATA._id].isWarning = true;
+                    this.app.services.eew.isEew = true;
+                    this.app.services.eew.reports[DATA._id].isWarning = true;
 
-                    this._app.services.eew.reports[DATA._id].originTime = new Date(DATA.earthquake.originTime);
+                    this.app.services.eew.reports[DATA._id].originTime = new Date(DATA.earthquake.originTime);
 
-                    if (!(this._app.services.eew.reports[DATA._id].originTime instanceof Date)) {
-                        this._app.services.eew.reports[DATA._id].originTimeText = "----/--/-- --:--";
+                    if (!(this.app.services.eew.reports[DATA._id].originTime instanceof Date)) {
+                        this.app.services.eew.reports[DATA._id].originTimeText = "----/--/-- --:--";
                     } else {
-                        this._app.services.eew.reports[DATA._id].originTimeText =
-                            `${this._app.services.eew.reports[DATA._id].originTime.getFullYear()}/` +
-                            `${this.zeroPadding(this._app.services.eew.reports[DATA._id].originTime.getMonth() + 1)}/` +
-                            `${this.zeroPadding(this._app.services.eew.reports[DATA._id].originTime.getDate())} ` +
-                            `${this.zeroPadding(this._app.services.eew.reports[DATA._id].originTime.getHours())}:` +
-                            `${this.zeroPadding(this._app.services.eew.reports[DATA._id].originTime.getMinutes())}`
+                        this.app.services.eew.reports[DATA._id].originTimeText =
+                            `${this.app.services.eew.reports[DATA._id].originTime.getFullYear()}/` +
+                            `${this.zeroPadding(this.app.services.eew.reports[DATA._id].originTime.getMonth() + 1)}/` +
+                            `${this.zeroPadding(this.app.services.eew.reports[DATA._id].originTime.getDate())} ` +
+                            `${this.zeroPadding(this.app.services.eew.reports[DATA._id].originTime.getHours())}:` +
+                            `${this.zeroPadding(this.app.services.eew.reports[DATA._id].originTime.getMinutes())}`
                     }
 
                     if (DATA.earthquake.hypocenter.name) {
-                        this._app.services.eew.reports[DATA._id].regionName = DATA.earthquake.hypocenter.name;
+                        this.app.services.eew.reports[DATA._id].regionName = DATA.earthquake.hypocenter.name;
                     } else {
-                        this._app.services.eew.reports[DATA._id].regionName = '震源 不明';
+                        this.app.services.eew.reports[DATA._id].regionName = '震源 不明';
                     }
 
-                    this._app.services.eew.reports[DATA._id].magnitude = DATA.earthquake.hypocenter.magnitude;
+                    this.app.services.eew.reports[DATA._id].magnitude = DATA.earthquake.hypocenter.magnitude;
 
-                    if (this._app.services.eew.reports[DATA._id].magnitude === -1) {
-                        this._app.services.eew.reports[DATA._id].magnitudeText = 'M不明';
+                    if (this.app.services.eew.reports[DATA._id].magnitude === -1) {
+                        this.app.services.eew.reports[DATA._id].magnitudeText = 'M不明';
                     } else {
-                        this._app.services.eew.reports[DATA._id].magnitudeText = `M${this._app.services.eew.reports[DATA._id].magnitude}`;
+                        this.app.services.eew.reports[DATA._id].magnitudeText = `M${this.app.services.eew.reports[DATA._id].magnitude}`;
                     }
 
-                    this._app.services.eew.reports[DATA._id].depth = DATA.earthquake.hypocenter.depth;
+                    this.app.services.eew.reports[DATA._id].depth = DATA.earthquake.hypocenter.depth;
 
-                    switch (this._app.services.eew.reports[DATA._id].depth) {
+                    switch (this.app.services.eew.reports[DATA._id].depth) {
                         case -1:
-                            this._app.services.eew.reports[DATA._id].depthText = "不明";
+                            this.app.services.eew.reports[DATA._id].depthText = "不明";
                             break;
 
                         case 0:
-                            this._app.services.eew.reports[DATA._id].depthText = "ごく浅い";
+                            this.app.services.eew.reports[DATA._id].depthText = "ごく浅い";
                             break;
 
                         default:
-                            this._app.services.eew.reports[DATA._id].depthText = `約${this._app.services.eew.reports[DATA._id].depth}km`;
+                            this.app.services.eew.reports[DATA._id].depthText = `約${this.app.services.eew.reports[DATA._id].depth}km`;
                             break;
                     }
 
                     DATA.areas.forEach((area) => {
-                        this._app.services.eew.warnAreas.push(
-                            new this._app.services.eew.WarnArea(
-                                this._app.services.eew,
+                        this.app.services.eew.warnAreas.push(
+                            new this.app.services.eew.WarnArea(
+                                this.app.services.eew,
                                 {
                                     name: area.name,
                                     pref: area.pref,
@@ -319,15 +319,15 @@ export class P2pquake extends Service {
 
                     let warnAreasText = "";
 
-                    this._app.services.eew.warnAreas.forEach(area => {
+                    this.app.services.eew.warnAreas.forEach(area => {
                         if (warnAreasText.indexOf(area.pref) !== -1) { return }
                         warnAreasText += `${area.pref}　`;
                     });
 
-                    this._app.services.eew.warnAreasText = warnAreasText;
+                    this.app.services.eew.warnAreasText = warnAreasText;
 
-                    this._app.services.eew.warning();
-                    this._app.services.eew.sound();
+                    this.app.services.eew.warning();
+                    this.app.services.eew.sound();
                     this.push(556);
                 } catch (error) {
                     console.error(error);
@@ -336,7 +336,7 @@ export class P2pquake extends Service {
             .catch((error) => {
                 console.error(error);
                 if (error != 'TypeError: Failed to fetch') {
-                    this._app.services.notify.show(
+                    this.app.services.notify.show(
                         "error",
                         "エラー",
                         `
@@ -364,71 +364,71 @@ export class P2pquake extends Service {
                         list["issue"]["typeJp"] = "";
                     }
 
-                    this._app.services.eqinfo.originTime = new Date(list["earthquake"]["time"]);
+                    this.app.services.eqinfo.originTime = new Date(list["earthquake"]["time"]);
 
-                    if (!(this._app.services.eqinfo.originTime instanceof Date)) {
-                        this._app.services.eqinfo.originTimeText = "----/--/-- --:--";
+                    if (!(this.app.services.eqinfo.originTime instanceof Date)) {
+                        this.app.services.eqinfo.originTimeText = "----/--/-- --:--";
                     } else {
-                        this._app.services.eqinfo.originTimeText =
-                            `${this._app.services.eqinfo.originTime.getFullYear()}/` +
-                            `${this.zeroPadding(this._app.services.eqinfo.originTime.getMonth() + 1)}/` +
-                            `${this.zeroPadding(this._app.services.eqinfo.originTime.getDate())} ` +
-                            `${this.zeroPadding(this._app.services.eqinfo.originTime.getHours())}:` +
-                            `${this.zeroPadding(this._app.services.eqinfo.originTime.getMinutes())}`
+                        this.app.services.eqinfo.originTimeText =
+                            `${this.app.services.eqinfo.originTime.getFullYear()}/` +
+                            `${this.zeroPadding(this.app.services.eqinfo.originTime.getMonth() + 1)}/` +
+                            `${this.zeroPadding(this.app.services.eqinfo.originTime.getDate())} ` +
+                            `${this.zeroPadding(this.app.services.eqinfo.originTime.getHours())}:` +
+                            `${this.zeroPadding(this.app.services.eqinfo.originTime.getMinutes())}`
                     }
 
-                    this._app.services.eqinfo.maxScale = list['earthquake']['maxScale'];
+                    this.app.services.eqinfo.maxScale = list['earthquake']['maxScale'];
 
-                    if (this._app.services.eqinfo.maxScale in this.maxScaleText) {
-                        this._app.services.eqinfo.maxScaleText = this.maxScaleText[String(this._app.services.eqinfo.maxScale)];
+                    if (this.app.services.eqinfo.maxScale in this.maxScaleText) {
+                        this.app.services.eqinfo.maxScaleText = this.maxScaleText[String(this.app.services.eqinfo.maxScale)];
                     } else {
-                        this._app.services.eqinfo.maxScaleText = "?";
+                        this.app.services.eqinfo.maxScaleText = "?";
                     }
 
-                    this._app.services.eqinfo.regionName = list['earthquake']['hypocenter']['name'];
+                    this.app.services.eqinfo.regionName = list['earthquake']['hypocenter']['name'];
 
-                    if (this._app.services.eqinfo.regionName == '') {
-                        this._app.services.eqinfo.regionName = '震源 調査中';
+                    if (this.app.services.eqinfo.regionName == '') {
+                        this.app.services.eqinfo.regionName = '震源 調査中';
                     }
 
-                    this._app.services.eqinfo.magnitude = list['earthquake']['hypocenter']['magnitude'];
+                    this.app.services.eqinfo.magnitude = list['earthquake']['hypocenter']['magnitude'];
 
-                    if (this._app.services.eqinfo.magnitude == -1) {
-                        this._app.services.eqinfo.magnitudeText = 'M調査中または不明';
+                    if (this.app.services.eqinfo.magnitude == -1) {
+                        this.app.services.eqinfo.magnitudeText = 'M調査中または不明';
                     } else {
-                        this._app.services.eqinfo.magnitudeText = `M${this._app.services.eqinfo.magnitude}`;
+                        this.app.services.eqinfo.magnitudeText = `M${this.app.services.eqinfo.magnitude}`;
                     }
 
-                    this._app.services.eqinfo.depth = list['earthquake']['hypocenter']['depth'];
+                    this.app.services.eqinfo.depth = list['earthquake']['hypocenter']['depth'];
 
-                    if (this._app.services.eqinfo.depth == -1) {
-                        this._app.services.eqinfo.depthText = '調査中または不明';
-                    } else if (this._app.services.eqinfo.depth == 0) {
-                        this._app.services.eqinfo.depthText = 'ごく浅い';
+                    if (this.app.services.eqinfo.depth == -1) {
+                        this.app.services.eqinfo.depthText = '調査中または不明';
+                    } else if (this.app.services.eqinfo.depth == 0) {
+                        this.app.services.eqinfo.depthText = 'ごく浅い';
                     } else {
-                        this._app.services.eqinfo.depthText = `約${this._app.services.eqinfo.depth}km`;
+                        this.app.services.eqinfo.depthText = `約${this.app.services.eqinfo.depth}km`;
                     }
 
-                    this._app.services.eqinfo.tsunami = list['earthquake']['domesticTsunami'];
+                    this.app.services.eqinfo.tsunami = list['earthquake']['domesticTsunami'];
 
-                    if (this._app.services.eqinfo.tsunami in this.tsunamiLevels) {
-                        this._app.services.eqinfo.tsunamiJp = this.tsunamiLevels[this._app.services.eqinfo.tsunami];
+                    if (this.app.services.eqinfo.tsunami in this.tsunamiLevels) {
+                        this.app.services.eqinfo.tsunamiJp = this.tsunamiLevels[this.app.services.eqinfo.tsunami];
                     } else {
-                        this._app.services.eqinfo.tsunamiJp = "津波の影響は不明";
+                        this.app.services.eqinfo.tsunamiJp = "津波の影響は不明";
                     }
 
                     let bgcolor;
                     let color;
 
-                    if (this._app.services.eqinfo.maxScale in this.colors) {
-                        bgcolor = this.colors[this._app.services.eqinfo.maxScale]["bgcolor"];
-                        color = this.colors[this._app.services.eqinfo.maxScale]["color"];
+                    if (this.app.services.eqinfo.maxScale in this.colors) {
+                        bgcolor = this.colors[this.app.services.eqinfo.maxScale]["bgcolor"];
+                        color = this.colors[this.app.services.eqinfo.maxScale]["color"];
                     } else {
                         bgcolor = "#404040ff";
                         color = "#ffffffff";
                     }
 
-                    this._app.services.eqinfo.addToList(true, this.eqinfoNum)
+                    this.app.services.eqinfo.addToList(true, this.eqinfoNum)
                     this.eqinfoNum++;
                 });
             })
@@ -459,7 +459,7 @@ export class P2pquake extends Service {
 
 
     socketOpened(event) {
-        this._app.services.debugLogs.add(
+        this.app.services.debugLogs.add(
             "network",
             `[NETWORK]`,
             "Successfully connected to api.p2pquake.net and WebSocket opened."
@@ -470,7 +470,7 @@ export class P2pquake extends Service {
         this.keepAlive();
 
         if (this.socketRetryCount > 0) {
-            this._app.services.notify.show(
+            this.app.services.notify.show(
                 "message",
                 "WebSocket再接続",
                 "P2P地震情報 (p2pquake.net) に再接続しました。"
@@ -484,14 +484,14 @@ export class P2pquake extends Service {
     socketClosed(event) {
         this.socket = null;
 
-        this._app.services.debugLogs.add(
+        this.app.services.debugLogs.add(
             "network",
             `[NETWORK]`,
             "Successfully disconnected from api.p2pquake.net and WebSocket closed."
         );
 
         if (!this.isError && this.socketRetryCount < 3) {
-            this._app.services.notify.show(
+            this.app.services.notify.show(
                 "error",
                 "WebSocket切断",
                 "P2P地震情報 (p2pquake.net) から切断されました。再接続を試行します。"
@@ -516,7 +516,7 @@ export class P2pquake extends Service {
         try {
             const DATA = JSON.parse(message.data);
 
-            this._app.services.debugLogs.add(
+            this.app.services.debugLogs.add(
                 "network",
                 `[NETWORK]`,
                 `
@@ -550,68 +550,68 @@ export class P2pquake extends Service {
     whenEew(data) {
         if (data["test"]) { return }
 
-        if (this._app.services.eew.reports[data._id] === undefined) {
-            this._app.services.eew.reports[data._id] = new this._app.services.eew.Report();
+        if (this.app.services.eew.reports[data._id] === undefined) {
+            this.app.services.eew.reports[data._id] = new this.app.services.eew.Report();
         }
 
-        this._app.services.eew.currentId = data._id;
+        this.app.services.eew.currentId = data._id;
 
-        const NOW_TIME = this._app.services.datetime.gmt.getTime();
+        const NOW_TIME = this.app.services.datetime.gmt.getTime();
         const ISSUE_TIME = new Date(data.issue.time).getTime();
 
         // EEW発表から3分以下の場合は警報処理をする
         if (((NOW_TIME - ISSUE_TIME) / 1000) >= 180) { return }
 
-        this._app.services.eew.isEew = true;
-        this._app.services.eew.reports[data._id].isWarning = true;
+        this.app.services.eew.isEew = true;
+        this.app.services.eew.reports[data._id].isWarning = true;
 
-        this._app.services.eew.reports[data._id].originTime = new Date(data.earthquake.originTime);
+        this.app.services.eew.reports[data._id].originTime = new Date(data.earthquake.originTime);
 
-        if (!(this._app.services.eew.reports[data._id].originTime instanceof Date)) {
-            this._app.services.eew.reports[data._id].originTimeText = "----/--/-- --:--";
+        if (!(this.app.services.eew.reports[data._id].originTime instanceof Date)) {
+            this.app.services.eew.reports[data._id].originTimeText = "----/--/-- --:--";
         } else {
-            this._app.services.eew.reports[data._id].originTimeText =
-                `${this._app.services.eew.reports[data._id].originTime.getFullYear()}/` +
-                `${this.zeroPadding(this._app.services.eew.reports[data._id].originTime.getMonth() + 1)}/` +
-                `${this.zeroPadding(this._app.services.eew.reports[data._id].originTime.getDate())} ` +
-                `${this.zeroPadding(this._app.services.eew.reports[data._id].originTime.getHours())}:` +
-                `${this.zeroPadding(this._app.services.eew.reports[data._id].originTime.getMinutes())}`
+            this.app.services.eew.reports[data._id].originTimeText =
+                `${this.app.services.eew.reports[data._id].originTime.getFullYear()}/` +
+                `${this.zeroPadding(this.app.services.eew.reports[data._id].originTime.getMonth() + 1)}/` +
+                `${this.zeroPadding(this.app.services.eew.reports[data._id].originTime.getDate())} ` +
+                `${this.zeroPadding(this.app.services.eew.reports[data._id].originTime.getHours())}:` +
+                `${this.zeroPadding(this.app.services.eew.reports[data._id].originTime.getMinutes())}`
         }
 
         if (data.earthquake.hypocenter.name) {
-            this._app.services.eew.reports[data._id].regionName = data.earthquake.hypocenter.name;
+            this.app.services.eew.reports[data._id].regionName = data.earthquake.hypocenter.name;
         } else {
-            this._app.services.eew.reports[data._id].regionName = '震源 不明';
+            this.app.services.eew.reports[data._id].regionName = '震源 不明';
         }
 
-        this._app.services.eew.reports[data._id].magnitude = data.earthquake.hypocenter.magnitude;
+        this.app.services.eew.reports[data._id].magnitude = data.earthquake.hypocenter.magnitude;
 
-        if (this._app.services.eew.reports[data._id].magnitude === -1) {
-            this._app.services.eew.reports[data._id].magnitudeText = 'M不明';
+        if (this.app.services.eew.reports[data._id].magnitude === -1) {
+            this.app.services.eew.reports[data._id].magnitudeText = 'M不明';
         } else {
-            this._app.services.eew.reports[data._id].magnitudeText = `M${this._app.services.eew.reports[data._id].magnitude}`;
+            this.app.services.eew.reports[data._id].magnitudeText = `M${this.app.services.eew.reports[data._id].magnitude}`;
         }
 
-        this._app.services.eew.reports[data._id].depth = data.earthquake.hypocenter.depth;
+        this.app.services.eew.reports[data._id].depth = data.earthquake.hypocenter.depth;
 
-        switch (this._app.services.eew.reports[data._id].depth) {
+        switch (this.app.services.eew.reports[data._id].depth) {
             case -1:
-                this._app.services.eew.reports[data._id].depthText = "不明";
+                this.app.services.eew.reports[data._id].depthText = "不明";
                 break;
 
             case 0:
-                this._app.services.eew.reports[data._id].depthText = "ごく浅い";
+                this.app.services.eew.reports[data._id].depthText = "ごく浅い";
                 break;
 
             default:
-                this._app.services.eew.reports[data._id].depthText = `約${this._app.services.eew.reports[data._id].depth}km`;
+                this.app.services.eew.reports[data._id].depthText = `約${this.app.services.eew.reports[data._id].depth}km`;
                 break;
         }
 
         data.areas.forEach((area) => {
-            this._app.services.eew.warnAreas.push(
-                new this._app.services.eew.WarnArea(
-                    this._app.services.eew,
+            this.app.services.eew.warnAreas.push(
+                new this.app.services.eew.WarnArea(
+                    this.app.services.eew,
                     {
                         name: area.name,
                         pref: area.pref,
@@ -625,87 +625,87 @@ export class P2pquake extends Service {
 
         let warnAreasText = "";
 
-        this._app.services.eew.warnAreas.forEach(area => {
+        this.app.services.eew.warnAreas.forEach(area => {
             if (warnAreasText.indexOf(area.pref) !== -1) { return }
             warnAreasText += `${area.pref}　`;
         });
 
-        this._app.services.eew.warnAreasText = warnAreasText;
+        this.app.services.eew.warnAreasText = warnAreasText;
 
-        this._app.services.eew.warning();
-        this._app.services.eqinfo.sound();
+        this.app.services.eew.warning();
+        this.app.services.eqinfo.sound();
         this.push(556);
     }
 
 
     whenEqinfo(data) {
-        this._app.services.eqinfo.type = data['issue']['type'];
+        this.app.services.eqinfo.type = data['issue']['type'];
 
-        if (this._app.services.eqinfo.type in this.typesJp) {
-            this._app.services.eqinfo.typeJp = this.typesJp[this._app.services.eqinfo.type];
+        if (this.app.services.eqinfo.type in this.typesJp) {
+            this.app.services.eqinfo.typeJp = this.typesJp[this.app.services.eqinfo.type];
         } else {
-            this._app.services.eqinfo.typeJp = "";
+            this.app.services.eqinfo.typeJp = "";
         }
 
-        this._app.services.eqinfo.originTime = new Date(data["earthquake"]["time"]);
+        this.app.services.eqinfo.originTime = new Date(data["earthquake"]["time"]);
 
-        if (!(this._app.services.eqinfo.originTime instanceof Date)) {
-            this._app.services.eqinfo.originTimeText = "----/--/-- --:--";
+        if (!(this.app.services.eqinfo.originTime instanceof Date)) {
+            this.app.services.eqinfo.originTimeText = "----/--/-- --:--";
         } else {
-            this._app.services.eqinfo.originTimeText =
-                `${this._app.services.eqinfo.originTime.getFullYear()}/` +
-                `${this.zeroPadding(this._app.services.eqinfo.originTime.getMonth() + 1)}/` +
-                `${this.zeroPadding(this._app.services.eqinfo.originTime.getDate())} ` +
-                `${this.zeroPadding(this._app.services.eqinfo.originTime.getHours())}:` +
-                `${this.zeroPadding(this._app.services.eqinfo.originTime.getMinutes())}`
+            this.app.services.eqinfo.originTimeText =
+                `${this.app.services.eqinfo.originTime.getFullYear()}/` +
+                `${this.zeroPadding(this.app.services.eqinfo.originTime.getMonth() + 1)}/` +
+                `${this.zeroPadding(this.app.services.eqinfo.originTime.getDate())} ` +
+                `${this.zeroPadding(this.app.services.eqinfo.originTime.getHours())}:` +
+                `${this.zeroPadding(this.app.services.eqinfo.originTime.getMinutes())}`
         }
 
-        this._app.services.eqinfo.maxScale = data['earthquake']['maxScale'];
+        this.app.services.eqinfo.maxScale = data['earthquake']['maxScale'];
 
-        if (this._app.services.eqinfo.maxScale in this.maxScaleText) {
-            this._app.services.eqinfo.maxScaleText = this.maxScaleText[String(this._app.services.eqinfo.maxScale)];
+        if (this.app.services.eqinfo.maxScale in this.maxScaleText) {
+            this.app.services.eqinfo.maxScaleText = this.maxScaleText[String(this.app.services.eqinfo.maxScale)];
         } else {
-            this._app.services.eqinfo.maxScaleText = "?";
+            this.app.services.eqinfo.maxScaleText = "?";
         }
 
-        this._app.services.eqinfo.regionName = data['earthquake']['hypocenter']['name'];
+        this.app.services.eqinfo.regionName = data['earthquake']['hypocenter']['name'];
 
-        if (this._app.services.eqinfo.regionName == '') {
-            this._app.services.eqinfo.regionName = '震源 調査中';
+        if (this.app.services.eqinfo.regionName == '') {
+            this.app.services.eqinfo.regionName = '震源 調査中';
         }
 
-        this._app.services.eqinfo.magnitude = data['earthquake']['hypocenter']['magnitude'];
+        this.app.services.eqinfo.magnitude = data['earthquake']['hypocenter']['magnitude'];
 
-        if (this._app.services.eqinfo.magnitude == -1) {
-            this._app.services.eqinfo.magnitudeText = 'M調査中';
+        if (this.app.services.eqinfo.magnitude == -1) {
+            this.app.services.eqinfo.magnitudeText = 'M調査中';
         } else {
-            this._app.services.eqinfo.magnitudeText = `M${this._app.services.eqinfo.magnitude}`;
+            this.app.services.eqinfo.magnitudeText = `M${this.app.services.eqinfo.magnitude}`;
         }
 
-        this._app.services.eqinfo.depth = data['earthquake']['hypocenter']['depth'];
+        this.app.services.eqinfo.depth = data['earthquake']['hypocenter']['depth'];
 
-        if (this._app.services.eqinfo.depth == -1) {
-            this._app.services.eqinfo.depthText = '深さ 調査中';
-        } else if (this._app.services.eqinfo.depth == 0) {
-            this._app.services.eqinfo.depthText = 'ごく浅い';
+        if (this.app.services.eqinfo.depth == -1) {
+            this.app.services.eqinfo.depthText = '深さ 調査中';
+        } else if (this.app.services.eqinfo.depth == 0) {
+            this.app.services.eqinfo.depthText = 'ごく浅い';
         } else {
-            this._app.services.eqinfo.depthText = `約${this._app.services.eqinfo.depth}km`;
+            this.app.services.eqinfo.depthText = `約${this.app.services.eqinfo.depth}km`;
         }
 
-        this._app.services.eqinfo.tsunami = data['earthquake']['domesticTsunami'];
+        this.app.services.eqinfo.tsunami = data['earthquake']['domesticTsunami'];
 
-        if (this._app.services.eqinfo.tsunami in this.tsunamiLevels) {
-            this._app.services.eqinfo.tsunamiJp = this.tsunamiLevels[this._app.services.eqinfo.tsunami];
+        if (this.app.services.eqinfo.tsunami in this.tsunamiLevels) {
+            this.app.services.eqinfo.tsunamiJp = this.tsunamiLevels[this.app.services.eqinfo.tsunami];
         } else {
-            this._app.services.eqinfo.tsunamiJp = "津波の影響は不明";
+            this.app.services.eqinfo.tsunamiJp = "津波の影響は不明";
         }
 
         let bgcolor;
         let color;
 
-        if (this._app.services.eqinfo.maxScale in this.colors) {
-            bgcolor = this.colors[this._app.services.eqinfo.maxScale]["bgcolor"];
-            color = this.colors[this._app.services.eqinfo.maxScale]["color"];
+        if (this.app.services.eqinfo.maxScale in this.colors) {
+            bgcolor = this.colors[this.app.services.eqinfo.maxScale]["bgcolor"];
+            color = this.colors[this.app.services.eqinfo.maxScale]["color"];
         } else {
             bgcolor = "#404040ff";
             color = "#ffffffff";
@@ -713,18 +713,18 @@ export class P2pquake extends Service {
 
         this.lastId = this.latestId;
 
-        if (this._app.services.eqinfo.type === "DetailScale") {
-            this._app.services.eqinfo.addToList(false, this.eqinfoNum);
+        if (this.app.services.eqinfo.type === "DetailScale") {
+            this.app.services.eqinfo.addToList(false, this.eqinfoNum);
             this.eqinfoNum++;
         }
 
-        this._app.services.eqinfo.sound();
+        this.app.services.eqinfo.sound();
         this.push(551);
     }
 
 
     socketError(event) {
-        this._app.services.debugLogs.add(
+        this.app.services.debugLogs.add(
             "error",
             `[NETWORK]`,
             `Failed to connect to api.p2pquake.net.<br>${event}`
@@ -733,13 +733,13 @@ export class P2pquake extends Service {
         this.isError = true;
 
         if (this.socketRetryCount < 3) {
-            this._app.services.notify.show(
+            this.app.services.notify.show(
                 "error",
                 "エラー",
                 "P2P地震情報 (p2pquake.net) に接続できません。10秒後に再接続を試行します。"
             );
         } else {
-            this._app.services.notify.show(
+            this.app.services.notify.show(
                 "error",
                 "エラー",
                 "P2P地震情報 (p2pquake.net) に接続できませんでした。"

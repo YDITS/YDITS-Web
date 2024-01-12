@@ -16,14 +16,17 @@ import { Service } from "../../service.mjs";
  * 現在時刻を管理するサービスです。
  */
 export class Datetime extends Service {
-    isGotTime = false;
-    gmt = null;
-    year = null;
-    month = null;
-    day = null;
-    hour = null;
-    minute = null;
-    second = null;
+    get fullYear() { return this.gmt.getFullYear(); }
+    get month() { return this.gmt.getMonth() + 1; }
+    get date() { return this.gmt.getDate(); }
+    get hours() { return this.gmt.getHours(); }
+    get minutes() { return this.gmt.getMinutes(); }
+    get seconds() { return this.gmt.getSeconds(); }
+
+
+    gmtFetchError(error) {
+        return new Error(`Failed to get the GMT time: ${error}`);
+    }
 
 
     constructor(app) {
@@ -47,15 +50,6 @@ export class Datetime extends Service {
             } else {
                 this.gmt = new Date();
             }
-
-            if (!(this.gmt instanceof Date)) { return }
-
-            this.year = this.gmt.getFullYear();
-            this.month = this.gmt.getMonth() + 1;
-            this.day = this.gmt.getDate();
-            this.hour = this.gmt.getHours();
-            this.minute = this.gmt.getMinutes();
-            this.second = this.gmt.getSeconds();
         } catch (error) {
             console.error(error);
         }
@@ -76,7 +70,7 @@ export class Datetime extends Service {
                 this.gmt = new Date(response.headers.date);
             })
             .catch((error) => {
-                return null;
+                throw this.gmtFetchError(error);
             });
     }
 }

@@ -41,15 +41,15 @@ export class ServiceWorker extends Service {
                 );
 
                 if (registration.installing) {
-                    this._app.services.debugLogs.add("info", `[INFO]`, "Service worker installing.");
+                    this.app.services.debugLogs.add("info", `[INFO]`, "Service worker installing.");
                 } else if (registration.waiting) {
-                    this._app.services.debugLogs.add("info", `[INFO]`, "Service worker installed.");
+                    this.app.services.debugLogs.add("info", `[INFO]`, "Service worker installed.");
                 } else if (registration.active) { }
             } catch (error) {
-                this._app.services.debugLogs.add("error", `[ERROR]`, `Registration failed with ${error}`);
+                this.app.services.debugLogs.add("error", `[ERROR]`, `Registration failed with ${error}`);
             }
         } else {
-            this._app.services.debugLogs.add("info", `[info]`, "Service worker is not supported on this browser.");
+            this.app.services.debugLogs.add("info", `[info]`, "Service worker is not supported on this browser.");
         }
     }
 }

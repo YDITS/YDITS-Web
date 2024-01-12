@@ -13,45 +13,15 @@
  * アプリケーションを作成します。
  */
 export class App {
-    _services = [];
+    services = [];
 
 
     constructor(config) {
-        this._name = config.name;
-        this._description = config.author;
-        this._version = config.version;
-        this._author = config.author;
-        this._copyright = config.copyright;
-    }
-
-
-    get name() {
-        return this._name;
-    }
-
-
-    get description() {
-        return this._description;
-    }
-
-
-    get version() {
-        return this._version;
-    }
-
-
-    get author() {
-        return this._author;
-    }
-
-
-    get copyright() {
-        return this._copyright;
-    }
-
-
-    get services() {
-        return this._services;
+        this.name = config.name;
+        this.description = config.author;
+        this.version = config.version;
+        this.author = config.author;
+        this.copyright = config.copyright;
     }
 
 
@@ -60,6 +30,6 @@ export class App {
      */
     register(service) {
         const newService = new service(this);
-        this._services[newService.name] = newService;
+        this.services[newService.name] = newService;
     }
 }

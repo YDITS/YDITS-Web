@@ -33,12 +33,15 @@ export class GeoLocation extends Service {
 
         this.$locationStatus = $("#locationStatus");
         this.$locationArea = $("#locationArea");
+        this.$locationAccuracy = $("#locationAccuracy");
 
         if ("geolocation" in navigator) {
             this.isSupport = true;
             this.$locationStatus.text("有効");
         } else {
             this.isSupport = false;
+            this.latitude = -1;
+            this.longitude = -1;
             this.$locationStatus.text("無効");
         }
 
@@ -64,6 +67,17 @@ export class GeoLocation extends Service {
      * 取得した現在位置情報から市区町村または都道府県を取得します。
      */
     async onGet(position) {
+        this.latitude = position.coords.latitude;
+        this.longitude = position.coords.longitude;
+
+        if (position.coords.accuracy === null) {
+            this.accuracy = -1;
+            this.$locationAccuracy.text(`不明`);
+        } else {
+            this.accuracy = position.coords.accuracy + 500;
+            this.$locationAccuracy.text(`半経距離 ${Math.round(this.accuracy)}m 程度`);
+        }
+
         const urlPref = "https://nominatim.openstreetmap.org/reverse?"
             + "format=json"
             + "&lat=" + position.coords.latitude
@@ -128,7 +142,7 @@ export class GeoLocation extends Service {
             .then(() => {
                 if (!(this.isGot)) {
                     this.isGot = true;
-                    document.dispatchEvent(this._app.buildEvent);
+                    document.dispatchEvent(this.app.buildEvent);
                 }
             })
             .catch((error) => {
@@ -141,11 +155,20 @@ export class GeoLocation extends Service {
      * 位置情報を取得できない際の処理を行います。
      */
     onError(error) {
+        this.app.services.debugLogs.add(
+            "error",
+            "[LOCATE]",
+            "Geo Location is supported, but Cannot get current global position."
+        )
+
         this.$locationStatus.text("無効");
+        this.latitude = -1;
+        this.longitude = -1;
+        this.accuracy = -1;
 
         if (!(this.isGot)) {
             this.isGot = true;
-            document.dispatchEvent(this._app.buildEvent);
+            document.dispatchEvent(this.app.buildEvent);
         }
     }
 

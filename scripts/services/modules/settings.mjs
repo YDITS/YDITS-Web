@@ -25,7 +25,8 @@ export class Settings extends Service {
 
 
     map = {
-        autoMove: null
+        autoMove: null,
+        displayUserPoint: null
     }
 
 
@@ -48,10 +49,10 @@ export class Settings extends Service {
 
 
     initialize() {
-        let dmdata = this._app.services.api.dmdata;
-        let debugLogs = this._app.services.debugLogs;
-        let notify = this._app.services.notify;
-        let sounds = this._app.services.sounds;
+        let dmdata = this.app.services.api.dmdata;
+        let debugLogs = this.app.services.debugLogs;
+        let notify = this.app.services.notify;
+        let sounds = this.app.services.sounds;
 
         // ----- Events ----- //
         $(document).on('click', '#settings .closeBtn', () => {
@@ -224,7 +225,32 @@ export class Settings extends Service {
                 localStorage.setItem('settings-map-auto-move', 'false');
                 $('#settings_map_auto_move .toggle-switch').removeClass('on');
             }
-        })
+        });
+
+        if (localStorage.getItem("settings-map-display-userpoint") == 'true') {
+            this.map.displayUserPoint = true;
+            $('#settings_map_user_point .toggle-switch').addClass('on');
+        } else if (localStorage.getItem("settings-map-display-userpoint") == 'false') {
+            this.map.displayUserPoint = false;
+            $('#settings_map_user_point .toggle-switch').removeClass('on');
+        } else {
+            this.map.displayUserPoint = true;
+            $('#settings_map_user_point .toggle-switch').addClass('on');
+        }
+
+        $(document).on('click', '#settings_map_user_point .toggle-switch', () => {
+            if (this.map.displayUserPoint == false) {
+                this.map.displayUserPoint = true;
+                localStorage.setItem('settings-map-display-userpoint', 'true');
+                $('#settings_map_user_point .toggle-switch').addClass('on');
+                this.app.services.map.updateUserPoint();
+            } else if (this.map.displayUserPoint == true) {
+                this.map.displayUserPoint = false;
+                localStorage.setItem('settings-map-display-userpoint', 'false');
+                $('#settings_map_user_point .toggle-switch').removeClass('on');
+                this.app.services.map.updateUserPoint();
+            }
+        });
 
         // ----- Connection ----- //
         this.connect.eew = "yahoo-kmoni";
@@ -241,13 +267,14 @@ export class Settings extends Service {
             this.connect.tsunami = "dmdata";
             this.connect.volcanicEruption = "dmdata";
             this.connect.civilProtection = "dmdata";
-
             this.map.autoMove = true;
+            this.map.displayUserPoint = true;
             this.sound.eewAny = true;
             this.sound.eewCancel = true;
             this.sound.eqinfo = true;
 
             $('#settings_map_auto_move .toggle-switch').addClass('on');
+            $('#settings_map_user_point .toggle-switch').addClass('on');
             $('#settings_playSound_eew_any .toggle-switch').addClass('on');
             $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
             $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
@@ -257,7 +284,7 @@ export class Settings extends Service {
 
             sounds.notify.play();
             notify.show("message", "設定のリセット", "設定をリセットしました。");
-            this._app.services.debugLogs.add("info", `[INFO]`, "Settings were reset.");
+            this.app.services.debugLogs.add("info", `[INFO]`, "Settings were reset.");
         });
 
 

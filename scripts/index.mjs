@@ -11,7 +11,4 @@
 
 import { YditsWeb } from "./apps/ydits-web.mjs";
 
-
-(function () {
-    const app = new YditsWeb();
-})();
+(function () { new YditsWeb(); })();

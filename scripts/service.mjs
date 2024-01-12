@@ -14,52 +14,23 @@
  */
 export class Service {
     constructor(app, config) {
-        this._app = app;
-        this._name = config.name;
-        this._description = config.description;
-        this._version = config.version;
-        this._author = config.author;
-        this._copyright = config.copyright;
-    }
-
-
-    get app() {
-        return this._app;
+        this.app = app;
+        this.name = config.name;
+        this.description = config.description;
+        this.version = config.version;
+        this.author = config.author;
+        this.copyright = config.copyright;
     }
 
 
     get config() {
         return {
-            name: this._name,
-            description: this._description,
-            version: this._version,
+            app: this.app,
+            name: this.name,
+            description: this.description,
+            version: this.version,
             author: this.author,
-            copyright: this._copyright
+            copyright: this.copyright
         }
-    }
-
-
-    get name() {
-        return this._name;
-    }
-
-
-    get description() {
-        return this._description;
-    }
-
-
-    get version() {
-        return this._version;
-    }
-
-
-    get author() {
-        return this._author;
-    }
-
-
-    get copyright() {
-        return this._copyright;
     }
 }

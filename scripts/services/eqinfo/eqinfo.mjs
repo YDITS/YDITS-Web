@@ -46,8 +46,8 @@ export class Eqinfo extends Service {
      * 初期化を行います。
      */
     initialize() {
-        this.settings = this._app.services.settings;
-        this.p2pquake = this._app.services.api.p2pquake;
+        this.settings = this.app.services.settings;
+        this.p2pquake = this.app.services.api.p2pquake;
 
         switch (this.settings.connect.eqinfo) {
             case "p2pquake":
@@ -60,7 +60,7 @@ export class Eqinfo extends Service {
      * 地震情報に関連するすべての通信を再接続します。
      */
     reconnect() {
-        this._app.services.api.p2pquake.startSocket();
+        this.app.services.api.p2pquake.startSocket();
     }
 
 
@@ -68,7 +68,7 @@ export class Eqinfo extends Service {
      * 地震情報に関連するすべての接続を切断します。
      */
     disconnect() {
-        this._app.services.api.p2pquake.socket.close();
+        this.app.services.api.p2pquake.socket.close();
     }
 
 
@@ -103,9 +103,9 @@ export class Eqinfo extends Service {
         let bgcolor;
         let color;
 
-        if (this.maxScale in this._app.services.api.p2pquake.colors) {
-            bgcolor = this._app.services.api.p2pquake.colors[this.maxScale]["bgcolor"];
-            color = this._app.services.api.p2pquake.colors[this.maxScale]["color"];
+        if (this.maxScale in this.app.services.api.p2pquake.colors) {
+            bgcolor = this.app.services.api.p2pquake.colors[this.maxScale]["bgcolor"];
+            color = this.app.services.api.p2pquake.colors[this.maxScale]["color"];
         } else {
             bgcolor = "#404040ff";
             color = "#ffffffff";
@@ -119,56 +119,56 @@ export class Eqinfo extends Service {
 
 
     sound() {
-        if (!(this._app.services.settings.sound.eqinfo)) { return }
+        if (!(this.app.services.settings.sound.eqinfo)) { return }
 
-        switch (this._app.services.eqinfo.maxScale) {
+        switch (this.app.services.eqinfo.maxScale) {
             case 10:
-                this._app.services.sounds.eqinfo.play();
-                this._app.services.sounds.eqinfoVoice1.play();
+                this.app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfoVoice1.play();
                 break;
 
             case 20:
-                this._app.services.sounds.eqinfo.play();
-                this._app.services.sounds.eqinfoVoice2.play();
+                this.app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfoVoice2.play();
                 break;
 
             case 30:
-                this._app.services.sounds.eqinfo.play();
-                this._app.services.sounds.eqinfoVoice3.play();
+                this.app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfoVoice3.play();
                 break;
 
             case 40:
-                this._app.services.sounds.eqinfo.play();
-                this._app.services.sounds.eqinfoVoice4.play();
+                this.app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfoVoice4.play();
                 break;
 
             case 45:
-                this._app.services.sounds.eqinfo.play();
-                this._app.services.sounds.eqinfoVoice5.play();
+                this.app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfoVoice5.play();
                 break;
 
             case 50:
-                this._app.services.sounds.eqinfo.play();
-                this._app.services.sounds.eqinfoVoice6.play();
+                this.app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfoVoice6.play();
                 break;
 
             case 55:
-                this._app.services.sounds.eqinfo.play();
-                this._app.services.sounds.eqinfoVoice7.play();
+                this.app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfoVoice7.play();
                 break;
 
             case 60:
-                this._app.services.sounds.eqinfo.play();
-                this._app.services.sounds.eqinfoVoice8.play();
+                this.app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfoVoice8.play();
                 break;
 
             case 70:
-                this._app.services.sounds.eqinfo.play();
-                this._app.services.sounds.eqinfoVoice9.play();
+                this.app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfoVoice9.play();
                 break;
 
             default:
-                this._app.services.sounds.eqinfo.play();
+                this.app.services.sounds.eqinfo.play();
                 break;
         }
     }
