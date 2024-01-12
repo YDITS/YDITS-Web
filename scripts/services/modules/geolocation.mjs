@@ -70,7 +70,7 @@ export class GeoLocation extends Service {
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
 
-        if (position.coords.accuracy === null) {
+        if ([undefined, null, NaN].includes(position.coords.accuracy)) {
             this.accuracy = -1;
             this.$locationAccuracy.text(`不明`);
         } else {
