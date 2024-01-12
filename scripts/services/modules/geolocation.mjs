@@ -74,7 +74,8 @@ export class GeoLocation extends Service {
             this.accuracy = -1;
             this.$locationAccuracy.text(`不明`);
         } else {
-            this.$locationAccuracy.text(`半経距離 ${Math.round(this.accuracy)}m 程度`);
+            this.accuracy = Math.round(position.coords.accuracy);
+            this.$locationAccuracy.text(`半経距離 ${this.accuracy}m 程度`);
         }
 
         const urlPref = "https://nominatim.openstreetmap.org/reverse?"
