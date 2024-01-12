@@ -33,7 +33,7 @@ export class Map extends Service {
         this.map = L.map('map', {
             center: [38.0194092, 138.3664968],
             zoom: 6,
-            maxZoom: 16,
+            maxZoom: 14,
             minZoom: 4,
             zoomSnap: 0,
             zoomDelta: 0,
