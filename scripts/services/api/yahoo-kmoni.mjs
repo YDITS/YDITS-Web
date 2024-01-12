@@ -43,8 +43,8 @@ export class YahooKmoni extends Service {
         // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20210213/20210213230859.json`;  //2021-2-13-23:08 Fukushima
         // const URL = "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20220529/20220529155631.json";  //2022-5-29-15:55 Ibaraki
         // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/19700101/19700101000000.json`;  //1970-1-1-00:00 HTTP 403
-        // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20200212/202002121937${this.zeroPadding(this.app.services.datetime.second)}.json`;  //2020-2-12-19:36 double eew
-        // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20240101/202401011610${this.zeroPadding(this.app.services.datetime.second)}.json`;  //2024-1-1-16:10 Ishikawa
+        // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20200212/202002121937${this.zeroPadding(this.app.services.datetime.seconds)}.json`;  //2020-2-12-19:36 double eew
+        // const URL = `https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20240101/202401011610${this.zeroPadding(this.app.services.datetime.seconds)}.json`;  //2024-1-1-16:10 Ishikawa
         // const URL = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
         // ---
 
@@ -74,8 +74,10 @@ export class YahooKmoni extends Service {
                                 this.app.services.eew.reports[DATA.reportId] = new this.app.services.eew.Report();
                             }
 
+                            this.app.services.eew.currentIdLast = this.app.services.eew.currentId;
                             this.app.services.eew.currentId = DATA.reportId;
 
+                            this.app.services.eew.reports[DATA.reportId].reportNumLast = this.app.services.eew.reports[DATA.reportId].reportNum;
                             this.app.services.eew.reports[DATA.reportId].reportNum = DATA.reportNum;
                             if (
                                 DATA.reportId === this.app.services.eew.reports[DATA.reportId].currentId &&
@@ -98,6 +100,8 @@ export class YahooKmoni extends Service {
                                     `${this.zeroPadding(this.app.services.eew.reports[DATA.reportId].originTime.getMinutes())}:` +
                                     `${this.zeroPadding(this.app.services.eew.reports[DATA.reportId].originTime.getSeconds())}`;
                             }
+
+                            this.app.services.eew.reports[DATA.reportId].maxScaleLast = this.app.services.eew.reports[DATA.reportId].maxScale;
 
                             switch (DATA.calcintensity) {
                                 case "00":
@@ -198,6 +202,7 @@ export class YahooKmoni extends Service {
 
                             this.app.services.eew.updateField();
                             this.app.services.eew.sound();
+                            this.app.services.eew.push();
                         } catch (error) {
                             console.error(error);
                         }

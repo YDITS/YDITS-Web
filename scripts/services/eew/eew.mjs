@@ -18,9 +18,11 @@ import { Service } from "../../service.mjs";
 export class Eew extends Service {
     isEew = false;
     currentId = null;
+    currentIdLast = null;
     reports = {};
     warnAreasText = "";
     warnAreas = [];
+    isUserAreaWarn = false;
 
     maxScaleText = {
         "-1": "?",
@@ -101,6 +103,7 @@ export class Eew extends Service {
         this.$arrivalTime = $("#eewArrivalTime");
         this.$arrivalTimeAboud = $("#eewArrivalTimeAbout");
         this.$locate = $("#eewLocate");
+        this.$error = $("#eewError");
 
         $(document).on("click", "#eewNotify", () => this.displayWarn());
         $(document).on("click", "#eewWarn .closeBtn", () => this.hideWarn());
@@ -240,47 +243,56 @@ export class Eew extends Service {
 
             if (this.reports[this.currentId].isWarning) {
                 this.app.services.sounds.eew.play();
+                this.app.services.sounds.eewWarnVoice.play();
             }
 
-            switch (this.reports[this.currentId].maxScale) {
-                case '1':
-                    this.app.services.sounds.eewVoice1.play();
-                    break;
+            console.debug(this.reports[this.currentId].maxScale, this.reports[this.currentId].maxScaleLast)
+            if (
+                (this.reports[this.currentId].maxScale !== this.reports[this.currentId].maxScaleLast) ||
+                (this.currentId !== this.currentIdLast)
+            ) {
 
-                case '2':
-                    this.app.services.sounds.eewVoice2.play();
-                    break;
+                console.debug(this.reports[this.currentId].maxScale);
+                switch (this.reports[this.currentId].maxScale) {
+                    case 10:
+                        this.app.services.sounds.eewVoice1.play();
+                        break;
 
-                case '3':
-                    this.app.services.sounds.eewVoice3.play();
-                    break;
+                    case 20:
+                        this.app.services.sounds.eewVoice2.play();
+                        break;
 
-                case '4':
-                    this.app.services.sounds.eewVoice4.play();
-                    break;
+                    case 30:
+                        this.app.services.sounds.eewVoice3.play();
+                        break;
 
-                case '5-':
-                    this.app.services.sounds.eewVoice5.play();
-                    break;
+                    case 40:
+                        this.app.services.sounds.eewVoice4.play();
+                        break;
 
-                case '5+':
-                    this.app.services.sounds.eewVoice6.play();
-                    break;
+                    case 45:
+                        this.app.services.sounds.eewVoice5.play();
+                        break;
 
-                case '6-':
-                    this.app.services.sounds.eewVoice7.play();
-                    break;
+                    case 50:
+                        this.app.services.sounds.eewVoice6.play();
+                        break;
 
-                case '6+':
-                    this.app.services.sounds.eewVoice8.play();
-                    break;
+                    case 55:
+                        this.app.services.sounds.eewVoice7.play();
+                        break;
 
-                case '7':
-                    this.app.services.sounds.eewVoice9.play();
-                    break;
+                    case 60:
+                        this.app.services.sounds.eewVoice8.play();
+                        break;
 
-                default:
-                    break;
+                    case 70:
+                        this.app.services.sounds.eewVoice9.play();
+                        break;
+
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -292,6 +304,9 @@ export class Eew extends Service {
     updateWarn() {
         this.warnAreas.forEach(area => {
             if (area.name === this.app.services.geoLocation.area) {
+                this.isUserAreaWarn = true;
+                this.$error.hide();
+
                 if (area.scaleTo === 99) {
                     this.scale = this.parseScale(area.scaleFrom);
                     this.$scaleAbout.text("程度以上");
@@ -323,6 +338,10 @@ export class Eew extends Service {
                 this.$locate.text(this.app.services.geoLocation.area);
             }
         });
+
+        if (!this.isUserAreaWarn) {
+            this.$error.show();
+        }
     }
 
 
@@ -433,13 +452,15 @@ export class Eew extends Service {
     /**
      * プッシュ通知を送信します。
      */
-    push(data) {
+    push() {
+        if (this.reports[this.currentId].reportNum === this.reports[this.currentId].reportNumLast || this.reports[this.currentId].isWarning) { return }
+
         try {
-            if (data.isCancel) {
+            if (this.reports[this.currentId].isCancel) {
                 Push.create(
-                    `緊急地震速報 ${data.type}(${data.reportNum})`,
+                    `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
                     {
-                        body: `先程の緊急地震速報は取り消されました。\nページ表示するにはここを選択してください。`,
+                        body: `先程の緊急地震速報は取り消されました。`,
                         onClick: function () {
                             window.focus();
                             this.close();
@@ -449,14 +470,14 @@ export class Eew extends Service {
 
                 this.notify.show(
                     "message",
-                    `緊急地震速報 ${data.type}(${data.reportNum})`,
+                    `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
                     `先程の緊急地震速報は取り消されました。`
                 );
             } else {
                 Push.create(
-                    `緊急地震速報 ${data.type}(${data.reportNum})`,
+                    `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
                     {
-                        body: `${data.regionName}で地震発生。予想最大震度は${data.maxInt}です。\nページ表示するにはここを選択してください。`,
+                        body: `${this.reports[this.currentId].regionName}で地震発生。予想最大震度は${this.reports[this.currentId].maxScaleText}です。`,
                         onClick: function () {
                             window.focus();
                             this.close();

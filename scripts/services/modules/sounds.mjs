@@ -18,6 +18,7 @@ import { Service } from "../../service.mjs"
 export class Sounds extends Service {
     notify = new Audio("https://webapp.ydits.net/sounds/notify-sound.m4a");
     eew = new Audio("https://webapp.ydits.net/sounds/eew.wav");
+    eewWarnVoice = new Audio("https://webapp.ydits.net/sounds/eew_warn_v.wav");
     eqinfo = new Audio("https://webapp.ydits.net/sounds/info.wav");
     eewVoice1 = new Audio("https://webapp.ydits.net/sounds/eew_1_v.mp3");
     eewVoice2 = new Audio("https://webapp.ydits.net/sounds/eew_2_v.mp3");

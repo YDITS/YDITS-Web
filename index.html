@@ -374,7 +374,6 @@
                         <div class="item" id="settings_map_user_point">
                             <label>
                                 <h3>現在地の表示</h3>
-                                <p>※現在地の周辺に表示される青色半透明の円は、位置情報の精度範囲を表しています。</p>
                             </label>
                             <div class="content">
                                 <div class="toggle-switch">
@@ -581,6 +580,10 @@
                 <span class="material-symbols-outlined icon">warning</span>
                 <span>強い揺れに警戒</span>
                 <span>身を守ってください</span>
+            </div>
+
+            <div id="eewError" style="display: none;">
+                <span style="display: block; padding: 1rem; font-size: 1.2rem; text-align: center;">位置情報が取得できないか、警報の受信対象外です。</span>
             </div>
 
             <div id="eewForecast">

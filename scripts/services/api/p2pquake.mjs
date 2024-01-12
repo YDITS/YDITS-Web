@@ -203,29 +203,52 @@ export class P2pquake extends Service {
 
                 // EEW
                 case 556:
-                    try {
-                        Push.create(
-                            `緊急地震速報 (警報)`,
-                            {
-                                body: `《次の地域では強い揺れに備えてください。》\n${this.app.services.eew.warnAreasText}`,
-                                onClick: function () {
-                                    window.focus();
-                                    this.close();
+                    if (this.app.services.eew.reports[this.app.services.eew.currentId].isCancel) {
+                        try {
+                            Push.create(
+                                `緊急地震速報 (取消)`,
+                                {
+                                    body: `先程の緊急地震速報は取り消されました。`,
+                                    onClick: function () {
+                                        window.focus();
+                                        this.close();
+                                    }
                                 }
-                            }
-                        );
-                    } catch (error) {
-                        console.error(error);
-                    }
+                            );
+                        } catch (error) {
+                            console.error(error);
+                        }
 
-                    this.app.services.notify.show(
-                        "eew",
-                        `緊急地震速報 (警報)`,
-                        `
-                            《次の地域では強い揺れに備えてください。》<br>
-                            ${this.app.services.eew.warnAreasText}
-                        `
-                    );
+                        this.app.services.notify.show(
+                            "eew",
+                            `緊急地震速報 (取消)`,
+                            `先程の緊急地震速報は取り消されました。`
+                        );
+                    } else {
+                        try {
+                            Push.create(
+                                `緊急地震速報 (警報)`,
+                                {
+                                    body: `《次の地域では強い揺れに備えてください。》\n${this.app.services.eew.warnAreasText}`,
+                                    onClick: function () {
+                                        window.focus();
+                                        this.close();
+                                    }
+                                }
+                            );
+                        } catch (error) {
+                            console.error(error);
+                        }
+
+                        this.app.services.notify.show(
+                            "eew",
+                            `緊急地震速報 (警報)`,
+                            `
+                                《次の地域では強い揺れに備えてください。》<br>
+                                ${this.app.services.eew.warnAreasText}
+                            `
+                        );
+                    }
                     break;
 
                 default:
@@ -248,6 +271,7 @@ export class P2pquake extends Service {
                         this.app.services.eew.reports[DATA._id] = new this.app.services.eew.Report();
                     }
 
+                    this.app.services.eew.currentIdLast = this.app.services.eew.currentId;
                     this.app.services.eew.currentId = DATA._id;
 
                     const NOW_TIME = this.app.services.datetime.gmt.getTime();
