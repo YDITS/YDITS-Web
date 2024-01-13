@@ -1,6 +1,6 @@
 /*
  *
- * service.mjs | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -8,6 +8,8 @@
  * 改変や複製を一切禁じます。
  *
  */
+
+'use strict';
 
 /**
  * アプリケーションで稼働するサービスを作成します。

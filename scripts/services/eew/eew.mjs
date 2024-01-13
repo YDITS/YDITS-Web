@@ -1,6 +1,6 @@
 /*
  *
- * eew.mjs | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -9,8 +9,9 @@
  *
  */
 
-import { Service } from "../../service.mjs";
+'use strict';
 
+import { Service } from "../../service.mjs";
 
 /**
  * 緊急地震速報を扱うサービスです。

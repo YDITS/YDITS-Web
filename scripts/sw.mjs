@@ -1,6 +1,6 @@
 /*
  *
- * sw.js | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *

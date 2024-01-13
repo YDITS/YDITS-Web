@@ -1,6 +1,6 @@
 /*
  *
- * jma-data-feed.mjs | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -9,8 +9,9 @@
  *
  */
 
-import { Service } from "../../service.mjs";
+'use strict';
 
+import { Service } from "../../service.mjs";
 
 /**
  * 気象庁防災情報電文を扱うサービスです。

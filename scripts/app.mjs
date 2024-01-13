@@ -1,6 +1,6 @@
 /*
  *
- * app.mjs | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -8,6 +8,8 @@
  * 改変や複製を一切禁じます。
  *
  */
+
+'use strict';
 
 /**
  * アプリケーションを作成します。

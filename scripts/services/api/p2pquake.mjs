@@ -1,6 +1,6 @@
 /*
  *
- * p2pquake.mjs | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -9,8 +9,9 @@
  *
  */
 
-import { Service } from "../../service.mjs";
+'use strict';
 
+import { Service } from "../../service.mjs";
 
 /**
  * P2P地震情報 APIを扱うサービスです。
@@ -122,7 +123,7 @@ export class P2pquake extends Service {
     constructor(app) {
         super(app, {
             name: "p2pquake",
-            description: "Yahoo! 強震モニタを扱うサービスです。",
+            description: "P2P地震情報 APIを扱うサービスです。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"

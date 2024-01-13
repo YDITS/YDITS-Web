@@ -1,6 +1,6 @@
 /*
  *
- * settings.mjs | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -8,6 +8,8 @@
  * 改変や複製を一切禁じます。
  *
  */
+
+'use strict';
 
 import { Service } from "../../service.mjs";
 

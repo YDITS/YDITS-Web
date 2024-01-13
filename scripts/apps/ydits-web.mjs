@@ -1,6 +1,6 @@
 /*
  *
- * ydits-web.mjs | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -8,6 +8,8 @@
  * 改変や複製を一切禁じます。
  *
  */
+
+'use strict';
 
 import { App } from "../app.mjs";
 import { Datetime } from "../services/modules/datetime.mjs";
@@ -23,7 +25,6 @@ import { Sounds } from "../services/modules/sounds.mjs";
 import { Api } from "../services/api/api.mjs";
 import { Settings } from "../services/modules/settings.mjs";
 import { Map } from "../services/map/map.mjs";
-
 
 export class YditsWeb extends App {
     eewGetCnt = -1;

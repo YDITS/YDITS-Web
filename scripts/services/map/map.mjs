@@ -1,6 +1,6 @@
 /*
  *
- * map.mjs | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -9,8 +9,9 @@
  *
  */
 
-import { Service } from "../../service.mjs";
+'use strict';
 
+import { Service } from "../../service.mjs";
 
 /**
  * マップを扱うサービスです。

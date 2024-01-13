@@ -1,9 +1,20 @@
+/*
+ *
+ * YDITS for Web
+ *
+ * (c) よね/Yone
+ *
+ * No modification or reproduction of any kind is permitted.
+ * 改変や複製を一切禁じます。
+ *
+ */
+
+'use strict';
 
 import { Service } from "../../service.mjs";
 import { YahooKmoni } from "./yahoo-kmoni.mjs";
 import { P2pquake } from "./p2pquake.mjs";
 import { Dmdata } from "./dmdata.mjs";
-
 
 /**
  * APIを扱うサービスです。

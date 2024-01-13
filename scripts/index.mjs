@@ -1,6 +1,6 @@
 /*
  *
- * index.mjs | YDITS for Web
+ * YDITS for Web
  *
  * (c) よね/Yone
  *
@@ -9,6 +9,10 @@
  *
  */
 
+'use strict';
+
 import { YditsWeb } from "./apps/ydits-web.mjs";
 
-(function () { new YditsWeb(); })();
+(function () {
+    new YditsWeb();
+})();
