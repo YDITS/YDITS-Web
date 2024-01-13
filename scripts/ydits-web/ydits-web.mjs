@@ -12,19 +12,19 @@
 'use strict';
 
 import { App } from "../app.mjs";
-import { Datetime } from "../services/modules/datetime.mjs";
-import { DebugLogs } from "../services/modules/debug-logs.mjs";
-import { Notify } from "../services/modules/notify.mjs";
-import { GeoLocation } from "../services/modules/geolocation.mjs";
-import { Eew } from "../services/eew/eew.mjs";
-import { Eqinfo } from "../services/eqinfo/eqinfo.mjs";
-import { JmaDataFeed } from "../services/jma/jma-data-feed.mjs";
-import { ServiceWorker } from "../services/service-worker.mjs";
-import { PushNotify } from "../services/modules/push-notify.mjs";
-import { Sounds } from "../services/modules/sounds.mjs";
-import { Api } from "../services/api/api.mjs";
-import { Settings } from "../services/modules/settings.mjs";
-import { Map } from "../services/map/map.mjs";
+import { Datetime } from "./services/modules/datetime.mjs";
+import { DebugLogs } from "./services/modules/debug-logs.mjs";
+import { Notify } from "./services/modules/notify.mjs";
+import { GeoLocation } from "./services/modules/geolocation.mjs";
+import { Eew } from "./services/eew/eew.mjs";
+import { Eqinfo } from "./services/eqinfo/eqinfo.mjs";
+import { JmaDataFeed } from "./services/jma/jma-data-feed.mjs";
+import { ServiceWorker } from "./services/service-worker.mjs";
+import { PushNotify } from "./services/modules/push-notify.mjs";
+import { Sounds } from "./services/modules/sounds.mjs";
+import { Api } from "./services/api/api.mjs";
+import { Settings } from "./services/modules/settings.mjs";
+import { Map } from "./services/map/map.mjs";
 
 export class YditsWeb extends App {
     eewGetCnt = -1;
