@@ -11,7 +11,7 @@
 
 'use strict';
 
-import { Service } from "../../service.mjs";
+import { Service } from "../../../service.mjs";
 
 /**
  * P2P地震情報 APIを扱うサービスです。

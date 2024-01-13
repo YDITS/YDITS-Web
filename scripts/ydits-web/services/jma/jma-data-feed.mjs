@@ -11,7 +11,7 @@
 
 'use strict';
 
-import { Service } from "../../service.mjs";
+import { Service } from "../../../service.mjs";
 
 /**
  * 気象庁防災情報電文を扱うサービスです。

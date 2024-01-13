@@ -11,7 +11,7 @@
 
 'use strict';
 
-import { Service } from "../../service.mjs";
+import { Service } from "../../../service.mjs";
 
 /**
  * Project DM-D.S.S (dmdata.jp) APIを扱うサービスです。

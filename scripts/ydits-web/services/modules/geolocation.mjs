@@ -11,7 +11,7 @@
 
 'use strict';
 
-import { Service } from "../../service.mjs";
+import { Service } from "../../../service.mjs";
 
 /**
  * 位置情報を管理するサービスです。

@@ -11,7 +11,7 @@
 
 'use strict';
 
-import { Service } from "../../service.mjs"
+import { Service } from "../../../service.mjs"
 
 /**
  * プッシュ通知を扱うサービスです。
