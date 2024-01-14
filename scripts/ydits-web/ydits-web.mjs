@@ -102,7 +102,7 @@ export class YditsWeb extends App {
                     `
                 );
 
-                win(
+                this.win(
                     "error",
                     "errorInitialize",
                     "エラー",
