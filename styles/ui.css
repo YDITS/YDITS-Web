@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 /* 
 
     YDITS for Web
@@ -8,7 +10,6 @@
     改変や複製を一切禁じます。
 
 */
-@charset "UTF-8";
 
 /* ----- Button ----- */
 .button {
