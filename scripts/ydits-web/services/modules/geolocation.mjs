@@ -101,26 +101,11 @@ export class GeoLocation extends Service {
 
 
                 if (data.address.city) {
-                    // 市区
                     this.city = data.address.city;
+                    this.suburb = data.address.suburb;
 
                     // 〇区
-                    if (
-                        [
-                            "札幌市",
-                            "さいたま市",
-                            "京都市",
-                            "新潟市",
-                            "名古屋市",
-                            "神戸市",
-                            "岡山市",
-                            "広島市",
-                            "福岡市",
-                            "熊本市"
-                        ]
-                            .includes(this.city)
-                    ) {
-                        this.suburb = data.address.suburb;
+                    if (this.suburb.indexOf("区") !== -1) {
                         this.city = this.app.services.eew.removeCity(this.city) + this.suburb;
                     }
 
