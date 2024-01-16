@@ -105,10 +105,23 @@ export class GeoLocation extends Service {
                     this.city = data.address.city;
 
                     // 〇区
-                    if (["札幌市", "さいたま市", "京都市", "新潟市", "名古屋市", "神戸市", "岡山市", "広島市", "福岡市", "熊本市"].includes(this.city)) {
+                    if (
+                        [
+                            "札幌市",
+                            "さいたま市",
+                            "京都市",
+                            "新潟市",
+                            "名古屋市",
+                            "神戸市",
+                            "岡山市",
+                            "広島市",
+                            "福岡市",
+                            "熊本市"
+                        ]
+                            .includes(this.city)
+                    ) {
                         this.suburb = data.address.suburb;
                         this.city = this.app.services.eew.removeCity(this.city) + this.suburb;
-                        console.debug(this.city);
                     }
 
                     // 同じ市名
