@@ -429,6 +429,18 @@ export class Eew extends Service {
 
 
     /**
+     * 文字列の末尾から市区町村を削除します。
+     */
+    removeCity(string) {
+        string = string.replace("市", "");
+        string = string.replace("区", "");
+        string = string.replace("町", "");
+        string = string.replace("村", "");
+        return string;
+    }
+
+
+    /**
      * P2P地震情報の震度値を文字列に変換します。
      */
     parseScale(value) {

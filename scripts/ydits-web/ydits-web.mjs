@@ -119,7 +119,7 @@ export class YditsWeb extends App {
 
 
     /**
-     * 説明が記載されていません。
+     * ビルド完了時
      */
     onBuild() {
         this.initialize();
@@ -130,7 +130,7 @@ export class YditsWeb extends App {
 
 
     /**
-     * 説明が記載されていません。
+     * 初期化します。
      */
     initialize() {
         this.services.settings.initialize();

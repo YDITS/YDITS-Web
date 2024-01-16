@@ -99,11 +99,19 @@ export class GeoLocation extends Service {
                 if (data === null || data.address === undefined) { return }
                 if (data.address.country_code !== "jp") { return }
 
+
                 if (data.address.city) {
                     // 市区
                     this.city = data.address.city;
 
-                    // 同じ市名が複数の地域で存在するため、その処理
+                    // 〇区
+                    if (["札幌市", "さいたま市", "京都市", "新潟市", "名古屋市", "神戸市", "岡山市", "広島市", "福岡市", "熊本市"].includes(this.city)) {
+                        this.suburb = data.address.suburb;
+                        this.city = this.app.services.eew.removeCity(this.city) + this.suburb;
+                        console.debug(this.city);
+                    }
+
+                    // 同じ市名
                     if (["府中市", "伊達市"].includes(this.city)) {
                         await fetch(urlPref)
                             .then((response) => response.json())
@@ -132,6 +140,12 @@ export class GeoLocation extends Service {
                 } else if (data.address.suburb) {
                     // 区
                     this.city = data.address.suburb;
+
+                    if (["北区", "南区", "西区"].includes(this.city)) {
+                        this.province = data.address.province;
+                        this.area = this.app.services.eew.removePref(this.province) + this.city;
+                        console.debug(this.area);
+                    }
                 } else if (data.address.town) {
                     // 町村
                     this.city = data.address.town;
