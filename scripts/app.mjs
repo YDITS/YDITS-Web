@@ -20,7 +20,7 @@ export class App {
 
     constructor(config) {
         this.name = config.name;
-        this.description = config.author;
+        this.description = config.description;
         this.version = config.version;
         this.author = config.author;
         this.copyright = config.copyright;
