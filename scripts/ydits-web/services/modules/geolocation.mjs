@@ -105,8 +105,10 @@ export class GeoLocation extends Service {
                     this.suburb = data.address.suburb;
 
                     // 〇区
-                    if (this.suburb.indexOf("区") !== -1) {
-                        this.city = this.app.services.eew.removeCity(this.city) + this.suburb;
+                    if (typeof this.suburb === "string") {
+                        if (this.suburb.indexOf("区") !== -1) {
+                            this.city = this.app.services.eew.removeCity(this.city) + this.suburb;
+                        }
                     }
 
                     // 同じ市名
