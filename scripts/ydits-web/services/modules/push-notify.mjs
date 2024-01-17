@@ -102,7 +102,7 @@ export class PushNotify extends Service {
 
 
     /**
-     * プッシュ通知に対応しているか。。
+     * プッシュ通知に対応しているか。
      * @returns {boolean} 対応している時はtrueを返す。
      */
     get isSupport() {
