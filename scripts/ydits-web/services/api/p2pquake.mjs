@@ -153,14 +153,10 @@ export class P2pquake extends Service {
                 case 551:
                     switch (this.app.services.eqinfo.type) {
                         case "DetailScale":
-                            Push.create(
+                            this.app.services.pushNotify.notify(
                                 this.app.services.eqinfo.typeJp,
                                 {
-                                    body: `${this.app.services.eqinfo.regionName}を震源とする、最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。\n規模は${this.app.services.eqinfo.magnitudeText}、深さは${this.app.services.eqinfo.depthText}と推定されます。\n${this.app.services.eqinfo.tsunamiJp}`,
-                                    onClick: function () {
-                                        window.focus();
-                                        this.close();
-                                    }
+                                    body: `${this.app.services.eqinfo.regionName}を震源とする、最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。\n規模は${this.app.services.eqinfo.magnitudeText}、深さは${this.app.services.eqinfo.depthText}と推定されます。\n${this.app.services.eqinfo.tsunamiJp}`
                                 }
                             );
 
@@ -176,14 +172,10 @@ export class P2pquake extends Service {
                             break;
 
                         case "ScalePrompt":
-                            Push.create(
+                            this.app.services.pushNotify.notify(
                                 this.app.services.eqinfo.typeJp,
                                 {
-                                    body: `最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。\n${this.app.services.eqinfo.tsunamiJp}`,
-                                    onClick: function () {
-                                        window.focus();
-                                        this.close();
-                                    }
+                                    body: `最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。\n${this.app.services.eqinfo.tsunamiJp}`
                                 }
                             );
 
@@ -205,41 +197,25 @@ export class P2pquake extends Service {
                 // EEW
                 case 556:
                     if (this.app.services.eew.reports[this.app.services.eew.currentId].isCancel) {
-                        try {
-                            Push.create(
-                                `緊急地震速報 (取消)`,
-                                {
-                                    body: `先程の緊急地震速報は取り消されました。`,
-                                    onClick: function () {
-                                        window.focus();
-                                        this.close();
-                                    }
-                                }
-                            );
-                        } catch (error) {
-                            console.error(error);
-                        }
+                        this.app.services.pushNotify.notify(
+                            "緊急地震速報 (取消)",
+                            {
+                                body: "先程の緊急地震速報は取り消されました。"
+                            }
+                        );
 
                         this.app.services.notify.show(
                             "eew",
-                            `緊急地震速報 (取消)`,
-                            `先程の緊急地震速報は取り消されました。`
+                            "緊急地震速報 (取消)",
+                            "先程の緊急地震速報は取り消されました。"
                         );
                     } else {
-                        try {
-                            Push.create(
-                                `緊急地震速報 (警報)`,
-                                {
-                                    body: `《次の地域では強い揺れに備えてください。》\n${this.app.services.eew.warnAreasText}`,
-                                    onClick: function () {
-                                        window.focus();
-                                        this.close();
-                                    }
-                                }
-                            );
-                        } catch (error) {
-                            console.error(error);
-                        }
+                        this.app.services.pushNotify.notify(
+                            "緊急地震速報 (警報)",
+                            {
+                                body: `《次の地域では強い揺れに備えてください。》\n${this.app.services.eew.warnAreasText}`
+                            }
+                        );
 
                         this.app.services.notify.show(
                             "eew",

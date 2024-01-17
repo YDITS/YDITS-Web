@@ -470,16 +470,12 @@ export class Eew extends Service {
 
         try {
             if (this.reports[this.currentId].isCancel) {
-                Push.create(
+                this.app.services.pushNotify.notify(
                     `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
                     {
-                        body: `先程の緊急地震速報は取り消されました。`,
-                        onClick: function () {
-                            window.focus();
-                            this.close();
-                        }
+                        body: "先程の緊急地震速報は取り消されました。"
                     }
-                );
+                )
 
                 this.notify.show(
                     "message",
@@ -487,16 +483,12 @@ export class Eew extends Service {
                     `先程の緊急地震速報は取り消されました。`
                 );
             } else {
-                Push.create(
+                this.app.services.pushNotify.notify(
                     `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
                     {
-                        body: `${this.reports[this.currentId].regionName}で地震発生。予想最大震度は${this.reports[this.currentId].maxScaleText}です。`,
-                        onClick: function () {
-                            window.focus();
-                            this.close();
-                        }
+                        body: `${this.reports[this.currentId].regionName}で地震発生。予想最大震度は${this.reports[this.currentId].maxScaleText}です。`
                     }
-                );
+                )
             }
         } catch (error) {
             console.error(error);

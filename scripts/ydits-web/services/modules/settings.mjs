@@ -306,14 +306,21 @@ export class Settings extends Service {
             sounds.notify.play();
             notify.show("message", "プッシュ通知のテスト", "これはページ内通知です。プッシュ通知とは別に表示されます。");
 
-            Push.create(`YDITS for Web`, {
-                body: `これはプッシュ通知のテストです。`,
-                timeout: 10000,
-                onClick: function () {
-                    window.focus();
-                    this.close();
+            this.app.services.pushNotify.notify(
+                "プッシュ通知のテスト",
+                {
+                    body: "これはプッシュ通知のテストです。"
                 }
-            })
+            );
+
+            // Push.create(`YDITS for Web`, {
+            //     body: `これはプッシュ通知のテストです。`,
+            //     timeout: 10000,
+            //     onClick: function () {
+            //         window.focus();
+            //         this.close();
+            //     }
+            // })
         });
 
 
