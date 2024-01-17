@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * ページ内通知のサービスです。
+ * ページ内通知を扱う。
  */
 export class Notify extends Service {
     lastNotifyId = null;

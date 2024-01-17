@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * デバッグログを管理するサービスです。
+ * デバッグログを管理する。
  */
 export class DebugLogs extends Service {
     debugLogs = [];
@@ -48,7 +48,7 @@ export class DebugLogs extends Service {
 
 
     /**
-     * ログを追加します。
+     * ログを追加する。
      */
     add(type, title, text) {
         let time =
@@ -78,7 +78,7 @@ export class DebugLogs extends Service {
 
 
     /**
-     * ログをページに追加します。
+     * ログをページに追加する。
      */
     addDebugLogsHtml(log) {
         let color = null;
@@ -115,7 +115,7 @@ export class DebugLogs extends Service {
 
 
     /**
-     * ログをすべて削除します。
+     * ログをすべて削除する。
      */
     delete() {
         this.debugLogs = [];

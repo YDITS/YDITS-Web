@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * Project DM-D.S.S (dmdata.jp) APIを扱うサービスです。
+ * Project DM-D.S.S (dmdata.jp) APIを扱う。
  */
 export class Dmdata extends Service {
     accessToken = null;
@@ -31,6 +31,10 @@ export class Dmdata extends Service {
     }
 
 
+    /**
+     * 初期化する。
+     * @returns 
+     */
     async initialize() {
         let settings = this.app.services.settings;
 
@@ -229,6 +233,10 @@ export class Dmdata extends Service {
     }
 
 
+    /**
+     * dmdata.jp にアカウントを認証する。
+     * @param {*} debugLogs 
+     */
     connect(debugLogs) {
         const dmdataOAuthBaseUrl = 'https://manager.dmdata.jp/account/oauth2/v1/auth';
         const state = "Ze4VX8";
@@ -243,6 +251,12 @@ export class Dmdata extends Service {
     }
 
 
+    /**
+     * URLからパラメーターを取得する。
+     * @param {*} name 
+     * @param {*} url 
+     * @returns 
+     */
     getParam(name, url) {
         if (!url) url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
@@ -254,6 +268,9 @@ export class Dmdata extends Service {
     }
 
 
+    /**
+     * WebSocket接続を開始する。
+     */
     startSocket() {
         const dmdataSocketUrl = 'https://api.dmdata.jp/v2/socket';
         const dmdataGetClassifications = ['socket.start', 'socket.list', 'socket.close', 'eew.forecast'];
@@ -378,12 +395,21 @@ export class Dmdata extends Service {
     }
 
 
+    /**
+     * メッセージEEWの受信時。
+     * @param {*} data 
+     */
     whenEew(data) {
         data = this.bodyToDocument(data);
         console.log(data);
     }
 
 
+    /**
+     * XMLをパースする。
+     * @param {*} data 
+     * @returns 
+     */
     bodyToDocument(data) {
         const buffer = new Uint8Array(atob(data).split('').map(c => c.charCodeAt(0)));
         return new DOMParser().parseFromString(new TextDecoder().decode(new Zlib.Gunzip(buffer).decompress()), 'application/xml');

@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs"
 
 /**
- * サウンドを扱うサービスです。
+ * サウンドを扱う。
  */
 export class Sounds extends Service {
     notify = new Audio("./sounds/notify-sound.m4a");

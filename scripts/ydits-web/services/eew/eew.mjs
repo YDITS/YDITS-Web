@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * 緊急地震速報を扱うサービスです。
+ * 緊急地震速報を扱う。
  */
 export class Eew extends Service {
     isEew = false;
@@ -112,7 +112,7 @@ export class Eew extends Service {
 
 
     /**
-     * 初期化を行います。
+     * 初期化する。
     */
     initialize() {
         switch (this.app.services.settings) {
@@ -123,7 +123,7 @@ export class Eew extends Service {
 
 
     /**
-     * 緊急地震速報（警報）発表時の処理を行います。
+     * 緊急地震速報（警報）発表時の処理。
      */
     warning(data) {
         let areas = [];
@@ -141,7 +141,7 @@ export class Eew extends Service {
 
 
     /**
-     * フィールドの表示を更新します。
+     * フィールドの表示を更新する。
      */
     updateField() {
         if (this.isEew) {
@@ -232,7 +232,7 @@ export class Eew extends Service {
 
 
     /**
-     * 情報に応じてサウンドを再生します。
+     * 情報に応じてサウンドを再生する。
      */
     sound() {
         if (this.reports[this.currentId].isCancel == true) {
@@ -300,7 +300,7 @@ export class Eew extends Service {
 
 
     /**
-     * 警報画面の表示を更新します。
+     * 警報画面の表示を更新する。
      */
     updateWarn() {
         this.warnAreas.forEach(area => {
@@ -347,7 +347,7 @@ export class Eew extends Service {
 
 
     /**
-     * 警報画面を表示します。
+     * 警報画面を表示する。
      */
     displayWarn() {
         if (!this.app.services.geoLocation.isSupport) { return }
@@ -356,7 +356,7 @@ export class Eew extends Service {
 
 
     /**
-     * 警報画面を非表示します。
+     * 警報画面を非表示する。
      */
     hideWarn() {
         this.$warn.removeClass("active");
@@ -364,7 +364,7 @@ export class Eew extends Service {
 
 
     /**
-     * すべての緊急地震速報イベントを終了します。
+     * すべての緊急地震速報イベントを終了する。
      */
     end() {
         this.isEew = false;
@@ -373,7 +373,7 @@ export class Eew extends Service {
     }
 
     /**
-     * 緊急地震速報（警報）イベントを終了します。
+     * 緊急地震速報（警報）イベントを終了する。
     */
     endWarn() {
         this.hideWarn();
@@ -383,7 +383,7 @@ export class Eew extends Service {
 
 
     /**
-     * 文字列の末尾に都府県を付与します。
+     * 文字列の末尾に都府県を付与する。
      */
     addPref(string) {
         switch (string) {
@@ -406,7 +406,7 @@ export class Eew extends Service {
 
 
     /**
-     * 文字列の末尾から都府県を削除します。
+     * 文字列の末尾から都府県を削除する。
      */
     removePref(string) {
         switch (string) {
@@ -429,7 +429,7 @@ export class Eew extends Service {
 
 
     /**
-     * 文字列の末尾から市区町村を削除します。
+     * 文字列の末尾から市区町村を削除する。
      */
     removeCity(string) {
         string = string.replace("市", "");
@@ -441,7 +441,7 @@ export class Eew extends Service {
 
 
     /**
-     * P2P地震情報の震度値を文字列に変換します。
+     * P2P地震情報の震度値を文字列に変換する。
      */
     parseScale(value) {
         switch (value) {
@@ -463,7 +463,7 @@ export class Eew extends Service {
 
 
     /**
-     * プッシュ通知を送信します。
+     * プッシュ通知を送信する。
      */
     push() {
         if (this.reports[this.currentId].reportNum === this.reports[this.currentId].reportNumLast || this.reports[this.currentId].isWarning) { return }

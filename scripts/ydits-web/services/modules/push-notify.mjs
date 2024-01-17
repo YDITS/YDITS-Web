@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs"
 
 /**
- * プッシュ通知を扱うサービス。
+ * プッシュ通知を扱う。
  */
 export class PushNotify extends Service {
     constructor(app) {

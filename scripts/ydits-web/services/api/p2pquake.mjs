@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * P2P地震情報 APIを扱うサービスです。
+ * P2P地震情報 APIを扱う。
  */
 export class P2pquake extends Service {
     eqinfoNum = 0;

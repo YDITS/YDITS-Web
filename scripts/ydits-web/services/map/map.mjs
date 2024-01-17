@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * マップを扱うサービスです。
+ * マップを扱う。
  */
 export class Map extends Service {
     map = null;
@@ -48,6 +48,10 @@ export class Map extends Service {
     }
 
 
+    /**
+     * 初期化する。
+     * @returns 
+     */
     initialize() {
         if (!this.app.services.geoLocation.isSupport) { return }
 
@@ -68,6 +72,10 @@ export class Map extends Service {
     }
 
 
+    /**
+     * ユーザーポイントの表示を更新する。
+     * @returns 
+     */
     updateUserPoint() {
         if (!this.app.services.geoLocation.isSupport) { return }
 
@@ -95,6 +103,10 @@ export class Map extends Service {
     }
 
 
+    /**
+     * マップの描画を更新する。
+     * @param {*} dateNow 
+     */
     update(dateNow) {
         try {
             if (this.app.services.api.yahooKmoni.isEew) {
@@ -192,6 +204,11 @@ export class Map extends Service {
     }
 
 
+    /**
+     * マップを移動する。
+     * @param {*} latLng 
+     * @param {*} zoom 
+     */
     setView(latLng, zoom) {
         this.map.setView(latLng, zoom);
     }

@@ -17,7 +17,7 @@ import { P2pquake } from "./p2pquake.mjs";
 import { Dmdata } from "./dmdata.mjs";
 
 /**
- * APIを扱うサービスです。
+ * APIを扱う。
  */
 export class Api extends Service {
     constructor(app) {

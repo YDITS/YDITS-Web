@@ -30,7 +30,10 @@ export class YditsWeb extends App {
     eewGetCnt = -1;
     ntpGetCnt = -1;
     jmaDataFeedGetCnt = -1;
-    JMA_DATA_FEED_GET_INTERVAL = (1000 * 60);
+
+    get JMA_DATA_FEED_GET_INTERVAL() {
+        return (1000 * 60);
+    }
 
 
     constructor() {
@@ -119,7 +122,7 @@ export class YditsWeb extends App {
 
 
     /**
-     * ビルド完了時
+     * ビルド完了時の処理
      */
     onBuild() {
         this.initialize();
@@ -130,7 +133,7 @@ export class YditsWeb extends App {
 
 
     /**
-     * 初期化します。
+     * 初期化する。
      */
     initialize() {
         this.services.settings.initialize();
@@ -144,7 +147,6 @@ export class YditsWeb extends App {
 
     /**
      * メインループ。
-     * 処理落ちしない限り60FPSでループします。
      */
     mainloop() {
         const DATE_DOW = new Date();
@@ -173,7 +175,7 @@ export class YditsWeb extends App {
 
 
     /**
-     * メニュー項目をイニシャライズします。
+     * メニュー項目をイニシャライズする。
      */
     initMenu() {
         $('#menu .version').text(`Ver ${this.version}`);
@@ -212,7 +214,7 @@ export class YditsWeb extends App {
 
 
     /**
-     * ライセンス項目をイニシャライズします。
+     * ライセンス項目をイニシャライズする。
      */
     initLicense() {
         $(document).on('click', '#license .closeBtn', function () {
@@ -222,7 +224,7 @@ export class YditsWeb extends App {
 
 
     /**
-     * クロックの表示を更新します。
+     * クロックの表示を更新する。
      */
     clock(time) {
         let clock;
@@ -244,7 +246,7 @@ export class YditsWeb extends App {
 
 
     /**
-     * 数値を二桁揃えします。
+     * 数値を二桁揃えする。
      */
     zeroPadding(value) {
         value = "0" + value;
@@ -254,7 +256,7 @@ export class YditsWeb extends App {
 
 
     /**
-     * ポップアップウィンドウを生成します。
+     * ポップアップウィンドウを生成する。
      */
     win(type, id, title, content) {
         let color = null;

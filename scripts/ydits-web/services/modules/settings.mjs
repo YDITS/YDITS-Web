@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * 設定を扱うサービスです。
+ * 設定を扱う。
  */
 export class Settings extends Service {
     connect = {

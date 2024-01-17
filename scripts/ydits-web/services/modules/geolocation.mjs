@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * 位置情報を管理するサービスです。
+ * 位置情報を管理する。
  */
 export class GeoLocation extends Service {
     isSupport = null;
@@ -51,7 +51,7 @@ export class GeoLocation extends Service {
 
 
     /**
-     * 現在位置を取得します。
+     * 現在位置を取得する。
     */
     async getLocation() {
         if (!this.isSupport) { return }
@@ -65,7 +65,7 @@ export class GeoLocation extends Service {
 
 
     /**
-     * 取得した現在位置情報から市区町村または都道府県を取得します。
+     * 取得した現在位置情報から市区町村または都道府県を取得する。
      */
     async onGet(position) {
         this.latitude = position.coords.latitude;
@@ -167,7 +167,7 @@ export class GeoLocation extends Service {
 
 
     /**
-     * 位置情報を取得できない際の処理を行います。
+     * 位置情報を取得できない際の処理を行う。
      */
     onError(error) {
         this.app.services.debugLogs.add(
@@ -189,7 +189,7 @@ export class GeoLocation extends Service {
 
 
     /**
-    * 取得した市区町村から、気象庁 緊急地震速報/地方予報区 を取得します。
+    * 取得した市区町村から、気象庁 緊急地震速報/地方予報区 を取得する。
     */
     getJmaForecastArea(city) {
         fetch("./data/jma_area_forecast_local_e.json")

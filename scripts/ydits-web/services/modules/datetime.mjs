@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * 現在時刻を管理するサービスです。
+ * 現在時刻を管理する。
  */
 export class Datetime extends Service {
     get fullYear() { return this.gmt.getFullYear(); }
@@ -42,7 +42,7 @@ export class Datetime extends Service {
 
 
     /**
-     * 現在時刻を取得します。
+     * 現在時刻を取得する。
      */
     update() {
         try {
@@ -58,7 +58,7 @@ export class Datetime extends Service {
 
 
     /**
-     * サーバーヘッダーから現在時刻を取得します。
+     * サーバーヘッダーから現在時刻を取得する。
      */
     getGmt() {
         axios.head(

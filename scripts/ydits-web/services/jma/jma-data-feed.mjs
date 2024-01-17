@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * 気象庁防災情報電文を扱うサービスです。
+ * 気象庁防災情報電文を扱う。
  */
 export class JmaDataFeed extends Service {
     url = "https://www.data.jma.go.jp/developer/xml/feed/eqvol.xml";
@@ -53,7 +53,7 @@ export class JmaDataFeed extends Service {
 
 
     /**
-     * 気象庁防災情報電文を更新します。
+     * 気象庁防災情報電文を更新する。
      */
     update() {
         /*

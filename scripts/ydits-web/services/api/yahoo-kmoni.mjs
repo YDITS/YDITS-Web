@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * Yahoo! 強震モニタを扱うサービスです。
+ * Yahoo! 強震モニタを扱う。
  */
 export class YahooKmoni extends Service {
     isEew = null;

@@ -14,7 +14,7 @@
 import { Service } from "../../../service.mjs";
 
 /**
- * 地震情報を扱うサービスです。
+ * 地震情報を扱う。
  */
 export class Eqinfo extends Service {
     eqinfoNum = 0;
@@ -44,7 +44,7 @@ export class Eqinfo extends Service {
 
 
     /**
-     * 初期化を行います。
+     * 初期化する。
      */
     initialize() {
         this.settings = this.app.services.settings;
@@ -58,7 +58,7 @@ export class Eqinfo extends Service {
 
 
     /**
-     * 地震情報に関連するすべての通信を再接続します。
+     * 地震情報に関連するすべての通信を再接続する。
      */
     reconnect() {
         this.app.services.api.p2pquake.startSocket();
@@ -66,7 +66,7 @@ export class Eqinfo extends Service {
 
 
     /**
-     * 地震情報に関連するすべての接続を切断します。
+     * 地震情報に関連するすべての接続を切断する。
      */
     disconnect() {
         this.app.services.api.p2pquake.socket.close();
@@ -74,7 +74,7 @@ export class Eqinfo extends Service {
 
 
     /**
-     * 地震履歴に地震情報を追加します。
+     * 地震履歴に地震情報を追加する。
      */
     addToList(isFirst, num) {
         let html = `
@@ -119,6 +119,10 @@ export class Eqinfo extends Service {
     }
 
 
+    /**
+     * 効果音を再生する。
+     * @returns 
+     */
     sound() {
         if (!(this.app.services.settings.sound.eqinfo)) { return }
 

@@ -14,7 +14,7 @@
 import { Service } from "../../service.mjs";
 
 /**
- * サービスワーカーを管理するサービスです。
+ * サービスワーカーを管理する。
  */
 export class ServiceWorker extends Service {
     constructor(app) {
@@ -31,7 +31,7 @@ export class ServiceWorker extends Service {
 
 
     /**
-     * サービスワーカを登録します。
+     * サービスワーカを登録する。
      */
     async register() {
         if ("serviceWorker" in navigator) {
