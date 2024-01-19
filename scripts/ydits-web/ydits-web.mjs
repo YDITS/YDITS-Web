@@ -40,7 +40,7 @@ export class YditsWeb extends App {
         super({
             name: "YDITS for Web",
             description: "『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。",
-            version: "3.11.0 bata",
+            version: "3.11.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
