@@ -1,8 +1,8 @@
 <!--
 
-    index.html | YDITS for Web
+    YDITS for Web
 
-    (c) よね/Yone
+    Copyright (c) よね/Yone
 
     No modification or reproduction of any kind is permitted.
     改変や複製を一切禁じます。
@@ -44,7 +44,7 @@
         crossorigin="">
     <link rel='stylesheet' href='./styles/leaflet-gesture-handling.min.css'>
 
-    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/common.css">
     <link rel="stylesheet" href="./styles/ui.css">
     <link rel="stylesheet" href="./styles/index.css">
 
@@ -65,16 +65,14 @@
         gtag('config', 'G-TWBJ0TEFRJ');
     </script>
 
-    <script src="./scripts/jquery-3.6.0.js"></script>
+    <script src="./scripts/libs/jquery-3.6.0.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
-        integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
-        crossorigin=""></script>
-    <script src='./scripts/leaflet-gesture-handling.min.js'></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src='./scripts/libs/leaflet-gesture-handling.min.js'></script>
 
-    <script src="./scripts/main.js"></script>
-    <script src="./scripts/ydits-web.mjs" type="module"></script>
+    <script src="./scripts/common.js"></script>
+    <script src="./scripts/main.mjs" type="module"></script>
     <noscript>
         <meta http-equiv="refresh" content="0; URL=./noscript/">
     </noscript>
@@ -87,13 +85,13 @@
         <div id="control">
             <div id="list">
                 <ul>
-                    <li id="menuBtn">
+                    <li id="menuBtn" title="メニューを開く">
                         <span class="material-symbols-outlined">menu</span>
                     </li>
-                    <li id="eqHistoryBtn">
+                    <li id="eqHistoryBtn" title="地震履歴を開く">
                         <span class="material-symbols-outlined">history</span>
                     </li>
-                    <li id="homeBtn">
+                    <li id="homeBtn" title="マップを初期位置に移動する">
                         <span class="material-symbols-outlined">home_pin</span>
                     </li>
                 </ul>
@@ -140,14 +138,14 @@
                 </div>
 
                 <div class="content">
-                    <div class="lists">
+                    <!-- <div class="lists">
                         <div class="list top bottom" id="menuJmaDataFeed">
                             <span class="material-symbols-outlined">
                                 database
                             </span>
                             気象庁 電文
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="lists">
                         <div class="list top" id="menuSettings">
@@ -262,30 +260,35 @@
                             </span>
                             音声と効果音
                         </li>
+
                         <li class="list" id="settings_list_map">
                             <span class="material-symbols-outlined">
                                 map
                             </span>
                             マップ
                         </li>
+
+                        <li class="list" id="settings_list_location">
+                            <span class="material-symbols-outlined">
+                                location_on
+                            </span>
+                            位置情報
+                        </li>
+
                         <li class="list" id="settings_list_notify">
                             <span class="material-symbols-outlined">
                                 notifications
                             </span>
                             プッシュ通知
                         </li>
-                        <li class="list" id="settings_list_connect">
-                            <span class="material-symbols-outlined">
-                                cloud
-                            </span>
-                            接続先
-                        </li>
+
                         <li class="list" id="settings_list_other">
                             <span class="material-symbols-outlined">
                                 reset_wrench
                             </span>
                             リセット
                         </li>
+
                         <li class="list bottom" id="openDebugLogsButton">
                             <span class="material-symbols-outlined">
                                 bug_report
@@ -352,7 +355,7 @@
                 </div>
 
                 <div class="content">
-                    <div class="list" id="settings_map">
+                    <div class="list">
                         <div class="item" id="settings_map_auto_move">
                             <label>
                                 <h3>マップの自動移動</h3>
@@ -365,66 +368,57 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="list">
+                        <div class="item" id="settings_map_user_point">
+                            <label>
+                                <h3>現在地の表示</h3>
+                            </label>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="window settings_list" id="settings_connect">
+            <div class="window settings_list" id="settings_location">
                 <div class="titleBar">
                     <span class="material-symbols-outlined closeBtn">arrow_back</span>
-                    <span class="title">接続先の設定</span>
+                    <span class="title">位置情報の設定</span>
                 </div>
 
                 <div class="content">
-                    <div class="list item" id="settings_getTypes">
-                        <label>緊急地震速報</label>
-                        <select name="settings-getType-eew" id="">
-                            <option value="yahoo-kmoni" selected>Yahoo! 強震モニタ</option>
-                            <option value="dmdata">Project DM-D.S.S</option>
-                        </select>
-                    </div>
+                    <p>位置情報データが送信されることはありません。</p>
 
-                    <div class="list item" id="settings_getType_eqinfo">
-                        <label>地震情報</label>
-                        <select name="settings-getType-eqinfo" id="">
-                            <option value="p2pquake" selected>P2P地震情報</option>
-                            <option value="dmdata">【未実装】Project DM-D.S.S</option>
-                        </select>
-                    </div>
-
-                    <div class="list item" id="settingsGetTypeTsunami">
-                        <label>津波情報【未実装】</label>
-                        <select name="settings-getType-tsunami" id="">
-                            <option value="p2pquake" selected>【未実装】P2P地震情報</option>
-                            <option value="dmdata">【未実装】Project DM-D.S.S</option>
-                        </select>
-                    </div>
-
-                    <div class="list item" id="settingsGetTypeVolcanicEruption">
-                        <label>火山情報【未実装】</label>
-                        <select name="settings-getType-volcanic-eruption" id="">
-                            <option value="" selected>未実装</option>
-                        </select>
-                    </div>
-
-                    <div class="list item" id="settingsGetTypeCivilProtection">
-                        <label>国民保護情報【未実装】</label>
-                        <select name="settings-getType-civil-protection" id="">
-                            <option value="" selected>未実装</option>
-                        </select>
-                    </div>
-
-                    <div class="list" id="settings_dmdata">
-                        <div id="settings_dmdata_init">
-                            <p style="color: #ff6060; font-weight: bold;">アカウント未連携</p>
-                            <button id="settings_dmdata_init_btn">
-                                DM-D.S.S アカウントを連携する
-                                <span class="material-symbols-outlined open-in-new">
-                                    open_in_new
-                                </span>
-                            </button>
+                    <div class="list" id="settings_map">
+                        <div class="item">
+                            <label>
+                                <h3>位置情報サービス</h3>
+                            </label>
+                            <div class="content">
+                                <span id="locationStatus"></span>
+                            </div>
                         </div>
-                        <div id="settings_dmdata_main">
-                            <p style="color: #4040c0; font-weight: bold;">アカウント連携済</p>
+
+                        <div class="item">
+                            <label>
+                                <h3>位置情報の精度</h3>
+                            </label>
+                            <div class="content">
+                                <span id="locationAccuracy"></span>
+                            </div>
+                        </div>
+
+                        <div class="item">
+                            <label>
+                                <h3>現在地の地区予報区</h3>
+                            </label>
+                            <div class="content">
+                                <span id="locationArea"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -522,7 +516,7 @@
                                     リアルタイム震度（強震モニタ）</a></h3>
                             <p>
                                 緊急地震速報JSONデータの提供<br>
-                                <a target="_blank" href="https://developer.yahoo.co.jp/">&copy; Yahoo! JAPAN</a>
+                                <a target="_blank" href="https://developer.yahoo.co.jp/">&copy; LY Corporation</a>
                             </p>
                         </li>
 
@@ -530,14 +524,20 @@
                             <h3><a target="_blank" href="https://www.p2pquake.net/json_api_v2/">P2P地震情報 JSON API
                                     v2</a></h3>
                             <p>
-                                地震情報 REST APIの提供
+                                緊急地震速報（警報）、地震情報APIの提供
                             </p>
+                        </li>
+
+                        <li>
+                            <h3><a target="_blank" href="https://leafletjs.com/">jQuery</a></h3>
+                            <p>Version 3.6.0 を利用。</p>
                         </li>
 
                         <li>
                             <h3><a target="_blank" href="https://leafletjs.com/">Leaflet</a></h3>
                             <p>
-                                地図描画ライブラリの提供
+                                地図描画ライブラリの提供<br>
+                                Version 1.9.4 を利用。
                             </p>
                         </li>
 
@@ -549,6 +549,14 @@
                                 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA
                                     2.0 ライセンス準拠</a><br>
                                 OpenStreetMapならびに拡大鏡のロゴおよびState of the MapはOpenStreetMap財団の登録商標です。
+                            </p>
+                        </li>
+
+                        <li>
+                            <h3><a target="_blank" href="https://nominatim.org/">Nominatim API</a></h3>
+                            <p>
+                                緯度経度からの市区町村の取得に利用<br>
+                                &copy; Nominatim developer community
                             </p>
                         </li>
 
@@ -565,6 +573,50 @@
         </div>
 
         <div id="notify"></div>
+        <div id="eewNotify" title="クリックして警報画面を表示する"></div>
+
+        <div id="eewWarn" class="window">
+            <div class="titleBar">
+                <span class="material-symbols-outlined closeBtn">close</span>
+                <span class="title">緊急地震速報（警報）</span>
+            </div>
+
+            <div class="warn">
+                <span class="material-symbols-outlined icon">warning</span>
+                <span>強い揺れに警戒</span>
+                <span>身を守ってください</span>
+            </div>
+
+            <div id="eewError" style="display: none;">
+                <span
+                    style="display: block; padding: 1rem; font-size: 1.2rem; text-align: center;">位置情報が取得できないか、警報の受信対象外です。</span>
+            </div>
+
+            <div id="eewForecast">
+                <div class="item" style="width: 48%;">
+                    <span class="label">推定震度</span>
+                    <div>
+                        <span id="eewScale" class="value"></span>
+                        <span id="eewScaleAbout" class="about" style="margin-left: .5em;"></span>
+                    </div>
+                </div>
+
+                <div class="item" style="width: 52%; border-left: 1px solid #808080ff;">
+                    <span class="label">主要動到達まで</span>
+                    <div>
+                        <span id="eewArrivalTimeAbout" class="about">およそ</span>
+                        <span id="eewArrivalTime" class="value"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="eewForecastDes">
+                <p>
+                    推定震度と主要動到達予想時刻は、<br>
+                    現在地の地区予報区［<span id="eewLocate"></span>］の情報です。
+                </p>
+            </div>
+        </div>
     </main>
 </body>
 

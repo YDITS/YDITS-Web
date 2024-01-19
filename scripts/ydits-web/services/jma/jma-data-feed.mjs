@@ -1,18 +1,34 @@
 /*
  *
- * jma-data-feed.mjs | YDITS for Web
+ * YDITS for Web
  *
- * (c) よね/Yone
+ * Copyright (c) よね/Yone
  *
  * No modification or reproduction of any kind is permitted.
  * 改変や複製を一切禁じます。
  *
  */
 
-export class JmaDataFeed {
+'use strict';
+
+import { Service } from "../../../service.mjs";
+
+/**
+ * 気象庁防災情報電文を扱う。
+ */
+export class JmaDataFeed extends Service {
     url = "https://www.data.jma.go.jp/developer/xml/feed/eqvol.xml";
 
-    constructor() {
+
+    constructor(app) {
+        super(app, {
+            name: "jmaDataFeed",
+            description: "気象庁防災情報電文を扱うサービスです。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        });
+
         $(document).on('click', '#jmaDataFeed .closeBtn', function () {
             $('#jmaDataFeed').removeClass('active');
         });
@@ -36,6 +52,9 @@ export class JmaDataFeed {
     }
 
 
+    /**
+     * 気象庁防災情報電文を更新する。
+     */
     update() {
         /*
         fetch(this.url)

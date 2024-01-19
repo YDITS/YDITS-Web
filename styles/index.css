@@ -1,14 +1,15 @@
+@charset "UTF-8";
+
 /* 
 
-    index.css | YDITS for Web
+    YDITS for Web
 
-    (c) よね/Yone
+    Copyright (c) よね/Yone
 
     No modification or reproduction of any kind is permitted.
     改変や複製を一切禁じます。
 
 */
-@charset "UTF-8";
 
 main {
     display: flex;
@@ -105,6 +106,7 @@ main {
     border-radius: 0.1em;
     text-align: center;
     font-size: 4.5rem;
+    color: #ffffffff;
 }
 
 
@@ -542,12 +544,12 @@ main {
 
 #debugLogLists .title {
     text-align: left;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 #debugLogLists .text {
     text-align: left;
-    font-size: 1rem;
+    font-size: .9rem;
 }
 
 #license.active {
@@ -583,7 +585,7 @@ main {
     #control {
         display: flex;
         width: 100vw;
-        height: 17em;
+        height: 14em;
     }
 
     #map {
