@@ -138,14 +138,14 @@
                 </div>
 
                 <div class="content">
-                    <div class="lists">
+                    <!-- <div class="lists">
                         <div class="list top bottom" id="menuJmaDataFeed">
                             <span class="material-symbols-outlined">
                                 database
                             </span>
                             気象庁 電文
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="lists">
                         <div class="list top" id="menuSettings">
@@ -274,7 +274,7 @@
                             </span>
                             位置情報
                         </li>
-                        
+
                         <li class="list" id="settings_list_notify">
                             <span class="material-symbols-outlined">
                                 notifications
@@ -395,21 +395,27 @@
 
                     <div class="list" id="settings_map">
                         <div class="item">
-                            <label><h3>位置情報サービス</h3></label>
+                            <label>
+                                <h3>位置情報サービス</h3>
+                            </label>
                             <div class="content">
                                 <span id="locationStatus"></span>
                             </div>
                         </div>
 
                         <div class="item">
-                            <label><h3>位置情報の精度</h3></label>
+                            <label>
+                                <h3>位置情報の精度</h3>
+                            </label>
                             <div class="content">
                                 <span id="locationAccuracy"></span>
                             </div>
                         </div>
 
                         <div class="item">
-                            <label><h3>現在地の地区予報区</h3></label>
+                            <label>
+                                <h3>現在地の地区予報区</h3>
+                            </label>
                             <div class="content">
                                 <span id="locationArea"></span>
                             </div>
@@ -582,7 +588,8 @@
             </div>
 
             <div id="eewError" style="display: none;">
-                <span style="display: block; padding: 1rem; font-size: 1.2rem; text-align: center;">位置情報が取得できないか、警報の受信対象外です。</span>
+                <span
+                    style="display: block; padding: 1rem; font-size: 1.2rem; text-align: center;">位置情報が取得できないか、警報の受信対象外です。</span>
             </div>
 
             <div id="eewForecast">
