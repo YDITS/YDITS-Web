@@ -11,7 +11,7 @@
 
 'use strict';
 
-import { App } from "../app.mjs";
+import { FirebaseApp } from "../firebase/app.mjs";
 import { Datetime } from "./services/modules/datetime.mjs";
 import { DebugLogs } from "./services/modules/debug-logs.mjs";
 import { Notify } from "./services/modules/notify.mjs";
@@ -26,7 +26,7 @@ import { Api } from "./services/api/api.mjs";
 import { Settings } from "./services/modules/settings.mjs";
 import { Map } from "./services/map/map.mjs";
 
-export class YditsWeb extends App {
+export class YditsWeb extends FirebaseApp {
     eewGetCnt = -1;
     ntpGetCnt = -1;
     jmaDataFeedGetCnt = -1;
@@ -42,7 +42,16 @@ export class YditsWeb extends App {
             description: "『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。",
             version: "3.11.0",
             author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
+            copyright: "Copyright © よね/Yone",
+            firebase: {
+                apiKey: "AIzaSyBibDJX9w02oum1vSTMW3D4Stigya5Y9oE",
+                authDomain: "ydits-for-web.firebaseapp.com",
+                projectId: "ydits-for-web",
+                storageBucket: "ydits-for-web.appspot.com",
+                messagingSenderId: "177926103278",
+                appId: "1:177926103278:web:da2bdcadb1d47b9ae653ff",
+                measurementId: "G-SYYZ9EM05T"
+            }
         });
 
         this.buildEvent = new Event("build");
