@@ -189,12 +189,13 @@ export class Map extends Service {
                 }
             } else {
                 Object.keys(this.app.services.eew.reports).forEach((id) => {
-                    if (id === "undefined" || this.app.services.eew.reports[id].isWarning) { return; }
-                    this.app.services.eew.reports[id].region.setLatLng(new L.LatLng(0, 0));
-                    this.app.services.eew.reports[id].sWave.setLatLng(new L.LatLng(0, 0));
-                    this.app.services.eew.reports[id].pWave.setLatLng(new L.LatLng(0, 0));
-                    this.app.services.eew.reports[id].sWave.setRadius(0);
-                    this.app.services.eew.reports[id].pWave.setRadius(0);
+                    if (id === "undefined") { return; }
+                    if (this.app.services.eew.reports[id].isWarning) { return; }
+
+                    this.map.removeLayer(this.app.services.eew.reports[id].region);
+                    this.map.removeLayer(this.app.services.eew.reports[id].sWave);
+                    this.map.removeLayer(this.app.services.eew.reports[id].pWave);
+                    delete this.app.services.eew.reports[id];
                 });
             }
         } catch (error) {
