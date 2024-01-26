@@ -244,62 +244,65 @@ export class P2pquake extends Service {
                 try {
                     const DATA = data[0];
 
-                    if (this.app.services.eew.reports[DATA._id] === undefined) {
-                        this.app.services.eew.reports[DATA._id] = new this.app.services.eew.Report();
+                    if (this.app.services.eew.reports[DATA.id] === undefined) {
+                        this.app.services.eew.reports[DATA.id] = new this.app.services.eew.Report();
                     }
 
                     this.app.services.eew.currentIdLast = this.app.services.eew.currentId;
-                    this.app.services.eew.currentId = DATA._id;
+                    this.app.services.eew.currentId = DATA.id;
 
                     const NOW_TIME = this.app.services.datetime.gmt.getTime();
                     const ISSUE_TIME = new Date(DATA.issue.time).getTime();
 
                     // EEW発表から3分以下の場合は警報処理をする
-                    if (((NOW_TIME - ISSUE_TIME) / 1000) >= 180) { return }
+                    if (((NOW_TIME - ISSUE_TIME) / 1000) >= 180) {
+                        delete this.app.services.eew.reports[DATA.id];
+                        return;
+                    }
 
+                    this.app.services.eew.reports[DATA.id].isWarning = true;
                     this.app.services.eew.isEew = true;
-                    this.app.services.eew.reports[DATA._id].isWarning = true;
 
-                    this.app.services.eew.reports[DATA._id].originTime = new Date(DATA.earthquake.originTime);
+                    this.app.services.eew.reports[DATA.id].originTime = new Date(DATA.earthquake.originTime);
 
-                    if (!(this.app.services.eew.reports[DATA._id].originTime instanceof Date)) {
-                        this.app.services.eew.reports[DATA._id].originTimeText = "----/--/-- --:--";
+                    if (!(this.app.services.eew.reports[DATA.id].originTime instanceof Date)) {
+                        this.app.services.eew.reports[DATA.id].originTimeText = "----/--/-- --:--";
                     } else {
-                        this.app.services.eew.reports[DATA._id].originTimeText =
-                            `${this.app.services.eew.reports[DATA._id].originTime.getFullYear()}/` +
-                            `${this.zeroPadding(this.app.services.eew.reports[DATA._id].originTime.getMonth() + 1)}/` +
-                            `${this.zeroPadding(this.app.services.eew.reports[DATA._id].originTime.getDate())} ` +
-                            `${this.zeroPadding(this.app.services.eew.reports[DATA._id].originTime.getHours())}:` +
-                            `${this.zeroPadding(this.app.services.eew.reports[DATA._id].originTime.getMinutes())}`
+                        this.app.services.eew.reports[DATA.id].originTimeText =
+                            `${this.app.services.eew.reports[DATA.id].originTime.getFullYear()}/` +
+                            `${this.zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getMonth() + 1)}/` +
+                            `${this.zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getDate())} ` +
+                            `${this.zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getHours())}:` +
+                            `${this.zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getMinutes())}`
                     }
 
                     if (DATA.earthquake.hypocenter.name) {
-                        this.app.services.eew.reports[DATA._id].regionName = DATA.earthquake.hypocenter.name;
+                        this.app.services.eew.reports[DATA.id].regionName = DATA.earthquake.hypocenter.name;
                     } else {
-                        this.app.services.eew.reports[DATA._id].regionName = '震源 不明';
+                        this.app.services.eew.reports[DATA.id].regionName = '震源 不明';
                     }
 
-                    this.app.services.eew.reports[DATA._id].magnitude = DATA.earthquake.hypocenter.magnitude;
+                    this.app.services.eew.reports[DATA.id].magnitude = DATA.earthquake.hypocenter.magnitude;
 
-                    if (this.app.services.eew.reports[DATA._id].magnitude === -1) {
-                        this.app.services.eew.reports[DATA._id].magnitudeText = 'M不明';
+                    if (this.app.services.eew.reports[DATA.id].magnitude === -1) {
+                        this.app.services.eew.reports[DATA.id].magnitudeText = 'M不明';
                     } else {
-                        this.app.services.eew.reports[DATA._id].magnitudeText = `M${this.app.services.eew.reports[DATA._id].magnitude}`;
+                        this.app.services.eew.reports[DATA.id].magnitudeText = `M${this.app.services.eew.reports[DATA.id].magnitude}`;
                     }
 
-                    this.app.services.eew.reports[DATA._id].depth = DATA.earthquake.hypocenter.depth;
+                    this.app.services.eew.reports[DATA.id].depth = DATA.earthquake.hypocenter.depth;
 
-                    switch (this.app.services.eew.reports[DATA._id].depth) {
+                    switch (this.app.services.eew.reports[DATA.id].depth) {
                         case -1:
-                            this.app.services.eew.reports[DATA._id].depthText = "不明";
+                            this.app.services.eew.reports[DATA.id].depthText = "不明";
                             break;
 
                         case 0:
-                            this.app.services.eew.reports[DATA._id].depthText = "ごく浅い";
+                            this.app.services.eew.reports[DATA.id].depthText = "ごく浅い";
                             break;
 
                         default:
-                            this.app.services.eew.reports[DATA._id].depthText = `約${this.app.services.eew.reports[DATA._id].depth}km`;
+                            this.app.services.eew.reports[DATA.id].depthText = `約${this.app.services.eew.reports[DATA.id].depth}km`;
                             break;
                     }
 
@@ -561,10 +564,13 @@ export class P2pquake extends Service {
         const ISSUE_TIME = new Date(data.issue.time).getTime();
 
         // EEW発表から3分以下の場合は警報処理をする
-        if (((NOW_TIME - ISSUE_TIME) / 1000) >= 180) { return }
+        if (((NOW_TIME - ISSUE_TIME) / 1000) >= 180) {
+            delete this.app.services.eew.reports[data._id]
+            return;
+        }
 
-        this.app.services.eew.isEew = true;
         this.app.services.eew.reports[data._id].isWarning = true;
+        this.app.services.eew.isEew = true;
 
         this.app.services.eew.reports[data._id].originTime = new Date(data.earthquake.originTime);
 
