@@ -15,7 +15,7 @@
  * アプリケーションを作成します。
  */
 export class App {
-    services = [];
+    services = {};
 
 
     constructor(config) {
@@ -30,8 +30,8 @@ export class App {
     /**
      * 新規のサービスを登録します。
      */
-    register(service) {
-        const newService = new service(this);
+    register(Service) {
+        const newService = new Service(this);
         this.services[newService.name] = newService;
     }
 }
