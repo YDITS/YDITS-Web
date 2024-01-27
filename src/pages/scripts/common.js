@@ -11,9 +11,19 @@
 
 'use strict';
 
-void (function () {
-    $(() => {
+(function() {
+    function initializePage() {
+        loadCommonElements();
+    }
+
+
+    function loadCommonElements() {
         $("header").load("./elements/header.html");
         $("footer").load("./elements/footer.html");
+    }
+
+
+    $(function() {
+        initializePage();
     });
 })();
