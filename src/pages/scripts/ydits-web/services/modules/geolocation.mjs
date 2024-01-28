@@ -172,7 +172,7 @@ export class GeoLocation extends Service {
     onError(error) {
         this.app.services.debugLogs.add(
             "error",
-            "[LOCATE]",
+            `[${this.name}]`,
             "Geo Location is supported, but Cannot get current global position."
         )
 

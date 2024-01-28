@@ -281,12 +281,12 @@ export class Settings extends Service {
             $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
             $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
 
-            localStorage.clear()
-            localStorage.setItem("debugLogs", JSON.stringify(debugLogs));
+            localStorage.clear();
+            localStorage.setItem("debugLogs", JSON.stringify(debugLogs.debugLogs));
 
             sounds.notify.play();
             notify.show("message", "設定のリセット", "設定をリセットしました。");
-            this.app.services.debugLogs.add("info", `[INFO]`, "Settings were reset.");
+            this.app.services.debugLogs.add("info", `[${this.name}]`, "Settings were reset.");
         });
 
 
