@@ -32,7 +32,7 @@ export class DebugLogs extends Service {
         const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
 
         if (DEBUG_LOGS_DATA === null) {
-            this.add("start", "[START]", "- Start log -");
+            this.add("start", `[${this.name}]`, "- Start log -");
         } else {
             this.debugLogs = JSON.parse(DEBUG_LOGS_DATA);
             this.debugLogs.forEach(log => {

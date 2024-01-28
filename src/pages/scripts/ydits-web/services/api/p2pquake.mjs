@@ -465,7 +465,7 @@ export class P2pquake extends Service {
     socketOpened(event) {
         this.app.services.debugLogs.add(
             "network",
-            `[NETWORK]`,
+            `[${this.name}]`,
             "Successfully connected to api.p2pquake.net and WebSocket opened."
         );
 
@@ -490,7 +490,7 @@ export class P2pquake extends Service {
 
         this.app.services.debugLogs.add(
             "network",
-            `[NETWORK]`,
+            `[${this.name}]`,
             "Successfully disconnected from api.p2pquake.net and WebSocket closed."
         );
 
@@ -522,7 +522,7 @@ export class P2pquake extends Service {
 
             this.app.services.debugLogs.add(
                 "network",
-                `[NETWORK]`,
+                `[${this.name}]`,
                 `
                     Got new message from Socket api.p2pquake.net.<br>
                     Code: ${DATA.code}
@@ -733,7 +733,7 @@ export class P2pquake extends Service {
     socketError(event) {
         this.app.services.debugLogs.add(
             "error",
-            `[NETWORK]`,
+            `[${this.name}]`,
             `Failed to connect to api.p2pquake.net.<br>${event}`
         );
 
