@@ -45,8 +45,8 @@ export class PushNotify extends Service {
      * プッシュ通知の権限を要求する。
     */
     requestPermission() {
-        Notification.requestPermission()
-            .then((permission) => this.checkRequestPermission(permission));
+            Notification.requestPermission()
+                .then((permission) => this.checkRequestPermission(permission));
     }
 
 
@@ -94,10 +94,19 @@ export class PushNotify extends Service {
             }
         }
 
-        return new Notification(
-            title,
-            options
-        )
+        try {
+            return this.app.services.serviceWorker.registration.showNotification(
+                title,
+                options
+            );
+        } catch (error) {
+            console.error(error);
+            this.app.services.debugLogs.add(
+                "error",
+                `[${this.name}]`,
+                `Cannot push notification: ${error}`
+            );
+        }
     }
 
 
@@ -106,11 +115,7 @@ export class PushNotify extends Service {
      * @returns {boolean} 対応している時はtrueを返す。
      */
     get isSupport() {
-        if ("Notification" in window) {
-            return true;
-        } else {
-            return false;
-        }
+        return ("Notification" in window);
     }
 
 
@@ -119,11 +124,7 @@ export class PushNotify extends Service {
      * @returns {boolean} 権限がある時はtrueを返す。
      */
     get isPremission() {
-        if (Notification.permission === "granted") {
-            return true;
-        } else {
-            return false;
-        }
+        return (Notification.permission === "granted");
     }
 
 

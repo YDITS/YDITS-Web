@@ -40,7 +40,7 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。",
-            version: "3.11.1",
+            version: "3.11.2",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: {
@@ -79,7 +79,7 @@ export class YditsWeb extends FirebaseApp {
                 } catch (error) {
                     // Without Webkit
                     console.error(error);
-                    this.services.debugLogs.add("error", "[ERROR]", error);
+                    this.services.debugLogs.add("error", `[${this.name}]`, error);
                 }
 
                 this.register(GeoLocation);
@@ -87,14 +87,14 @@ export class YditsWeb extends FirebaseApp {
                 this.initLicense();
 
                 window.addEventListener("online", () => {
-                    this.services.debugLogs.add("network", "[NETWORK]", "Reconnected to the network.");
+                    this.services.debugLogs.add("network", `[${this.name}]`, "Reconnected to the network.");
                     this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
                     this.services.eqinfo.reconnect();
                 });
 
                 window.addEventListener("offline", () => {
                     $('#statusLamp').css({ 'background-color': '#ff4040' });
-                    this.services.debugLogs.add("error", "[NETWORK]", "Network disconnected.");
+                    this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
                     this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
                     this.services.eqinfo.disconnect();
                 });
@@ -103,7 +103,7 @@ export class YditsWeb extends FirebaseApp {
                 $("#clock").text("----/--/-- --:--:--");
             } catch (error) {
                 console.error(error);
-                this.services.debugLogs.add("info", "[INFO]", `Failed Application initialization: ${error}`);
+                this.services.debugLogs.add("info", `[${this.name}]`, `Failed Application initialization: ${error}`);
 
                 this.services.notify.show(
                     "error",
@@ -135,7 +135,7 @@ export class YditsWeb extends FirebaseApp {
      */
     onBuild() {
         this.initialize();
-        this.services.debugLogs.add("info", "[INFO]", "Application initialized.");
+        this.services.debugLogs.add("info", `[${this.name}]`, "Application initialized.");
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
         requestAnimationFrame(() => this.mainloop());
     }

@@ -49,6 +49,7 @@ export class YahooKmoni extends Service {
         // const URL = "https://www.lmoni.bosai.go.jp/monitor/webservice/hypo/eew/20220330001911.json";                 //2022-3-30-00:19 kmoni
         // ---
 
+        try {
         fetch(URL)
             .then((response) => {
                 if (!response.ok) {
@@ -223,6 +224,9 @@ export class YahooKmoni extends Service {
             .catch(error => {
                 this.fetchError(error);
             });
+        } catch (error) {
+            this.fetchError(error);
+        }
     }
 
 
@@ -236,7 +240,7 @@ export class YahooKmoni extends Service {
             if (this.fetchLastStatus) {
                 this.app.services.debugLogs.add(
                     "error",
-                    "[NETWORK]",
+                    `[${this.name}]`,
                     `Failed to connect to weather-kyoshin.east.edge.storage-yahoo.jp.<br>${error}`
                 );
 
