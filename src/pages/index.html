@@ -282,11 +282,20 @@
                             プッシュ通知
                         </li>
 
-                        <li class="list" id="settings_list_other">
+                        <li class="list bottom" id="settings_list_other">
                             <span class="material-symbols-outlined">
                                 reset_wrench
                             </span>
                             リセット
+                        </li>
+                    </ul>
+
+                    <ul class="lists">
+                        <li class="list top" id="openDebugModeButton">
+                            <span class="material-symbols-outlined">
+                                bug_report
+                            </span>
+                            デバッグモード
                         </li>
 
                         <li class="list bottom" id="openDebugLogsButton">
@@ -445,11 +454,35 @@
 
                 <div class="content">
                     <div class="list">
-                        <p>
+                        <!-- <p>
                             すべての設定をリセットします。<br>
                             <span style="color: #ff6060;">DM-D.S.Sアカウントとの連携情報も削除され、再度dmdataと接続するには再連携が必要になります。</span>
-                        </p>
+                        </p> -->
                         <button id="settings_resetSettingsBtn">設定をリセット</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="window settings_list" id="debugModeWindow">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">デバッグモード</span>
+                </div>
+
+                <div class="content">
+                    <p>これらの設定は開発用です。通常は使用しないでください。<br>有効にすると正常に動作しなくなったり、パフォーマンスが低下する可能性があります。</p>
+
+                    <div class="list">
+                        <div class="item" id="settingsDebugRayout">
+                            <label>
+                                <h3>レイアウトの表示</h3>
+                            </label>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

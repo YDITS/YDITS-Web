@@ -39,6 +39,11 @@ export class Settings extends Service {
     }
 
 
+    debug = {
+        rayout: null
+    }
+
+
     constructor(app) {
         super(app, {
             name: "settings",
@@ -340,6 +345,57 @@ export class Settings extends Service {
 
             sounds.notify.play();
             notify.show("message", "デバッグログの削除", "デバッグログを削除しました。");
+        });
+
+        // ----- Debug Mode -----//
+        $(document).on("click", "#openDebugModeButton", () => {
+            $("#debugModeWindow").addClass("active");
+        });
+        $(document).on("click", "#debugModeWindow .closeBtn", () => {
+            $("#debugModeWindow").removeClass("active");
+        });
+
+        // ----- Debug Rayout ----- //
+        if (localStorage.getItem("settings-debug-rayout") == 'true') {
+            this.debug.rayout = true;
+            $('#settingsDebugRayout .toggle-switch').addClass('on');
+            this.showDebugRayout();
+        } else if (localStorage.getItem("settings-debug-rayout") == 'false') {
+            this.debug.rayout = false;
+            $('#settingsDebugRayout .toggle-switch').removeClass('on');
+            this.hideDebugRayout();
+        } else {
+            this.debug.rayout = false;
+            $('#settingsDebugRayout .toggle-switch').removeClass('on');
+            this.hideDebugRayout();
+        }
+
+        $(document).on('click', '#settingsDebugRayout .toggle-switch', () => {
+            if (this.debug.rayout == false) {
+                this.debug.rayout = true;
+                localStorage.setItem('settings-debug-rayout', 'true');
+                $('#settingsDebugRayout .toggle-switch').addClass('on');
+                this.showDebugRayout();
+            } else if (this.debug.rayout == true) {
+                this.debug.rayout = false;
+                localStorage.setItem('settings-debug-rayout', 'false');
+                $('#settingsDebugRayout .toggle-switch').removeClass('on');
+                this.hideDebugRayout();
+            }
+        });
+    }
+
+
+    showDebugRayout() {
+        $("*").css({
+            "outline": "1px solid #00ff00ff"
+        });
+    }
+
+
+    hideDebugRayout() {
+        $("*").css({
+            "outline": "unset"
         });
     }
 }
