@@ -106,11 +106,7 @@ export class PushNotify extends Service {
      * @returns {boolean} 対応している時はtrueを返す。
      */
     get isSupport() {
-        if ("Notification" in window) {
-            return true;
-        } else {
-            return false;
-        }
+        return ("Notification" in window);
     }
 
 
@@ -119,11 +115,7 @@ export class PushNotify extends Service {
      * @returns {boolean} 権限がある時はtrueを返す。
      */
     get isPremission() {
-        if (Notification.permission === "granted") {
-            return true;
-        } else {
-            return false;
-        }
+        return (Notification.permission === "granted");
     }
 
 
