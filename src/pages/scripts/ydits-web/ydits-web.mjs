@@ -205,7 +205,7 @@ export class YditsWeb extends FirebaseApp {
         });
 
         $(document).on('click', '#homeBtn', () => {
-            this.services.map.setView([38.0194092, 138.3664968], 6);
+            this.services.map.setViewHome();
         });
 
         $(document).on('click', '#menuJmaDataFeed', () => {
