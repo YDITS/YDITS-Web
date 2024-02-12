@@ -40,7 +40,7 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。",
-            version: "3.11.2",
+            version: "3.12.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: {
@@ -205,7 +205,7 @@ export class YditsWeb extends FirebaseApp {
         });
 
         $(document).on('click', '#homeBtn', () => {
-            this.services.map.setView([38.0194092, 138.3664968], 6);
+            this.services.map.setViewHome();
         });
 
         $(document).on('click', '#menuJmaDataFeed', () => {

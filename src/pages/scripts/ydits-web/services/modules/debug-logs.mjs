@@ -51,29 +51,51 @@ export class DebugLogs extends Service {
      * ログを追加する。
      */
     add(type, title, text) {
-        let time =
-            `${this.app.services.datetime.fullYear}/` +
-            `${('0' + this.app.services.datetime.month).slice(-2)}/` +
-            `${('0' + this.app.services.datetime.date).slice(-2)} ` +
-            `${('0' + this.app.services.datetime.hours).slice(-2)}:` +
-            `${('0' + this.app.services.datetime.minutes).slice(-2)}:` +
-            `${('0' + this.app.services.datetime.seconds).slice(-2)}`;
+        const time = this.formatDatetime(this.app.services.datetime);
 
-        this.debugLogs.push({
+        const logEntry = {
             type: type,
             time: time,
             title: title,
             text: text
-        });
+        };
 
+        this.debugLogs.push(logEntry);
+        this.saveLogsToLocalStorage();
+        this.addDebugLogsHtml(logEntry);
+    }
+
+    /**
+     * 日付と時刻を指定のフォーマットで整形する。
+     * @param {Datetime} datetime - 整形対象の Datetime オブジェクト
+     * @returns {string} - 整形された日付と時刻の文字列
+     */
+    formatDatetime(datetime) {
+        return (
+            `${datetime.fullYear}/` +
+            `${this.zeroPadding(datetime.month)}/` +
+            `${this.zeroPadding(datetime.date)} ` +
+            `${this.zeroPadding(datetime.hours)}:` +
+            `${this.zeroPadding(datetime.minutes)}:` +
+            `${this.zeroPadding(datetime.seconds)}`
+        );
+    }
+
+    /**
+     * ゼロ埋めを行う。
+     * @param {number} num - ゼロ埋めする数値
+     * @returns {string} - ゼロ埋めされた文字列
+     */
+    zeroPadding(num) {
+        return num.toString().padStart(2, '0');
+    }
+
+
+    /**
+     * ログをlocalStorageに保存する。
+     */
+    saveLogsToLocalStorage() {
         localStorage.setItem("debugLogs", JSON.stringify(this.debugLogs));
-
-        this.addDebugLogsHtml({
-            type: type,
-            time: time,
-            title: title,
-            text: text
-        });
     }
 
 

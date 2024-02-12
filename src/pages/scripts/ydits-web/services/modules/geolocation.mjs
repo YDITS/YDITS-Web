@@ -93,7 +93,14 @@ export class GeoLocation extends Service {
             + "&zoom=12"
             + "&addressdetails=1";
 
-        await fetch(urlCity)
+        await fetch(
+            urlCity,
+            {
+                headers: {
+                    "Accept-Language": "ja-JP"
+                }
+            }
+        )
             .then((response) => response.json())
             .then(async (data) => {
                 if (data === null || data.address === undefined) { return }
@@ -144,7 +151,6 @@ export class GeoLocation extends Service {
                     if (["北区", "南区", "西区"].includes(this.city)) {
                         this.province = data.address.province;
                         this.area = this.app.services.eew.removePref(this.province) + this.city;
-                        console.debug(this.area);
                     }
                 } else if (data.address.town) {
                     // 町村

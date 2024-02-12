@@ -21,6 +21,14 @@ export class Map extends Service {
     loopCount = -1;
     autoMoveCount = null;
 
+    get defaultCenter() {
+        return ([36.0047000, 137.5930000]);
+    }
+
+    get defaultZoom() {
+        return (5);
+    }
+
 
     constructor(app) {
         super(app, {
@@ -32,18 +40,18 @@ export class Map extends Service {
         });
 
         this.map = L.map('map', {
-            center: [38.0194092, 138.3664968],
-            zoom: 6,
-            maxZoom: 14,
+            center: this.defaultCenter,
+            zoom: this.defaultZoom,
+            maxZoom: 10,
             minZoom: 4,
             zoomSnap: 0,
             zoomDelta: 0,
             zoomControl: false
         });
 
-        L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-            apikey: 'c168fc2f-2f64-4f13-874c-ce2dcec92819',
-            attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+        this.maptilerLayer = L.maptilerLayer({
+            apiKey: "3ft2uVdfAwtgfKQGIT8U",
+            style: "ba979b60-0cf8-4087-8cdc-5bb919540c08",
         }).addTo(this.map);
     }
 
@@ -212,5 +220,13 @@ export class Map extends Service {
      */
     setView(latLng, zoom) {
         this.map.setView(latLng, zoom);
+    }
+
+
+    /**
+     * マップを初期位置に移動する。
+     */
+    setViewHome() {
+        this.setView(this.defaultCenter, this.defaultZoom);
     }
 }
