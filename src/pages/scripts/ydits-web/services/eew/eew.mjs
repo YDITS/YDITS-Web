@@ -215,6 +215,8 @@ export class Eew extends Service {
                 'background-color': bgcolor,
                 'color': fontColor
             })
+
+            this.app.services.map.layerControl.startEew();
         } else {
             $('#eewTitle').text(`緊急地震速報は発表されていません`);
             $('#eewCalc').text("");
@@ -227,6 +229,8 @@ export class Eew extends Service {
                 'background-color': "#404040ff",
                 'color': "#ffffffff"
             });
+
+            this.app.services.map.layerControl.stopEew();
         }
     }
 

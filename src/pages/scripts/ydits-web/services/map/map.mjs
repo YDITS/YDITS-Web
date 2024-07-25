@@ -30,6 +30,26 @@ export class Map extends Service {
     }
 
 
+    get hrpnsTimesUrl() {
+        return ("https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json");
+    }
+
+
+    get layersControlElement() {
+        return (document.getElementById("layersControl"));
+    }
+
+
+    get $hrpnsTime() {
+        return ($("#hrpnsTime>.text"));
+    }
+
+
+    hrpnsImgUrl(baseTime, validTime) {
+        return (`https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`);
+    }
+
+
     constructor(app) {
         super(app, {
             name: "map",
@@ -60,7 +80,7 @@ export class Map extends Service {
      * 初期化する。
      * @returns 
      */
-    initialize() {
+    async initialize() {
         if (!this.app.services.geoLocation.isSupport) { return }
 
         this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
@@ -77,6 +97,8 @@ export class Map extends Service {
             fillColor: '#4080ff80',
             fillOpacity: 0.25,
         }).addTo(this.map);
+
+        await this.showHrpns();
     }
 
 
@@ -107,6 +129,121 @@ export class Map extends Service {
             this.map.removeLayer(this.userPointCircle);
             this.userPoint = null;
             this.userPointCircle = null;
+        }
+    }
+
+
+    /**
+     * 引数に渡されたString `yyyyMMDDHHmm` を `yyyy年MM月DD日 HH時mm分` に変換する
+     */
+    formatDatetime(datetime) {
+        const year = datetime.slice(0, 4);
+        const month = datetime.slice(4, 6) - 1;
+        const day = datetime.slice(6, 8);
+        const hour = datetime.slice(8, 10);
+        const minute = datetime.slice(10, 12);
+        const utcDate = new Date(Date.UTC(year, month, day, hour, minute));
+        const jstDate = this.datetimeConvertToJst(utcDate)
+        // return `${jstDate.getFullYear()}年${String(jstDate.getMonth() + 1).padStart(2, '0')}月${String(jstDate.getDate()).padStart(2, '0')}日 ${String(jstDate.getHours()).padStart(2, '0')}時${String(jstDate.getMinutes()).padStart(2, '0')}分`;
+        return `${String(jstDate.getHours()).padStart(2, '0')}:${String(jstDate.getMinutes()).padStart(2, '0')}`;
+    }
+
+
+    /**
+     * UTC Datetime convert to JST (UTC+9)
+     */
+    datetimeConvertToJst(utcDate) {
+        const jstDate = utcDate;
+        jstDate.setHours(utcDate.getHours() + 10);
+        return jstDate;
+    }
+
+
+    /**
+     * 説明が記載されていません。
+     */
+    updateLayers() {
+        if (this.hrpns) {
+            console.debug("show");
+            this.layerControl
+            this.layerControl = new CustomLayerControl({
+                layers: {
+                    "雨雲レーダー（高精度降水ナウキャスト）": this.hrpns
+                },
+                map: this.map
+            });
+        } else {
+            console.debug("hide");
+        }
+
+        if (this.layerControl) {
+            this.map.removeControl(this.layerControl);
+        }
+
+
+        this.layersControlElement.appendChild(this.layerControl.onAdd(this.map));
+    }
+
+
+    /**
+     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）を更新する。
+     */
+    async updateHrpns() {
+        if (!this.hrpns) { return; }
+        this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
+        const url = this.hrpnsImgUrl(this.hrpnsLatestTargetTime["basetime"], this.hrpnsLatestTargetTime["validtime"]);
+        this.hrpns.setUrl(url);
+        this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+    }
+
+
+    /**
+     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）を表示する。
+     */
+    async showHrpns() {
+        this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
+        const url = this.hrpnsImgUrl(this.hrpnsLatestTargetTime["basetime"], this.hrpnsLatestTargetTime["validtime"]);
+        this.hrpns = L.tileLayer(url, {
+            opacity: 0.7
+        }).addTo(this.map);
+        this.updateLayers();
+        this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+    }
+
+
+    /**
+     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）を非表示する。
+     */
+    hideHrpns() {
+        this.map.removeLayer(this.hrpns);
+        this.hrpns = null;
+        this.updateLayers();
+    }
+
+
+    /**
+     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）の最新URLを返す。
+     */
+    async getHrpnsTargetTime() {
+        const time = await this.fetchHrpnsTargetTime();
+        const latestData = time[time.length - 1];
+        return latestData;
+    }
+
+
+    /**
+     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）のターゲットURLを取得する。
+     */
+    async fetchHrpnsTargetTime() {
+        try {
+            const response = await fetch(this.hrpnsTimesUrl);
+            if (!response.ok) {
+                throw new Error(`Error fetching rain map data: Status ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(`Error fetching rain map data: ${error}`);
         }
     }
 
@@ -228,5 +365,102 @@ export class Map extends Service {
      */
     setViewHome() {
         this.setView(this.defaultCenter, this.defaultZoom);
+    }
+}
+
+
+/**
+ * 独自レイヤーコントロールクラス
+ */
+class CustomLayerControl extends L.Control {
+    constructor(options) {
+        super(options);
+        this.options = options || {};
+        this.eewActive = false; // EEWの状態を示すプロパティ
+    }
+
+    get $hrpnsTime() {
+        return ($("#hrpnsTime"));
+    }
+
+    onAdd(map) {
+        this.map = map; // 地図オブジェクトをクラスのプロパティとして保存
+        this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        this._container.style.backgroundColor = 'white';
+        this._container.style.padding = '10px';
+        this._layerControl = L.DomUtil.create('div', 'layer-control', this._container);
+        this.updateLayerControl();
+        return this._container;
+    }
+
+    updateLayerControl() {
+        this._layerControl.innerHTML = '';
+        const savedLayers = JSON.parse(localStorage.getItem('selectedLayers')) || {};
+
+        if (this.options.layers) {
+            for (const [name, layer] of Object.entries(this.options.layers)) {
+                const controlItem = L.DomUtil.create('div', '', this._layerControl);
+                const checkbox = L.DomUtil.create('input', '', controlItem);
+                checkbox.type = 'checkbox';
+                checkbox.id = name;
+                checkbox.checked = savedLayers[name] || false;
+
+                if (checkbox.checked && !this.eewActive) {
+                    this.map.addLayer(layer);
+                    this.$hrpnsTime.show();
+                } else {
+                    this.map.removeLayer(layer);
+                    this.$hrpnsTime.hide();
+                }
+
+                L.DomEvent.on(checkbox, 'change', () => {
+                    if (checkbox.checked) {
+                        savedLayers[name] = true;
+                        if (!this.eewActive) {
+                            this.map.addLayer(layer);
+                            this.$hrpnsTime.show();
+                        }
+                    } else {
+                        savedLayers[name] = false;
+                        this.map.removeLayer(layer);
+                        this.$hrpnsTime.hide();
+                    }
+                    localStorage.setItem('selectedLayers', JSON.stringify(savedLayers));
+                });
+
+                const label = L.DomUtil.create('label', '', controlItem);
+                label.htmlFor = name;
+                label.innerHTML = name;
+            }
+        }
+    }
+
+    // EEWの開始を検知するメソッド
+    startEew() {
+        this.eewActive = true;
+        this.updateLayerControlVisibility();
+    }
+
+    // EEWの終了を検知するメソッド
+    stopEew() {
+        this.eewActive = false;
+        this.updateLayerControlVisibility();
+    }
+
+    // レイヤーの表示/非表示を更新するメソッド
+    updateLayerControlVisibility() {
+        const savedLayers = JSON.parse(localStorage.getItem('selectedLayers')) || {};
+
+        for (const [name, layer] of Object.entries(this.options.layers)) {
+            if (savedLayers[name]) {
+                if (this.eewActive) {
+                    this.map.removeLayer(layer);
+                    this.$hrpnsTime.hide();
+                } else {
+                    this.map.addLayer(layer);
+                    this.$hrpnsTime.show();
+                }
+            }
+        }
     }
 }

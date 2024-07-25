@@ -127,9 +127,33 @@
 
         <div id="mapWrapper">
             <div id="map"></div>
+            
             <span id="clock"></span>
+
             <div id="status">
                 <span id="statusLamp"></span>
+            </div>
+
+            <div id="hrpnsTime">
+                <span class="title">雨雲レーダー</span>
+                <span class="text"></span>
+            </div>
+
+            <div id="mapLayersMenu" class="map-controler window">
+                <div class="titleBar">
+                    <span class="title">マップレイヤー表示切替</span>
+                </div>
+
+                <div id="layersControl" class="content">
+                    <p>
+                        緊急地震速報の発表中は、地震動到達予想円を見やすくするためにマップ上のすべてのレイヤーが一時的に非表示になります。<br>緊急地震速報が終了した後は、ユーザーが設定したもとの表示状態に自動的に戻ります。
+                    </p>
+                </div>
+            </div>
+
+            <div id="mapLayersButton" class="map-controler">
+                <img src="./images/layers_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="MapLayersIcon" srcset="" class="open">
+                <img src="./images/close_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="MapLayersIcon" srcset="" class="close">
             </div>
         </div>
 
@@ -403,7 +427,7 @@
                 </div>
 
                 <div class="content">
-                    <p>位置情報データが送信されることはありません。</p>
+                    <p>位置情報データは、ユーザーの現在地をマップに表示し、現在地の地区予報区を取得するためにのみ使用されます。このデータは他の目的では収集・使用されず、第三者に提供されることはありません。</p>
 
                     <div class="list" id="settings_map">
                         <div class="item">
@@ -529,7 +553,7 @@
                         <li>
                             <h3><a href="https://www.jma.go.jp/jma/">国土交通省 気象庁</a></h3>
                             <p>
-                                緊急地震速報、地震情報の提供<br>
+                                緊急地震速報、地震情報、高精度降水ナウキャスト画像の提供<br>
                                 気象庁防災情報XMLフォーマット形式電文（PULL型）の提供<br>
                                 <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY
                                     4.0 ライセンス準拠</a><br>
