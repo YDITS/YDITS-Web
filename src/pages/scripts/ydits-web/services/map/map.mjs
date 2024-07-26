@@ -396,10 +396,10 @@ class CustomLayerControl extends L.Control {
 
                 if (checkbox.checked && !this.eewActive) {
                     this.map.addLayer(layer);
-                    this.$hrpnsTime.show();
+                    this.$hrpnsTime.addClass("show");
                 } else {
                     this.map.removeLayer(layer);
-                    this.$hrpnsTime.hide();
+                    this.$hrpnsTime.removeClass("show");
                 }
 
                 L.DomEvent.on(checkbox, 'change', () => {
@@ -407,12 +407,12 @@ class CustomLayerControl extends L.Control {
                         savedLayers[name] = true;
                         if (!this.eewActive) {
                             this.map.addLayer(layer);
-                            this.$hrpnsTime.show();
+                            this.$hrpnsTime.addClass("show");
                         }
                     } else {
                         savedLayers[name] = false;
                         this.map.removeLayer(layer);
-                        this.$hrpnsTime.hide();
+                        this.$hrpnsTime.removeClass("show");
                     }
                     localStorage.setItem('selectedLayers', JSON.stringify(savedLayers));
                 });
@@ -444,10 +444,10 @@ class CustomLayerControl extends L.Control {
             if (savedLayers[name]) {
                 if (this.eewActive) {
                     this.map.removeLayer(layer);
-                    this.$hrpnsTime.hide();
+                    this.$hrpnsTime.removeClass("show");
                 } else {
                     this.map.addLayer(layer);
-                    this.$hrpnsTime.show();
+                    this.$hrpnsTime.addClass("show");
                 }
             }
         }

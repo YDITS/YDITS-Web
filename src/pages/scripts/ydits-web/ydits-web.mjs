@@ -205,7 +205,7 @@ export class YditsWeb extends FirebaseApp {
         $(document).on('click', '#eqHistoryBtn', () => {
             $('#control').toggleClass('mobile');
             $('#eqHistoryField').toggleClass('mobile');
-            $('#map').toggleClass('mobile');
+            $('#mapWrapper').toggleClass('mobile');
         });
 
         $(document).on('click', '#homeBtn', () => {

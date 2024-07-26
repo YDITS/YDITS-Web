@@ -262,7 +262,7 @@ main {
     position: absolute;
     bottom: 3rem;
     left: .7em;
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -270,6 +270,10 @@ main {
     padding: .7em;
     border-radius: .6rem;
     z-index: 1;
+}
+
+#hrpnsTime.show {
+    display: flex;
 }
 
 #hrpnsTime>.title {
@@ -723,7 +727,7 @@ main {
         display: block;
     }
 
-    #map.mobile {
+    #mapWrapper.mobile {
         display: none;
     }
 
