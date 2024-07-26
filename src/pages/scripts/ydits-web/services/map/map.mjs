@@ -164,7 +164,6 @@ export class Map extends Service {
      */
     updateLayers() {
         if (this.hrpns) {
-            console.debug("show");
             this.layerControl = new CustomLayerControl({
                 layers: {
                     "雨雲レーダー（高解像度降水ナウキャスト）": this.hrpns,
@@ -172,8 +171,6 @@ export class Map extends Service {
                 },
                 map: this.map
             });
-        } else {
-            console.debug("hide");
         }
 
         if (this.layerControl) {
@@ -305,7 +302,6 @@ export class Map extends Service {
 
             // 強風域を表示
             if (analysisData && analysisData.galeWarningArea) {
-                console.debug(titleData);
                 this.addGaleWarningArea(analysisData.galeWarningArea, titleData.typhoonNumber.slice(-2).replace(/^0+/, ''));
             }
         } else {

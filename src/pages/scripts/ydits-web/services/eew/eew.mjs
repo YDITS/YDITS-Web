@@ -251,13 +251,11 @@ export class Eew extends Service {
                 this.app.services.sounds.eewWarnVoice.play();
             }
 
-            console.debug(this.reports[this.currentId].maxScale, this.reports[this.currentId].maxScaleLast)
             if (
                 (this.reports[this.currentId].maxScale !== this.reports[this.currentId].maxScaleLast) ||
                 (this.currentId !== this.currentIdLast)
             ) {
 
-                console.debug(this.reports[this.currentId].maxScale);
                 switch (this.reports[this.currentId].maxScale) {
                     case 10:
                         this.app.services.sounds.eewVoice1.play();
