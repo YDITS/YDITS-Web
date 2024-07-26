@@ -293,8 +293,8 @@ export class Map extends Service {
                             iconSize: [24, 24]
                         })
                     })
-                    .bindPopup(`台風中心: [${analysisData.center[0]}, ${analysisData.center[1]}]`)
-                    .addTo(this.typhoon);
+                        .bindPopup(`台風中心: [${analysisData.center[0]}, ${analysisData.center[1]}]`)
+                        .addTo(this.typhoon);
                 }
             }
 
@@ -379,7 +379,7 @@ export class Map extends Service {
     hideTyphoon() {
         this.map.removeLayer(this.typhoon);
         this.typhoon = null;
-        this.updateLayers();
+        // this.updateLayers();
     }
 
 
