@@ -35,6 +35,11 @@ export class Map extends Service {
     }
 
 
+    get tropicalCycloneTargetUrl() {
+        return ("https://www.jma.go.jp/bosai/typhoon/data/targetTc.json");
+    }
+
+
     get layersControlElement() {
         return (document.getElementById("layersControl"));
     }
@@ -47,6 +52,11 @@ export class Map extends Service {
 
     hrpnsImgUrl(baseTime, validTime) {
         return (`https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`);
+    }
+
+
+    tropicalCycloneForecastUrl(tropicalCycloneNumber) {
+        return (`https://www.jma.go.jp/bosai/typhoon/data/${tropicalCycloneNumber}/forecast.json`);
     }
 
 
@@ -99,6 +109,7 @@ export class Map extends Service {
         }).addTo(this.map);
 
         await this.showHrpns();
+        await this.showTyphoon();
     }
 
 
@@ -154,10 +165,10 @@ export class Map extends Service {
     updateLayers() {
         if (this.hrpns) {
             console.debug("show");
-            this.layerControl
             this.layerControl = new CustomLayerControl({
                 layers: {
-                    "雨雲レーダー（高解像度降水ナウキャスト）": this.hrpns
+                    "雨雲レーダー（高解像度降水ナウキャスト）": this.hrpns,
+                    "台風情報（予想進路図）": this.typhoon,
                 },
                 map: this.map
             });
@@ -195,7 +206,7 @@ export class Map extends Service {
         this.hrpns = L.tileLayer(url, {
             opacity: 0.7
         }).addTo(this.map);
-        this.updateLayers();
+        // this.updateLayers();
         this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
     }
 
@@ -226,6 +237,168 @@ export class Map extends Service {
     async fetchHrpnsTargetTime() {
         try {
             const response = await fetch(this.hrpnsTimesUrl);
+            if (!response.ok) {
+                throw new Error(`Error fetching rain map data: Status ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(`Error fetching rain map data: ${error}`);
+        }
+    }
+
+
+    /**
+     * 台風情報（予想進路図）を更新する。
+     */
+    async updateTyphoon() {
+        if (!this.typhoon) {
+            this.hideTyphoon();
+        }
+        await this.showTyphoon();
+    }
+
+
+    /**
+     * 台風情報（予想進路図）を表示する。
+     */
+    async showTyphoon() {
+        this.typhoon = L.layerGroup().addTo(this.map);
+
+        this.tropicalCycloneLatestTarget = await this.getTropicalCycloneTarget();
+        const url = this.tropicalCycloneForecastUrl(this.tropicalCycloneLatestTarget);
+
+        let data = await fetch(url);
+        data = await data.json();
+
+        if (Array.isArray(data)) {
+            let titleData = data.find(item => item.part && item.part === "title");
+            let analysisData = data.find(item => item.part && item.part.en === "Analysis");
+            let forecast12h = data.find(item => item.part && item.part.en === "Forecast for 12 hours ahead");
+            let forecast24h = data.find(item => item.part && item.part.en === "Forecast for 24 hours ahead");
+            let forecast45h = data.find(item => item.part && item.part.en === "Forecast for 45 hours ahead");
+
+            if (analysisData && analysisData.track && analysisData.track.typhoon) {
+                // 台風進路の座標を抽出
+                const typhoonTrack = analysisData.track.typhoon.map(point => [point[0], point[1]]);
+
+                // 進路ポリラインを追加
+                const polyline = L.polyline(typhoonTrack, { color: '#ffffff', weight: 1 }).addTo(this.typhoon);
+
+                // 台風の中心位置にマーカーを追加
+                if (analysisData.center) {
+                    L.marker([analysisData.center[0], analysisData.center[1]], {
+                        icon: L.icon({
+                            iconUrl: "./images/close_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg",
+                            iconSize: [24, 24]
+                        })
+                    })
+                    .bindPopup(`台風中心: [${analysisData.center[0]}, ${analysisData.center[1]}]`)
+                    .addTo(this.typhoon);
+                }
+            }
+
+            // 予報円と強風域を追加
+            this.addForecastCircle(forecast12h);
+            this.addForecastCircle(forecast24h);
+            this.addForecastCircle(forecast45h);
+
+            // 強風域を表示
+            if (analysisData && analysisData.galeWarningArea) {
+                console.debug(titleData);
+                this.addGaleWarningArea(analysisData.galeWarningArea, titleData.typhoonNumber.slice(-2).replace(/^0+/, ''));
+            }
+        } else {
+            console.error('Error: Data is not an array.');
+        }
+
+        this.updateLayers();
+        this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+    }
+
+
+    // 予報円を追加する関数
+    addForecastCircle(forecast) {
+        if (forecast && forecast.center && forecast.probabilityCircle) {
+            const center = forecast.center;
+            const radius = forecast.probabilityCircle.radius;
+            const validtime = new Date(forecast.validtime["JST"]); // 予報の時刻
+
+            L.circle([center[0], center[1]], {
+                color: '#ffffff',
+                fillColor: '#ffffff',
+                fillOpacity: 0.2,
+                radius: radius,
+                weight: 1
+            }).addTo(this.typhoon);
+
+            // 予報円の接線をラインで表示
+            forecast.probabilityCircle.tangent.forEach(tangent => {
+                const line = tangent.map(point => [point[0], point[1]]);
+                L.polyline(line, { color: '#ffffff', dashArray: '5, 5', weight: 1 }).addTo(this.typhoon);
+            });
+
+            L.marker([center[0], center[1]], {
+                icon: L.divIcon({
+                    className: 'forecast-icon',
+                    html: `<div class="forecast-time">${validtime.getDate()}日${validtime.getHours()}時</div>`,
+                    iconSize: [100, 40],
+                    minZoom: 6
+                })
+            }).addTo(this.typhoon);
+        }
+    }
+
+
+    // 強風域を追加する関数
+    addGaleWarningArea(galeWarningArea, typhoonNumber) {
+        const center = galeWarningArea.center;
+        const radius = galeWarningArea.radius;
+        L.circle([center[0], center[1]], {
+            color: '#ffee00',
+            fillColor: '#ffee00',
+            fillOpacity: 0.3,
+            radius: radius,
+            weight: 1
+        }).addTo(this.typhoon);
+
+        L.marker([center[0], center[1]], {
+            icon: L.divIcon({
+                className: 'warning-icon',
+                html: `<div class="warning-time">${typhoonNumber}号</div>`,
+                iconSize: [100, 40],
+                minZoom: 6
+            })
+        }).addTo(this.typhoon);
+    }
+
+
+    /**
+     * 台風情報（予想進路図）を非表示する。
+     */
+    hideTyphoon() {
+        this.map.removeLayer(this.typhoon);
+        this.typhoon = null;
+        this.updateLayers();
+    }
+
+
+    /**
+     * 台風情報（予想進路図）の最新URLを返す。
+     */
+    async getTropicalCycloneTarget() {
+        const tcs = await this.fetchTropicalCycloneTarget();
+        const latestData = tcs[0]["tropicalCyclone"];
+        return latestData;
+    }
+
+
+    /**
+     * 台風情報（予想進路図）のターゲットURLを取得する。
+     */
+    async fetchTropicalCycloneTarget() {
+        try {
+            const response = await fetch(this.tropicalCycloneTargetUrl);
             if (!response.ok) {
                 throw new Error(`Error fetching rain map data: Status ${response.status}`);
             }
