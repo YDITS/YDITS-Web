@@ -157,7 +157,7 @@ export class Map extends Service {
             this.layerControl
             this.layerControl = new CustomLayerControl({
                 layers: {
-                    "雨雲レーダー（高精度降水ナウキャスト）": this.hrpns
+                    "雨雲レーダー（高解像度降水ナウキャスト）": this.hrpns
                 },
                 map: this.map
             });
@@ -175,7 +175,7 @@ export class Map extends Service {
 
 
     /**
-     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）を更新する。
+     * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を更新する。
      */
     async updateHrpns() {
         if (!this.hrpns) { return; }
@@ -187,7 +187,7 @@ export class Map extends Service {
 
 
     /**
-     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）を表示する。
+     * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を表示する。
      */
     async showHrpns() {
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
@@ -201,7 +201,7 @@ export class Map extends Service {
 
 
     /**
-     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）を非表示する。
+     * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を非表示する。
      */
     hideHrpns() {
         this.map.removeLayer(this.hrpns);
@@ -211,7 +211,7 @@ export class Map extends Service {
 
 
     /**
-     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）の最新URLを返す。
+     * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）の最新URLを返す。
      */
     async getHrpnsTargetTime() {
         const time = await this.fetchHrpnsTargetTime();
@@ -221,7 +221,7 @@ export class Map extends Service {
 
 
     /**
-     * 雨雲レーダー（高精度降水ナウキャスト/HRPNS）のターゲットURLを取得する。
+     * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）のターゲットURLを取得する。
      */
     async fetchHrpnsTargetTime() {
         try {
