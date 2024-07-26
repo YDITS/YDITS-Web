@@ -142,20 +142,9 @@ export class Map extends Service {
         const day = datetime.slice(6, 8);
         const hour = datetime.slice(8, 10);
         const minute = datetime.slice(10, 12);
-        const utcDate = new Date(Date.UTC(year, month, day, hour, minute));
-        const jstDate = this.datetimeConvertToJst(utcDate)
+        const date = new Date(Date.UTC(year, month, day, hour, minute));
         // return `${jstDate.getFullYear()}年${String(jstDate.getMonth() + 1).padStart(2, '0')}月${String(jstDate.getDate()).padStart(2, '0')}日 ${String(jstDate.getHours()).padStart(2, '0')}時${String(jstDate.getMinutes()).padStart(2, '0')}分`;
-        return `${String(jstDate.getHours()).padStart(2, '0')}:${String(jstDate.getMinutes()).padStart(2, '0')}`;
-    }
-
-
-    /**
-     * UTC Datetime convert to JST (UTC+9)
-     */
-    datetimeConvertToJst(utcDate) {
-        const jstDate = utcDate;
-        jstDate.setHours(utcDate.getHours() + 10);
-        return jstDate;
+        return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     }
 
 
