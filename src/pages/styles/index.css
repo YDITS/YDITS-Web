@@ -13,7 +13,7 @@
 
 main {
     display: flex;
-    height: calc(100vh - 2em - 2px);
+    height: calc(100svh - 2em - 2px);
     overflow: hidden;
 }
 
@@ -258,13 +258,147 @@ main {
     z-index: 1;
 }
 
+#hrpnsTime {
+    position: absolute;
+    bottom: 3rem;
+    left: .7em;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #202020;
+    padding: .7em;
+    border-radius: .6rem;
+    z-index: 1;
+}
+
+#hrpnsTime.show {
+    display: flex;
+}
+
+#hrpnsTime>.title {
+    font-size: 0.7rem;
+}
+
+#hrpnsTime>.text {
+    font-size: 1.5rem;
+}
+
+.map-controler {
+    position: absolute;
+    z-index: 1;
+}
+
+#mapLayersButton {
+    bottom: 2.5rem;
+    right: 1.5rem;
+    display: flex;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: #101010;
+    cursor: pointer;
+    z-index: 1;
+}
+
+#mapLayersButton:hover {
+    background-color: #303030;
+}
+
+#mapLayersButton .close {
+    display: none;
+}
+#mapLayersButton.active .open {
+    display: none;
+}
+#mapLayersButton.active .close {
+    display: block;
+}
+
+#mapLayersMenu {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 100vw;
+    z-index: 1;
+    background-color: #202020e0;
+}
+
+#mapLayersMenu>.content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+#layersControl .leaflet-control {
+    padding: 0 !important;
+}
+
+#layersControl .leaflet-control * {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#layersControl .layer-control {
+    flex-direction: column;
+}
+
+#layersControl .layer-control label {
+    display: block;
+    padding: 1rem 0;
+    width: 100%;
+    color: #303030ff;
+}
+
+#layersControl .layer-control input[type="checkbox"] {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    margin-left: 1rem;
+    margin-right: .75em;
+}
+
+.forecast-icon, 
+.warning-icon {
+    text-align: center;
+}
+.forecast-time,
+.warning-time {
+    font-size: 1rem;
+    color: #ffffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.menu-list {
+    list-style: none;
+}
+
+.menu-list-item {
+    padding: 1rem;
+}
+
+#mapLayersMenu .titleBar {
+    background-color: unset;
+}
+
+#mapLayersMenu .content {
+    height: calc(100% - 4rem - 4rem);
+}
+
+#mapLayersMenu.active {
+    left: 0;
+}
+
 #popup {
     display: block;
     position: fixed;
-    top: 100vh;
+    top: 100svh;
     left: 0;
     width: 100vw;
-    height: calc(100vh - 2rem);
+    height: calc(100svh - 2rem);
     background-color: #101010c0;
     /* background-color: rgba(40, 40, 40, .75); */
     z-index: 1;
@@ -276,7 +410,7 @@ main {
 
 .window {
     position: fixed;
-    top: 100vh;
+    top: 100svh;
     left: 0;
     display: block;
     width: calc(100%);
@@ -330,7 +464,7 @@ main {
 }
 
 .window>.content {
-    height: calc(100vh - 2rem - 4rem - 4rem);
+    height: calc(100svh - 2rem - 4rem - 4rem);
     padding: 2rem 5%;
     overflow: auto;
 }
@@ -592,6 +726,10 @@ main {
         width: 100vw;
     }
 
+    #mapWrapper {
+        width: 100%;
+    }
+
     #eqHistoryField {
         display: none;
     }
@@ -604,7 +742,7 @@ main {
         display: block;
     }
 
-    #map.mobile {
+    #mapWrapper.mobile {
         display: none;
     }
 

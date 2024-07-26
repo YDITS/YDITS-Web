@@ -237,6 +237,8 @@ export class YahooKmoni extends Service {
         ) {
             $('#statusLamp').css({ 'background-color': '#ff4040' });
 
+            if (!navigator.onLine) { return; }
+
             if (this.fetchLastStatus) {
                 this.app.services.debugLogs.add(
                     "error",

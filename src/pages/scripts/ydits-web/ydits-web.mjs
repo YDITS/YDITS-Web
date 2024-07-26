@@ -27,10 +27,6 @@ import { Settings } from "./services/modules/settings.mjs";
 import { Map } from "./services/map/map.mjs";
 
 export class YditsWeb extends FirebaseApp {
-    eewGetCnt = -1;
-    ntpGetCnt = -1;
-    jmaDataFeedGetCnt = -1;
-
     get JMA_DATA_FEED_GET_INTERVAL() {
         return (1000 * 60);
     }
@@ -85,11 +81,15 @@ export class YditsWeb extends FirebaseApp {
                 this.register(GeoLocation);
                 this.initMenu();
                 this.initLicense();
+                this.initMapLayersMenu();
 
                 window.addEventListener("online", () => {
                     this.services.debugLogs.add("network", `[${this.name}]`, "Reconnected to the network.");
                     this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
-                    this.services.eqinfo.reconnect();
+                    setTimeout(() => {
+                        this.services.eqinfo.reconnect();
+                        this.services.map.updateHrpns();
+                    }, 3000)
                 });
 
                 window.addEventListener("offline", () => {
@@ -137,6 +137,10 @@ export class YditsWeb extends FirebaseApp {
         this.initialize();
         this.services.debugLogs.add("info", `[${this.name}]`, "Application initialized.");
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
+        setInterval(() => this.ntp(), 1000);
+        setInterval(() => this.eew(), 1000);
+        setInterval(() => this.hrpns(), 1000 * 60);
+        setInterval(() => this.jmaDataFeed(), this.JMA_DATA_FEED_GET_INTERVAL);
         requestAnimationFrame(() => this.mainloop());
     }
 
@@ -155,31 +159,31 @@ export class YditsWeb extends FirebaseApp {
 
 
     /**
-     * メインループ。
+     * アニメーションメインループ
      */
     mainloop() {
         const DATE_DOW = new Date();
-
-        if (DATE_DOW - this.ntpGetCnt >= 1000) {
-            this.services.datetime.update();
-            this.clock(this.services.datetime);
-            this.ntpGetCnt = DATE_DOW;
-        }
-
-        if (DATE_DOW - this.eewGetCnt >= 1000) {
-            this.services.eew.updateWarn();
-            this.services.api.yahooKmoni.get();
-            this.eewGetCnt = DATE_DOW;
-        }
-
-        if ((DATE_DOW - this.jmaDataFeedGetCnt >= this.JMA_DATA_FEED_GET_INTERVAL)) {
-            this.services.jmaDataFeed.update();
-            this.jmaDataFeedGetCnt = DATE_DOW;
-        }
-
         this.services.map.update(DATE_DOW);
-
         requestAnimationFrame(() => this.mainloop());
+    }
+
+
+    /**
+     * メインループ
+     */
+    ntp() {
+        this.services.datetime.update();
+        this.clock(this.services.datetime);
+    }
+    eew() {
+        this.services.eew.updateWarn();
+        this.services.api.yahooKmoni.get();
+    }
+    hrpns() {
+        this.services.map.updateHrpns();
+    }
+    jmaDataFeed() {
+        this.services.jmaDataFeed.update();
     }
 
 
@@ -201,7 +205,7 @@ export class YditsWeb extends FirebaseApp {
         $(document).on('click', '#eqHistoryBtn', () => {
             $('#control').toggleClass('mobile');
             $('#eqHistoryField').toggleClass('mobile');
-            $('#map').toggleClass('mobile');
+            $('#mapWrapper').toggleClass('mobile');
         });
 
         $(document).on('click', '#homeBtn', () => {
@@ -228,6 +232,17 @@ export class YditsWeb extends FirebaseApp {
     initLicense() {
         $(document).on('click', '#license .closeBtn', function () {
             $('#license').removeClass('active');
+        });
+    }
+
+
+    /**
+     * マップレイヤー切替機能関連をイニシャライズする。
+     */
+    initMapLayersMenu() {
+        $(document).on('click', '#mapLayersButton', function () {
+            $('#mapLayersMenu').toggleClass('active');
+            $('#mapLayersButton').toggleClass('active');
         });
     }
 

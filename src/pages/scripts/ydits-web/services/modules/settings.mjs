@@ -28,7 +28,10 @@ export class Settings extends Service {
 
     map = {
         autoMove: null,
-        displayUserPoint: null
+        displayUserPoint: null,
+        layers: {
+            hrpns: null
+        }
     }
 
 

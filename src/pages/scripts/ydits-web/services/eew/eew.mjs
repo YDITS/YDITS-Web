@@ -215,6 +215,8 @@ export class Eew extends Service {
                 'background-color': bgcolor,
                 'color': fontColor
             })
+
+            this.app.services.map.layerControl.startEew();
         } else {
             $('#eewTitle').text(`緊急地震速報は発表されていません`);
             $('#eewCalc').text("");
@@ -227,6 +229,8 @@ export class Eew extends Service {
                 'background-color': "#404040ff",
                 'color': "#ffffffff"
             });
+
+            this.app.services.map.layerControl.stopEew();
         }
     }
 
@@ -247,13 +251,11 @@ export class Eew extends Service {
                 this.app.services.sounds.eewWarnVoice.play();
             }
 
-            console.debug(this.reports[this.currentId].maxScale, this.reports[this.currentId].maxScaleLast)
             if (
                 (this.reports[this.currentId].maxScale !== this.reports[this.currentId].maxScaleLast) ||
                 (this.currentId !== this.currentIdLast)
             ) {
 
-                console.debug(this.reports[this.currentId].maxScale);
                 switch (this.reports[this.currentId].maxScale) {
                     case 10:
                         this.app.services.sounds.eewVoice1.play();
