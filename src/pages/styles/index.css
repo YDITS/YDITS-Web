@@ -227,9 +227,11 @@ main {
     position: absolute;
     top: 0;
     left: 0;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 10rem;
-    padding: .2rem;
+    height: 1.85rem;
     text-align: center;
     background-color: #202020;
     font-size: 1rem;
@@ -239,7 +241,7 @@ main {
 #status {
     position: absolute;
     top: 0;
-    left: calc(10rem + .4rem);
+    left: calc(10rem);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -255,6 +257,19 @@ main {
     height: 60%;
     border-radius: 100%;
     background-color: #808080;
+    z-index: 1;
+}
+
+#fps {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4rem;
+    height: 1.85rem;
+    background-color: #202020;
     z-index: 1;
 }
 

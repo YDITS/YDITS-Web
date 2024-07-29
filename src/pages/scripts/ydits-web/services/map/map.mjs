@@ -261,8 +261,11 @@ export class Map extends Service {
      */
     async showTyphoon() {
         this.typhoon = L.layerGroup().addTo(this.map);
+        this.updateLayers();
 
         this.tropicalCycloneLatestTarget = await this.getTropicalCycloneTarget();
+        if (!this.tropicalCycloneLatestTarget) return null;
+
         const url = this.tropicalCycloneForecastUrl(this.tropicalCycloneLatestTarget);
 
         let data = await fetch(url);
@@ -308,7 +311,6 @@ export class Map extends Service {
             console.error('Error: Data is not an array.');
         }
 
-        this.updateLayers();
         this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
     }
 
@@ -383,9 +385,17 @@ export class Map extends Service {
      * 台風情報（予想進路図）の最新URLを返す。
      */
     async getTropicalCycloneTarget() {
-        const tcs = await this.fetchTropicalCycloneTarget();
-        const latestData = tcs[0]["tropicalCyclone"];
-        return latestData;
+        try {
+            const tcs = await this.fetchTropicalCycloneTarget();
+            if (!tcs || tcs.length <= 0) return null;
+
+            const latestData = tcs[0]["tropicalCyclone"];
+
+            if (latestData) { return latestData; }
+            else { return null; }
+        } catch (error) {
+            console.error("An error occurred when parsing tropical cyclone JSON data: ", error);
+        }
     }
 
 
@@ -402,6 +412,7 @@ export class Map extends Service {
             return data;
         } catch (error) {
             console.error(`Error fetching rain map data: ${error}`);
+            return null;
         }
     }
 
@@ -514,7 +525,7 @@ export class Map extends Service {
      * @param {*} zoom 
      */
     setView(latLng, zoom) {
-        this.map.setView(latLng, zoom);
+        this.map.flyTo(latLng, zoom);
     }
 
 
