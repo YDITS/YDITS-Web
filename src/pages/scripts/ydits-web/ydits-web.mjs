@@ -32,11 +32,16 @@ export class YditsWeb extends FirebaseApp {
     }
 
 
+    lastTime = -1;
+    fps = -1;
+    lastFpsUpdateTime = -1;
+
+
     constructor() {
         super({
             name: "YDITS for Web",
             description: "『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。",
-            version: "3.13.0",
+            version: "3.13.1",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: {
@@ -139,7 +144,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
         setInterval(() => this.ntp(), 1000);
         setInterval(() => this.eew(), 1000);
-        setInterval(() => this.hrpns(), 1000 * 60);
+        setInterval(() => this.hrpns(), 1000 * 30);
         setInterval(() => this.jmaDataFeed(), this.JMA_DATA_FEED_GET_INTERVAL);
         requestAnimationFrame(() => this.mainloop());
     }
@@ -162,9 +167,39 @@ export class YditsWeb extends FirebaseApp {
      * アニメーションメインループ
      */
     mainloop() {
-        const DATE_DOW = new Date();
-        this.services.map.update(DATE_DOW);
+        const timeNow = new Date();
+        this.calcFps(timeNow);
+        this.displayFps(timeNow);
+        this.services.map.update(timeNow);
         requestAnimationFrame(() => this.mainloop());
+    }
+
+
+    calcFps(timeNow) {
+        const deltaTime = timeNow - this.lastTime;
+        this.lastTime = timeNow;
+        this.fps = 1000 / deltaTime;
+    }
+
+
+    displayFps(timeNow) {
+        if (timeNow - this.lastFpsUpdateTime >= 500 /* ms */) {
+            let color;
+
+            if (this.fps <= 15) {
+                color = "#ff4040ff";
+            } else {
+                color = "#202020ff";
+            }
+
+            $("#fps")
+                .text(`${Math.round(this.fps)}FPS`)
+                .css({
+                    "backgroundColor": color,
+                });
+
+            this.lastFpsUpdateTime = timeNow;
+        }
     }
 
 
