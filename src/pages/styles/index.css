@@ -13,7 +13,7 @@
 
 main {
     display: flex;
-    height: calc(100svh - env(titlebar-area-height) - 2px);
+    height: calc(100svh - env(titlebar-area-height, 2rem) - 2px);
     overflow: hidden;
 }
 

@@ -38,9 +38,8 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: env(titlebar-area-width);
-    min-height: 2rem;
-    height: env(titlebar-area-height);
+    width: env(titlebar-area-width, 100svw);
+    height: env(titlebar-area-height, 2rem);
     background-color: #101010;
     color: #ffffff;
     -webkit-app-region: drag;
