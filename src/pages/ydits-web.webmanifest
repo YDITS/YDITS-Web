@@ -9,8 +9,6 @@
     "start_url": "./index.html",
     "display": "standalone",
     "display_override": ["window-controls-overlay", "standalone"],
-    "theme_color": "#e0c040",
-    "background_color": "#ffffff",
     "icons": [
         {
             "src": "https://cdn.ydits.net/images/ydits_logos/ydits_icon_512px.png",
