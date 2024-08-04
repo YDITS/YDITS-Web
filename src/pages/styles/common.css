@@ -40,7 +40,8 @@ header {
     align-items: center;
     width: env(titlebar-area-width, 100svw);
     height: env(titlebar-area-height, 2rem);
-    background-color: #101010;
+    background-color: #1f1f1f;
+    border-bottom: 1px solid #2b2b2b;
     color: #ffffff;
     -webkit-app-region: drag;
 }
