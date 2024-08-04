@@ -8,7 +8,7 @@
     "scope": "/",
     "start_url": "./index.html",
     "display": "standalone",
-    "display_override": ["fullscreen", "window-controls-overlay", "standalone"],
+    "display_override": ["window-controls-overlay", "standalone"],
     "theme_color": "#e0c040",
     "background_color": "#ffffff",
     "icons": [
