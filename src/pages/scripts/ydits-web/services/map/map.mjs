@@ -266,52 +266,62 @@ export class Map extends Service {
         this.tropicalCycloneLatestTarget = await this.getTropicalCycloneTarget();
         if (!this.tropicalCycloneLatestTarget) return null;
 
-        const url = this.tropicalCycloneForecastUrl(this.tropicalCycloneLatestTarget);
+        this.tropicalCycloneLatestTarget.forEach(async target => {
+            const url = this.tropicalCycloneForecastUrl(target);
 
-        let data = await fetch(url);
-        data = await data.json();
+            let data = await fetch(url);
+            data = await data.json();
 
-        if (Array.isArray(data)) {
-            let titleData = data.find(item => item.part && item.part === "title");
-            let analysisData = data.find(item => item.part && item.part.en === "Analysis");
-            let forecast12h = data.find(item => item.part && item.part.en === "Forecast for 12 hours ahead");
-            let forecast24h = data.find(item => item.part && item.part.en === "Forecast for 24 hours ahead");
-            let forecast45h = data.find(item => item.part && item.part.en === "Forecast for 45 hours ahead");
+            if (Array.isArray(data)) {
+                let titleData = data.find(item => item.part && item.part === "title");
+                let analysisData = data.find(item => item.part && item.part.en === "Analysis");
+                let forecast12h = data.find(item => item.part && item.part.en === "Forecast for 12 hours ahead");
+                let forecast24h = data.find(item => item.part && item.part.en === "Forecast for 24 hours ahead");
+                let forecast45h = data.find(item => item.part && item.part.en === "Forecast for 45 hours ahead");
+                let forecast48h = data.find(item => item.part && item.part.en === "Forecast for 48 hours ahead");
+                let forecast72h = data.find(item => item.part && item.part.en === "Forecast for 72 hours ahead");
+                let forecast96h = data.find(item => item.part && item.part.en === "Forecast for 96 hours ahead");
+                let forecast120h = data.find(item => item.part && item.part.en === "Forecast for 120 hours ahead");
 
-            if (analysisData && analysisData.track && analysisData.track.typhoon) {
-                // 台風進路の座標を抽出
-                const typhoonTrack = analysisData.track.typhoon.map(point => [point[0], point[1]]);
+                if (analysisData && analysisData.track && analysisData.track.typhoon) {
+                    // 台風進路の座標を抽出
+                    const typhoonTrack = analysisData.track.typhoon.map(point => [point[0], point[1]]);
 
-                // 進路ポリラインを追加
-                const polyline = L.polyline(typhoonTrack, { color: '#ffffff', weight: 1 }).addTo(this.typhoon);
+                    // 進路ポリラインを追加
+                    const polyline = L.polyline(typhoonTrack, { color: '#ffffff', weight: 1 }).addTo(this.typhoon);
 
-                // 台風の中心位置にマーカーを追加
-                if (analysisData.center) {
-                    L.marker([analysisData.center[0], analysisData.center[1]], {
-                        icon: L.icon({
-                            iconUrl: "./images/close_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg",
-                            iconSize: [24, 24]
+                    // 台風の中心位置にマーカーを追加
+                    if (analysisData.center) {
+                        L.marker([analysisData.center[0], analysisData.center[1]], {
+                            icon: L.icon({
+                                iconUrl: "./images/close_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg",
+                                iconSize: [24, 24]
+                            })
                         })
-                    })
-                        .bindPopup(`台風中心: [${analysisData.center[0]}, ${analysisData.center[1]}]`)
-                        .addTo(this.typhoon);
+                            .bindPopup(`台風中心: [${analysisData.center[0]}, ${analysisData.center[1]}]`)
+                            .addTo(this.typhoon);
+                    }
                 }
+
+                // 予報円と強風域を追加
+                this.addForecastCircle(forecast12h);
+                this.addForecastCircle(forecast24h);
+                this.addForecastCircle(forecast45h);
+                this.addForecastCircle(forecast48h);
+                this.addForecastCircle(forecast72h);
+                this.addForecastCircle(forecast96h);
+                this.addForecastCircle(forecast120h);
+
+                // 強風域を表示
+                if (analysisData && analysisData.galeWarningArea) {
+                    this.addGaleWarningArea(analysisData.galeWarningArea, titleData.typhoonNumber.slice(-2).replace(/^0+/, ''));
+                }
+            } else {
+                console.error('Error: Data is not an array.');
             }
 
-            // 予報円と強風域を追加
-            this.addForecastCircle(forecast12h);
-            this.addForecastCircle(forecast24h);
-            this.addForecastCircle(forecast45h);
-
-            // 強風域を表示
-            if (analysisData && analysisData.galeWarningArea) {
-                this.addGaleWarningArea(analysisData.galeWarningArea, titleData.typhoonNumber.slice(-2).replace(/^0+/, ''));
-            }
-        } else {
-            console.error('Error: Data is not an array.');
-        }
-
-        this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+            this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+        });
     }
 
 
@@ -389,9 +399,9 @@ export class Map extends Service {
             const tcs = await this.fetchTropicalCycloneTarget();
             if (!tcs || tcs.length <= 0) return null;
 
-            const latestData = tcs[0]["tropicalCyclone"];
+            const datas = tcs.map(item => item.tropicalCyclone);
 
-            if (latestData) { return latestData; }
+            if (datas) { return datas; }
             else { return null; }
         } catch (error) {
             console.error("An error occurred when parsing tropical cyclone JSON data: ", error);
