@@ -71,7 +71,7 @@ export class Datetime extends Service {
                 this.gmt = new Date(response.headers.date);
             })
             .catch((error) => {
-                throw this.gmtFetchError(error);
+                this.gmt = new Date();
             });
     }
 }

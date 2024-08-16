@@ -263,7 +263,8 @@ export class YahooKmoni extends Service {
 
 
     makeKmoniDatetime() {
-        let kmoniDatetime = this.app.services.datetime.gmt;
+        let kmoniDatetime;
+        kmoniDatetime = this.app.services.datetime.gmt;
 
         if (!(kmoniDatetime instanceof Date)) { return null }
 
