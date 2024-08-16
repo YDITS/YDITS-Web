@@ -67,6 +67,7 @@ export class Notify extends Service {
                 .html(`
                     <h3>${title}</h3>
                     <p>${text}</p>
+                    <p style="margin-top: .5rem; font-size: .8rem;">ここをタップして警報画面を表示します。</p>
                 `)
                 .css({
                     "background-color": color

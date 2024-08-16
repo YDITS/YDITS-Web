@@ -213,7 +213,7 @@ export class P2pquake extends Service {
                         this.app.services.pushNotify.notify(
                             "緊急地震速報 (警報)",
                             {
-                                body: `《次の地域では強い揺れに備えてください。》\n${this.app.services.eew.warnAreasText}`
+                                body: `《次の地域では強い揺れに備えてください》\n${this.app.services.eew.warnAreasText}`
                             }
                         );
 
@@ -221,7 +221,7 @@ export class P2pquake extends Service {
                             "eew",
                             `緊急地震速報 (警報)`,
                             `
-                                《次の地域では強い揺れに備えてください。》<br>
+                                《次の地域では強い揺れに備えてください》<br>
                                 ${this.app.services.eew.warnAreasText}
                             `
                         );
