@@ -222,7 +222,7 @@
 }
 
 #eewWarn.active {
-    top: 2rem;
+    top: calc(env(titlebar-area-height, 2rem) + 1rem);
 }
 
 #eewWarn .closeBtn {
@@ -230,7 +230,7 @@
     right: 1.5rem;
 }
 
-#eewWarn>.warn {
+#eewWarn .warn {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -240,12 +240,12 @@
     background-color: #f05050ff;
 }
 
-#eewWarn>.warn>.icon {
+#eewWarn .warn>.icon {
     margin-bottom: 2rem;
     font-size: 7.5rem;
 }
 
-#eewWarn>.warn span:not(.icon) {
+#eewWarn .warn span:not(.icon) {
     display: inline-block;
     margin-bottom: .175em;
     font-size: 2.5rem;

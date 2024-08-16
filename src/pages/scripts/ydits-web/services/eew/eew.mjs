@@ -132,9 +132,7 @@ export class Eew extends Service {
             areas.push(area.name);
         });
 
-        if (areas.includes(this.app.services.geoLocation.area)) {
-            this.displayWarn();
-        }
+        this.displayWarn();
 
         this.updateWarn(data);
     }
