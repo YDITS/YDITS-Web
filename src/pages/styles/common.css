@@ -22,7 +22,7 @@ html {
 body {
     background-color: #202020;
     font-family: 'Noto Sans JP', 'Roboto', sans-serif;
-    font-weight: 400;
+    font-weight: 300;
     font-size: 14px;
     color: #ffffff;
     user-select: none;
@@ -61,6 +61,10 @@ a {
     color: #ffffff;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    font-weight: unset;
+}
+
 .material-symbols-outlined {
     font-variation-settings:
         'FILL' 0,
@@ -69,10 +73,11 @@ a {
         'opsz' 48;
 }
 
-.material-symbols-outlined.open-in-new {
-    font-size: 1em;
-}
-
 #headerTitle {
     font-size: 1rem;
+}
+
+.material-symbols-outlined.open-in-new {
+    display: inline-block;
+    font-size: 1em;
 }
