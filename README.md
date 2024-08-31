@@ -14,4 +14,4 @@ A web application that allows users to quickly get earthquake information.
 
 **No licensed. No modification or reproduction of any kind is permitted.**
 
-Copyright (c) よね/Yone
+Copyright (C) よね/Yone
