@@ -12,6 +12,6 @@ A web application that allows users to quickly get earthquake information.
 
 ## LICENSE
 
-**No licensed. No modification or reproduction of any kind is permitted.**
+Licensed under the Apache License 2.0.
 
 Copyright (C) よね/Yone
