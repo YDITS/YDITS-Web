@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "YDITS for Web",
     "short_name": "YDITS-Web",
-    "description": "『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。",
+    "description": "『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。",
     "version": "3.14.2.0",
     "minimum_chrome_version": "116",
     "scope": "/",

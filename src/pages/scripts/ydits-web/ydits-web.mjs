@@ -40,7 +40,7 @@ export class YditsWeb extends FirebaseApp {
     constructor() {
         super({
             name: "YDITS for Web",
-            description: "『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。",
+            description: "『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。",
             version: "3.14.2",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",

@@ -4,7 +4,7 @@
 ## Overview
 
 A web application that allows users to quickly get earthquake information.  
-地震速報をすぐに確認できるWebアプリケーションです。
+防災情報をすぐに確認できるWebアプリケーションです。
 
 ## Usage
 
