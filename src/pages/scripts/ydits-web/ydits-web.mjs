@@ -2,10 +2,9 @@
  *
  * YDITS for Web
  *
- * Copyright (c) よね/Yone
+ * Copyright (C) よね/Yone
  *
- * No modification or reproduction of any kind is permitted.
- * 改変や複製を一切禁じます。
+ * Licensed under the Apache License 2.0.
  *
  */
 
@@ -40,7 +39,7 @@ export class YditsWeb extends FirebaseApp {
     constructor() {
         super({
             name: "YDITS for Web",
-            description: "『YDITS for Web』は、地震速報をすぐに確認できるWebアプリケーションです。",
+            description: "『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。",
             version: "3.14.2",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
