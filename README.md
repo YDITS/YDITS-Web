@@ -1,18 +1,19 @@
 # YDITS for Web
 
+[→ 日本語](./README_JP.md)
+
 ## Overview
 
-A web application that allows users to quickly get earthquake information.  
-防災情報をすぐに確認できるWebアプリケーションです。
+A web application that allows users to quickly get disaster prevention information.  
 
 ## Usage
 
-`src/pages/` をデプロイします。
+Deploy directory `src/pages/`.
 
 ## LICENSE
 
-Licensed under the [Apache License 2.0](https://github.com/YDITS/YDITS-Web/blob/production/LICENSE).
+Licensed under the [Apache License 2.0](./LICENSE).
 
-Also must read the [NOTICE](https://github.com/YDITS/YDITS-Web/blob/production/NOTICE.md)
+Also must read the [NOTICE](./NOTICE.md).
 
 Copyright (C) よね/Yone
