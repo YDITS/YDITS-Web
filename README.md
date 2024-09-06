@@ -6,6 +6,9 @@
 
 A web application that allows users to quickly get disaster prevention information.
 
+Published at https://webapp.ydits.net/ .  
+Introduction site is here: https://www.ydits.net/apps/web/
+
 ## Usage
 
 Deploy directory `src/pages/`.
