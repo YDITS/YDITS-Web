@@ -14,6 +14,6 @@
 
 [Apache License 2.0](./LICENSE) のもとでライセンスされます。
 
-[NOTICE](https://github.com/YDITS/YDITS-Web/blob/production/NOTICE.md) も必ずご確認ください。
+[NOTICE](./NOTICE.md) も必ずご確認ください。
 
 Copyright (C) よね/Yone

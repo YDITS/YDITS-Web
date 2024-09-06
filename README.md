@@ -4,13 +4,13 @@
 
 ## Overview
 
-A web application that allows users to quickly get disaster prevention information.  
+A web application that allows users to quickly get disaster prevention information.
 
 ## Usage
 
 Deploy directory `src/pages/`.
 
-## LICENSE
+## License
 
 Licensed under the [Apache License 2.0](./LICENSE).
 

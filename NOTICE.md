@@ -6,7 +6,7 @@ This repository contains some or all of the following third-party source code
 
 ### jQuery
 
-Licensed under the MIT license.  
+Licensed under the MIT License.  
 Copyright OpenJS Foundation and other contributors.
 
 URL: https://jquery.org/license
