@@ -31,16 +31,17 @@ export class YditsWeb extends FirebaseApp {
     }
 
 
-    lastTime = -1;
     fps = -1;
+    frame = 0;
     lastFpsUpdateTime = -1;
+    lastTime = -1;
 
 
     constructor() {
         super({
             name: "YDITS for Web",
             description: "『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。",
-            version: "3.15.2",
+            version: "3.16.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: {
@@ -167,29 +168,31 @@ export class YditsWeb extends FirebaseApp {
      */
     mainloop() {
         const timeNow = new Date();
-        this.calcFps(timeNow);
-        this.displayFps(timeNow);
+        this.calcFps();
+        this.displayFps();
         this.services.map.update(timeNow);
         requestAnimationFrame(() => this.mainloop());
     }
 
 
-    calcFps(timeNow) {
-        const deltaTime = timeNow - this.lastTime;
-        this.lastTime = timeNow;
-        this.fps = 1000 / deltaTime;
+    calcFps() {
+        const timeNow = performance.now();
+        const elapsed = timeNow - this.lastTime;
+        this.frames++;
+        
+        if (elapsed >= this.services.settings.debug.fpsMs) {
+            this.fps = Math.round((this.frames * 1000) / elapsed);
+            this.frames = 0;
+            this.lastTime = timeNow;
+        }
     }
 
 
-    displayFps(timeNow) {
-        if (timeNow - this.lastFpsUpdateTime >= 500 /* ms */) {
-            let color;
+    displayFps() {
+        const timeNow = performance.now();
 
-            if (this.fps <= 15) {
-                color = "#ff4040ff";
-            } else {
-                color = "#202020ff";
-            }
+        if (timeNow - this.lastFpsUpdateTime >= this.services.settings.debug.fpsMs) {
+            const color = this.fps <= 15 ? "#ff4040ff" : "#202020ff";
 
             $("#fps")
                 .text(`${Math.round(this.fps)}FPS`)
