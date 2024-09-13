@@ -282,12 +282,18 @@ export class Settings extends Service {
             this.sound.eewAny = true;
             this.sound.eewCancel = true;
             this.sound.eqinfo = true;
-
+            this.debug.fpsMs = 1000;
+            this.debug.rayout = false;
+            
             $('#settings_map_auto_move .toggle-switch').addClass('on');
             $('#settings_map_user_point .toggle-switch').addClass('on');
             $('#settings_playSound_eew_any .toggle-switch').addClass('on');
             $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
             $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
+            $('#settingsFpsMsSelect').val('1000');
+            $('#settingsDebugRayout .toggle-switch').removeClass('on');
+
+            this.hideDebugRayout();
 
             localStorage.clear();
             localStorage.setItem("debugLogs", JSON.stringify(debugLogs.debugLogs));
@@ -384,6 +390,34 @@ export class Settings extends Service {
                 localStorage.setItem('settings-debug-rayout', 'false');
                 $('#settingsDebugRayout .toggle-switch').removeClass('on');
                 this.hideDebugRayout();
+            }
+        });
+
+        // ----- FPS ----- //
+        if (localStorage.getItem("settings-fps-ms") == '100') {
+            this.debug.fpsMs = 100;
+            $('#settingsFpsMsSelect').val('100');
+        } else if (localStorage.getItem("settings-fps-ms") == '500') {
+            this.debug.fpsMs = 500;
+            $('#settingsFpsMsSelect').val('500');
+        } else if (localStorage.getItem("settings-fps-ms") == '1000') {
+            this.debug.fpsMs = 1000;
+            $('#settingsFpsMsSelect').val('1000');
+        } else {
+            this.debug.fpsMs = 1000;
+            $('#settingsFpsMsSelect').val('1000');
+        }
+
+        $(document).on('change', '#settingsFpsMsSelect', () => {
+            if ($('#settingsFpsMsSelect').val() == '100') {
+                this.debug.fpsMs = 100;
+                localStorage.setItem('settings-fps-ms', '100');
+            } else if ($('#settingsFpsMsSelect').val() == '500') {
+                this.debug.fpsMs = 500;
+                localStorage.setItem('settings-fps-ms', '500');
+            } else if ($('#settingsFpsMsSelect').val() == '1000') {
+                this.debug.fpsMs = 1000;
+                localStorage.setItem('settings-fps-ms', '1000');
             }
         });
     }
