@@ -357,11 +357,11 @@ export class Settings extends Service {
         });
 
         // ----- Debug Mode -----//
-        $(document).on("click", "#openDebugModeButton", () => {
-            $("#debugModeWindow").addClass("active");
+        $(document).on("click", "#openDebugOptionButton", () => {
+            $("#debugOptionWindow").addClass("active");
         });
-        $(document).on("click", "#debugModeWindow .closeBtn", () => {
-            $("#debugModeWindow").removeClass("active");
+        $(document).on("click", "#debugOptionWindow .closeBtn", () => {
+            $("#debugOptionWindow").removeClass("active");
         });
 
         // ----- Debug Rayout ----- //
