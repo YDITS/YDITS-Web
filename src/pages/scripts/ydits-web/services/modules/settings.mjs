@@ -42,7 +42,8 @@ export class Settings extends Service {
 
 
     debug = {
-        rayout: null
+        rayout: null,
+        fpsMs: 1000
     }
 
 
