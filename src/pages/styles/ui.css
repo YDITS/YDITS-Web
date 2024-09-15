@@ -150,6 +150,7 @@
 
 /* ----- Notifycation ----- */
 #notify {
+    visibility: hidden;
     display: inline-block;
 
     position: fixed;
@@ -171,12 +172,14 @@
 }
 
 #notify.active {
+    visibility: visible;
     right: 2rem;
 }
 
 
 /* ----- EEW Notify ----- */
 #eewNotify {
+    visibility: hidden;
     display: block;
 
     position: fixed;
@@ -200,6 +203,7 @@
 }
 
 #eewNotify.active {
+    visibility: visible;
     left: 2rem;
 }
 
@@ -217,10 +221,12 @@
 
 /* ---------- EEW Warn ---------- */
 #eewWarn {
+    visibility: hidden;
     z-index: 4;
 }
 
 #eewWarn.active {
+    visibility: visible;
     top: calc(env(titlebar-area-height, 2rem) + 1rem);
 }
 
