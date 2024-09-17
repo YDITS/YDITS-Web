@@ -227,8 +227,6 @@ export class YditsWeb extends FirebaseApp {
      * メニュー項目をイニシャライズする。
      */
     initMenu() {
-        $("#eewTitle").text(`メニューウィンドウをイニシャライズしています…`);
-
         $('#menu .version').text(`Ver ${this.version}`);
 
         $(document).on('click', '#menuBtn', () => {
@@ -268,8 +266,6 @@ export class YditsWeb extends FirebaseApp {
      * ライセンス項目をイニシャライズする。
      */
     initLicense() {
-        $("#eewTitle").text(`ライセンスウィンドウをイニシャライズしています…`);
-
         $(document).on('click', '#license .closeBtn', function () {
             $('#license').removeClass('active');
         });
@@ -280,8 +276,6 @@ export class YditsWeb extends FirebaseApp {
      * マップレイヤー切替機能関連をイニシャライズする。
      */
     initMapLayersMenu() {
-        $("#eewTitle").text(`マップレイヤーセレクタをイニシャライズしています…`);
-
         $(document).on('click', '#mapLayersButton', function () {
             $('#mapLayersMenu').toggleClass('active');
             $('#mapLayersButton').toggleClass('active');
