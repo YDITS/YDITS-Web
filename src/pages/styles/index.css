@@ -829,7 +829,6 @@ main {
 }
 
 @media (max-width: 384px) {
-
     html,
     body {
         font-size: 11px;
