@@ -46,6 +46,8 @@ export class Eqinfo extends Service {
      * 初期化する。
      */
     initialize() {
+        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+
         this.settings = this.app.services.settings;
         this.p2pquake = this.app.services.api.p2pquake;
 

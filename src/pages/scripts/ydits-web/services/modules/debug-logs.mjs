@@ -28,6 +28,8 @@ export class DebugLogs extends Service {
             copyright: "Copyright © よね/Yone"
         })
 
+        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+
         const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
 
         if (DEBUG_LOGS_DATA === null) {

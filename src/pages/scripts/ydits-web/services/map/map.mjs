@@ -68,6 +68,8 @@ export class Map extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        $("#eewTitle").text(`${this.name}をコンストラクトしています…`);
+
         this.map = L.map('map', {
             center: this.defaultCenter,
             zoom: this.defaultZoom,
@@ -90,6 +92,8 @@ export class Map extends Service {
      * @returns 
      */
     async initialize() {
+        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+
         if (!this.app.services.geoLocation.isSupport) { return }
 
         this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
@@ -107,8 +111,11 @@ export class Map extends Service {
             fillOpacity: 0.25,
         }).addTo(this.map);
 
+        $("#eewTitle").text(`hrpnsをイニシャライズしています…`);
         await this.showHrpns();
+        $("#eewTitle").text(`typhoonをイニシャライズしています…`);
         await this.showTyphoon();
+        $("#eewTitle").text(`読み込み中…`);
     }
 
 
