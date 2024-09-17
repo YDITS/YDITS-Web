@@ -114,6 +114,8 @@ export class Eew extends Service {
      * 初期化する。
     */
     initialize() {
+        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+
         switch (this.app.services.settings) {
             case "yahoo-kmoni":
                 break;

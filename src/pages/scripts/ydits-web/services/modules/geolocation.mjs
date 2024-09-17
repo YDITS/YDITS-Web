@@ -30,6 +30,7 @@ export class GeoLocation extends Service {
             copyright: "Copyright © よね/Yone"
         })
 
+        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
 
         this.$locationStatus = $("#locationStatus");
         this.$locationArea = $("#locationArea");
@@ -55,6 +56,8 @@ export class GeoLocation extends Service {
     async getLocation() {
         if (!this.isSupport) { return }
 
+        $("#eewTitle").text(`位置情報を取得しています…`);
+
         navigator.geolocation.getCurrentPosition(
             async (position) => await this.onGet(position),
             (error) => this.onError(error),
@@ -67,6 +70,8 @@ export class GeoLocation extends Service {
      * 取得した現在位置情報から市区町村または都道府県を取得する。
      */
     async onGet(position) {
+        $("#eewTitle").text(`現在地を処理しています…`);
+
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
 
@@ -104,7 +109,6 @@ export class GeoLocation extends Service {
             .then(async (data) => {
                 if (data === null || data.address === undefined) { return }
                 if (data.address.country_code !== "jp") { return }
-
 
                 if (data.address.city) {
                     this.city = data.address.city;
@@ -197,6 +201,8 @@ export class GeoLocation extends Service {
     * 取得した市区町村から、気象庁 緊急地震速報/地方予報区 を取得する。
     */
     getJmaForecastArea(city) {
+        $("#eewTitle").text(`現在地の地区予報区を取得しています…`);
+
         fetch("./data/jma_area_forecast_local_e.json")
             .then((response) => response.json())
             .then((data) => {

@@ -237,6 +237,8 @@ export class P2pquake extends Service {
 
 
     initialize() {
+        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+
         fetch(this.urlRestEew)
             .then((response) => response.json())
             .then((data) => {

@@ -59,6 +59,8 @@ export class Settings extends Service {
 
 
     initialize() {
+        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+
         let dmdata = this.app.services.api.dmdata;
         let debugLogs = this.app.services.debugLogs;
         let notify = this.app.services.notify;

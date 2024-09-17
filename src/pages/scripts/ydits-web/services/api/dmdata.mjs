@@ -35,6 +35,8 @@ export class Dmdata extends Service {
      * @returns 
      */
     async initialize() {
+        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+
         let settings = this.app.services.settings;
 
         if (settings.connect.eew !== 'dmdata') { return }
