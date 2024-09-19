@@ -775,7 +775,7 @@ main {
 }
 
 
-@media (max-width: 769px) {
+@media (max-width: 640px) {
     main {
         flex-direction: column;
     }
