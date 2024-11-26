@@ -41,6 +41,11 @@ export class Settings extends Service {
     }
 
 
+    display = {
+        showWarn: null
+    }
+
+
     debug = {
         rayout: null,
         fpsMs: 1000
