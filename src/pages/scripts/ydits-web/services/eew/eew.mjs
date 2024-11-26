@@ -351,7 +351,8 @@ export class Eew extends Service {
      * 警報画面を表示する。
      */
     displayWarn() {
-        if (!this.app.services.geoLocation.isSupport) { return }
+        if (!this.app.services.settings.display.showWarn) { return; }
+        if (!this.app.services.geoLocation.isSupport) { return; }
         this.$warn.addClass("active");
     }
 
