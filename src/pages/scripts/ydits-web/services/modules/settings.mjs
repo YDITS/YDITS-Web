@@ -85,7 +85,7 @@ export class Settings extends Service {
         $(document).on('click', '#settings_list_display', () => {
             $('#settings_display').addClass('active');
         });
-        $(document).on('click', '#settings_list_display .closeBtn', () => {
+        $(document).on('click', '#settings_display .closeBtn', () => {
             $('#settings_display').removeClass('active');
         });
         $(document).on('click', '#settings_list_map', () => {
