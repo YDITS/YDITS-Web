@@ -10,6 +10,10 @@
 
 */
 
+:root {
+    --control-width: 32rem;
+}
+
 main {
     display: flex;
     height: calc(100svh - env(titlebar-area-height, 2rem) - 2px);
@@ -54,7 +58,7 @@ main {
 
 #control {
     display: flex;
-    width: 35rem;
+    width: var(--control-width);
     height: 100%;
     background-color: #303030;
     border-bottom: 2px solid #808080;
@@ -71,7 +75,6 @@ main {
 
 #eewField {
     width: calc(100% - 1em);
-    height: calc(14em - 1em);
     padding: .5em;
     background-color: #404040;
 }
@@ -211,7 +214,7 @@ main {
 
 #mapWrapper {
     position: relative;
-    width: calc(100vw - 35em);
+    width: calc(100vw - var(--control-width));
     height: 100%;
 }
 
@@ -766,6 +769,13 @@ main {
 
 
 @media (max-width: 769px) {
+    :root {
+        --control-width: 30rem;
+    }
+}
+
+
+@media (max-width: 640px) {
     main {
         flex-direction: column;
     }
@@ -829,7 +839,6 @@ main {
 }
 
 @media (max-width: 384px) {
-
     html,
     body {
         font-size: 11px;

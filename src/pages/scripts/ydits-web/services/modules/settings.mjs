@@ -41,6 +41,11 @@ export class Settings extends Service {
     }
 
 
+    display = {
+        showWarn: null
+    }
+
+
     debug = {
         rayout: null,
         fpsMs: 1000
@@ -59,6 +64,8 @@ export class Settings extends Service {
 
 
     initialize() {
+        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+
         let dmdata = this.app.services.api.dmdata;
         let debugLogs = this.app.services.debugLogs;
         let notify = this.app.services.notify;
@@ -74,6 +81,12 @@ export class Settings extends Service {
         });
         $(document).on('click', '#settings_sounds .closeBtn', () => {
             $('#settings_sounds').removeClass('active');
+        });
+        $(document).on('click', '#settings_list_display', () => {
+            $('#settings_display').addClass('active');
+        });
+        $(document).on('click', '#settings_list_display .closeBtn', () => {
+            $('#settings_display').removeClass('active');
         });
         $(document).on('click', '#settings_list_map', () => {
             $('#settings_map').addClass('active');
@@ -212,6 +225,29 @@ export class Settings extends Service {
             }
         })
 
+        // ----- Display ----- //
+        if (localStorage.getItem("settings-display-warn") == 'true') {
+            this.display.showWarn = true;
+            $('#settings_display .toggle-switch').addClass('on');
+        } else if (localStorage.getItem("settings-display-warn") == 'false') {
+            this.display.showWarn = false;
+            $('#settings_display .toggle-switch').removeClass('on');
+        } else {
+            this.display.showWarn = true;
+            $('#settings_display .toggle-switch').addClass('on');
+        }
+
+        $(document).on('click', '#settings_display .toggle-switch', () => {
+            if (this.display.showWarn == false) {
+                this.display.showWarn = true;
+                localStorage.setItem('settings-display-warn', 'true');
+                $('#settings_display .toggle-switch').addClass('on');
+            } else if (this.display.showWarn == true) {
+                this.display.showWarn = false;
+                localStorage.setItem('settings-display-warn', 'false');
+                $('#settings_display .toggle-switch').removeClass('on');
+            }
+        });
 
         // ----- Map ----- //
         if (localStorage.getItem("settings-map-auto-move") == 'true') {
@@ -277,6 +313,7 @@ export class Settings extends Service {
             this.connect.tsunami = "dmdata";
             this.connect.volcanicEruption = "dmdata";
             this.connect.civilProtection = "dmdata";
+            this.display.showWarn = true;
             this.map.autoMove = true;
             this.map.displayUserPoint = true;
             this.sound.eewAny = true;
@@ -285,6 +322,7 @@ export class Settings extends Service {
             this.debug.fpsMs = 1000;
             this.debug.rayout = false;
             
+            $('#settings_display_warn .toggle-switch').addClass('on');
             $('#settings_map_auto_move .toggle-switch').addClass('on');
             $('#settings_map_user_point .toggle-switch').addClass('on');
             $('#settings_playSound_eew_any .toggle-switch').addClass('on');

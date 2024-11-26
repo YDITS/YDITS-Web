@@ -61,16 +61,27 @@ a {
     color: #ffffff;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-weight: unset;
 }
 
-.material-symbols-outlined {
+body .material-symbols-outlined {
     font-variation-settings:
         'FILL' 0,
         'wght' 400,
         'GRAD' 0,
         'opsz' 48;
+    font-size: 1.7rem;
+}
+
+img.material-symbols-outlined {
+    width: 1.7rem;
+    height: 1.7em;
 }
 
 #headerTitle {

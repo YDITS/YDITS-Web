@@ -31,8 +31,6 @@
     <meta name="twitter:site" content="@YDITS_JP">
     <meta name="twitter:card" content="summary">
 
-    <base href="https://webapp.ydits.net/">
-
     <link rel="shortcut icon" type="image/x-icon" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png">
     <link rel="apple-touch-icon-precomposed" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png">
     <link rel="fluid-icon" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png" title="YDITS for Web">
@@ -151,10 +149,10 @@
             </div>
 
             <div id="mapLayersButton" class="map-controler">
-                <img src="./images/layers_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="MapLayersIcon" srcset=""
-                    class="open">
-                <img src="./images/close_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="MapLayersIcon" srcset=""
-                    class="close">
+                <img class="material-symbols-outlined open"
+                    src="./images/layers_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="MapLayersIcon" srcset="">
+                <img class="material-symbols-outlined close"
+                    src="./images/close_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="MapLayersIcon" srcset="">
             </div>
         </div>
 
@@ -289,6 +287,13 @@
                             音声と効果音
                         </li>
 
+                        <li class="list" id="settings_list_display">
+                            <span class="material-symbols-outlined">
+                                monitor
+                            </span>
+                            表示
+                        </li>
+
                         <li class="list" id="settings_list_map">
                             <span class="material-symbols-outlined">
                                 map
@@ -381,6 +386,29 @@
                         <button id="btn_eew_chk_sound">緊急地震速報の音声をテスト再生</button>
                         <button id="btn_earthquake_info_chk_sound">地震情報の音声をテスト再生</button>
                         <button id="btn_eew_cancel_chk_sound">取消報の音声をテスト再生</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="window settings_list" id="settings_display">
+                <div class="titleBar">
+                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <span class="title">表示の設定</span>
+                </div>
+
+                <div class="content">
+                    <div class="list">
+                        <div class="item" id="settings_display_warn">
+                            <label>
+                                <h3>警報画面の表示</h3>
+                                <p>緊急地震速報（警報）の発表時に警告画面を表示します。</p>
+                            </label>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -524,9 +552,7 @@
                             </label>
 
                             <div class="content">
-                                <select
-                                    name="settingsFpsMsSelect"
-                                    id="settingsFpsMsSelect"
+                                <select name="settingsFpsMsSelect" id="settingsFpsMsSelect"
                                     class="select settings__select">
                                     <option value="100">100ms</option>
                                     <option value="500">500ms</option>
@@ -573,7 +599,8 @@
                                 <p>
                                     Licensed under the&NonBreakingSpace;
 
-                                    <a target="_blank" href="https://github.com/YDITS/YDITS-Web/blob/production/LICENSE">
+                                    <a target="_blank"
+                                        href="https://github.com/YDITS/YDITS-Web/blob/production/LICENSE">
                                         Apache License 2.0
 
                                         <span class="material-symbols-outlined open-in-new">
