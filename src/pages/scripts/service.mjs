@@ -22,16 +22,4 @@ export class Service {
         this.author = config.author;
         this.copyright = config.copyright;
     }
-
-
-    get config() {
-        return {
-            app: this.app,
-            name: this.name,
-            description: this.description,
-            version: this.version,
-            author: this.author,
-            copyright: this.copyright
-        }
-    }
 }

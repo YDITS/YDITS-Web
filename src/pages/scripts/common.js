@@ -10,14 +10,12 @@
 
 'use strict';
 
-(function () {
-    function loadCommonElements() {
-        $("header").load("/elements/header.html");
-        $("footer").load("/elements/footer.html");
-    }
+function loadCommonElements() {
+    $("header").load("/elements/header.html");
+    $("footer").load("/elements/footer.html");
+}
 
-
-    $(function () {
-        loadCommonElements();
-    });
-})();
+document.addEventListener(
+    "DOMContentLoaded",
+    () => loadCommonElements()
+);
