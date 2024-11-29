@@ -262,12 +262,11 @@ export class YahooKmoni extends Service {
 
 
     makeKmoniDatetime() {
-        let kmoniDatetime;
-        kmoniDatetime = this.app.services.datetime.gmt;
+        let kmoniDatetime = new Date(this.app.services.datetime.gmt);
 
         if (!(kmoniDatetime instanceof Date)) { return null }
 
-        kmoniDatetime.setSeconds(this.app.services.datetime.seconds - 2);
+        kmoniDatetime.setSeconds(kmoniDatetime.getSeconds() - 2);
         kmoniDatetime =
             `${kmoniDatetime.getFullYear()}` +
             `${this.zeroPadding(kmoniDatetime.getMonth() + 1)}` +

@@ -60,7 +60,6 @@ export class YditsWeb extends FirebaseApp {
 
         try {
             this.register(Datetime);
-            this.services.datetime.gmt = new Date();
             this.services.datetime.update();
             this.register(DebugLogs);
             this.register(Notify);

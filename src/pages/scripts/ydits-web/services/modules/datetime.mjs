@@ -25,7 +25,7 @@ export class Datetime extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
-        this.gmt = new Date();
+        this._gmt = new Date();
     }
 
 
@@ -35,11 +35,6 @@ export class Datetime extends Service {
         }
 
         return this._gmt;
-    }
-
-
-    set gmt(value) {
-        this._gmt = value;
     }
 
 
@@ -57,9 +52,9 @@ export class Datetime extends Service {
     update() {
         try {
             if (navigator.onLine) {
-                this.gmt = this.fetchGmt();
+                this._gmt = this.fetchGmt();
             } else {
-                this.gmt = new Date();
+                this._gmt = new Date();
             }
         } catch (error) {
             this.app.services.debugLogs.add(
