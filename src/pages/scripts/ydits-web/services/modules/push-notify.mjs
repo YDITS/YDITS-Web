@@ -44,8 +44,8 @@ export class PushNotify extends Service {
      * プッシュ通知の権限を要求する。
     */
     requestPermission() {
-            Notification.requestPermission()
-                .then((permission) => this.checkRequestPermission(permission));
+        Notification.requestPermission()
+            .then((permission) => this.checkRequestPermission(permission));
     }
 
 

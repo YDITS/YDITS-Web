@@ -321,7 +321,7 @@ export class Settings extends Service {
             this.sound.eqinfo = true;
             this.debug.fpsMs = 1000;
             this.debug.rayout = false;
-            
+
             $('#settings_display_warn .toggle-switch').addClass('on');
             $('#settings_map_auto_move .toggle-switch').addClass('on');
             $('#settings_map_user_point .toggle-switch').addClass('on');

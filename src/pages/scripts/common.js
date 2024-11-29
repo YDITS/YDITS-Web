@@ -10,14 +10,14 @@
 
 'use strict';
 
-(function() {
+(function () {
     function loadCommonElements() {
         $("header").load("/elements/header.html");
         $("footer").load("/elements/footer.html");
     }
 
 
-    $(function() {
+    $(function () {
         loadCommonElements();
     });
 })();

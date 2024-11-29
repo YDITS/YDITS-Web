@@ -177,7 +177,7 @@ export class YditsWeb extends FirebaseApp {
         const timeNow = performance.now();
         const elapsed = timeNow - this.lastTime;
         this.frames++;
-        
+
         if (elapsed >= this.services.settings.debug.fpsMs) {
             this.fps = Math.round((this.frames * 1000) / elapsed);
             this.frames = 0;
