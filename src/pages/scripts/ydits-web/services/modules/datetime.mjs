@@ -16,19 +16,6 @@ import { Service } from "../../../service.mjs";
  * 現在時刻を管理する。
  */
 export class Datetime extends Service {
-    get fullYear() { return this.gmt.getFullYear(); }
-    get month() { return this.gmt.getMonth() + 1; }
-    get date() { return this.gmt.getDate(); }
-    get hours() { return this.gmt.getHours(); }
-    get minutes() { return this.gmt.getMinutes(); }
-    get seconds() { return this.gmt.getSeconds(); }
-
-
-    gmtFetchError(error) {
-        return new Error(`Failed to get the GMT time: ${error}`);
-    }
-
-
     constructor(app) {
         super(app, {
             name: "datetime",
@@ -37,21 +24,49 @@ export class Datetime extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+
+        this.gmt = new Date();
     }
 
 
+    get gmt() {
+        if (!this._gmt) {
+            return new Date();
+        }
+
+        return this._gmt;
+    }
+
+
+    set gmt(value) {
+        this._gmt = value;
+    }
+
+
+    get fullYear() { return this.gmt.getFullYear(); }
+    get month() { return this.gmt.getMonth() + 1; }
+    get date() { return this.gmt.getDate(); }
+    get hours() { return this.gmt.getHours(); }
+    get minutes() { return this.gmt.getMinutes(); }
+    get seconds() { return this.gmt.getSeconds(); }
+
+
     /**
-     * 現在時刻を取得する。
+     * 現在時刻を更新する。
      */
     update() {
         try {
             if (navigator.onLine) {
-                this.getGmt();
+                this.gmt = this.fetchGmt();
             } else {
                 this.gmt = new Date();
             }
         } catch (error) {
-            console.error(error);
+            this.app.services.debugLogs.add(
+                "error",
+                `[${this.name}]`,
+                `Failed to update datetime: ${error}`,
+            );
         }
     }
 
@@ -59,7 +74,9 @@ export class Datetime extends Service {
     /**
      * サーバーヘッダーから現在時刻を取得する。
      */
-    getGmt() {
+    fetchGmt() {
+        let time = null;
+
         axios.head(
             window.location.href,
             {
@@ -67,10 +84,18 @@ export class Datetime extends Service {
             }
         )
             .then((response) => {
-                this.gmt = new Date(response.headers.date);
+                time = new Date(response.headers.date);
             })
             .catch((error) => {
-                this.gmt = new Date();
+                this.app.services.debugLogs.add(
+                    "error",
+                    `[${this.name}]`,
+                    `Failed to fetch gmt: ${error}`,
+                );
+
+                time = new Date();
             });
+
+        return time;
     }
 }
