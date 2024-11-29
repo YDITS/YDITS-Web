@@ -1,6 +1,6 @@
 # YDITS for Web - NOTICE
 
-This repository contains some or all of the following third-party source code
+This repository contains some or all of the following third-party source code.
 
 ---
 
