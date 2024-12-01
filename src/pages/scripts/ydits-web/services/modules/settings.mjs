@@ -410,11 +410,9 @@ export class Settings extends Service {
         } else if (localStorage.getItem("settings-debug-rayout") == 'false') {
             this.debug.rayout = false;
             $('#settingsDebugRayout .toggle-switch').removeClass('on');
-            this.hideDebugRayout();
         } else {
             this.debug.rayout = false;
             $('#settingsDebugRayout .toggle-switch').removeClass('on');
-            this.hideDebugRayout();
         }
 
         $(document).on('click', '#settingsDebugRayout .toggle-switch', () => {
