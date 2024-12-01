@@ -3,7 +3,7 @@
     "name": "YDITS for Web",
     "short_name": "YDITS-Web",
     "description": "『YDITS for Web』は防災情報をすぐに確認できるWebアプリケーションです。",
-    "version": "3.17.1.0",
+    "version": "3.17.2.0",
     "minimum_chrome_version": "116",
     "scope": "/",
     "start_url": "./index.html",
