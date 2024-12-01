@@ -456,6 +456,32 @@ export class Settings extends Service {
                 localStorage.setItem('settings-fps-ms', '1000');
             }
         });
+
+        // ----- Write Debug Logs to Clipboard ----- //
+        $(document).on(
+            "click",
+            "#writeDebugLogsToClipboardButton",
+            () => this.writeDebugLogsToClipboard(
+                () => {
+                    $("#writeDebugLogsToClipboardButton").text("✅ クリップボードにコピーされました");
+                    setTimeout(
+                        () => {
+                            $("#writeDebugLogsToClipboardButton").text("ログをクリップボードにコピー");
+                        },
+                        3000
+                    );
+                },
+                () => {
+                    $("#writeDebugLogsToClipboardButton").text("❌ クリップボードにコピーできませんでした");
+                    setTimeout(
+                        () => {
+                            $("#writeDebugLogsToClipboardButton").text("ログをクリップボードにコピー");
+                        },
+                        3000
+                    );
+                }
+            )
+        )
     }
 
 
@@ -470,5 +496,24 @@ export class Settings extends Service {
         $("*").css({
             "outline": "unset"
         });
+    }
+
+
+    writeDebugLogsToClipboard(onCompleted, onError) {
+        if (!navigator.clipboard) {
+            onError();
+            return;
+        }
+
+        try {
+            navigator.clipboard.writeText(JSON.stringify(this.app.services.debugLogs.debugLogs));
+        } catch (error) {
+            onError();
+            return;
+        }
+
+        if (onCompleted) {
+            onCompleted();
+        }
     }
 }
