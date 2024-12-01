@@ -321,7 +321,7 @@ export class Settings extends Service {
             this.sound.eqinfo = true;
             this.debug.fpsMs = 1000;
             this.debug.rayout = false;
-            
+
             $('#settings_display_warn .toggle-switch').addClass('on');
             $('#settings_map_auto_move .toggle-switch').addClass('on');
             $('#settings_map_user_point .toggle-switch').addClass('on');
@@ -410,11 +410,9 @@ export class Settings extends Service {
         } else if (localStorage.getItem("settings-debug-rayout") == 'false') {
             this.debug.rayout = false;
             $('#settingsDebugRayout .toggle-switch').removeClass('on');
-            this.hideDebugRayout();
         } else {
             this.debug.rayout = false;
             $('#settingsDebugRayout .toggle-switch').removeClass('on');
-            this.hideDebugRayout();
         }
 
         $(document).on('click', '#settingsDebugRayout .toggle-switch', () => {
@@ -458,6 +456,32 @@ export class Settings extends Service {
                 localStorage.setItem('settings-fps-ms', '1000');
             }
         });
+
+        // ----- Write Debug Logs to Clipboard ----- //
+        $(document).on(
+            "click",
+            "#writeDebugLogsToClipboardButton",
+            () => this.writeDebugLogsToClipboard(
+                () => {
+                    $("#writeDebugLogsToClipboardButton").text("✅ クリップボードにコピーされました");
+                    setTimeout(
+                        () => {
+                            $("#writeDebugLogsToClipboardButton").text("ログをクリップボードにコピー");
+                        },
+                        3000
+                    );
+                },
+                () => {
+                    $("#writeDebugLogsToClipboardButton").text("❌ クリップボードにコピーできませんでした");
+                    setTimeout(
+                        () => {
+                            $("#writeDebugLogsToClipboardButton").text("ログをクリップボードにコピー");
+                        },
+                        3000
+                    );
+                }
+            )
+        )
     }
 
 
@@ -472,5 +496,24 @@ export class Settings extends Service {
         $("*").css({
             "outline": "unset"
         });
+    }
+
+
+    writeDebugLogsToClipboard(onCompleted, onError) {
+        if (!navigator.clipboard) {
+            onError();
+            return;
+        }
+
+        try {
+            navigator.clipboard.writeText(JSON.stringify(this.app.services.debugLogs.debugLogs));
+        } catch (error) {
+            onError();
+            return;
+        }
+
+        if (onCompleted) {
+            onCompleted();
+        }
     }
 }

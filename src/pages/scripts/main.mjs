@@ -12,6 +12,4 @@
 
 import { YditsWeb } from "./ydits-web/ydits-web.mjs";
 
-(function () {
-    new YditsWeb();
-})();
+new YditsWeb();
