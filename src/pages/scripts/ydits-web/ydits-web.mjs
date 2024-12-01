@@ -26,17 +26,6 @@ import { Settings } from "./services/modules/settings.mjs";
 import { Map } from "./services/map/map.mjs";
 
 export class YditsWeb extends FirebaseApp {
-    get JMA_DATA_FEED_GET_INTERVAL() {
-        return (1000 * 60);
-    }
-
-
-    fps = -1;
-    frame = 0;
-    lastFpsUpdateTime = -1;
-    lastTime = -1;
-
-
     constructor() {
         super({
             name: "YDITS for Web",
@@ -63,73 +52,139 @@ export class YditsWeb extends FirebaseApp {
             this.services.datetime.update();
             this.register(DebugLogs);
             this.register(Notify);
+        } catch (error) {
+            this.on_unhandled_error(error);
+        }
+
+        try {
+            this.register(Eew);
+            this.register(Eqinfo);
+            this.register(JmaDataFeed);
+            this.register(ServiceWorker);
+            this.register(Sounds);
+            this.register(Api);
+            this.register(Settings);
+            this.register(Map);
 
             try {
-                this.register(Eew);
-                this.register(Eqinfo);
-                this.register(JmaDataFeed);
-                this.register(ServiceWorker);
-                this.register(Sounds);
-                this.register(Api);
-                this.register(Settings);
-                this.register(Map);
-
-                try {
-                    this.register(PushNotify);
-                } catch (error) {
-                    // Without Webkit
-                    console.error(error);
-                    this.services.debugLogs.add("error", `[${this.name}]`, error);
-                }
-
-                this.register(GeoLocation);
-                this.initMenu();
-                this.initLicense();
-                this.initMapLayersMenu();
-
-                window.addEventListener("online", () => {
-                    this.services.debugLogs.add("network", `[${this.name}]`, "Reconnected to the network.");
-                    this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
-                    setTimeout(() => {
-                        this.services.eqinfo.reconnect();
-                        this.services.map.updateHrpns();
-                    }, 3000)
-                });
-
-                window.addEventListener("offline", () => {
-                    $('#statusLamp').css({ 'background-color': '#ff4040' });
-                    this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
-                    this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
-                    this.services.eqinfo.disconnect();
-                });
-
-                $("#clock").text("----/--/-- --:--:--");
+                this.register(PushNotify);
             } catch (error) {
+                // Without Webkit
                 console.error(error);
-                this.services.debugLogs.add("info", `[${this.name}]`, `Failed Application initialization: ${error}`);
-
-                this.services.notify.show(
-                    "error",
-                    "エラー",
-                    `
-                        イニシャライズ中にエラーが発生しました。<br>
-                        <code>${error}</code>
-                    `
-                );
-
-                this.win(
-                    "error",
-                    "errorInitialize",
-                    "エラー",
-                    `
-                        イニシャライズ中にエラーが発生しました。<br>
-                        <code>${error}</code>
-                    `
-                );
+                this.services.debugLogs.add("error", `[${this.name}]`, error);
             }
+
+            this.register(GeoLocation);
+            this.initMenu();
+            this.initLicense();
+            this.initMapLayersMenu();
+
+            window.addEventListener("online", () => this.onNetworkConnected());
+            window.addEventListener("offline", () => this.onNetworkDisconnected());
+
+            $("#clock").text("----/--/-- --:--:--");
         } catch (error) {
-            console.error(`[ERROR] An unhandled exception has occurred:\n    ${error}`);
+            this.on_initialize_error(error);
         }
+    }
+
+
+    /**
+     * JMA防災情報フィードの取得頻度 (ms)
+     */
+    jma_data_feed_fetch_interval = 1000 * 60;
+
+
+    /**
+     * アニメーションメインループのFPS値
+     */
+    fps = -1;
+
+
+    /**
+     * 最後にFPS値を更新したDate
+     */
+    lastFpsUpdateTime = -1;
+
+
+    /**
+     * 最後に計測した `performance.now()` 値
+     */
+    lastTime = -1;
+
+
+    /**
+     * ハンドルされない例外の処理。
+     */
+    on_unhandled_error(error) {
+        new Window({
+            type: Window.types.error,
+            id: "errorUnhandled",
+            create: true,
+            title: "エラー",
+            content: `
+                ハンドルされない例外が発生しました。<br>
+                <code>${error}</code>
+            `
+        });
+    }
+
+
+    /**
+     * イニシャライズ中の例外処理。
+     */
+    on_initialize_error(error) {
+        console.error(error);
+
+        this.services.debugLogs.add(
+            "info",
+            `[${this.name}]`,
+            `Failed Application initialization: ${error}`
+        );
+
+        this.services.notify.show(
+            "error",
+            "エラー",
+            `
+                イニシャライズ中にエラーが発生しました。<br>
+                <code>${error}</code>
+            `
+        );
+
+        new Window({
+            type: Window.types.error,
+            id: "errorInitialize",
+            create: true,
+            title: "エラー",
+            content: `
+                イニシャライズ中にエラーが発生しました。<br>
+                <code>${error}</code>
+            `
+        });
+    }
+
+
+    /**
+     * ネットワーク接続時の処理
+     */
+    onNetworkConnected() {
+        this.services.debugLogs.add("network", `[${this.name}]`, "Reconnected to the network.");
+        this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
+        setTimeout(() => {
+            this.services.eqinfo.reconnect();
+            this.services.map.updateHrpns();
+        }, 3000);
+    }
+
+
+    /**
+     * ネットワーク切断時の処理
+     */
+    onNetworkDisconnected() {
+        $('#statusLamp').css({ 'background-color': '#ff4040' });
+        this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
+        this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
+        this.services.eqinfo.disconnect();
     }
 
 
@@ -143,7 +198,7 @@ export class YditsWeb extends FirebaseApp {
         setInterval(() => this.ntp(), 1000);
         setInterval(() => this.eew(), 1000);
         setInterval(() => this.hrpns(), 1000 * 30);
-        setInterval(() => this.jmaDataFeed(), this.JMA_DATA_FEED_GET_INTERVAL);
+        setInterval(() => this.jmaDataFeed(), this.jma_data_feed_fetch_interval);
         requestAnimationFrame(() => this.mainloop());
     }
 
@@ -210,13 +265,19 @@ export class YditsWeb extends FirebaseApp {
         this.services.datetime.update();
         this.clock(this.services.datetime);
     }
+
+
     eew() {
         this.services.eew.updateWarn();
         this.services.api.yahooKmoni.get();
     }
+
+
     hrpns() {
         this.services.map.updateHrpns();
     }
+
+
     jmaDataFeed() {
         this.services.jmaDataFeed.update();
     }
@@ -312,48 +373,76 @@ export class YditsWeb extends FirebaseApp {
         value = value.slice(-2);
         return value;
     }
+}
 
 
-    /**
-     * ポップアップウィンドウを生成する。
-     */
-    win(type, id, title, content) {
-        let color = null;
+/**
+ * ポップアップウィンドウを作成する。
+ * @param {Window.types} type - Window.types: ウィンドウのタイプ
+ * @param {string} id - 使用する共通ウィンドウID
+ * @param {string} title - ウィンドウのタイトル
+ * @param {string} content - ウィンドウの内容
+ */
+class Window {
+    constructor(options) {
+        this.type = options.type || null;
+        this.id = `win_${options.id}` || null;
+        this.title = options.title || "";
+        this.content = options.content || "";
 
-        switch (type) {
-            case "message":
-                color = "#404040ff";
-                break;
+        this.color = this.windowTypeToColor[this.type] || this.windowTypeToColor.default;
 
-            case "error":
-                color = "#ff5050ff";
-                break;
+        const create = options.create || null;
 
-            default:
-                color = "#404040ff";
-                break;
+        if (create) {
+            this.create()
         }
+    }
 
-        $('body')
-            .append(`
-                <dialog class="dialog" id=${id}>
+
+    static types = {
+        message: "message",
+        error: "error",
+    }
+
+
+    windowTypeToColor = {
+        message: "#404040ff",
+        error: "#ff5050ff",
+        default: "#404040ff"
+    }
+
+
+    create() {
+        const newWindowElement = `
+                <dialog class="dialog" id=${this.id}>
                     <div class="navBar">
-                        <h2 class="title">${title}</h2>
+                        <h2 class="title">${this.title}</h2>
                         <span class="close material-symbols-outlined">close</span>
                     </div>
     
                     <div class="content">
-                        ${content}
+                        ${this.content}
                     </div>
                 </dialog>
-            `);
+            `
 
-        $(document).on('click', `#${id}>.navBar>.close`, (event) => {
-            $(`#${id}`).remove();
+        $('body').append(newWindowElement);
+
+        $(`#${this.id}>.navBar`).css({
+            "background-color": this.color
         });
 
-        $(`#${id}>.navBar`).css({
-            "background-color": color
-        });
+        $(document).on(
+            'click',
+            `#${this.id}>.navBar>.close`,
+            (event) => this.close()
+        );
+
+    }
+
+
+    close() {
+        $(`#${this.id}`).remove();
     }
 }
