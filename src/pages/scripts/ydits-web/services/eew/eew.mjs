@@ -114,7 +114,7 @@ export class Eew extends Service {
      * 初期化する。
     */
     initialize() {
-        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         switch (this.app.services.settings) {
             case "yahoo-kmoni":
