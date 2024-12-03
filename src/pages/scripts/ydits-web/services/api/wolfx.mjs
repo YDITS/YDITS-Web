@@ -118,7 +118,7 @@ export class Wolfx extends Service {
             `Wolfx JMA EEW WebSocket has updated: type: ${data.type}`
         );
 
-        if (data.type === "jma_eew") return;
+        if (data.type !== "jma_eew") return;
 
         this.jmaEewData = data;
     }
