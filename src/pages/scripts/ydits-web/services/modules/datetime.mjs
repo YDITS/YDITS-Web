@@ -52,7 +52,7 @@ export class Datetime extends Service {
     update() {
         try {
             if (navigator.onLine) {
-                this._gmt = this.fetchGmt();
+                this.fetchGmt();
             } else {
                 this._gmt = new Date();
             }
