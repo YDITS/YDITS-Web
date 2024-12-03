@@ -172,6 +172,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
         setTimeout(() => {
             this.services.eqinfo.reconnect();
+            this.services.api.wolfx.connect();
             this.services.map.updateHrpns();
         }, 3000);
     }
@@ -185,6 +186,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
         this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
         this.services.eqinfo.disconnect();
+        this.services.api.wolfx.disconnect();
     }
 
 

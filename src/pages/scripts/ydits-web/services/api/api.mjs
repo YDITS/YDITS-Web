@@ -14,6 +14,7 @@ import { Service } from "../../../service.mjs";
 import { YahooKmoni } from "./yahoo-kmoni.mjs";
 import { P2pquake } from "./p2pquake.mjs";
 import { Dmdata } from "./dmdata.mjs";
+import { Wolfx } from "./wolfx.mjs";
 
 /**
  * APIを扱う。
@@ -31,5 +32,6 @@ export class Api extends Service {
         this.yahooKmoni = new YahooKmoni(app);
         this.p2pquake = new P2pquake(app);
         this.dmdata = new Dmdata(app);
+        this.wolfx = new Wolfx(app);
     }
 }
