@@ -35,7 +35,7 @@ export class Dmdata extends Service {
      * @returns 
      */
     async initialize() {
-        this.app.notify.show("message", "", `${this.name}をイニシャライズしています…`);
+        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         let settings = this.app.services.settings;
 
