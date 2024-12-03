@@ -28,7 +28,7 @@ export class DebugLogs extends Service {
             copyright: "Copyright © よね/Yone"
         })
 
-        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
 
