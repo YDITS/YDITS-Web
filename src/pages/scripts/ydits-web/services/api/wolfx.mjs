@@ -140,8 +140,6 @@ export class Wolfx extends Service {
      * 表示更新
      */
     update() {
-        if (this.jmaEewData.type !== "jma_eew") return;
-
         const nowTime = this.app.services.datetime.gmt;
         const isEew = this.jmaEewData.isEew(nowTime);
 
