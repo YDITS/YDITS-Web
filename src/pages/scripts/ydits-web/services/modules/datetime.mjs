@@ -70,8 +70,6 @@ export class Datetime extends Service {
      * サーバーヘッダーから現在時刻を取得する。
      */
     fetchGmt() {
-        let time = null;
-
         axios.head(
             window.location.href,
             {
@@ -79,7 +77,7 @@ export class Datetime extends Service {
             }
         )
             .then((response) => {
-                time = new Date(response.headers.date);
+                this._gmt = new Date(response.headers.date);
             })
             .catch((error) => {
                 this.app.services.debugLogs.add(
@@ -88,9 +86,7 @@ export class Datetime extends Service {
                     `Failed to fetch gmt: ${error}`,
                 );
 
-                time = new Date();
+                this._gmt = new Date();
             });
-
-        return time;
     }
 }
