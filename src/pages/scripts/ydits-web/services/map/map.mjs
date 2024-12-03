@@ -68,7 +68,7 @@ export class Map extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
-        $("#eewTitle").text(`${this.name}をコンストラクトしています…`);
+        this.app.services.notify.show("message", "", `${this.name}をコンストラクトしています…`);
 
         this.map = L.map('map', {
             center: this.defaultCenter,
@@ -92,7 +92,7 @@ export class Map extends Service {
      * @returns 
      */
     async initialize() {
-        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         if (!this.app.services.geoLocation.isSupport) { return }
 
@@ -111,11 +111,10 @@ export class Map extends Service {
             fillOpacity: 0.25,
         }).addTo(this.map);
 
-        $("#eewTitle").text(`hrpnsをイニシャライズしています…`);
+        this.app.services.notify.show("message", "", `hrpnsをイニシャライズしています…`);
         await this.showHrpns();
-        $("#eewTitle").text(`typhoonをイニシャライズしています…`);
+        this.app.services.notify.show("message", "", `typhoonをイニシャライズしています…`);
         await this.showTyphoon();
-        $("#eewTitle").text(`読み込み中…`);
     }
 
 
