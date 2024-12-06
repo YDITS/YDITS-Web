@@ -354,7 +354,7 @@ export class Eew extends Service {
     displayWarn() {
         if (!this.app.services.settings.display.showWarn) { return; }
         if (!this.app.services.geoLocation.isSupport) { return; }
-        this.warnElement.addClass("active");
+        this.warnElement.classList.add("active");
     }
 
 
@@ -362,7 +362,7 @@ export class Eew extends Service {
      * 警報画面を非表示する。
      */
     hideWarn() {
-        this.warnElement.removeClass("active");
+        this.warnElement.classList.remove("active");
     }
 
 

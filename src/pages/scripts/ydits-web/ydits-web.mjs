@@ -185,7 +185,7 @@ export class YditsWeb extends FirebaseApp {
      * ネットワーク切断時の処理
      */
     onNetworkDisconnected() {
-        $('#statusLamp').css({ 'background-color': '#ff4040' });
+        document.getElementById("statusLamp").style.backgroundColor = "ff4040";
         this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
         this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
         this.services.api.wolfx.disconnect();
