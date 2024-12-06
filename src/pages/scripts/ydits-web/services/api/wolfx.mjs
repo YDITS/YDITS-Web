@@ -201,7 +201,7 @@ export class Wolfx extends Service {
         this.eewRegionElement.textContent = this.jmaEewData.hypocenter;
         this.eewOriginTimeElement.textContent = `発生日時: ${this.jmaEewData.originTime}`;
         this.eewMagnitudeElement.textContent = `規模 ${this.jmaEewData.magnitudeText}`;
-        this.eewDepthElement.textContent `深さ ${this.jmaEewData.depthText}`;
+        this.eewDepthElement.textContent = `深さ ${this.jmaEewData.depthText}`;
         this.eewFieldElement.style.backgroundColor = bgcolor;
         this.eewFieldElement.style.color = fontColor;
 
