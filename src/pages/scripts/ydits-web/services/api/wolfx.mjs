@@ -43,6 +43,9 @@ export class Wolfx extends Service {
     lastSerial = -1;
 
 
+    /**
+     * JMA EEW をRESTから取得する。
+     */
     async fetch() {
         const rest = new WolfxJmaEewRest();
         this.jmaEewData = await rest.fetch();
@@ -50,6 +53,9 @@ export class Wolfx extends Service {
     }
 
 
+    /**
+     * JMA EEW Socket に接続する。
+     */
     connect() {
         try {
             this.jmaEewSocket = new WolfxJmaEewSocket(
@@ -67,6 +73,9 @@ export class Wolfx extends Service {
     }
 
 
+    /**
+     * JMA EEW Socket から切断する。
+     */
     disconnect() {
         try {
             this.jmaEewSocket.disconnect();
@@ -77,7 +86,7 @@ export class Wolfx extends Service {
 
 
     /**
-     * JMA EEW Socket オープン時の処理
+     * JMA EEW Socket オープン時の処理。
      */
     onJmaEewSocketOpened(isRetried) {
         this.app.services.debugLogs.add(
@@ -97,7 +106,7 @@ export class Wolfx extends Service {
 
 
     /**
-     * JMA EEW Socket クローズ時の処理
+     * JMA EEW Socket クローズ時の処理。
      */
     onJmaEewSocketClosed() {
         this.app.services.debugLogs.add(
@@ -109,7 +118,7 @@ export class Wolfx extends Service {
 
 
     /**
-    * JMA EEW Socket 情報更新時の処理
+    * JMA EEW Socket 情報更新時の処理。
     */
     onJmaEewSocketUpdated(data) {
         this.app.services.debugLogs.add(
@@ -125,7 +134,7 @@ export class Wolfx extends Service {
 
 
     /**
-     * JMA EEW Socket エラー時の処理
+     * JMA EEW Socket エラー時の処理。
      */
     onJmaEewSocketError() {
         this.app.services.debugLogs.add(
@@ -137,7 +146,7 @@ export class Wolfx extends Service {
 
 
     /**
-     * 表示更新
+     * 表示更新。
      */
     update() {
         const nowTime = this.app.services.datetime.gmt;
@@ -152,7 +161,7 @@ export class Wolfx extends Service {
 
 
     /**
-     * EEW発表時
+     * EEW発表時。
      */
     onEew() {
         const scale = Intensity.wolfxToYdits[this.jmaEewData.maxIntensity];
@@ -184,7 +193,7 @@ export class Wolfx extends Service {
 
 
     /**
-     * EEW未発表時
+     * EEW未発表時。
      */
     onNotEew() {
         $('#eewTitle').text(`緊急地震速報は発表されていません`);
@@ -283,12 +292,6 @@ export class Wolfx extends Service {
                     {
                         body: "先程の緊急地震速報は取り消されました。"
                     }
-                )
-
-                this.notify.show(
-                    "message",
-                    `緊急地震速報 (取消)`,
-                    `先程の緊急地震速報は取り消されました。`
                 );
             } else {
                 if (
@@ -320,7 +323,7 @@ export class WolfxJmaEewRest {
 
 
     /**
-     * エンドポイントから情報を取得します。
+     * エンドポイントから情報を取得する。
      * @returns {WolfxJmaEewData} - 取得した Wolfx JMA EEW のデータクラス。
      */
     async fetch() {
@@ -391,8 +394,7 @@ export class WolfxJmaEewSocket {
 
 
     /**
-     * エンドポイントへWebSocket接続を開始します。
-     * @param {Object} callbacks - 各コールバック関数のオブジェクト。
+     * エンドポイントへWebSocket接続を開始する。
      */
     async connect() {
         try {
@@ -435,6 +437,9 @@ export class WolfxJmaEewSocket {
     }
 
 
+    /**
+     * WebSocket接続を切断する。
+     */
     disconnect() {
         this.socket.close();
     }
@@ -575,6 +580,12 @@ export class WolfxJmaEewData {
     }
 
 
+    /**
+     * 渡された日時において、緊急地震速報が有効かどうかを検証し、結果を返す。
+     * 発表から3分以上経過している場合は無効とする。
+     * @param {Datetime} nowTime - 検証対象の Datetime クラス。
+     * @return {bool} - 緊急地震速報が有効かどうか。
+     */
     isEew(nowTime) {
         const _nowTime = nowTime.getTime();
         const announcedTime = this.announcedTime.getTime();
