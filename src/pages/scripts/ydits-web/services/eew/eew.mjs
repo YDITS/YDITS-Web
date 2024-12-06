@@ -114,7 +114,7 @@ export class Eew extends Service {
      * 初期化する。
     */
     initialize() {
-        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         switch (this.app.services.settings) {
             case "yahoo-kmoni":
@@ -477,12 +477,6 @@ export class Eew extends Service {
                     {
                         body: "先程の緊急地震速報は取り消されました。"
                     }
-                )
-
-                this.notify.show(
-                    "message",
-                    `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
-                    `先程の緊急地震速報は取り消されました。`
                 );
             } else {
                 this.app.services.pushNotify.notify(

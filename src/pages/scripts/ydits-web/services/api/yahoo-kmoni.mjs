@@ -201,16 +201,16 @@ export class YahooKmoni extends Service {
                                 this.app.services.eew.reports[DATA.reportId].psWave.pRadius = data.psWave.items[0].pRadius;
                                 this.app.services.eew.reports[DATA.reportId].psWave.sRadius = data.psWave.items[0].sRadius;
 
-                                this.app.services.eew.updateField();
-                                this.app.services.eew.sound();
-                                this.app.services.eew.push();
+                                // this.app.services.eew.updateField();
+                                // this.app.services.eew.sound();
+                                // this.app.services.eew.push();
                             } catch (error) {
                                 console.error(error);
                             }
                         } else {
                             this.app.services.eew.isEew = false;
                             this.isEew = false;
-                            this.app.services.eew.updateField();
+                            // this.app.services.eew.updateField();
                         }
 
                         $('#statusLamp').css({ 'background-color': '#40ff40' });

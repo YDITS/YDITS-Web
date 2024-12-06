@@ -171,6 +171,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.debugLogs.add("network", `[${this.name}]`, "Reconnected to the network.");
         this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
         setTimeout(() => {
+            this.services.api.wolfx.connect();
             this.services.eqinfo.reconnect();
             this.services.map.updateHrpns();
         }, 3000);
@@ -184,6 +185,7 @@ export class YditsWeb extends FirebaseApp {
         $('#statusLamp').css({ 'background-color': '#ff4040' });
         this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
         this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
+        this.services.api.wolfx.disconnect();
         this.services.eqinfo.disconnect();
     }
 
@@ -196,6 +198,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.debugLogs.add("info", `[${this.name}]`, "Application initialized.");
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
         setInterval(() => this.ntp(), 1000);
+        setInterval(() => this.clock(this.services.datetime), 333);
         setInterval(() => this.eew(), 1000);
         setInterval(() => this.hrpns(), 1000 * 30);
         setInterval(() => this.jmaDataFeed(), this.jma_data_feed_fetch_interval);
@@ -263,7 +266,6 @@ export class YditsWeb extends FirebaseApp {
      */
     ntp() {
         this.services.datetime.update();
-        this.clock(this.services.datetime);
     }
 
 

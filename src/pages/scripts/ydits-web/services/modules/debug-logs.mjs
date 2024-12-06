@@ -26,9 +26,7 @@ export class DebugLogs extends Service {
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
-        })
-
-        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+        });
 
         const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
 

@@ -237,7 +237,7 @@ export class P2pquake extends Service {
 
 
     initialize() {
-        $("#eewTitle").text(`${this.name}をイニシャライズしています…`);
+        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         fetch(this.urlRestEew)
             .then((response) => response.json())
@@ -495,7 +495,9 @@ export class P2pquake extends Service {
             "Successfully disconnected from api.p2pquake.net and WebSocket closed."
         );
 
-        if (!this.isError && this.socketRetryCount < 3) {
+        if (!navigator.onLine) { return; }
+
+        if (navigator.onLine && !this.isError && this.socketRetryCount < 3) {
             this.app.services.notify.show(
                 "error",
                 "WebSocket切断",
