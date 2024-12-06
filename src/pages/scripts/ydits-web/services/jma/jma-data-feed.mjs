@@ -28,6 +28,8 @@ export class JmaDataFeed extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        return; // Developing
+
         $(document).on('click', '#jmaDataFeed .closeBtn', function () {
             $('#jmaDataFeed').removeClass('active');
         });

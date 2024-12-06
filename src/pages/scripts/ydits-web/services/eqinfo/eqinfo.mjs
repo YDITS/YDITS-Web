@@ -48,6 +48,8 @@ export class Eqinfo extends Service {
     initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
+        this.eqHistoryFieldElement = document.getElementById("eqHistoryField");
+
         this.settings = this.app.services.settings;
         this.p2pquake = this.app.services.api.p2pquake;
 
@@ -97,9 +99,9 @@ export class Eqinfo extends Service {
         `;
 
         if (isFirst) {
-            $('#eqHistoryField').append(html);
+            document.getElementById('eqHistoryField').insertAdjacentHTML('beforeend', html);
         } else {
-            $('#eqHistoryField').prepend(html);
+            document.getElementById('eqHistoryField').insertAdjacentHTML("afterend", html);
         }
 
         let bgcolor;
@@ -113,10 +115,8 @@ export class Eqinfo extends Service {
             color = "#ffffffff";
         }
 
-        $(`#eqHistoryField>.list-${num}>.maxScale`).css({
-            'background-color': bgcolor,
-            'color': color
-        });
+        document.querySelector(`#eqHistoryField>.list-${num}>.maxScale`).style.backgroundColor = bgcolor;
+        document.querySelector(`#eqHistoryField>.list-${num}>.maxScale`).style.color = color;
     }
 
 

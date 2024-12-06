@@ -29,13 +29,13 @@
 /* ----- Dialog ----- */
 .dialog {
     position: fixed;
-    top: calc(50vh - 12rem);
+    top: calc(50vh - 14rem);
     left: 0;
     display: block;
 
     margin: auto;
-    width: 28rem;
-    height: 24rem;
+    width: 32rem;
+    height: 28rem;
     border: 0;
     border-radius: .8rem;
     box-shadow: 0 0 2px 2px #00000040;
@@ -95,6 +95,7 @@
 .dialog .content {
     padding: 1rem;
     overflow: auto;
+    font-size: 12px;
 }
 
 @media (max-width: 769px) {

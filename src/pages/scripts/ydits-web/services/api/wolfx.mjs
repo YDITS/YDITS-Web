@@ -28,6 +28,8 @@ export class Wolfx extends Service {
             copyright: "Copyright © よね/Yone",
         });
 
+        this.initializeElements();
+
         this.fetch();
         this.connect();
 
@@ -41,6 +43,20 @@ export class Wolfx extends Service {
     lastEventId = -1;
     lastMaxIntensity = "";
     lastSerial = -1;
+
+
+    /**
+     * Elements をイニシャライズする。
+     */
+    initializeElements() {
+        this.eewFieldElement = document.getElementById("eewField");
+        this.eewTitleElement = document.getElementById("eewTitle");
+        this.eewCalcElement = document.getElementById("eewCalc");
+        this.eewRegionElement = document.getElementById("eewRegion");
+        this.eewOriginTimeElement = document.getElementById("eewOrigin_time");
+        this.eewMagnitudeElement = document.getElementById("eewMagnitude");
+        this.eewDepthElement = document.getElementById("eewDepth");
+    }
 
 
     /**
@@ -180,17 +196,14 @@ export class Wolfx extends Service {
 
         this.finalText = this.jmaEewData.isFinal ? "最終" : "";
 
-        $('#eewTitle').text(`緊急地震速報 ${this.jmaEewData.serialText} (${this.finalText})`);
-        $('#eewCalc').text(this.jmaEewData.maxIntensity);
-        $('#eewRegion').text(this.jmaEewData.hypocenter);
-        $('#eewOrigin_time').text(`発生日時: ${this.jmaEewData.originTime}`);
-        $('#eewMagnitude').text(`規模 ${this.jmaEewData.magnitudeText}`);
-        $('#eewDepth').text(`深さ ${this.jmaEewData.depthText}`);
-
-        $('#eewField').css({
-            'background-color': bgcolor,
-            'color': fontColor
-        })
+        this.eewTitleElement.textContent = `緊急地震速報 ${this.jmaEewData.serialText} (${this.finalText})`;
+        this.eewCalcElement.textContent = this.jmaEewData.maxIntensity;
+        this.eewRegionElement.textContent = this.jmaEewData.hypocenter;
+        this.eewOriginTimeElement.textContent = `発生日時: ${this.jmaEewData.originTime}`;
+        this.eewMagnitudeElement.textContent = `規模 ${this.jmaEewData.magnitudeText}`;
+        this.eewDepthElement.textContent `深さ ${this.jmaEewData.depthText}`;
+        this.eewFieldElement.style.backgroundColor = bgcolor;
+        this.eewFieldElement.style.color = fontColor;
 
         this.sound();
         this.push();
@@ -204,17 +217,14 @@ export class Wolfx extends Service {
      * EEW未発表時。
      */
     onNotEew() {
-        $('#eewTitle').text(`緊急地震速報は発表されていません`);
-        $('#eewCalc').text("");
-        $('#eewRegion').text("");
-        $('#eewOrigin_time').text("");
-        $('#eewMagnitude').text("");
-        $('#eewDepth').text("");
-
-        $('#eewField').css({
-            'background-color': "#404040ff",
-            'color': "#ffffffff"
-        });
+        this.eewTitleElement.textContent =  `緊急地震速報は発表されていません`;
+        this.eewCalcElement.textContent = "";
+        this.eewRegionElement.textContent = "";
+        this.eewOriginTimeElement.textContent = "";
+        this.eewMagnitudeElement.textContent = "";
+        this.eewDepthElement.textContent = "";
+        this.eewFieldElement.style.backgroundColor = "#404040ff";
+        this.eewFieldElement.style.color = "#ffffffff";
     }
 
 

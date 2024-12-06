@@ -28,6 +28,8 @@ export class DebugLogs extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        this.debugLogListsElement = document.getElementById("debugLogLists");
+
         const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
 
         if (DEBUG_LOGS_DATA === null) {
@@ -126,12 +128,12 @@ export class DebugLogs extends Service {
                 break;
         }
 
-        $('#debugLogLists').prepend(`
+        this.debugLogListsElement.innerHTML = `
             <li>
                 <h3 class="title" style="color: ${color};">${log.title} ${log.time}</h3>
                 <p class="text">${log.text}</p>
             </li>
-        `);
+        ` + this.debugLogListsElement.innerHTML;
     }
 
 
@@ -140,7 +142,7 @@ export class DebugLogs extends Service {
      */
     delete() {
         this.debugLogs = [];
-        $('#debugLogLists').html("");
+        this.debugLogListsElement.innerHTML = "";
         localStorage.removeItem("debugLogs");
     }
 }

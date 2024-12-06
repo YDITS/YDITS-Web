@@ -28,6 +28,8 @@ export class YahooKmoni extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+
+        this.statusLampElement = document.getElementById("statusLamp");
     }
 
 
@@ -213,7 +215,7 @@ export class YahooKmoni extends Service {
                             // this.app.services.eew.updateField();
                         }
 
-                        $('#statusLamp').css({ 'background-color': '#40ff40' });
+                        this.statusLampElement.style.backgroundColor = "#40ff40";
 
                         if (!this.fetchLastStatus) {
                             this.fetchLastStatus = true;
@@ -234,7 +236,7 @@ export class YahooKmoni extends Service {
             (this.app.services.settings.connect.eew === 'yahoo-kmoni') ||
             (this.app.services.api.dmdata.accessToken === null)
         ) {
-            $('#statusLamp').css({ 'background-color': '#ff4040' });
+            this.statusLampElement.style.backgroundColor = "#ff4040";
 
             if (!navigator.onLine) { return; }
 
