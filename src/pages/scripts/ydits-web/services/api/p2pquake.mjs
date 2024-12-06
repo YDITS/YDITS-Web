@@ -495,7 +495,9 @@ export class P2pquake extends Service {
             "Successfully disconnected from api.p2pquake.net and WebSocket closed."
         );
 
-        if (!this.isError && this.socketRetryCount < 3) {
+        if (!navigator.onLine) { return; }
+
+        if (navigator.onLine && !this.isError && this.socketRetryCount < 3) {
             this.app.services.notify.show(
                 "error",
                 "WebSocket切断",
