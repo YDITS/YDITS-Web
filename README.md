@@ -17,6 +17,4 @@ Deploy directory `src/pages/`.
 
 Licensed under the [Apache License 2.0](./LICENSE).
 
-Also must read the [NOTICE](./NOTICE.md).
-
 Copyright (C) よね/Yone

@@ -17,6 +17,4 @@ https://webapp.ydits.net/ で公開しています。
 
 [Apache License 2.0](./LICENSE) のもとでライセンスされます。
 
-[NOTICE](./NOTICE.md) も必ずご確認ください。
-
 Copyright (C) よね/Yone
