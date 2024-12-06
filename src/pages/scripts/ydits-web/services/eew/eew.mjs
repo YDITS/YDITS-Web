@@ -477,12 +477,6 @@ export class Eew extends Service {
                     {
                         body: "先程の緊急地震速報は取り消されました。"
                     }
-                )
-
-                this.notify.show(
-                    "message",
-                    `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
-                    `先程の緊急地震速報は取り消されました。`
                 );
             } else {
                 this.app.services.pushNotify.notify(
