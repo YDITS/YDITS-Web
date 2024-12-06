@@ -44,8 +44,8 @@ export class Map extends Service {
     }
 
 
-    get $hrpnsTime() {
-        return ($("#hrpnsTime>.text"));
+    get hrpnsTimeElement() {
+        return (document.querySelector("#hrpnsTime>.text"));
     }
 
 
@@ -196,7 +196,7 @@ export class Map extends Service {
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImgUrl(this.hrpnsLatestTargetTime["basetime"], this.hrpnsLatestTargetTime["validtime"]);
         this.hrpns.setUrl(url);
-        this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+        this.hrpnsTimeElement.textContent = this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]);
     }
 
 
@@ -210,7 +210,7 @@ export class Map extends Service {
             opacity: 0.7
         }).addTo(this.map);
         // this.updateLayers();
-        this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+        this.hrpnsTimeElement.textContent = this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]);
     }
 
 
@@ -326,7 +326,7 @@ export class Map extends Service {
                 console.error('Error: Data is not an array.');
             }
 
-            this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+            this.hrpnsTimeElement.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
         });
     }
 
@@ -564,8 +564,8 @@ class CustomLayerControl extends L.Control {
         this.eewActive = false; // EEWの状態を示すプロパティ
     }
 
-    get $hrpnsTime() {
-        return ($("#hrpnsTime"));
+    get hrpnsTimeElement() {
+        return (document.getElementById("hrpnsTime"));
     }
 
     onAdd(map) {
@@ -592,10 +592,10 @@ class CustomLayerControl extends L.Control {
 
                 if (checkbox.checked && !this.eewActive) {
                     this.map.addLayer(layer);
-                    this.$hrpnsTime.addClass("show");
+                    this.hrpnsTimeElement.classList.add("show");
                 } else {
                     this.map.removeLayer(layer);
-                    this.$hrpnsTime.removeClass("show");
+                    this.hrpnsTimeElement.classList.remove("show");
                 }
 
                 L.DomEvent.on(checkbox, 'change', () => {
@@ -603,12 +603,12 @@ class CustomLayerControl extends L.Control {
                         savedLayers[name] = true;
                         if (!this.eewActive) {
                             this.map.addLayer(layer);
-                            this.$hrpnsTime.addClass("show");
+                            this.hrpnsTimeElement.classList.add("show");
                         }
                     } else {
                         savedLayers[name] = false;
                         this.map.removeLayer(layer);
-                        this.$hrpnsTime.removeClass("show");
+                        this.hrpnsTimeElement.classList.remove("show");
                     }
                     localStorage.setItem('selectedLayers', JSON.stringify(savedLayers));
                 });
@@ -640,10 +640,10 @@ class CustomLayerControl extends L.Control {
             if (savedLayers[name]) {
                 if (this.eewActive) {
                     this.map.removeLayer(layer);
-                    this.$hrpnsTime.removeClass("show");
+                    this.hrpnsTimeElement.classList.remove("show");
                 } else {
                     this.map.addLayer(layer);
-                    this.$hrpnsTime.addClass("show");
+                    this.hrpnsTimeElement.classList.add("show");
                 }
             }
         }

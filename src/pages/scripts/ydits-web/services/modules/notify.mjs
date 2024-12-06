@@ -29,8 +29,8 @@ export class Notify extends Service {
             copyright: "Copyright © よね/Yone"
         })
 
-        this.$notify = $("#notify");
-        this.$eewNotify = $("#eewNotify");
+        this.notifyElement = document.getElementById("notify");
+        this.eewNotifyElement = document.getElementById("eewNotify");
     }
 
 
@@ -62,39 +62,35 @@ export class Notify extends Service {
         }
 
         if (type === "eew") {
-            this.$eewNotify
-                .html(`
+            this.eewNotifyElement.innerHTML = `
                     <h3>${title}</h3>
                     <p>${text}</p>
                     <p style="margin-top: .5rem; font-size: .8rem;">ここをタップして警報画面を表示します。</p>
-                `)
-                .css({
-                    "background-color": color
-                })
-                .addClass("active");
+                `;
+            this.eewNotifyElement.style.backgroundColor = color;
+            this.eewNotifyElement.classList.add("active");
+
             clearTimeout(this.lastEewNotifyId);
             this.lastEewNotifyId = setTimeout(() => {
-                this.hide(this.$eewNotify);
+                this.hide(this.eewNotifyElement);
             }, eewHideAfter);
         } else {
-            this.$notify
-                .html(`
+            this.notifyElement.innerHTML = `
                     <h3>${title}</h3>
                     <p>${text}</p>
-                `)
-                .css({
-                    "background-color": color
-                })
-                .addClass("active");
+                `;
+            this.notifyElement.style.backgroundColor = color;
+            this.notifyElement.classList.add("active");
+
             clearTimeout(this.lastNotifyId);
             this.lastNotifyId = setTimeout(() => {
-                this.hide(this.$notify);
+                this.hide(this.notifyElement);
             }, hideAfter);
         }
     }
 
 
     hide(element) {
-        element.removeClass("active");
+        element.classList.remove("active");
     }
 }

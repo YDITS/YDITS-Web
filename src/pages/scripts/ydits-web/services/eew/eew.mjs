@@ -97,16 +97,17 @@ export class Eew extends Service {
 
         this.datetime = app.services.datetime;
         this.geolocation = app.services.geoLocation;
-        this.$warn = $("#eewWarn");
-        this.$scale = $("#eewScale");
-        this.$scaleAbout = $("#eewScaleAbout");
-        this.$arrivalTime = $("#eewArrivalTime");
-        this.$arrivalTimeAboud = $("#eewArrivalTimeAbout");
-        this.$locate = $("#eewLocate");
-        this.$error = $("#eewError");
 
-        $(document).on("click", "#eewNotify", () => this.displayWarn());
-        $(document).on("click", "#eewWarn .closeBtn", () => this.hideWarn());
+        this.warnElement = document.getElementById("eewWarn");
+        this.scaleElement =document.getElementById("eewScale");
+        this.scaleAboutElement = document.getElementById("eewScaleAbout");
+        this.arrivalTimeElement = document.getElementById("eewArrivalTime");
+        this.arrivalTimeAboudElement = document.getElementById("eewArrivalTimeAbout");
+        this.locateElement = document.getElementById("eewLocate");
+        this.errorElement = document.getElementById("eewError");
+
+        document.getElementById("eewNotify").addEventListener("click", () => this.displayWarn());
+        document.querySelector("#eewWarn .closeBtn").addEventListener("click", () => this.hideWarn());
     }
 
 
@@ -307,19 +308,19 @@ export class Eew extends Service {
         this.warnAreas.forEach(area => {
             if (area.name === this.app.services.geoLocation.area) {
                 this.isUserAreaWarn = true;
-                this.$error.hide();
+                this.errorElement.hide();
 
                 if (area.scaleTo === 99) {
                     this.scale = this.parseScale(area.scaleFrom);
-                    this.$scaleAbout.text("程度以上");
+                    this.scaleAboutElement.text("程度以上");
                 } else {
                     this.scale = this.parseScale(area.scaleTo);
-                    this.$scaleAbout.text("程度");
+                    this.scaleAboutElement.text("程度");
                 }
 
                 if (area.arrivalTime === null) {
                     this.arrivalTime = "到達と推測";
-                    this.$arrivalTimeAboud.text("");
+                    this.arrivalTimeAboudElement.text("");
                 } else {
                     let dateNow = this.app.services.datetime.gmt.getTime();
                     let arrivalTime = new Date(area.arrivalTime).getTime();
@@ -328,21 +329,21 @@ export class Eew extends Service {
 
                     if (this.arrivalTime <= 0) {
                         this.arrivalTime = "到達と推測";
-                        this.$arrivalTimeAboud.text("");
+                        this.arrivalTimeAboudElement.text("");
                     } else {
                         this.arrivalTime = `${this.arrivalTime}秒`;
-                        this.$arrivalTimeAboud.text("およそ");
+                        this.arrivalTimeAboudElement.text("およそ");
                     }
                 }
 
-                this.$scale.text(this.scale);
-                this.$arrivalTime.text(this.arrivalTime);
-                this.$locate.text(this.app.services.geoLocation.area);
+                this.scaleElement.text(this.scale);
+                this.arrivalTimeElement.text(this.arrivalTime);
+                this.locateElement.text(this.app.services.geoLocation.area);
             }
         });
 
         if (!this.isUserAreaWarn) {
-            this.$error.show();
+            this.errorElement.style.display = "block";
         }
     }
 
@@ -353,7 +354,7 @@ export class Eew extends Service {
     displayWarn() {
         if (!this.app.services.settings.display.showWarn) { return; }
         if (!this.app.services.geoLocation.isSupport) { return; }
-        this.$warn.addClass("active");
+        this.warnElement.addClass("active");
     }
 
 
@@ -361,7 +362,7 @@ export class Eew extends Service {
      * 警報画面を非表示する。
      */
     hideWarn() {
-        this.$warn.removeClass("active");
+        this.warnElement.removeClass("active");
     }
 
 

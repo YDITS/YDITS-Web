@@ -47,6 +47,9 @@ export class YditsWeb extends FirebaseApp {
         this.buildEvent = new Event("build");
         document.addEventListener("build", () => this.onBuild());
 
+        this.clockElement = document.getElementById("clock");
+        this.fpsElement = document.getElementById("fps");
+
         try {
             this.register(Datetime);
             this.services.datetime.update();
@@ -82,7 +85,7 @@ export class YditsWeb extends FirebaseApp {
             window.addEventListener("online", () => this.onNetworkConnected());
             window.addEventListener("offline", () => this.onNetworkDisconnected());
 
-            $("#clock").text("----/--/-- --:--:--");
+            this.clockElement.textContent = "----/--/-- --:--:--";
         } catch (error) {
             this.on_initialize_error(error);
         }
@@ -124,8 +127,8 @@ export class YditsWeb extends FirebaseApp {
             title: "エラー",
             content: `
                 ハンドルされない例外が発生しました。<br>
-                <code>${error}</code>
-            `
+                <code>${error.stack}</code>
+            `,
         });
     }
 
@@ -147,7 +150,7 @@ export class YditsWeb extends FirebaseApp {
             "エラー",
             `
                 イニシャライズ中にエラーが発生しました。<br>
-                <code>${error}</code>
+                <code>${error.stack}</code>
             `
         );
 
@@ -158,7 +161,7 @@ export class YditsWeb extends FirebaseApp {
             title: "エラー",
             content: `
                 イニシャライズ中にエラーが発生しました。<br>
-                <code>${error}</code>
+                <code>${error.stack}</code>
             `
         });
     }
@@ -197,8 +200,8 @@ export class YditsWeb extends FirebaseApp {
         this.initialize();
         this.services.debugLogs.add("info", `[${this.name}]`, "Application initialized.");
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
-        setInterval(() => this.ntp(), 1000);
-        setInterval(() => this.clock(this.services.datetime), 333);
+        setInterval(() => this.ntp(), 100);
+        setInterval(() => this.clock(this.services.datetime), 100);
         setInterval(() => this.eew(), 1000);
         setInterval(() => this.hrpns(), 1000 * 30);
         setInterval(() => this.jmaDataFeed(), this.jma_data_feed_fetch_interval);
@@ -249,13 +252,8 @@ export class YditsWeb extends FirebaseApp {
 
         if (timeNow - this.lastFpsUpdateTime >= this.services.settings.debug.fpsMs) {
             const color = this.fps <= 15 ? "#ff4040ff" : "#202020ff";
-
-            $("#fps")
-                .text(`${Math.round(this.fps)}FPS`)
-                .css({
-                    "backgroundColor": color,
-                });
-
+            this.fpsElement.textContent = `${Math.round(this.fps)}FPS`;
+            this.fpsElement.style.backgroundColor = color;
             this.lastFpsUpdateTime = timeNow;
         }
     }
@@ -289,37 +287,38 @@ export class YditsWeb extends FirebaseApp {
      * メニュー項目をイニシャライズする。
      */
     initMenu() {
-        $('#menu .version').text(`Ver ${this.version}`);
+        document.querySelector("#menu .version").textContent = `Ver ${this.version}`;
 
-        $(document).on('click', '#menuBtn', () => {
-            $('#popup').addClass('active');
-            $('#menu').addClass('active');
-        });
-        $(document).on('click', '#menu .closeBtn', () => {
-            $('#popup').removeClass('active');
-            $('#menu').removeClass('active');
+        document.getElementById("menuBtn").addEventListener("click", () => {
+            document.getElementById("popup").classList.add("active");
+            document.getElementById("menu").classList.add("active");
         });
 
-        $(document).on('click', '#eqHistoryBtn', () => {
-            $('#control').toggleClass('mobile');
-            $('#eqHistoryField').toggleClass('mobile');
-            $('#mapWrapper').toggleClass('mobile');
+        document.querySelector("#menu .closeBtn").addEventListener("click", () => {
+            document.getElementById("popup").classList.remove("active");
+            document.getElementById("menu").classList.remove("active");
         });
 
-        $(document).on('click', '#homeBtn', () => {
+        document.getElementById("eqHistoryBtn").addEventListener("click", () => {
+            document.getElementById("control").classList.toggle("mobile");
+            document.getElementById("eqHistoryField").classList.toggle("mobile");
+            document.getElementById("mapWrapper").classList.toggle("mobile");
+        });
+
+        document.getElementById("homeBtn").addEventListener("click", () => {
             this.services.map.setViewHome();
         });
 
-        $(document).on('click', '#menuJmaDataFeed', () => {
-            $('#jmaDataFeed').addClass('active');
+        // document.getElementById("menuJmaDataFeed").addEventListener("click", () => {
+        //     document.getElementById("jmaDataFeed").classList.add("active");
+        // });
+
+        document.getElementById("menuSettings").addEventListener("click", () => {
+            document.getElementById("settings").classList.add("active");
         });
 
-        $(document).on('click', '#menuSettings', () => {
-            $('#settings').addClass('active');
-        });
-
-        $(document).on('click', '#menuLicense', () => {
-            $('#license').addClass('active');
+        document.getElementById("menuLicense").addEventListener("click", () => {
+            document.getElementById("license").classList.add("active");
         });
     }
 
@@ -328,8 +327,8 @@ export class YditsWeb extends FirebaseApp {
      * ライセンス項目をイニシャライズする。
      */
     initLicense() {
-        $(document).on('click', '#license .closeBtn', function () {
-            $('#license').removeClass('active');
+        document.querySelector("#license .closeBtn").addEventListener("click", () => {
+            document.getElementById("license").classList.remove("active");
         });
     }
 
@@ -338,9 +337,9 @@ export class YditsWeb extends FirebaseApp {
      * マップレイヤー切替機能関連をイニシャライズする。
      */
     initMapLayersMenu() {
-        $(document).on('click', '#mapLayersButton', function () {
-            $('#mapLayersMenu').toggleClass('active');
-            $('#mapLayersButton').toggleClass('active');
+        document.getElementById("mapLayersButton").addEventListener("click", () => {
+            document.getElementById("mapLayersMenu").classList.toggle("active");
+            document.getElementById("mapLayersButton").classList.toggle("active");
         });
     }
 
@@ -363,7 +362,7 @@ export class YditsWeb extends FirebaseApp {
                 `${this.zeroPadding(time.seconds)}`;
         }
 
-        $("#clock").text(clock);
+        this.clockElement.textContent = clock;
     }
 
 
@@ -429,22 +428,19 @@ class Window {
                 </dialog>
             `
 
-        $('body').append(newWindowElement);
+        // $('body').append(newWindowElement);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(newWindowElement, "text/html");
+        const dialogElement = doc.body.firstChild;
 
-        $(`#${this.id}>.navBar`).css({
-            "background-color": this.color
-        });
+        dialogElement.querySelector(".navBar").style.backgroundColor = this.color;
+        dialogElement.querySelector(".close").addEventListener("click", () => this.close());
 
-        $(document).on(
-            'click',
-            `#${this.id}>.navBar>.close`,
-            (event) => this.close()
-        );
-
+        document.body.append(dialogElement);
     }
 
 
     close() {
-        $(`#${this.id}`).remove();
+        document.getElementById(this.id).remove();
     }
 }

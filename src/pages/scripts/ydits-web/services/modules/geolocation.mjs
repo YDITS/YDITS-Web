@@ -32,18 +32,18 @@ export class GeoLocation extends Service {
 
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
-        this.$locationStatus = $("#locationStatus");
-        this.$locationArea = $("#locationArea");
-        this.$locationAccuracy = $("#locationAccuracy");
+        this.locationStatusElement = document.getElementById("locationStatus");
+        this.locationAreaElement = document.getElementById("locationArea");
+        this.locationAccuracyElement = document.getElementById("locationAccuracy");
 
         if ("geolocation" in navigator) {
             this.isSupport = true;
-            this.$locationStatus.text("有効");
+            this.locationStatusElement.textContent = "有効";
         } else {
             this.isSupport = false;
             this.latitude = -1;
             this.longitude = -1;
-            this.$locationStatus.text("無効");
+            this.locationStatusElement.textContent = "無効";
         }
 
         this.getLocation();
@@ -77,10 +77,10 @@ export class GeoLocation extends Service {
 
         if ([undefined, null, NaN].includes(position.coords.accuracy)) {
             this.accuracy = -1;
-            this.$locationAccuracy.text(`不明`);
+            this.locationAccuracyElement.textContent = `不明`;
         } else {
             this.accuracy = Math.round(position.coords.accuracy);
-            this.$locationAccuracy.text(`半経距離 ${this.accuracy}m 程度`);
+            this.locationAccuracyElement.textContent = `半経距離 ${this.accuracy}m 程度`;
         }
 
         const urlPref = "https://nominatim.openstreetmap.org/reverse?"
@@ -185,7 +185,7 @@ export class GeoLocation extends Service {
             "Geo Location is supported, but Cannot get current global position."
         )
 
-        this.$locationStatus.text("無効");
+        this.locationStatusElement.textContent = "無効";
         this.latitude = -1;
         this.longitude = -1;
         this.accuracy = -1;
@@ -212,7 +212,7 @@ export class GeoLocation extends Service {
                     this.area = data[city];
                 }
 
-                this.$locationArea.text(this.area);
+                this.locationAreaElement.textContent = this.area;
             });
     }
 }

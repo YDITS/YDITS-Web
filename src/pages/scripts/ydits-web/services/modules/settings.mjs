@@ -72,228 +72,199 @@ export class Settings extends Service {
         let sounds = this.app.services.sounds;
 
         // ----- Events ----- //
-        $(document).on('click', '#settings .closeBtn', () => {
-            $('#settings').removeClass('active');
-            $('#menu').addClass('active');
+        document.querySelector("#settings .closeBtn").addEventListener("click", () => {
+            document.getElementById("settings").classList.remove("active");
+            document.getElementById("menu").classList.add("active");
         });
-        $(document).on('click', '#settings_list_sound', () => {
-            $('#settings_sounds').addClass('active');
+
+        document.getElementById("settings_list_sound").addEventListener("click", () => {
+            document.getElementById("settings_sounds").classList.add("active");
         });
-        $(document).on('click', '#settings_sounds .closeBtn', () => {
-            $('#settings_sounds').removeClass('active');
+
+        document.querySelector("#settings_sounds .closeBtn").addEventListener("click", () => {
+            document.getElementById("settings_sounds").classList.remove("active");
         });
-        $(document).on('click', '#settings_list_display', () => {
-            $('#settings_display').addClass('active');
+
+        document.getElementById("settings_list_display").addEventListener("click", () => {
+            document.getElementById("settings_display").classList.add("active");
         });
-        $(document).on('click', '#settings_display .closeBtn', () => {
-            $('#settings_display').removeClass('active');
+
+        document.querySelector("#settings_display .closeBtn").addEventListener("click", () => {
+            document.getElementById("settings_display").classList.remove("active");
         });
-        $(document).on('click', '#settings_list_map', () => {
-            $('#settings_map').addClass('active');
+
+        document.getElementById("settings_list_map").addEventListener("click", () => {
+            document.getElementById("settings_map").classList.add("active");
         });
-        $(document).on('click', '#settings_map .closeBtn', () => {
-            $('#settings_map').removeClass('active');
+
+        document.querySelector("#settings_map .closeBtn").addEventListener("click", () => {
+            document.getElementById("settings_map").classList.remove("active");
         });
-        $(document).on('click', '#settings_list_location', () => {
-            $('#settings_location').addClass('active');
+
+        document.getElementById("settings_list_location").addEventListener("click", () => {
+            document.getElementById("settings_location").classList.add("active");
         });
-        $(document).on('click', '#settings_location .closeBtn', () => {
-            $('#settings_location').removeClass('active');
+
+        document.querySelector("#settings_location .closeBtn").addEventListener("click", () => {
+            document.getElementById("settings_location").classList.remove("active");
         });
-        $(document).on('click', '#settings_list_notify', () => {
-            $('#settings_notify').addClass('active');
+
+        document.getElementById("settings_list_notify").addEventListener("click", () => {
+            document.getElementById("settings_notify").classList.add("active");
         });
-        $(document).on('click', '#settings_notify .closeBtn', () => {
-            $('#settings_notify').removeClass('active');
+
+        document.querySelector("#settings_notify .closeBtn").addEventListener("click", () => {
+            document.getElementById("settings_notify").classList.remove("active");
         });
-        $(document).on('click', '#settings_list_other', () => {
-            $('#settings_other').addClass('active');
+
+        document.getElementById("settings_list_other").addEventListener("click", () => {
+            document.getElementById("settings_other").classList.add("active");
         });
-        $(document).on('click', '#settings_other .closeBtn', () => {
-            $('#settings_other').removeClass('active');
+
+        document.querySelector("#settings_other .closeBtn").addEventListener("click", () => {
+            document.getElementById("settings_other").classList.remove("active");
         });
 
 
         // ----- Sounds -----//
-        $(document).on('click', '#settings_list_sound', () => {
-            $('#settings_sounds').addClass('active');
-            $('#settings_connect').removeClass('active');
-            $('#settings_notify').removeClass('active');
-            $('#settings_other').removeClass('active');
-            $('#settings_list_sound').addClass('active');
-            $('#settings_list_connect').removeClass('active');
-            $('#settings_list_notify').removeClass('active');
-            $('#settings_list_other').removeClass('active');
-        });
-        $(document).on('click', '#settings_list_connect', () => {
-            $('#settings_sounds').removeClass('active');
-            $('#settings_connect').addClass('active');
-            $('#settings_notify').removeClass('active');
-            $('#settings_other').removeClass('active');
-            $('#settings_list_sound').removeClass('active');
-            $('#settings_list_connect').addClass('active');
-            $('#settings_list_notify').removeClass('active');
-            $('#settings_list_other').removeClass('active');
-        });
-        $(document).on('click', '#settings_list_notify', () => {
-            $('#settings_sounds').removeClass('active');
-            $('#settings_connect').removeClass('active');
-            $('#settings_notify').addClass('active');
-            $('#settings_other').removeClass('active');
-            $('#settings_list_sound').removeClass('active');
-            $('#settings_list_connect').removeClass('active');
-            $('#settings_list_notify').addClass('active');
-            $('#settings_list_other').removeClass('active');
-        });
-        $(document).on('click', '#settings_list_other', () => {
-            $('#settings_sounds').removeClass('active');
-            $('#settings_connect').removeClass('active');
-            $('#settings_notify').removeClass('active');
-            $('#settings_other').addClass('active');
-            $('#settings_list_sound').removeClass('active');
-            $('#settings_list_connect').removeClass('active');
-            $('#settings_list_notify').removeClass('active');
-            $('#settings_list_other').addClass('active');
-        });
-
         if (localStorage.getItem("settings-playSound-eew-any") == 'true') {
             this.sound.eewAny = true;
-            $('#settings_playSound_eew_any .toggle-switch').addClass('on');
+            document.querySelector("#settings_playSound_eew_any .toggle-switch").classList.add("on");
         } else if (localStorage.getItem("settings-playSound-eew-any") == 'false') {
             this.sound.eewAny = false;
-            $('#settings_playSound_eew_any .toggle-switch').removeClass('on');
+            document.querySelector("#settings_playSound_eew_any .toggle-switch").classList.remove("on");
         } else {
             this.sound.eewAny = true;
-            $('#settings_playSound_eew_any .toggle-switch').addClass('on');
+            document.querySelector("#settings_playSound_eew_any .toggle-switch").classList.add("on");
         }
 
-        $(document).on('click', '#settings_playSound_eew_any .toggle-switch', () => {
+        document.querySelector("#settings_playSound_eew_any .toggle-switch").addEventListener("click", () => {
             if (this.sound.eewAny == false) {
                 this.sound.eewAny = true;
                 localStorage.setItem('settings-playSound-eew-any', 'true');
-                $('#settings_playSound_eew_any .toggle-switch').addClass('on');
+                document.querySelector("#settings_playSound_eew_any .toggle-switch").classList.add("on");
             } else if (this.sound.eewAny == true) {
                 this.sound.eewAny = false;
                 localStorage.setItem('settings-playSound-eew-any', 'false');
-                $('#settings_playSound_eew_any .toggle-switch').removeClass('on');
+                document.querySelector("#settings_playSound_eew_any .toggle-switch").classList.remove("on");
             }
         })
 
         if (localStorage.getItem("settings-playSound-eew-cancel") == 'true') {
             this.sound.eewCancel = true;
-            $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
+            document.querySelector("#settings_playSound_eew_cancel .toggle-switch").classList.add("on");
         } else if (localStorage.getItem("settings-playSound-eew-cancel") == 'false') {
             this.sound.eewCancel = false;
-            $('#settings_playSound_eew_cancel .toggle-switch').removeClass('on');
+            document.querySelector("#settings_playSound_eew_cancel .toggle-switch").classList.remove("on");
         } else {
             this.sound.eewCancel = true;
-            $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
+            document.querySelector("#settings_playSound_eew_cancel .toggle-switch").classList.add("on");
         }
 
-        $(document).on('click', '#settings_playSound_eew_cancel .toggle-switch', () => {
+        document.querySelector("#settings_playSound_eew_cancel .toggle-switch").addEventListener("click", () => {
             if (this.sound.eewCancel == false) {
                 this.sound.eewCancel = true;
                 localStorage.setItem('settings-playSound-eew-cancel', 'true');
-                $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
+                document.querySelector("#settings_playSound_eew_cancel .toggle-switch").classList.add("on");
             } else if (this.sound.eewCancel == true) {
                 this.sound.eewCancel = false;
                 localStorage.setItem('settings-playSound-eew-cancel', 'false');
-                $('#settings_playSound_eew_cancel .toggle-switch').removeClass('on');
+                document.querySelector("#settings_playSound_eew_cancel .toggle-switch").classList.remove("on");
             }
         })
 
         if (localStorage.getItem("settings-playSound-info") == 'true') {
             this.sound.eqinfo = true;
-            $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
+            document.querySelector("#settings_playSound_eqinfo .toggle-switch").classList.add("on");
         } else if (localStorage.getItem("settings-playSound-info") == 'false') {
             this.sound.eqinfo = false;
-            $('#settings_playSound_eqinfo .toggle-switch').removeClass('on');
+            document.querySelector("#settings_playSound_eqinfo .toggle-switch").classList.remove("on");
         } else {
             this.sound.eqinfo = true;
-            $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
+            document.querySelector("#settings_playSound_eqinfo .toggle-switch").classList.add("on");
         }
 
-        $(document).on('click', '#settings_playSound_eqinfo .toggle-switch', () => {
+        document.querySelector("#settings_playSound_eqinfo .toggle-switch").addEventListener("click", () => {
             if (this.sound.eqinfo == false) {
                 this.sound.eqinfo = true;
                 localStorage.setItem('settings-playSound-info', 'true');
-                $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
+                document.querySelector("#settings_playSound_eqinfo .toggle-switch").classList.add("on");
             } else if (this.sound.eqinfo == true) {
                 this.sound.eqinfo = false;
                 localStorage.setItem('settings-playSound-info', 'false');
-                $('#settings_playSound_eqinfo .toggle-switch').removeClass('on');
+                document.querySelector("#settings_playSound_eqinfo .toggle-switch").classList.remove("on");
             }
         })
 
         // ----- Display ----- //
         if (localStorage.getItem("settings-display-warn") == 'true') {
             this.display.showWarn = true;
-            $('#settings_display .toggle-switch').addClass('on');
+            document.querySelector("#settings_display .toggle-switch").classList.add("on");
         } else if (localStorage.getItem("settings-display-warn") == 'false') {
             this.display.showWarn = false;
-            $('#settings_display .toggle-switch').removeClass('on');
+            document.querySelector("#settings_display .toggle-switch").classList.remove("on");
         } else {
             this.display.showWarn = true;
-            $('#settings_display .toggle-switch').addClass('on');
+            document.querySelector("#settings_display .toggle-switch").classList.add("on");
         }
 
-        $(document).on('click', '#settings_display .toggle-switch', () => {
+        document.querySelector("#settings_display .toggle-switch").addEventListener("click", () => {
             if (this.display.showWarn == false) {
                 this.display.showWarn = true;
                 localStorage.setItem('settings-display-warn', 'true');
-                $('#settings_display .toggle-switch').addClass('on');
+                document.querySelector("#settings_display .toggle-switch").classList.add("on");
             } else if (this.display.showWarn == true) {
                 this.display.showWarn = false;
                 localStorage.setItem('settings-display-warn', 'false');
-                $('#settings_display .toggle-switch').removeClass('on');
+                document.querySelector("#settings_display .toggle-switch").classList.remove("on");
             }
         });
 
         // ----- Map ----- //
         if (localStorage.getItem("settings-map-auto-move") == 'true') {
             this.map.autoMove = true;
-            $('#settings_map_auto_move .toggle-switch').addClass('on');
+            document.querySelector("#settings_map_auto_move .toggle-switch").classList.add("on");
         } else if (localStorage.getItem("settings-map-auto-move") == 'false') {
             this.map.autoMove = false;
-            $('#settings_map_auto_move .toggle-switch').removeClass('on');
+            document.querySelector("#settings_map_auto_move .toggle-switch").classList.remove("on");
         } else {
             this.map.autoMove = true;
-            $('#settings_map_auto_move .toggle-switch').addClass('on');
+            document.querySelector("#settings_map_auto_move .toggle-switch").classList.add("on");
         }
 
-        $(document).on('click', '#settings_map_auto_move .toggle-switch', () => {
+        document.querySelector("#settings_map_auto_move .toggle-switch").addEventListener("click", () => {
             if (this.map.autoMove == false) {
                 this.map.autoMove = true;
                 localStorage.setItem('settings-map-auto-move', 'true');
-                $('#settings_map_auto_move .toggle-switch').addClass('on');
+                document.querySelector("#settings_map_auto_move .toggle-switch").classList.add("on");
             } else if (this.map.autoMove == true) {
                 this.map.autoMove = false;
                 localStorage.setItem('settings-map-auto-move', 'false');
-                $('#settings_map_auto_move .toggle-switch').removeClass('on');
+                document.querySelector("#settings_map_auto_move .toggle-switch").classList.remove("on");
             }
         });
 
         if (localStorage.getItem("settings-map-display-userpoint") == 'true') {
             this.map.displayUserPoint = true;
-            $('#settings_map_user_point .toggle-switch').addClass('on');
+            document.querySelector("#settings_map_user_point .toggle-switch").classList.add("on");
         } else if (localStorage.getItem("settings-map-display-userpoint") == 'false') {
             this.map.displayUserPoint = false;
-            $('#settings_map_user_point .toggle-switch').removeClass('on');
+            document.querySelector("#settings_map_user_point .toggle-switch").classList.remove("on");
         } else {
             this.map.displayUserPoint = true;
-            $('#settings_map_user_point .toggle-switch').addClass('on');
+            document.querySelector("#settings_map_user_point .toggle-switch").classList.add("on");
         }
 
-        $(document).on('click', '#settings_map_user_point .toggle-switch', () => {
+        document.querySelector("#settings_map_user_point .toggle-switch").addEventListener("click", () => {
             if (this.map.displayUserPoint == false) {
                 this.map.displayUserPoint = true;
                 localStorage.setItem('settings-map-display-userpoint', 'true');
-                $('#settings_map_user_point .toggle-switch').addClass('on');
+                document.querySelector("#settings_map_user_point .toggle-switch").classList.add("on");
                 this.app.services.map.updateUserPoint();
             } else if (this.map.displayUserPoint == true) {
                 this.map.displayUserPoint = false;
                 localStorage.setItem('settings-map-display-userpoint', 'false');
-                $('#settings_map_user_point .toggle-switch').removeClass('on');
+                document.querySelector("#settings_map_user_point .toggle-switch").classList.remove("on");
                 this.app.services.map.updateUserPoint();
             }
         });
@@ -307,7 +278,7 @@ export class Settings extends Service {
 
 
         // ----- Reset -----//
-        $(document).on('click', '#settings_resetSettingsBtn', (e) => {
+        document.getElementById("settings_resetSettingsBtn").addEventListener("click", () => {
             this.connect.eew = "yahoo-kmoni";
             this.connect.eqinfo = "p2pquake";
             this.connect.tsunami = "dmdata";
@@ -322,14 +293,14 @@ export class Settings extends Service {
             this.debug.fpsMs = 1000;
             this.debug.rayout = false;
 
-            $('#settings_display_warn .toggle-switch').addClass('on');
-            $('#settings_map_auto_move .toggle-switch').addClass('on');
-            $('#settings_map_user_point .toggle-switch').addClass('on');
-            $('#settings_playSound_eew_any .toggle-switch').addClass('on');
-            $('#settings_playSound_eew_cancel .toggle-switch').addClass('on');
-            $('#settings_playSound_eqinfo .toggle-switch').addClass('on');
-            $('#settingsFpsMsSelect').val('1000');
-            $('#settingsDebugRayout .toggle-switch').removeClass('on');
+            document.querySelector("#settings_display_warn .toggle-switch").classList.add("on");
+            document.querySelector("#settings_map_auto_move .toggle-switch").classList.add("on");
+            document.querySelector("#settings_map_user_point .toggle-switch").classList.add("on");
+            document.querySelector("#settings_playSound_eew_any .toggle-switch").classList.add("on");
+            document.querySelector("#settings_playSound_eew_cancel .toggle-switch").classList.add("on");
+            document.querySelector("#settings_playSound_eqinfo .toggle-switch").classList.add("on");
+            document.getElementById('settingsFpsMsSelect').value = '1000';
+            document.querySelector("#settingsDebugRayout .toggle-switch").classList.remove("on");
 
             this.hideDebugRayout();
 
@@ -343,18 +314,21 @@ export class Settings extends Service {
 
 
         // ----- Test Play Sounds -----//
-        $(document).on('click', '#btn_eew_chk_sound', () => {
+        document.getElementById("btn_eew_chk_sound").addEventListener("click", () => {
             sounds.eew.play();
             sounds.eewVoice7.play();
         });
-        $(document).on('click', '#btn_earthquake_info_chk_sound', () => {
+
+        document.getElementById("btn_earthquake_info_chk_sound").addEventListener("click", () => {
             sounds.eqinfo.play();
             sounds.eqinfoVoice7.play();
         });
-        $(document).on('click', '#btn_eew_cancel_chk_sound', () => {
+
+        document.getElementById("btn_eew_cancel_chk_sound").addEventListener("click", () => {
             sounds.eewVoiceCancel.play();
         });
-        $(document).on('click', '#btn_push_chk', () => {
+
+        document.getElementById("btn_push_chk").addEventListener("click", () => {
             sounds.notify.play();
             notify.show("message", "プッシュ通知のテスト", "これはページ内通知です。プッシュ通知とは別に表示されます。");
 
@@ -377,16 +351,16 @@ export class Settings extends Service {
 
 
         // ----- Debug Logs -----//
-        $(document).on("click", "#openDebugLogsButton", () => {
-            $("#debugLogsWindow").addClass("active");
-        });
-        $(document).on("click", "#debugLogsWindow .closeBtn", () => {
-            $("#debugLogsWindow").removeClass("active");
+        document.getElementById("openDebugLogsButton").addEventListener("click", () => {
+            document.getElementById("debugLogsWindow").classList.add("active");
         });
 
+        document.querySelector("#debugLogsWindow .closeBtn").addEventListener("click", () => {
+            document.getElementById("debugLogsWindow").classList.remove("active");
+        });
 
         // ----- Delete Debug Logs -----//
-        $(document).on('click', '#deleteDebugLogsButton', () => {
+        document.getElementById("deleteDebugLogsButton").addEventListener("click", () => {
             debugLogs.delete();
             debugLogs.add("start", "[START]", "- Start log -");
 
@@ -395,36 +369,37 @@ export class Settings extends Service {
         });
 
         // ----- Debug Mode -----//
-        $(document).on("click", "#openDebugOptionButton", () => {
-            $("#debugOptionWindow").addClass("active");
+        document.getElementById("openDebugOptionButton").addEventListener("click", () => {
+            document.getElementById("debugOptionWindow").classList.add("active");
         });
-        $(document).on("click", "#debugOptionWindow .closeBtn", () => {
-            $("#debugOptionWindow").removeClass("active");
+
+        document.querySelector("#debugOptionWindow .closeBtn").addEventListener("click", () => {
+            document.getElementById("debugOptionWindow").classList.remove("active");
         });
 
         // ----- Debug Rayout ----- //
         if (localStorage.getItem("settings-debug-rayout") == 'true') {
             this.debug.rayout = true;
-            $('#settingsDebugRayout .toggle-switch').addClass('on');
+            document.querySelector("#settingsDebugRayout .toggle-switch").classList.add("on");
             this.showDebugRayout();
         } else if (localStorage.getItem("settings-debug-rayout") == 'false') {
             this.debug.rayout = false;
-            $('#settingsDebugRayout .toggle-switch').removeClass('on');
+            document.querySelector("#settingsDebugRayout .toggle-switch").classList.remove("on");
         } else {
             this.debug.rayout = false;
-            $('#settingsDebugRayout .toggle-switch').removeClass('on');
+            document.querySelector("#settingsDebugRayout .toggle-switch").classList.remove("on");
         }
 
-        $(document).on('click', '#settingsDebugRayout .toggle-switch', () => {
+        document.querySelector("#settingsDebugRayout .toggle-switch").addEventListener("click", () => {
             if (this.debug.rayout == false) {
                 this.debug.rayout = true;
                 localStorage.setItem('settings-debug-rayout', 'true');
-                $('#settingsDebugRayout .toggle-switch').addClass('on');
+                document.querySelector("#settingsDebugRayout .toggle-switch").classList.add("on");
                 this.showDebugRayout();
             } else if (this.debug.rayout == true) {
                 this.debug.rayout = false;
                 localStorage.setItem('settings-debug-rayout', 'false');
-                $('#settingsDebugRayout .toggle-switch').removeClass('on');
+                document.querySelector("#settingsDebugRayout .toggle-switch").classList.remove("on");
                 this.hideDebugRayout();
             }
         });
@@ -432,69 +407,70 @@ export class Settings extends Service {
         // ----- FPS ----- //
         if (localStorage.getItem("settings-fps-ms") == '100') {
             this.debug.fpsMs = 100;
-            $('#settingsFpsMsSelect').val('100');
+            document.getElementById('settingsFpsMsSelect').value = '100';
         } else if (localStorage.getItem("settings-fps-ms") == '500') {
             this.debug.fpsMs = 500;
-            $('#settingsFpsMsSelect').val('500');
+            document.getElementById('settingsFpsMsSelect').value = '500';
         } else if (localStorage.getItem("settings-fps-ms") == '1000') {
             this.debug.fpsMs = 1000;
-            $('#settingsFpsMsSelect').val('1000');
+            document.getElementById('settingsFpsMsSelect').value = '1000';
         } else {
             this.debug.fpsMs = 1000;
-            $('#settingsFpsMsSelect').val('1000');
+            document.getElementById('settingsFpsMsSelect').value = '1000';
         }
 
-        $(document).on('change', '#settingsFpsMsSelect', () => {
-            if ($('#settingsFpsMsSelect').val() == '100') {
+        document.getElementById("settingsFpsMsSelect").addEventListener("change", () => {
+            if (document.getElementById('settingsFpsMsSelect').value == '100') {
                 this.debug.fpsMs = 100;
                 localStorage.setItem('settings-fps-ms', '100');
-            } else if ($('#settingsFpsMsSelect').val() == '500') {
+            } else if (document.getElementById('settingsFpsMsSelect').value == '500') {
                 this.debug.fpsMs = 500;
                 localStorage.setItem('settings-fps-ms', '500');
-            } else if ($('#settingsFpsMsSelect').val() == '1000') {
+            } else if (document.getElementById('settingsFpsMsSelect').value == '1000') {
                 this.debug.fpsMs = 1000;
                 localStorage.setItem('settings-fps-ms', '1000');
             }
         });
 
         // ----- Write Debug Logs to Clipboard ----- //
-        $(document).on(
+        document.getElementById("writeDebugLogsToClipboardButton").addEventListener(
             "click",
-            "#writeDebugLogsToClipboardButton",
-            () => this.writeDebugLogsToClipboard(
-                () => {
-                    $("#writeDebugLogsToClipboardButton").text("✅ クリップボードにコピーされました");
-                    setTimeout(
-                        () => {
-                            $("#writeDebugLogsToClipboardButton").text("ログをクリップボードにコピー");
-                        },
-                        3000
-                    );
-                },
-                () => {
-                    $("#writeDebugLogsToClipboardButton").text("❌ クリップボードにコピーできませんでした");
-                    setTimeout(
-                        () => {
-                            $("#writeDebugLogsToClipboardButton").text("ログをクリップボードにコピー");
-                        },
-                        3000
-                    );
-                }
-            )
-        )
+            () => {
+                this.writeDebugLogsToClipboard(
+                    () => {
+                        document.getElementById("writeDebugLogsToClipboardButton").textContent = "✅ クリップボードにコピーされました";
+                        setTimeout(
+                            () => {
+                                document.getElementById("writeDebugLogsToClipboardButton").textContent = "ログをクリップボードにコピー";
+                            },
+                            3000
+                        );
+                    },
+                    () => {
+                        document.getElementById("writeDebugLogsToClipboardButton").textContent = "❌ クリップボードにコピーできませんでした";
+                        setTimeout(
+                            () => {
+                                document.getElementById("writeDebugLogsToClipboardButton").textContent = "ログをクリップボードにコピー";
+                            },
+                            3000
+                        );
+                    }
+                );
+            }
+        );
     }
 
 
     showDebugRayout() {
-        $("*").css({
-            "outline": "1px solid #00ff00ff"
+        document.querySelectorAll('*').forEach(function (element) {
+            element.style.outline = '1px solid #00ff00ff';
         });
     }
 
 
     hideDebugRayout() {
-        $("*").css({
-            "outline": "unset"
+        document.querySelectorAll('*').forEach(function (element) {
+            element.style.outline = 'unset';
         });
     }
 
