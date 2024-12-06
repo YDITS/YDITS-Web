@@ -114,6 +114,14 @@ export class Wolfx extends Service {
             `[${this.name}]`,
             `Wolfx JMA EEW WebSocket has closed.`
         );
+
+        if (!navigator.onLine) { return; }
+
+        this.app.services.notify.show(
+            "message",
+            "WebSocket切断",
+            "Wolfx JMA EEW から切断されました。再接続を試行します。"
+        );
     }
 
 
@@ -298,10 +306,10 @@ export class Wolfx extends Service {
                     (this.jmaEewData.maxIntensity !== this.lastMaxIntensity) ||
                     (this.jmaEewData.eventId !== this.lastEventId)
                 ) {
-                    this.finalText = this.jmaEewData.isFinal ? "最終" : "";
+                    this.finalText = this.jmaEewData.isFinal ? " (最終)" : "";
 
                     this.app.services.pushNotify.notify(
-                        `緊急地震速報 ${this.jmaEewData.serialText} (${this.finalText})`,
+                        `緊急地震速報 ${this.jmaEewData.serialText}${this.finalText}`,
                         {
                             body: `${this.jmaEewData.hypocenter}で地震発生。予想最大震度は${this.jmaEewData.maxIntensity}です。`
                         }
@@ -372,7 +380,7 @@ export class WolfxJmaEewSocket {
         this.autoReconnect = options.autoReconnect || true;
 
         try {
-            this.connect();
+            this.connect(this.endpoint);
         } catch (error) {
             throw new Error(`Failed to connect to Wolfx JMA EEW WebSocket: ${error}`);
         }
@@ -396,9 +404,9 @@ export class WolfxJmaEewSocket {
     /**
      * エンドポイントへWebSocket接続を開始する。
      */
-    async connect() {
+    async connect(endpoint) {
         try {
-            this.socket = new WebSocket(this.endpoint);
+            this.socket = new WebSocket(endpoint);
         } catch (error) {
             throw new Error(`Failed to connect to Wolfx JMA EEW WebSocket: ${error}`);
         }
@@ -478,7 +486,7 @@ export class WolfxJmaEewSocket {
                     this.socketRetryCount++;
                 },
                 10 * 1000,
-                this.connect
+                () => this.connect(this.endpoint)
             );
         }
 
@@ -594,7 +602,7 @@ export class WolfxJmaEewData {
 
 
     get warnText() {
-        return this.isWarn ? "警報" : "予報"
+        return this.isWarning ? "警報" : "予報";
     }
 
 
