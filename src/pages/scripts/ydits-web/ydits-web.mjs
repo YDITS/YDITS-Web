@@ -200,8 +200,8 @@ export class YditsWeb extends FirebaseApp {
         this.initialize();
         this.services.debugLogs.add("info", `[${this.name}]`, "Application initialized.");
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
-        setInterval(() => this.ntp(), 100);
-        setInterval(() => this.clock(this.services.datetime), 100);
+        setInterval(() => this.ntp(), 1000);
+        setInterval(() => this.clock(this.services.datetime), 1000);
         setInterval(() => this.eew(), 1000);
         setInterval(() => this.hrpns(), 1000 * 30);
         setInterval(() => this.jmaDataFeed(), this.jma_data_feed_fetch_interval);
