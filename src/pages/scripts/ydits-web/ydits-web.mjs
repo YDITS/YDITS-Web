@@ -320,6 +320,14 @@ export class YditsWeb extends FirebaseApp {
         document.getElementById("menuLicense").addEventListener("click", () => {
             document.getElementById("license").classList.add("active");
         });
+
+        document.getElementById("menuHelp").addEventListener("click", () => {
+            window.open(
+                '/help/',
+                'popupWindow',
+                'width=960,height=540,top=128,left=128,scrollbars=yes,resizable=no'
+            );
+        });
     }
 
 
