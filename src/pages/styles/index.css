@@ -70,7 +70,9 @@ main {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    max-width: 29rem;
     height: 100%;
+    margin: 0 auto;
 }
 
 #eewField {
@@ -161,8 +163,8 @@ main {
     /* justify-content: space-around; */
     align-items: center;
 
-    width: calc(100% - 2rem);
-    padding: .5rem 1rem;
+    width: calc(100% - 1rem);
+    padding: .5rem .5rem;
 
     cursor: pointer;
     transition: all .3s;
