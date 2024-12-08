@@ -45,6 +45,33 @@ export class DebugLogs extends Service {
                 });
             });
         }
+
+        if (this.app.isDebugLogsMode) {
+            this.lastDebugLogs = [];
+
+            setInterval(
+                () => {
+                    const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
+
+                    if (DEBUG_LOGS_DATA === null) {
+                        this.add("start", `[${this.name}]`, "- Start log -");
+                    } else {
+                        this.debugLogs = JSON.parse(DEBUG_LOGS_DATA);
+                        this.debugLogListsElement.innerHTML = "";
+
+                        this.debugLogs.forEach(log => {
+                            this.addDebugLogsHtml({
+                                type: log.type,
+                                time: log.time,
+                                title: log.title,
+                                text: log.text
+                            });
+                        });
+                    }
+                },
+                1000
+            )
+        }
     }
 
 

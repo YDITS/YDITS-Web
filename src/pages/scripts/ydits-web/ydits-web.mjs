@@ -44,6 +44,19 @@ export class YditsWeb extends FirebaseApp {
             }
         });
 
+        if (location.pathname === "/eqhistory/") {
+            this.eqhistoryMode();
+            return;
+        }
+
+        if (location.pathname === "/debug-logs/") {
+            this.debugLogsMode();
+            return;
+        }
+
+        this.isEqhistoryMode = false;
+        this.isDebugLogsMode = false;
+
         this.buildEvent = new Event("build");
         document.addEventListener("build", () => this.onBuild());
 
@@ -289,6 +302,14 @@ export class YditsWeb extends FirebaseApp {
     initMenu() {
         document.querySelector("#menu .version").textContent = `Ver ${this.version}`;
 
+        document.getElementById("menuOpenEqhistory").addEventListener("click", () => {
+            window.open(
+                '/eqhistory/',
+                'popupWindow',
+                'width=448,height=1024,top=128,left=128,scrollbars=yes,resizable=no'
+            );
+        });
+
         document.getElementById("menuBtn").addEventListener("click", () => {
             document.getElementById("popup").classList.add("active");
             document.getElementById("menu").classList.add("active");
@@ -325,7 +346,7 @@ export class YditsWeb extends FirebaseApp {
             window.open(
                 '/help/',
                 'popupWindow',
-                'width=960,height=540,top=128,left=128,scrollbars=yes,resizable=no'
+                'width=960,height=540,top=128,left=128,scrollbars=yes,resizable=yes'
             );
         });
     }
@@ -381,6 +402,37 @@ export class YditsWeb extends FirebaseApp {
         value = "0" + value;
         value = value.slice(-2);
         return value;
+    }
+
+
+    /**
+     * 地震履歴ウィンドウ
+     */
+    eqhistoryMode() {
+        this.isEqhistoryMode = true;
+
+        this.register(Datetime);
+        this.register(DebugLogs);
+        this.register(Api);
+        this.register(Notify);
+        this.register(Eqinfo);
+
+        this.services.api.p2pquake.initialize();
+        this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
+    }
+
+
+    /**
+     * デバッグログウィンドウ
+     */
+    debugLogsMode() {
+        this.isDebugLogsMode = true;
+
+        this.register(Datetime);
+        this.register(DebugLogs);
+        this.register(Notify);
+
+        this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
     }
 }
 

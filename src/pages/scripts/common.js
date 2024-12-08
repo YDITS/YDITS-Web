@@ -19,10 +19,8 @@ document.addEventListener(
 
 async function loadCommonElements() {
     await trying(fetchAndSetElement, {query: "header", uri: "/elements/header.html"});
-
-    if (location.pathname !== "/") {
-        await trying(fetchAndSetElement, {query: "footer", uri: "/elements/footer.html"});
-    }
+    if (new Set(["/", "/eqhistory/", "/debug-logs/"]).has(location.pathname)) { return; }
+    await trying(fetchAndSetElement, {query: "footer", uri: "/elements/footer.html"});
 }
 
 // ---------------------------------------------------------------------------------------------------- //

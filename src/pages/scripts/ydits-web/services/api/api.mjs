@@ -29,8 +29,10 @@ export class Api extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
-        this.wolfx = new Wolfx(app);
         this.p2pquake = new P2pquake(app);
+
+        if (this.app.isEqhistoryMode) { return; }
+        this.wolfx = new Wolfx(app);
         this.yahooKmoni = new YahooKmoni(app);
         this.dmdata = new Dmdata(app);
     }

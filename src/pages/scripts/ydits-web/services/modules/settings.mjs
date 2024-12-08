@@ -359,6 +359,15 @@ export class Settings extends Service {
             document.getElementById("debugLogsWindow").classList.remove("active");
         });
 
+        // ----- Debug Logs Window -----//
+        document.getElementById("openDebugLogs").addEventListener("click", () => {
+            window.open(
+                '/debug-logs/',
+                'popupWindow',
+                'width=960,height=540,top=128,left=128,scrollbars=yes,resizable=yes'
+            );
+        });
+
         // ----- Delete Debug Logs -----//
         document.getElementById("deleteDebugLogsButton").addEventListener("click", () => {
             debugLogs.delete();
