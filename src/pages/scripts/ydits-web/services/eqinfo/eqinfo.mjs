@@ -99,9 +99,9 @@ export class Eqinfo extends Service {
         `;
 
         if (isFirst) {
-            document.getElementById('eqHistoryField').insertAdjacentHTML('beforeend', html);
+            document.getElementById('eqHistoryField').insertAdjacentHTML("beforeend", html);
         } else {
-            document.getElementById('eqHistoryField').insertAdjacentHTML("afterend", html);
+            document.getElementById('eqHistoryField').insertAdjacentHTML("beforebegin", html);
         }
 
         let bgcolor;
