@@ -101,7 +101,7 @@ export class Eqinfo extends Service {
         if (isFirst) {
             document.getElementById('eqHistoryField').insertAdjacentHTML("beforeend", html);
         } else {
-            document.getElementById('eqHistoryField').insertAdjacentHTML("beforebegin", html);
+            document.getElementById('eqHistoryField').insertAdjacentHTML("afterbegin", html);
         }
 
         let bgcolor;
