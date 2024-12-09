@@ -131,6 +131,12 @@ export class YditsWeb extends FirebaseApp {
      * ハンドルされない例外の処理。
      */
     on_unhandled_error(error) {
+        this.services.debugLogs.add(
+            "error",
+            `[${this.name}]`,
+            `Unhandled error: ${error.stack}`
+        )
+
         new Window({
             type: Window.types.error,
             id: "errorUnhandled",
@@ -473,6 +479,10 @@ class Window {
 
 
     create() {
+        if (document.getElementById(this.id)) {
+            throw new Error(`Window with id \`${this.id}\` already exists.`);
+        };
+
         const newWindowElement = `
                 <dialog class="dialog" id=${this.id}>
                     <div class="navBar">
