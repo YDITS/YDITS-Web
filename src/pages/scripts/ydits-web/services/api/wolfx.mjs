@@ -609,7 +609,7 @@ export class WolfxJmaEewData {
     isValid(nowTime) {
         const _nowTime = nowTime.getTime();
         const announcedTime = this.announcedTime.getTime();
-        return VALID_EEW_DURATION_SECONDS >= ((_nowTime - announcedTime) / 1000)
+        return this.VALID_EEW_DURATION_SECONDS >= ((_nowTime - announcedTime) / 1000)
     }
 
 
