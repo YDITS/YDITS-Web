@@ -174,9 +174,9 @@ export class Wolfx extends Service {
      */
     update() {
         const nowTime = this.app.services.datetime.gmt;
-        const isEew = this.jmaEewData.isEew(nowTime);
+        const isValid = this.jmaEewData.isValid(nowTime);
 
-        if (isEew) {
+        if (isValid) {
             this.onEew();
         } else {
             this.onNotEew();
@@ -597,6 +597,8 @@ export class WolfxJmaEewData {
         this.originalText = data["OriginalText"];
     }
 
+    VALID_EEW_DURATION_SECONDS = 180;
+
 
     /**
      * 渡された日時において、緊急地震速報が有効かどうかを検証し、結果を返す。
@@ -604,10 +606,10 @@ export class WolfxJmaEewData {
      * @param {Datetime} nowTime - 検証対象の Datetime クラス。
      * @return {bool} - 緊急地震速報が有効かどうか。
      */
-    isEew(nowTime) {
+    isValid(nowTime) {
         const _nowTime = nowTime.getTime();
         const announcedTime = this.announcedTime.getTime();
-        return 180 >= ((_nowTime - announcedTime) / 1000)
+        return VALID_EEW_DURATION_SECONDS >= ((_nowTime - announcedTime) / 1000)
     }
 
 
