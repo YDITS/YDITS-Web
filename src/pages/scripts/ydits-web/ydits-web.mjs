@@ -44,6 +44,8 @@ export class YditsWeb extends FirebaseApp {
             }
         });
 
+        window.addEventListener("error", (event) => this.on_unhandled_error(event.error));
+
         if (location.pathname === "/eqhistory/") {
             this.eqhistoryMode();
             return;
@@ -63,14 +65,10 @@ export class YditsWeb extends FirebaseApp {
         this.clockElement = document.getElementById("clock");
         this.fpsElement = document.getElementById("fps");
 
-        try {
-            this.register(Datetime);
-            this.services.datetime.update();
-            this.register(DebugLogs);
-            this.register(Notify);
-        } catch (error) {
-            this.on_unhandled_error(error);
-        }
+        this.register(Datetime);
+        this.services.datetime.update();
+        this.register(DebugLogs);
+        this.register(Notify);
 
         try {
             this.register(Eew);
