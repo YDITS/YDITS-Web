@@ -29,12 +29,8 @@ export class App {
     /**
      * 新規のサービスを登録します。
      */
-    register(Service) {
-        if (!(Service instanceof Service)) {
-            throw new TypeError('引数はServiceクラスである必要があります');
-        }
-
-        const newService = new Service(this);
+    register(NewService) {
+        const newService = new NewService(this);
 
         if (!newService.name) {
             throw new Error('Serviceにnameプロパティが設定されていません');
