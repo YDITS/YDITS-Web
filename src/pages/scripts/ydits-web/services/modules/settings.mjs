@@ -348,7 +348,6 @@ export class Settings extends Service {
             // })
         });
 
-
         // ----- Debug Logs -----//
         document.getElementById("openDebugLogsButton").addEventListener("click", () => {
             document.getElementById("debugLogsWindow").classList.add("active");

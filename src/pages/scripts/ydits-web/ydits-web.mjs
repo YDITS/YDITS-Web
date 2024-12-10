@@ -46,6 +46,8 @@ export class YditsWeb extends FirebaseApp {
 
         window.addEventListener("error", (event) => this.on_unhandled_error(event.error));
 
+        this.initializeStartedTime = performance.now();
+
         if (location.pathname === "/eqhistory/") {
             this.eqhistoryMode();
             return;
@@ -68,7 +70,6 @@ export class YditsWeb extends FirebaseApp {
         this.register(Datetime);
         this.services.datetime.update();
         this.register(DebugLogs);
-        this.initializeStartedTime = performance.now();
         this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
 
         this.register(Notify);
@@ -220,16 +221,22 @@ export class YditsWeb extends FirebaseApp {
      */
     onBuild() {
         this.initialize();
+
         this.upTime = performance.now();
         this.startupTime = this.services.datetime.gmt.getTime();
-        let initializeTime = this.upTime - this.initializeStartedTime;
-        this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version}. Initialize time: ${Math.round(initializeTime)}ms.`);
+        this.initializeTime = this.upTime - this.initializeStartedTime;
+
+        this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version}. Initialize time: ${Math.round(this.initializeTime)}ms.`);
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
+
+        document.getElementById("initializeTime").textContent = `${Math.round(this.initializeTime)}ms`;
+
         setInterval(() => this.ntp(), 1000);
         setInterval(() => this.clock(this.services.datetime), 1000);
         setInterval(() => this.eew(), 1000);
         setInterval(() => this.hrpns(), 1000 * 30);
         setInterval(() => this.jmaDataFeed(), this.jma_data_feed_fetch_interval);
+
         requestAnimationFrame(() => this.mainloop());
     }
 
