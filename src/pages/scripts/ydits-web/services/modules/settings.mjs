@@ -309,7 +309,6 @@ export class Settings extends Service {
 
             sounds.notify.play();
             notify.show("message", "設定のリセット", "設定をリセットしました。");
-            this.app.services.debugLogs.add("info", `[${this.name}]`, "Settings were reset.");
         });
 
 

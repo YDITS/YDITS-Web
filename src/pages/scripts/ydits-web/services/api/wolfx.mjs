@@ -108,7 +108,7 @@ export class Wolfx extends Service {
         this.app.services.debugLogs.add(
             "network",
             `[${this.name}]`,
-            `Wolfx JMA EEW WebSocket has opened.`
+            `Connected to Wolfx JMA EEW WebSocket.`
         );
 
         if (isRetried) {
@@ -128,7 +128,7 @@ export class Wolfx extends Service {
         this.app.services.debugLogs.add(
             "network",
             `[${this.name}]`,
-            `Wolfx JMA EEW WebSocket has closed.`
+            `Disconnected from Wolfx JMA EEW WebSocket.`
         );
 
         if (!navigator.onLine) { return; }
@@ -145,14 +145,7 @@ export class Wolfx extends Service {
     * JMA EEW Socket 情報更新時の処理。
     */
     onJmaEewSocketUpdated(data) {
-        this.app.services.debugLogs.add(
-            "network",
-            `[${this.name}]`,
-            `Wolfx JMA EEW WebSocket has updated: type: ${data.type}`
-        );
-
         if (data.type !== "jma_eew") return;
-
         this.jmaEewData = data;
     }
 

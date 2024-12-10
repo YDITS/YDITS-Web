@@ -12,6 +12,12 @@
 
 import { Service } from "../../../service.mjs";
 
+/**!
+ * 2024-12-11
+ * This class is not used!
+ * このクラスは使われていません！
+ */
+
 /**
  * Project DM-D.S.S (dmdata.jp) APIを扱う。
  */
