@@ -68,6 +68,7 @@ export class YditsWeb extends FirebaseApp {
         this.register(Datetime);
         this.services.datetime.update();
         this.register(DebugLogs);
+        this.initializeStartedTime = performance.now();
         this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
 
         this.register(Notify);
@@ -219,7 +220,10 @@ export class YditsWeb extends FirebaseApp {
      */
     onBuild() {
         this.initialize();
-        this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version}`);
+        this.upTime = performance.now();
+        this.startupTime = this.services.datetime.gmt.getTime();
+        let initializeTime = this.upTime - this.initializeStartedTime;
+        this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version}. Initialize time: ${Math.round(initializeTime)}ms.`);
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
         setInterval(() => this.ntp(), 1000);
         setInterval(() => this.clock(this.services.datetime), 1000);
