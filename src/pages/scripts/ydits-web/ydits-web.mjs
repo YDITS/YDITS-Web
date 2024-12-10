@@ -68,6 +68,8 @@ export class YditsWeb extends FirebaseApp {
         this.register(Datetime);
         this.services.datetime.update();
         this.register(DebugLogs);
+        this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
+
         this.register(Notify);
 
         try {
@@ -131,10 +133,12 @@ export class YditsWeb extends FirebaseApp {
      * ハンドルされない例外の処理。
      */
     on_unhandled_error(error) {
+        console.error(error);
+
         this.services.debugLogs.add(
             "error",
             `[${this.name}]`,
-            `Unhandled error: ${error.stack}`
+            `Unhandled error: ${error.stack}.`
         )
 
         new Window({
@@ -159,7 +163,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.debugLogs.add(
             "error",
             `[${this.name}]`,
-            `Failed Application initialization: ${error}`
+            `Failed Application initialization: ${error.stack}.`
         );
 
         this.services.notify.show(
@@ -188,7 +192,7 @@ export class YditsWeb extends FirebaseApp {
      * ネットワーク接続時の処理
      */
     onNetworkConnected() {
-        this.services.debugLogs.add("network", `[${this.name}]`, "Reconnected to the network.");
+        this.services.debugLogs.add("network", `[${this.name}]`, "Network reconnected.");
         this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
         setTimeout(() => {
             this.services.api.wolfx.connect();
@@ -215,7 +219,7 @@ export class YditsWeb extends FirebaseApp {
      */
     onBuild() {
         this.initialize();
-        this.services.debugLogs.add("info", `[${this.name}]`, "Application initialized with version " + this.version);
+        this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version}`);
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
         setInterval(() => this.ntp(), 1000);
         setInterval(() => this.clock(this.services.datetime), 1000);
@@ -460,7 +464,7 @@ class Window {
         const create = options.create || null;
 
         if (create) {
-            this.create()
+            this.create();
         }
     }
 
