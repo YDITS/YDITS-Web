@@ -60,7 +60,7 @@ export class Datetime extends Service {
             this.app.services.debugLogs.add(
                 "error",
                 `[${this.name}]`,
-                `Failed to update datetime: ${error}`,
+                `Failed to update datetime: ${error.stack}`,
             );
         }
     }

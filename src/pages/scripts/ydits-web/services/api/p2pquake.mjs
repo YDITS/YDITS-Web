@@ -469,7 +469,7 @@ export class P2pquake extends Service {
         this.app.services.debugLogs.add(
             "network",
             `[${this.name}]`,
-            "Successfully connected to api.p2pquake.net and WebSocket opened."
+            "Connected to p2pquake WebSocket."
         );
 
         this.isError = false;
@@ -494,7 +494,7 @@ export class P2pquake extends Service {
         this.app.services.debugLogs.add(
             "network",
             `[${this.name}]`,
-            "Successfully disconnected from api.p2pquake.net and WebSocket closed."
+            "Disconnected from p2pquake WebSocket."
         );
 
         if (!navigator.onLine) { return; }
@@ -524,15 +524,6 @@ export class P2pquake extends Service {
     socketGotMessage(message) {
         try {
             const DATA = JSON.parse(message.data);
-
-            this.app.services.debugLogs.add(
-                "network",
-                `[${this.name}]`,
-                `
-                    Got new message from Socket api.p2pquake.net.<br>
-                    Code: ${DATA.code}
-                `
-            );
 
             this.latestId = DATA["_id"];
 
@@ -739,7 +730,7 @@ export class P2pquake extends Service {
         this.app.services.debugLogs.add(
             "error",
             `[${this.name}]`,
-            `Failed to connect to api.p2pquake.net.<br>${event}`
+            `Failed to connect to p2pquake WebSocket: ${event}`
         );
 
         this.isError = true;

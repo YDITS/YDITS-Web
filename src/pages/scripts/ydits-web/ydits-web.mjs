@@ -157,7 +157,7 @@ export class YditsWeb extends FirebaseApp {
         console.error(error);
 
         this.services.debugLogs.add(
-            "info",
+            "error",
             `[${this.name}]`,
             `Failed Application initialization: ${error}`
         );
@@ -215,7 +215,7 @@ export class YditsWeb extends FirebaseApp {
      */
     onBuild() {
         this.initialize();
-        this.services.debugLogs.add("info", `[${this.name}]`, "Application initialized.");
+        this.services.debugLogs.add("info", `[${this.name}]`, "Application initialized with version " + this.version);
         this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
         setInterval(() => this.ntp(), 1000);
         setInterval(() => this.clock(this.services.datetime), 1000);

@@ -244,7 +244,7 @@ export class YahooKmoni extends Service {
                 this.app.services.debugLogs.add(
                     "error",
                     `[${this.name}]`,
-                    `Failed to connect to weather-kyoshin.east.edge.storage-yahoo.jp.<br>${error}`
+                    `Failed to fetch from yahoo-kmoni: ${error}`
                 );
 
                 this.app.services.notify.show(

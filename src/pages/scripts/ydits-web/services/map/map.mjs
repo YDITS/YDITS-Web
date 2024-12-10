@@ -530,7 +530,7 @@ export class Map extends Service {
             }
         } catch (error) {
             console.error(error);
-            this.app.services.debugLogs.add("error", `[${this.name}]`, `Map error: ${error}`);
+            this.app.services.debugLogs.add("error", `[${this.name}]`, `EEW Map update error: ${error.stack}`);
         }
     }
 

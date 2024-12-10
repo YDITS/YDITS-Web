@@ -182,8 +182,8 @@ export class GeoLocation extends Service {
         this.app.services.debugLogs.add(
             "error",
             `[${this.name}]`,
-            "Geo Location is supported, but Cannot get current global position."
-        )
+            `Geo location is supported, but could not get current user position: ${error}`
+        );
 
         this.locationStatusElement.textContent = "無効";
         this.latitude = -1;
