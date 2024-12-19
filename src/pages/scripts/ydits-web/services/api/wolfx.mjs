@@ -198,6 +198,9 @@ export class Wolfx extends Service {
         this.eewFieldElement.style.backgroundColor = bgcolor;
         this.eewFieldElement.style.color = fontColor;
 
+        this.eewFieldElement.role = "status";
+        this.eewFieldElement.ariaLabel = `緊急地震速報が発表されています。${this.jmaEewData.originTime}頃、${this.jmaEewData.hypocenter}を震源とする地震が発生しました。最大震度は ${this.jmaEewData.maxIntensity} と推定されています。`;
+
         this.sound();
         this.push();
 
@@ -218,6 +221,9 @@ export class Wolfx extends Service {
         this.eewDepthElement.textContent = "";
         this.eewFieldElement.style.backgroundColor = "#404040ff";
         this.eewFieldElement.style.color = "#ffffffff";
+
+        this.eewFieldElement.role = "status";
+        this.eewFieldElement.ariaLabel = "緊急地震速報は発表されていません";
     }
 
 
