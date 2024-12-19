@@ -82,13 +82,25 @@
         <div id="control">
             <div id="list">
                 <ul>
-                    <li id="menuBtn" title="メニューを開く">
+                    <li id="menuBtn"
+                        title="メニューを開く"
+                        role="button"
+                        aria-label="メニューを開く"
+                        aria-roledescription="クリックすると メニュー を開きます。">
                         <span class="material-symbols-outlined">menu</span>
                     </li>
-                    <li id="eqHistoryBtn" title="地震履歴を開く">
+                    <li id="eqHistoryBtn"
+                        title="地震履歴を開く"
+                        role="button"
+                        aria-label="地震履歴を開く"
+                        aria-roledescription="クリックすると 地震履歴一覧 を 展開します。">
                         <span class="material-symbols-outlined">history</span>
                     </li>
-                    <li id="homeBtn" title="マップを初期位置に移動する">
+                    <li id="homeBtn"
+                        title="マップを初期位置に移動する"
+                        role="button"
+                        aria-label="マップを初期位置に移動する"
+                        aria-roledescription="クリックすると マップを初期位置に移動します。">
                         <span class="material-symbols-outlined">home_pin</span>
                     </li>
                 </ul>
@@ -147,7 +159,13 @@
                 </div>
             </div>
 
-            <div id="mapLayersButton" class="map-controler">
+            <div
+                id="mapLayersButton"
+                class="map-controler"
+                title="マップレイヤー表示切替ウィンドウを開く"
+                role="button"
+                aria-label="マップレイヤー表示切替ウィンドウを開く"
+                aria-roledescription="クリックすると マップレイヤー表示切替ウィンドウ を開きます。">
                 <img class="material-symbols-outlined open"
                     src="./images/layers_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="MapLayersIcon" srcset="">
                 <img class="material-symbols-outlined close"
@@ -158,13 +176,26 @@
         <div id="popup">
             <div class="window" id="menu">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">close</span>
+                    <span
+                        class="material-symbols-outlined closeBtn"
+                        title="メニューウィンドウを閉じる"
+                        role="button"
+                        aria-label="メニューウィンドウを閉じる"
+                        aria-roledescription="クリックすると メニューウィンドウ を閉じます。">
+                        close
+                    </span>
                     <span class="title">メニュー</span>
                 </div>
 
                 <div class="content">
                     <div class="lists">
-                        <div class="list top bottom" id="menuOpenEqhistory">
+                        <div
+                            class="list top bottom"
+                            id="menuOpenEqhistory"
+                            title="地震履歴ウィンドウを開く"
+                            role="button"
+                            aria-label="地震履歴ウィンドウを開く"
+                            aria-roledescription="クリックすると 地震履歴ウィンドウ を開きます。">
                             <span class="material-symbols-outlined">
                                 open_in_new
                             </span>
@@ -182,21 +213,39 @@
                     </div> -->
 
                     <div class="lists">
-                        <div class="list top" id="menuSettings">
+                        <div
+                            class="list top"
+                            id="menuSettings"
+                            title="設定を開く"
+                            role="button"
+                            aria-label="設定を開く"
+                            aria-roledescription="クリックすると 設定 を開きます。">
                             <span class="material-symbols-outlined">
                                 settings
                             </span>
                             設定
                         </div>
 
-                        <div class="list" id="menuHelp">
+                        <div
+                            class="list"
+                            id="menuHelp"
+                            title="ヘルプを開く"
+                            role="button"
+                            aria-label="ヘルプを開く"
+                            aria-roledescription="クリックすると ヘルプ を開きます。">
                             <span class="material-symbols-outlined">
                                 help
                             </span>
                             ヘルプ
                         </div>
 
-                        <div class="list" id="menuLicense">
+                        <div
+                            class="list"
+                            id="menuLicense"
+                            title="ライセンス情報に関するウィンドウを開く"
+                            role="button"
+                            aria-label="ライセンス情報に関するウィンドウを開く"
+                            aria-roledescription="クリックすると ライセンス情報に関するウィンドウ を開きます。">
                             <span class="material-symbols-outlined">
                                 info
                             </span>
