@@ -199,7 +199,8 @@ export class Wolfx extends Service {
         this.eewFieldElement.style.color = fontColor;
 
         this.eewFieldElement.role = "status";
-        this.eewFieldElement.ariaLabel = `緊急地震速報が発表されています。${this.jmaEewData.originTime}頃、${this.jmaEewData.hypocenter}を震源とする地震が発生しました。最大震度は ${this.jmaEewData.maxIntensity} と推定されています。`;
+        this.eewFieldElement.ariaLabel = "緊急地震速報が発表中";
+        this.eewFieldElement.ariaRoleDescription = `緊急地震速報が発表されています。${this.jmaEewData.originTime}頃、${this.jmaEewData.hypocenter}を震源とする地震が発生しました。最大震度は ${this.jmaEewData.maxIntensity} と推定されています。`;
 
         this.sound();
         this.push();
@@ -224,6 +225,7 @@ export class Wolfx extends Service {
 
         this.eewFieldElement.role = "status";
         this.eewFieldElement.ariaLabel = "緊急地震速報は発表されていません";
+        this.eewFieldElement.ariaLabel = "";
     }
 
 
