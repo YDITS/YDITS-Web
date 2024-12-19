@@ -51,6 +51,7 @@ export class Wolfx extends Service {
     initializeElements() {
         this.eewFieldElement = document.getElementById("eewField");
         this.eewTitleElement = document.getElementById("eewTitle");
+        this.eewCalcDesElement = document.getElementById("eewCalcDes");
         this.eewCalcElement = document.getElementById("eewCalc");
         this.eewRegionElement = document.getElementById("eewRegion");
         this.eewOriginTimeElement = document.getElementById("eewOrigin_time");
@@ -190,6 +191,7 @@ export class Wolfx extends Service {
         this.finalText = this.jmaEewData.isFinal ? "最終" : "";
 
         this.eewTitleElement.textContent = `緊急地震速報 ${this.jmaEewData.serialText} (${this.finalText})`;
+        this.eewCalcDesElement.textContent = "最大震度";
         this.eewCalcElement.textContent = this.jmaEewData.maxIntensity;
         this.eewRegionElement.textContent = this.jmaEewData.hypocenter;
         this.eewOriginTimeElement.textContent = `発生日時: ${this.jmaEewData.originTime}`;
@@ -198,7 +200,6 @@ export class Wolfx extends Service {
         this.eewFieldElement.style.backgroundColor = bgcolor;
         this.eewFieldElement.style.color = fontColor;
 
-        this.eewFieldElement.role = "status";
         this.eewFieldElement.ariaLabel = "緊急地震速報が発表中";
         this.eewFieldElement.ariaRoleDescription = `緊急地震速報が発表されています。${this.jmaEewData.originTime}頃、${this.jmaEewData.hypocenter}を震源とする地震が発生しました。最大震度は ${this.jmaEewData.maxIntensity} と推定されています。`;
 
@@ -215,6 +216,7 @@ export class Wolfx extends Service {
      */
     onNotEew() {
         this.eewTitleElement.textContent =  `緊急地震速報は発表されていません`;
+        this.eewCalcDesElement.textContent = "";
         this.eewCalcElement.textContent = "";
         this.eewRegionElement.textContent = "";
         this.eewOriginTimeElement.textContent = "";
@@ -223,7 +225,6 @@ export class Wolfx extends Service {
         this.eewFieldElement.style.backgroundColor = "#404040ff";
         this.eewFieldElement.style.color = "#ffffffff";
 
-        this.eewFieldElement.role = "status";
         this.eewFieldElement.ariaLabel = "緊急地震速報は発表されていません";
         this.eewFieldElement.ariaLabel = "";
     }
