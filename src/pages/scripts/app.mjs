@@ -53,7 +53,7 @@ export class App {
         const newService = new NewService(this);
 
         if (!newService.name) {
-            throw new Error('Serviceにnameプロパティが設定されていません');
+            throw new Error('`name` is required in the service.');
         }
 
         this.services[newService.name] = newService;
