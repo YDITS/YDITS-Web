@@ -548,7 +548,7 @@
                 </div>
 
                 <div class="content">
-                    <p>これらの設定は開発用です。通常は使用しないでください。<br>有効にするとパフォーマンスが低下したり、正常に動作しなくなる可能性があります。</p>
+                    <p>これらの設定は開発用です。</p>
 
                     <div class="list">
                         <div class="item">
@@ -557,6 +557,19 @@
                             </label>
                             <div class="content">
                                 <span id="initializeTime"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list">
+                        <div class="item" id="settingsDebugOutput">
+                            <label>
+                                <h3>デバッグオーバーレイ</h3>
+                            </label>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -999,6 +1012,20 @@
                     </p>
                 </div>
             </div>
+        </div>
+
+        <div id="betaBanner">
+            <span id="betaBannerText">Beta</span>
+        </div>
+
+        <div id="debugOutput">
+            <code id="debugOutputAppName"></code>
+            <code id="debugOutputTitle">Debug Mode</code>
+            <code id="debugOutputUserAgent"></code>
+            <code id="debugOutputLanguage"></code>
+            <code id="debugOutputDisplay"></code>
+            <code id="debugOutputWolfxJmaEewSocket"></code>
+            <code id="debugOutputP2pquakeSocket"></code>
         </div>
     </main>
 </body>

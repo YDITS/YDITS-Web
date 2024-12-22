@@ -15,6 +15,7 @@
 }
 
 main {
+    position: absolute;
     display: flex;
     height: calc(100svh - env(titlebar-area-height, 2rem) - 2px);
     overflow: hidden;
@@ -770,6 +771,45 @@ main {
     gap: 1rem;
 }
 
+#betaBanner {
+    display: none;
+    position: absolute;
+    right: 2rem;
+    top: 2rem;
+    border-radius: 100vw;
+    padding: 0 0.5rem;
+    background-color: #e04040;
+    opacity: 0.5;
+    z-index: 3;
+    pointer-events: none;
+}
+
+#betaBanner.active {
+    display: flex;
+}
+
+#betaBannerText {
+    color: #ffffff;
+    text-align: center;
+}
+
+#debugOutput {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+#debugOutput.active {
+    display: flex;
+}
+
+#debugOutput>* {
+    background-color: #00000080;
+}
 
 @media (max-width: 769px) {
     :root {

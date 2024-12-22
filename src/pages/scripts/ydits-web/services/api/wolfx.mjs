@@ -81,7 +81,7 @@ export class Wolfx extends Service {
                 {
                     onOpened: (isRetried) => this.onJmaEewSocketOpened(isRetried),
                     onClosed: () => this.onJmaEewSocketClosed(),
-                    onUpdated: (data)  => this.onJmaEewSocketUpdated(data),
+                    onUpdated: (data) => this.onJmaEewSocketUpdated(data),
                     onError: () => this.onJmaEewSocketError(),
                 }
             );
@@ -218,7 +218,7 @@ export class Wolfx extends Service {
      * EEW未発表時。
      */
     onNotEew() {
-        this.eewTitleElement.textContent =  `緊急地震速報は発表されていません`;
+        this.eewTitleElement.textContent = `緊急地震速報は発表されていません`;
         this.eewCalcDesElement.textContent = "";
         this.eewCalcElement.textContent = "";
         this.eewRegionElement.textContent = "";

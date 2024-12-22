@@ -48,7 +48,8 @@ export class Settings extends Service {
 
     debug = {
         rayout: null,
-        fpsMs: 1000
+        fpsMs: 1000,
+        output: false,
     }
 
 
@@ -384,6 +385,33 @@ export class Settings extends Service {
             document.getElementById("debugOptionWindow").classList.remove("active");
         });
 
+        // ----- Debug Output ----- //
+        if (localStorage.getItem("settings-debug-output") == 'true') {
+            this.debug.output = true;
+            document.querySelector("#settingsDebugOutput .toggle-switch").classList.add("on");
+            this.showDebugOutput();
+        } else if (localStorage.getItem("settings-debug-output") == 'false') {
+            this.debug.output = false;
+            document.querySelector("#settingsDebugOutput .toggle-switch").classList.remove("on");
+        } else {
+            this.debug.output = false;
+            document.querySelector("#settingsDebugOutput .toggle-switch").classList.remove("on");
+        }
+
+        document.querySelector("#settingsDebugOutput .toggle-switch").addEventListener("click", () => {
+            if (this.debug.output == false) {
+                this.debug.output = true;
+                localStorage.setItem('settings-debug-output', 'true');
+                document.querySelector("#settingsDebugOutput .toggle-switch").classList.add("on");
+                this.showDebugOutput();
+            } else if (this.debug.output == true) {
+                this.debug.output = false;
+                localStorage.setItem('settings-debug-output', 'false');
+                document.querySelector("#settingsDebugOutput .toggle-switch").classList.remove("on");
+                this.hideDebugOutput();
+            }
+        });
+
         // ----- Debug Rayout ----- //
         if (localStorage.getItem("settings-debug-rayout") == 'true') {
             this.debug.rayout = true;
@@ -465,6 +493,16 @@ export class Settings extends Service {
                 );
             }
         );
+    }
+
+
+    showDebugOutput() {
+        document.getElementById("debugOutput").classList.add("active");
+    }
+
+
+    hideDebugOutput() {
+        document.getElementById("debugOutput").classList.remove("active");
     }
 
 

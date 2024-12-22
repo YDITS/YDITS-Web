@@ -115,7 +115,7 @@ export class Map extends Service {
         await this.showHrpns();
         this.app.services.notify.show("message", "", `typhoonをイニシャライズしています…`);
         await this.showTyphoon();
-        this.app.services.notify.show("message", `YDITS for Web Ver ${this.app.versionString}`, "");
+        this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.versionString}`, "");
     }
 
 

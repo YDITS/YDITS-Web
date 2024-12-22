@@ -227,6 +227,10 @@ export class YditsWeb extends FirebaseApp {
     onBuild() {
         this.initialize();
 
+        if (this.version.level === YditsWeb.versionLevels.beta) {
+            document.getElementById("betaBanner").classList.add("active");
+        }
+
         this.upTime = performance.now();
         this.startupTime = this.services.datetime.gmt.getTime();
         this.initializeTime = this.upTime - this.initializeStartedTime;
@@ -241,6 +245,7 @@ export class YditsWeb extends FirebaseApp {
         setInterval(() => this.eew(), 1000);
         setInterval(() => this.hrpns(), 1000 * 30);
         setInterval(() => this.jmaDataFeed(), this.jma_data_feed_fetch_interval);
+        setInterval(() => this.debugOutput(), 1000);
 
         requestAnimationFrame(() => this.mainloop());
     }
@@ -317,6 +322,35 @@ export class YditsWeb extends FirebaseApp {
 
     jmaDataFeed() {
         this.services.jmaDataFeed.update();
+    }
+
+
+    debugOutput() {
+        if (!this.services.settings.debug.output) return;
+
+        trying(() => {
+            document.getElementById("debugOutputAppName").textContent = `${this.name} Version ${this.versionString}`;
+        });
+
+        trying(() => {
+            document.getElementById("debugOutputUserAgent").textContent = `User Agent: ${navigator.userAgent}`;
+        });
+
+        trying(() => {
+            document.getElementById("debugOutputLanguage").textContent = `Client Language: ${navigator.language}`;
+        });
+
+        trying(() => {
+            document.getElementById("debugOutputDisplay").textContent = `Display: ${screen.width} x ${screen.height}`;
+        });
+
+        trying(() => {
+            document.getElementById("debugOutputWolfxJmaEewSocket").textContent = `Wolfx JMA EEW WebSocket: ${this.services.api.wolfx.jmaEewSocket.socket ? "Connected" : "Disconnected"}`;
+        });
+
+        trying(() => {
+            document.getElementById("debugOutputP2pquakeSocket").textContent = `P2P地震情報 WebSocket: ${this.services.api.p2pquake.socket ? "Connected" : "Disconnected"}`;
+        });
     }
 
 
