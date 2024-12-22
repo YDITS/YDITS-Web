@@ -167,6 +167,8 @@ export class Wolfx extends Service {
      * 表示更新。
      */
     update() {
+        if (this.jmaEewData instanceof WolfxJmaEewData) { return; }
+
         const nowTime = this.app.services.datetime.gmt;
         const isValid = this.jmaEewData.isValid(nowTime);
 
