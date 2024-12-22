@@ -36,6 +36,8 @@ export class DebugLogs extends Service {
             this.add("start", `[${this.name}]`, "- Start log -");
         } else {
             this.debugLogs = JSON.parse(DEBUG_LOGS_DATA);
+            this.debugLogs = this.limitter(this.debugLogs, 200);
+            this.saveLogsToLocalStorage();
             this.debugLogs.forEach(log => {
                 this.addDebugLogsHtml({
                     type: log.type,
@@ -89,6 +91,7 @@ export class DebugLogs extends Service {
         };
 
         this.debugLogs.push(logEntry);
+        this.debugLogs = this.limitter(this.debugLogs, 200);
         this.saveLogsToLocalStorage();
         this.addDebugLogsHtml(logEntry);
     }
@@ -171,5 +174,17 @@ export class DebugLogs extends Service {
         this.debugLogs = [];
         this.debugLogListsElement.innerHTML = "";
         localStorage.removeItem("debugLogs");
+    }
+
+
+    /**
+     * 指定の数値までのログを残す。
+     */
+    limitter(array, limit) {
+        if (array.length > limit) {
+            return array.slice(array.length - limit);
+        } else {
+            return array;
+        }
     }
 }
