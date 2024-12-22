@@ -34,10 +34,9 @@ export class Wolfx extends Service {
         this.connect();
 
         setInterval(
-            (data) => this.update(data),
-            1000,
-            this.jmaEewData
-        )
+            () => this.update(this.jmaEewData),
+            1000
+        );
     }
 
 
@@ -383,7 +382,7 @@ export class WolfxJmaEewSocket {
         }
 
         if (!callbacks.onError) {
-            throw new Error("Required argument 'callbacks.onUpdated' is not specified.");
+            throw new Error("Required argument 'callbacks.onError' is not specified.");
         }
 
         this.callbacks = callbacks;
@@ -528,7 +527,7 @@ export class WolfxJmaEewSocket {
                 try {
                     data = new WolfxJmaEewData(data);
                 } catch (error) {
-                    throw new Error(`Failed to parse data of Wolfx Heartbeat JSON data: ${error}`);
+                    throw new Error(`Failed to parse data of Wolfx JMA EEW JSON data: ${error}`);
                 }
             } else {
                 throw new Error(`Unknown data type was response: ${data.type}`);
@@ -644,6 +643,9 @@ export class WolfxJmaEewData {
 
 
 class WolfxJmaEewWarnAreas {
+    areas = [];
+
+
     constructor(areas = []) {
         areas.forEach(area => {
             this.areas.push(
@@ -666,8 +668,6 @@ class WolfxJmaEewWarnArea {
 
 
     get isWarn() {
-        if (this.type === "警報") return true;
-        if (this.type === "予報") return false;
-        return null;
+        if (this.type === "警報") { return true } else { return false };
     }
 }
