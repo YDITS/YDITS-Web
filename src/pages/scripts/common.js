@@ -12,15 +12,15 @@
 
 document.addEventListener(
     "DOMContentLoaded",
-    async() => await loadCommonElements()
+    async () => await loadCommonElements()
 );
 
 // ---------------------------------------------------------------------------------------------------- //
 
 async function loadCommonElements() {
-    await trying(fetchAndSetElement, {query: "header", uri: "/elements/header.html"});
+    await trying(fetchAndSetElement, { query: "header", uri: "/elements/header.html" });
     if (new Set(["/", "/eqhistory/", "/debug-logs/"]).has(location.pathname)) { return; }
-    await trying(fetchAndSetElement, {query: "footer", uri: "/elements/footer.html"});
+    await trying(fetchAndSetElement, { query: "footer", uri: "/elements/footer.html" });
 }
 
 // ---------------------------------------------------------------------------------------------------- //
@@ -37,7 +37,7 @@ async function trying(func, args) {
 
 async function fetchAndSetElement(args) {
     let response;
-    
+
     try {
         response = await fetch(args.uri);
     } catch (error) {

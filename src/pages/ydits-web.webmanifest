@@ -8,7 +8,10 @@
     "scope": "/",
     "start_url": "./index.html",
     "display": "standalone",
-    "display_override": ["window-controls-overlay", "standalone"],
+    "display_override": [
+        "window-controls-overlay",
+        "standalone"
+    ],
     "icons": [
         {
             "src": "https://cdn.ydits.net/images/ydits_logos/ydits_icon_512px.png",

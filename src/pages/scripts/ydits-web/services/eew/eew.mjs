@@ -99,7 +99,7 @@ export class Eew extends Service {
         this.geolocation = app.services.geoLocation;
 
         this.warnElement = document.getElementById("eewWarn");
-        this.scaleElement =document.getElementById("eewScale");
+        this.scaleElement = document.getElementById("eewScale");
         this.scaleAboutElement = document.getElementById("eewScaleAbout");
         this.arrivalTimeElement = document.getElementById("eewArrivalTime");
         this.arrivalTimeAboudElement = document.getElementById("eewArrivalTimeAbout");
