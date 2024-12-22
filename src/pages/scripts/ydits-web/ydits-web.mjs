@@ -223,7 +223,7 @@ export class YditsWeb extends FirebaseApp {
     onBuild() {
         this.initialize();
 
-        if (this.version.level === YditsWeb.versionLevels.beta) {
+        if (this.version.level === Version.levels.beta) {
             document.getElementById("betaBanner").classList.add("active");
         }
 
@@ -325,7 +325,7 @@ export class YditsWeb extends FirebaseApp {
         if (!this.services.settings.debug.output) return;
 
         trying(() => {
-            document.getElementById("debugOutputAppName").textContent = `${this.name} Version ${this.versionString}`;
+            document.getElementById("debugOutputAppName").textContent = `${this.name} Version ${this.version.string}`;
         });
 
         trying(() => {
