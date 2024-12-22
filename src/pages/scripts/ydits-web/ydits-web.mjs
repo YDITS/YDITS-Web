@@ -231,7 +231,7 @@ export class YditsWeb extends FirebaseApp {
         this.startupTime = this.services.datetime.gmt.getTime();
         this.initializeTime = this.upTime - this.initializeStartedTime;
 
-        this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version}. Initialize time: ${Math.round(this.initializeTime)}ms.`);
+        this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version.string}. Initialize time: ${Math.round(this.initializeTime)}ms.`);
         this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
 
         document.getElementById("initializeTime").textContent = `${Math.round(this.initializeTime)}ms`;
