@@ -20,29 +20,9 @@ export class App {
     constructor(config) {
         this.name = config.name;
         this.description = config.description;
-        this.version = {
-            major: config.version.major,
-            minor: config.version.minor,
-            patch: config.version.patch,
-            level: config.version.level,
-        }
+        this.version = config.version;
         this.author = config.author;
         this.copyright = config.copyright;
-    }
-
-
-    get versionString() {
-        if (this.version.level === App.versionLevels.beta) {
-            return `${this.version.major}.${this.version.minor}.${this.version.patch} (beta)`;
-        }
-
-        return `${this.version.major}.${this.version.minor}.${this.version.patch}`;
-    }
-
-
-    static versionLevels = {
-        final: "final",
-        beta: "beta",
     }
 
 

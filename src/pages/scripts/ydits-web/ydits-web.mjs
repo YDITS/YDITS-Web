@@ -11,6 +11,7 @@
 'use strict';
 
 import { FirebaseApp } from "../firebase/app.mjs";
+import { Version } from "../version.mjs";
 import { Datetime } from "./services/modules/datetime.mjs";
 import { DebugLogs } from "./services/modules/debug-logs.mjs";
 import { Notify } from "./services/modules/notify.mjs";
@@ -30,12 +31,7 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。",
-            version: {
-                major: 3,
-                minor: 18,
-                patch: 0,
-                level: YditsWeb.versionLevels.beta,
-            },
+            version: new Version(3, 18, 0, Version.levels.beta),
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: {
@@ -236,7 +232,7 @@ export class YditsWeb extends FirebaseApp {
         this.initializeTime = this.upTime - this.initializeStartedTime;
 
         this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version}. Initialize time: ${Math.round(this.initializeTime)}ms.`);
-        this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
+        this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
 
         document.getElementById("initializeTime").textContent = `${Math.round(this.initializeTime)}ms`;
 
@@ -358,7 +354,7 @@ export class YditsWeb extends FirebaseApp {
      * メニュー項目をイニシャライズする。
      */
     initMenu() {
-        document.querySelector("#menu .version").textContent = `Ver ${this.versionString}`;
+        document.querySelector("#menu .version").textContent = `Ver ${this.version.string}`;
 
         document.getElementById("menuOpenEqhistory").addEventListener("click", () => {
             window.open(
