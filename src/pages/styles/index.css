@@ -115,6 +115,7 @@ main {
 
 #eewField .left .title {
     display: block;
+    height: 1em;
 }
 
 #eewField .right {

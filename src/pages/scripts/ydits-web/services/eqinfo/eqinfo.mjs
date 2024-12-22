@@ -81,7 +81,13 @@ export class Eqinfo extends Service {
      */
     addToList(isFirst, num) {
         let html = `
-            <li class="list list-${num}">
+            <li
+                class="list list-${num}"
+                tabindex="0"
+                role="button"
+                aria-disabled="false"
+                aria-label="地震情報"
+                aria-roledescription="地震履歴の項目${num + 1}。${this.convertDateFormat(this.originTimeText)}頃、${this.regionName}で最大震度${this.maxScaleText}の地震がありました。地震の規模は${this.magnitudeText}、震源の深さは${this.depthText}と推定されます。この地震による${this.tsunamiJp}">
                 <div class="maxScale">
                     <p>${this.maxScaleText}</p>
                 </div>
@@ -117,6 +123,24 @@ export class Eqinfo extends Service {
 
         document.querySelector(`#eqHistoryField>.list-${num}>.maxScale`).style.backgroundColor = bgcolor;
         document.querySelector(`#eqHistoryField>.list-${num}>.maxScale`).style.color = color;
+    }
+
+
+    convertDateFormat(dateString) {
+        const regex = /(\d{4})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2})/;
+        const match = dateString.match(regex);
+
+        if (match) {
+            const year = match[1];
+            const month = match[2];
+            const day = match[3];
+            const hour = match[4];
+            const minute = match[5];
+
+            return `${year}年${month}月${day}日 ${hour}時${minute}分`;
+        } else {
+            throw new Error("Invalid date format");
+        }
     }
 
 
