@@ -30,7 +30,12 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。",
-            version: "3.17.2",
+            version: {
+                major: 3,
+                minor: 17,
+                patch: 2,
+                level: YditsWeb.versionLevels.beta,
+            },
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: {
@@ -319,7 +324,7 @@ export class YditsWeb extends FirebaseApp {
      * メニュー項目をイニシャライズする。
      */
     initMenu() {
-        document.querySelector("#menu .version").textContent = `Ver ${this.version}`;
+        document.querySelector("#menu .version").textContent = `Ver ${this.versionString}`;
 
         document.getElementById("menuOpenEqhistory").addEventListener("click", () => {
             window.open(
