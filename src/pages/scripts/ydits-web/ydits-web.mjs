@@ -32,8 +32,8 @@ export class YditsWeb extends FirebaseApp {
             description: "『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。",
             version: {
                 major: 3,
-                minor: 17,
-                patch: 2,
+                minor: 18,
+                patch: 0,
                 level: YditsWeb.versionLevels.beta,
             },
             author: "よね/Yone",
