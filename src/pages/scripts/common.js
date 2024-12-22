@@ -25,9 +25,9 @@ async function loadCommonElements() {
 async function trying(func, ...args) {
     try {
         return await func(...args);
-    } catch (error) {
-        console.error(error);
-    }
+    } catch {
+        // Do nothing
+    };
 }
 
 // ---------------------------------------------------------------------------------------------------- //
