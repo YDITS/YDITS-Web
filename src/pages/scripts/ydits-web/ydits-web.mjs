@@ -209,7 +209,7 @@ export class YditsWeb extends FirebaseApp {
      * ネットワーク切断時の処理
      */
     onNetworkDisconnected() {
-        document.getElementById("statusLamp").style.backgroundColor = "ff4040";
+        document.getElementById("statusLamp").style.backgroundColor = "#ff4040";
         this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
         this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
         this.services.api.wolfx.disconnect();
@@ -513,11 +513,11 @@ export class YditsWeb extends FirebaseApp {
 class Window {
     constructor(options) {
         this.type = options.type || null;
-        this.id = `win_${options.id}` || null;
+        this.id = options.id ? `win_${options.id}` : null;
         this.title = options.title || "";
         this.content = options.content || "";
 
-        this.color = this.windowTypeToColor[this.type] || this.windowTypeToColor.default;
+        this.color = Window.windowTypeToColor[this.type] || Window.windowTypeToColor.default;
 
         const create = options.create || null;
 
@@ -533,7 +533,7 @@ class Window {
     }
 
 
-    windowTypeToColor = {
+    static windowTypeToColor = {
         message: "#404040ff",
         error: "#ff5050ff",
         default: "#404040ff"
@@ -546,7 +546,7 @@ class Window {
         };
 
         const newWindowElement = `
-                <dialog class="dialog" id=${this.id}>
+                <dialog class="dialog" id="${this.id}">
                     <div class="navBar">
                         <h2 class="title">${this.title}</h2>
                         <span class="close material-symbols-outlined">close</span>
