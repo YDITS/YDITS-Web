@@ -34,8 +34,9 @@ export class Wolfx extends Service {
         this.connect();
 
         setInterval(
-            () => this.update(),
-            1000
+            (data) => this.update(data),
+            1000,
+            this.jmaEewData
         )
     }
 
@@ -66,7 +67,7 @@ export class Wolfx extends Service {
     async fetch() {
         const rest = new WolfxJmaEewRest();
         this.jmaEewData = await rest.fetch();
-        this.update();
+        this.update(this.jmaEewData);
     }
 
 
@@ -80,7 +81,7 @@ export class Wolfx extends Service {
                 {
                     onOpened: (isRetried) => this.onJmaEewSocketOpened(isRetried),
                     onClosed: () => this.onJmaEewSocketClosed(),
-                    onUpdated: (data) => this.onJmaEewSocketUpdated(data),
+                    onUpdated: (data)  => this.onJmaEewSocketUpdated(data),
                     onError: () => this.onJmaEewSocketError(),
                 }
             );
@@ -146,7 +147,7 @@ export class Wolfx extends Service {
     * JMA EEW Socket 情報更新時の処理。
     */
     onJmaEewSocketUpdated(data) {
-        if (data.type !== "jma_eew") return;
+        if (!(data instanceof WolfxJmaEewData)) return;
         this.jmaEewData = data;
     }
 
@@ -166,11 +167,11 @@ export class Wolfx extends Service {
     /**
      * 表示更新。
      */
-    update() {
-        if (this.jmaEewData instanceof WolfxJmaEewData) { return; }
+    update(data) {
+        if (!data && !(data instanceof WolfxJmaEewData)) { return; }
 
         const nowTime = this.app.services.datetime.gmt;
-        const isValid = this.jmaEewData.isValid(nowTime);
+        const isValid = data.isValid(nowTime);
 
         if (isValid) {
             this.onEew();
@@ -453,7 +454,7 @@ export class WolfxJmaEewSocket {
             "error",
             (event) => this.socketError(
                 event,
-                () => this.this.callbacks.onError()
+                () => this.callbacks.onError()
             )
         );
     }
