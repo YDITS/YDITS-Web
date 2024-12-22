@@ -45,8 +45,6 @@ export class YditsWeb extends FirebaseApp {
             }
         });
 
-        window.addEventListener("error", (event) => this.on_unhandled_error(event.error));
-
         this.initializeStartedTime = performance.now();
 
         if (location.pathname === "/eqhistory/") {
@@ -68,14 +66,30 @@ export class YditsWeb extends FirebaseApp {
         this.clockElement = document.getElementById("clock");
         this.fpsElement = document.getElementById("fps");
 
+        this.initializeServices();
+        this.registerServices();
+        this.initUI();
+    }
+
+
+    setupEventListeners() {
+        window.addEventListener("error", (event) => this.on_unhandled_error(event.error));
+        window.addEventListener("online", () => this.onNetworkConnected());
+        window.addEventListener("offline", () => this.onNetworkDisconnected());
+    }
+
+
+    initializeServices() {
         this.register(Datetime);
         this.services.datetime.update();
         this.register(DebugLogs);
         this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
+    }
 
-        this.register(Notify);
 
+    registerServices() {
         try {
+            this.register(Notify);
             this.register(Eew);
             this.register(Eqinfo);
             this.register(JmaDataFeed);
@@ -88,23 +102,22 @@ export class YditsWeb extends FirebaseApp {
             try {
                 this.register(PushNotify);
             } catch (error) {
-                // Without Webkit
                 console.error(error);
                 this.services.debugLogs.add("error", `[${this.name}]`, error);
             }
 
             this.register(GeoLocation);
-            this.initMenu();
-            this.initLicense();
-            this.initMapLayersMenu();
-
-            window.addEventListener("online", () => this.onNetworkConnected());
-            window.addEventListener("offline", () => this.onNetworkDisconnected());
-
-            this.clockElement.textContent = "----/--/-- --:--:--";
         } catch (error) {
             this.on_initialize_error(error);
         }
+    }
+
+
+    initUI() {
+        this.initMenu();
+        this.initLicense();
+        this.initMapLayersMenu();
+        this.clockElement.textContent = "----/--/-- --:--:--";
     }
 
 
@@ -236,14 +249,19 @@ export class YditsWeb extends FirebaseApp {
 
         document.getElementById("initializeTime").textContent = `${Math.round(this.initializeTime)}ms`;
 
+        this.startIntervals();
+
+        requestAnimationFrame(() => this.mainloop());
+    }
+
+
+    startIntervals() {
         setInterval(() => this.ntp(), 1000);
         setInterval(() => this.clock(this.services.datetime), 1000);
         setInterval(() => this.eew(), 1000);
         setInterval(() => this.hrpns(), 1000 * 30);
         setInterval(() => this.jmaDataFeed(), this.jma_data_feed_fetch_interval);
         setInterval(() => this.debugOutput(), 1000);
-
-        requestAnimationFrame(() => this.mainloop());
     }
 
 
@@ -465,9 +483,7 @@ export class YditsWeb extends FirebaseApp {
      * 数値を二桁揃えする。
      */
     zeroPadding(value) {
-        value = "0" + value;
-        value = value.slice(-2);
-        return value;
+        return ("0" + value).slice(-2);
     }
 
 
@@ -484,7 +500,7 @@ export class YditsWeb extends FirebaseApp {
         this.register(Eqinfo);
 
         this.services.api.p2pquake.initialize();
-        this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
+        this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
     }
 
 
@@ -498,7 +514,7 @@ export class YditsWeb extends FirebaseApp {
         this.register(DebugLogs);
         this.register(Notify);
 
-        this.services.notify.show("message", `YDITS for Web Ver ${this.version}`, "");
+        this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
     }
 }
 
@@ -519,9 +535,7 @@ class Window {
 
         this.color = Window.windowTypeToColor[this.type] || Window.windowTypeToColor.default;
 
-        const create = options.create || null;
-
-        if (create) {
+        if (options.create) {
             this.create();
         }
     }
