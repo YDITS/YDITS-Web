@@ -57,6 +57,8 @@ export class YditsWeb extends FirebaseApp {
             return;
         }
 
+        this.setupEventListeners();
+
         this.isEqhistoryMode = false;
         this.isDebugLogsMode = false;
 
