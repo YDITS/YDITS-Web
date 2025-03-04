@@ -12,6 +12,9 @@
 
 <head>
     <meta charset="UTF-8">
+
+    <!-- Meta -->
+    <title>デバッグログ | YDITS for Web</title>
     <meta name="application-name" content="YDITS for Web">
     <meta name="description" content="『YDITS for Web』は防災情報をすぐに確認できるWebアプリケーションです。">
     <meta name="keywords" content="YDITS for Web, YDITS-Web, YDITS, よね/Yone, よね, Yone">
@@ -20,8 +23,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <title>デバッグログ | YDITS for Web</title>
-
+    <!-- OGP -->
     <meta property="og:url" content="https://webapp.ydits.net/debug-logs/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="YDITS for Web">
@@ -31,21 +33,15 @@
     <meta name="twitter:site" content="@YDITS_JP">
     <meta name="twitter:card" content="summary">
 
+    <!-- Icons -->
     <link rel="shortcut icon" type="image/x-icon" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png">
     <link rel="apple-touch-icon-precomposed" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png">
     <link rel="fluid-icon" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png" title="YDITS for Web">
+
+    <!-- Manifest -->
     <link rel="manifest" href="/ydits-web.webmanifest">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-        integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-        crossorigin="">
-    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.css" rel="stylesheet" />
-
-    <link rel="stylesheet" href="/styles/common.css">
-    <link rel="stylesheet" href="/styles/ui.css">
-    <link rel="stylesheet" href="/styles/index.css">
-    <link rel="stylesheet" href="./styles/index.css">
-
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -54,15 +50,18 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TWBJ0TEFRJ"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+        integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+        crossorigin="">
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.css" rel="stylesheet">
 
-        gtag('config', 'G-TWBJ0TEFRJ');
-    </script>
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="/styles/ui.css">
+    <link rel="stylesheet" href="/styles/index.css">
+    <link rel="stylesheet" href="/debug-logs/styles/index.css">
 
+    <!-- Scripts -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -74,6 +73,16 @@
     <noscript>
         <meta http-equiv="refresh" content="0; URL=/noscript/">
     </noscript>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TWBJ0TEFRJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-TWBJ0TEFRJ');
+    </script>
 </head>
 
 <body>
