@@ -72,7 +72,7 @@ export class Eqinfo extends Service {
      * 地震情報に関連するすべての接続を切断する。
      */
     disconnect() {
-        this.app.services.api.p2pquake.socket.close();
+        this.app.services.api.p2pquake.socket?.close();
     }
 
 
