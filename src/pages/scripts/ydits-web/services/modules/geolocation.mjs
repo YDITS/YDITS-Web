@@ -11,6 +11,7 @@
 'use strict';
 
 import { Service } from "../../../service.mjs";
+import { LocalStorage } from "./local-storage.mjs";
 
 /**
  * 位置情報を管理する。
@@ -35,6 +36,17 @@ export class GeoLocation extends Service {
         this.locationStatusElement = document.getElementById("locationStatus");
         this.locationAreaElement = document.getElementById("locationArea");
         this.locationAccuracyElement = document.getElementById("locationAccuracy");
+
+        this._localStorage = new LocalStorage(this.app);
+
+        const cacheLocationArea = this._localStorage.cacheLocationArea;
+
+        if (typeof cacheLocationArea === "string") {
+            this.area = cacheLocationArea;
+            this.locationAreaElement.textContent = `${this.area} (キャッシュ)`;
+            this.isGot = false;
+            document.dispatchEvent(this.app.buildEvent);
+        }
 
         if ("geolocation" in navigator) {
             this.isSupport = true;
@@ -212,6 +224,7 @@ export class GeoLocation extends Service {
                     this.area = data[city];
                 }
 
+                this._localStorage.cacheLocationArea = this.area;
                 this.locationAreaElement.textContent = this.area;
             });
     }
