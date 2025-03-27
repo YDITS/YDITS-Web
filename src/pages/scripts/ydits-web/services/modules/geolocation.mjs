@@ -39,15 +39,6 @@ export class GeoLocation extends Service {
 
         this._localStorage = new LocalStorage(this.app);
 
-        const cacheLocationArea = this._localStorage.cacheLocationArea;
-
-        if (typeof cacheLocationArea === "string") {
-            this.area = cacheLocationArea;
-            this.locationAreaElement.textContent = `${this.area} (キャッシュ)`;
-            this.isGot = false;
-            document.dispatchEvent(this.app.buildEvent);
-        }
-
         if ("geolocation" in navigator) {
             this.isSupport = true;
             this.locationStatusElement.textContent = "有効";
@@ -56,6 +47,17 @@ export class GeoLocation extends Service {
             this.latitude = -1;
             this.longitude = -1;
             this.locationStatusElement.textContent = "無効";
+        }
+
+        const cacheLocationArea = this._localStorage.cacheLocationArea;
+
+        if (typeof cacheLocationArea === "string") {
+            this.area = cacheLocationArea;
+            this.locationAreaElement.textContent = `${this.area} (キャッシュ)`;
+            document.dispatchEvent(this.app.buildEvent);
+        } else {
+            this.area = "東京都23区";
+            document.dispatchEvent(this.app.buildEvent);
         }
 
         this.getLocation();
@@ -178,7 +180,7 @@ export class GeoLocation extends Service {
             .then(() => {
                 if (!(this.isGot)) {
                     this.isGot = true;
-                    document.dispatchEvent(this.app.buildEvent);
+                    // document.dispatchEvent(this.app.buildEvent);
                 }
             })
             .catch((error) => {
@@ -226,6 +228,8 @@ export class GeoLocation extends Service {
 
                 this._localStorage.cacheLocationArea = this.area;
                 this.locationAreaElement.textContent = this.area;
+
+                this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
             });
     }
 }
