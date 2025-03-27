@@ -90,7 +90,7 @@ export class Notify extends Service {
     }
 
 
-    hide(element) {
-        element.classList.remove("active");
+    hide() {
+        this.notifyElement.classList.remove("active");
     }
 }
