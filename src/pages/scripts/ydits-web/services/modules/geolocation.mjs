@@ -180,6 +180,7 @@ export class GeoLocation extends Service {
             .then(() => {
                 if (!(this.isGot)) {
                     this.isGot = true;
+                    this.app.services.map.updateUserPoint();
                     // document.dispatchEvent(this.app.buildEvent);
                 }
             })
