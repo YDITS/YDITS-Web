@@ -10,7 +10,7 @@
 
 import { Service } from "../../../service.mjs";
 
-class LocalStorage extends Service {
+export class LocalStorage extends Service {
     constructor(app) {
         super(app, {
             name: "localStorage",
@@ -40,7 +40,7 @@ class LocalStorage extends Service {
 
     _localStorageGetItem(key) {
         try {
-            window.localStorage.getItem(key);
+            return window.localStorage.getItem(key);
         } catch (error) {
             throw new Error(`Could not get localStorage item as ${key}: ${error.stack}`);
         }
@@ -49,7 +49,7 @@ class LocalStorage extends Service {
 
     _localStorageSetItem(key, value) {
         try {
-            window.localStorage.setItem(key, value);
+            return window.localStorage.setItem(key, value);
         } catch (error) {
             throw new Error(`Could not set localStorage item as ${key}: ${error.stack}`);
         }
