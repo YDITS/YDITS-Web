@@ -209,7 +209,6 @@ export class GeoLocation extends Service {
 
         if (!(this.isGot)) {
             this.isGot = true;
-            document.dispatchEvent(this.app.buildEvent);
         }
     }
 
