@@ -367,7 +367,7 @@ export class YditsWeb extends FirebaseApp {
         trying(() => {
             document.getElementById("debugOutputP2pquakeSocket").textContent = `P2P地震情報 WebSocket: ${this.services.api.p2pquake.socket ? "Connected" : "Disconnected"}`;
         });
-        
+
         trying(() => {
             let reports = "";
             Object.keys(this.services.eew.reports[this.services.eew.currentId]).forEach(key => {
