@@ -94,22 +94,25 @@ export class Map extends Service {
     async initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
-        if (!this.app.services.geoLocation.isSupport) { return }
+        if (!this.isGeoLocationSupported) { return }
 
-        this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
-            icon: L.icon({
-                iconUrl: "./images/user_point.png",
-                iconSize: [24, 24]
-            })
-        }).addTo(this.map);
+        document.addEventListener("getLocation", () => {
+            this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
+                icon: L.icon({
+                    iconUrl: "./images/user_point.png",
+                    iconSize: [24, 24]
+                })
+            }).addTo(this.map);
 
-        this.userPointCircle = L.circle([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
-            radius: this.app.services.geoLocation.accuracy,
-            weight: 1,
-            color: '#00000000',
-            fillColor: '#4080ff80',
-            fillOpacity: 0.25,
-        }).addTo(this.map);
+            this.userPointCircle = L.circle([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
+                radius: this.app.services.geoLocation.accuracy,
+                weight: 1,
+                color: '#00000000',
+                fillColor: '#4080ff80',
+                fillOpacity: 0.25,
+            }).addTo(this.map);
+
+        });
 
         this.app.services.notify.show("message", "", `hrpnsをイニシャライズしています…`);
         await this.showHrpns();
@@ -550,6 +553,11 @@ export class Map extends Service {
      */
     setViewHome() {
         this.setView(this.defaultCenter, this.defaultZoom);
+    }
+
+
+    get isGeoLocationSupported() {
+        return "geolocation" in window.navigator;
     }
 }
 
