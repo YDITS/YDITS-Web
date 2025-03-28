@@ -4,17 +4,17 @@
 
 ## Overview
 
-A web application that allows users to quickly get disaster prevention information.
+**YDITS for Web** is a web application that allows users to quickly get disaster prevention information.
 
-Published at https://webapp.ydits.net/ .  
-Introduction site is here: https://www.ydits.net/apps/web/
+Published at: https://webapp.ydits.net/ .  
+Introduction site: https://www.ydits.net/apps/web/
 
 ## Usage
 
-Deploy directory `src/pages/`.
+Deploy the `src/pages/` directory.
 
 ## License
 
 Licensed under the [Apache License 2.0](./LICENSE).
 
-Copyright (C) よね/Yone
+Copyright &copy; よね/Yone
