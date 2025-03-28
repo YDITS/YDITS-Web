@@ -37,9 +37,11 @@ export class GeoLocation extends Service {
         this.locationAreaElement = document.getElementById("locationArea");
         this.locationAccuracyElement = document.getElementById("locationAccuracy");
 
+        this.getLocationEvent = new Event("getLocation");
+
         this._localStorage = new LocalStorage(this.app);
 
-        if ("geolocation" in navigator) {
+        if (GeoLocation.isGeoLocationSupported) {
             this.isSupport = true;
             this.locationStatusElement.textContent = "有効";
         } else {
@@ -68,7 +70,7 @@ export class GeoLocation extends Service {
      * 現在位置を取得する。
     */
     async getLocation() {
-        if (!this.isSupport) { return }
+        if (!this.isGeoLocationSupported) { return }
 
         this.app.services.notify.show("message", "", `位置情報を取得しています…`);
 
@@ -230,7 +232,18 @@ export class GeoLocation extends Service {
                 this._localStorage.cacheLocationArea = this.area;
                 this.locationAreaElement.textContent = this.area;
 
+                document.dispatchEvent(this.getLocationEvent);
+
                 this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
             });
+    }
+
+
+    /**
+     * 位置情報に対応しているかどうか。
+     * @returns {boolean} 位置情報に対応している場合は true を返す。
+     */
+    get isGeoLocationSupported() {
+        return "geolocation" in window.navigator;
     }
 }
