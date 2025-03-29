@@ -17,11 +17,6 @@ import { LocalStorage } from "./local-storage.mjs";
  * 位置情報を管理する。
  */
 export class GeoLocation extends Service {
-    isSupport = null;
-    isGot = false;
-    area = null;
-
-
     constructor(app) {
         super(app, {
             name: "geoLocation",
@@ -32,37 +27,31 @@ export class GeoLocation extends Service {
         })
 
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
+        
+        this.__getLocationEvent = null;
+        this.__localStorage = null;
 
-        this.locationStatusElement = document.getElementById("locationStatus");
-        this.locationAreaElement = document.getElementById("locationArea");
-        this.locationAccuracyElement = document.getElementById("locationAccuracy");
+        this._area = null;
+        this._cacheLocationArea = null;
+        this._isGot = null;
+        this._isSupported = null;
+        this._latitude = null;
+        this._longitude = null;
+        this._$locationAccuracy = null;
+        this._$locationArea = null;
+        this._$locationStatus = null;
 
-        this.getLocationEvent = new Event("getLocation");
-
-        this._localStorage = new LocalStorage(this.app);
-
-        if (GeoLocation.isGeoLocationSupported) {
-            this.isSupport = true;
-            this.locationStatusElement.textContent = "有効";
-        } else {
-            this.isSupport = false;
-            this.latitude = -1;
-            this.longitude = -1;
-            this.locationStatusElement.textContent = "無効";
-        }
-
-        const cacheLocationArea = this._localStorage.cacheLocationArea;
-
-        if (typeof cacheLocationArea === "string") {
-            this.area = cacheLocationArea;
-            this.locationAreaElement.textContent = `${this.area} (キャッシュ)`;
-            document.dispatchEvent(this.app.buildEvent);
-        } else {
-            this.area = "東京都23区";
-            document.dispatchEvent(this.app.buildEvent);
-        }
+        this.updateDisplay();
+        document.dispatchEvent(this.app.buildEvent);
 
         this.getLocation();
+    }
+
+
+    updateDisplay() {
+        this.$locationStatus.textContent = this.locationStatusText;
+        this.$locationAccuracy.textContent = this.isGot ? `半経距離 ${this.accuracy}m 程度` : "";
+        this.$locationArea.textContent = this.isGot ? this.area : `${this.area} (キャッシュ)`;
     }
 
 
@@ -70,7 +59,7 @@ export class GeoLocation extends Service {
      * 現在位置を取得する。
     */
     async getLocation() {
-        if (!this.isGeoLocationSupported) { return }
+        if (!this.isSupported) { return }
 
         this.app.services.notify.show("message", "", `位置情報を取得しています…`);
 
@@ -93,10 +82,10 @@ export class GeoLocation extends Service {
 
         if ([undefined, null, NaN].includes(position.coords.accuracy)) {
             this.accuracy = -1;
-            this.locationAccuracyElement.textContent = `不明`;
+            this.$locationAccuracy.textContent = `不明`;
         } else {
             this.accuracy = Math.round(position.coords.accuracy);
-            this.locationAccuracyElement.textContent = `半経距離 ${this.accuracy}m 程度`;
+            this.updateDisplay();
         }
 
         const urlPref = "https://nominatim.openstreetmap.org/reverse?"
@@ -202,14 +191,7 @@ export class GeoLocation extends Service {
             `Geo location is supported, but could not get current user position: ${error}`
         );
 
-        this.locationStatusElement.textContent = "無効";
-        this.latitude = -1;
-        this.longitude = -1;
-        this.accuracy = -1;
-
-        if (!(this.isGot)) {
-            this.isGot = true;
-        }
+        this.updateDisplay();
     }
 
 
@@ -226,12 +208,13 @@ export class GeoLocation extends Service {
 
                 if (city in data) {
                     this.area = data[city];
+                    this.isGot = true;
                 }
 
                 this._localStorage.cacheLocationArea = this.area;
-                this.locationAreaElement.textContent = this.area;
+                this.updateDisplay();
 
-                document.dispatchEvent(this.getLocationEvent);
+                document.dispatchEvent(this._getLocationEvent);
 
                 this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
             });
@@ -239,10 +222,134 @@ export class GeoLocation extends Service {
 
 
     /**
+     * @returns {string} 現在地の地区予報区
+     */
+    get area() {
+        /* 位置情報を取得できない場合はキャッシュを代入し、キャッシュがない場合は仮値を代入する。 */
+        if (!this.isGot) {
+            this._area = typeof this.cacheLocationArea === "string" ? this.cacheLocationArea : "東京都23区";
+        }
+
+        return this._area;
+    }
+
+
+    set area(value) {
+        this._area = value;
+    }
+
+
+    /**
+     * @returns {string} キャッシュされた地区予報区
+     */
+    get cacheLocationArea() {
+        if (this._cacheLocationArea === null) {
+            this._cacheLocationArea = this._localStorage.cacheLocationArea;
+        }
+
+        return this._cacheLocationArea;
+    }
+
+
+    get locationStatusText() {
+        return this.isGot ? "有効" : "無効";
+    }
+
+
+    /**
      * 位置情報に対応しているかどうか。
      * @returns {boolean} 位置情報に対応している場合は true を返す。
      */
-    get isGeoLocationSupported() {
-        return "geolocation" in window.navigator;
+    get isSupported() {
+        if (this._isSupported === null) {
+            this._isSupported = "geolocation" in window.navigator;
+        }
+
+        return this._isSupported;
+    }
+
+
+    /**
+     * 位置情報を取得したかどうか。
+     * @returns {boolean} 位置情報を取得済みの場合は true を返す。
+     */
+    get isGot() {
+        return this._isGot;
+    }
+
+
+    set isGot(value) {
+        this._isGot = value;
+    }
+
+
+    /**
+     * 現在地の緯度
+     */
+    get latitude() {
+        return this.isSupported ? this._latitude : null;
+    }
+
+
+    set latitude(value) {
+        this._latitude = value;
+    }
+
+
+    /**
+     * 現在地の経度
+     */
+    get longitude() {
+        return this.isSupported ? this._longitude : null;
+    }
+
+
+    set longitude(value) {
+        this._longitude = value;
+    }
+
+
+    get _getLocationEvent() {
+        if (this.__getLocationEvent === null) {
+            this.__getLocationEvent = new Event("getLocation");
+        }
+
+        return this.__getLocationEvent;
+    }
+
+
+    get _localStorage() {
+        if (this.__localStorage === null) {
+            this.__localStorage = new LocalStorage(this.app);
+        }
+
+        return this.__localStorage;
+    }
+
+
+    /* Elements */
+
+    get $locationStatus() {
+        if (this._$locationStatus === null) {
+            this._$locationStatus = document.getElementById("locationStatus");
+        }
+
+        return this._$locationStatus;
+    }
+
+    get $locationArea() {
+        if (this._$locationArea === null) {
+            this._$locationArea = document.getElementById("locationArea");
+        }
+
+        return this._$locationArea;
+    }
+
+    get $locationAccuracy() {
+        if (this._$locationAccuracy === null) {
+            this._$locationAccuracy = document.getElementById("locationAccuracy");
+        }
+
+        return this._$locationAccuracy;
     }
 }
