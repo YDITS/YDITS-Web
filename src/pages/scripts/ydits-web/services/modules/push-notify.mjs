@@ -99,10 +99,14 @@ export class PushNotify extends Service {
                 options
             );
         } catch (error) {
+            const errorMessage = `Could not push notification: ${error.stack}`;
+
+            console.error(errorMessage);
+
             this.app.services.debugLogs.add(
                 "error",
                 `[${this.name}]`,
-                `Could not push notification: ${error.stack}`
+                errorMessage
             );
         }
     }
