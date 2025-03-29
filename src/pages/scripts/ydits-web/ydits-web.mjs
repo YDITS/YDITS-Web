@@ -8,8 +8,6 @@
  *
  */
 
-'use strict';
-
 import { FirebaseApp } from "../firebase/app.mjs";
 import { Version } from "../version.mjs";
 import { Datetime } from "./services/modules/datetime.mjs";

@@ -8,8 +8,6 @@
  *
  */
 
-'use strict';
-
 import { Service } from "../../../service.mjs";
 import { Intensity } from "../modules/intensity.mjs";
 import { Colors } from "../modules/colors.mjs";

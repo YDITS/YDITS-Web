@@ -8,8 +8,6 @@
  *
  */
 
-'use strict';
-
 import { YditsWeb } from "./ydits-web/ydits-web.mjs";
 
 new YditsWeb();

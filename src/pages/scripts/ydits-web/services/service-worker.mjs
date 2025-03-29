@@ -8,8 +8,6 @@
  *
  */
 
-'use strict';
-
 import { Service } from "../../service.mjs";
 import { PushNotify } from "./modules/push-notify.mjs";
 

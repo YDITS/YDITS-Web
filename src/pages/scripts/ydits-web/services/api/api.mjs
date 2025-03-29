@@ -8,8 +8,6 @@
  *
  */
 
-'use strict';
-
 import { Service } from "../../../service.mjs";
 import { YahooKmoni } from "./yahoo-kmoni.mjs";
 import { P2pquake } from "./p2pquake.mjs";

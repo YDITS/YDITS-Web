@@ -8,8 +8,6 @@
  *
  */
 
-'use strict';
-
 import { Service } from "../../../service.mjs";
 import { LocalStorage } from "./local-storage.mjs";
 
