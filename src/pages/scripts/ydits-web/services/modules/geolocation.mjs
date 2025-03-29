@@ -25,7 +25,7 @@ export class GeoLocation extends Service {
         })
 
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
-        
+
         this.__getLocationEvent = null;
         this.__localStorage = null;
 
@@ -48,8 +48,13 @@ export class GeoLocation extends Service {
 
     updateDisplay() {
         this.$locationStatus.textContent = this.locationStatusText;
-        this.$locationAccuracy.textContent = this.isGot ? `半経距離 ${this.accuracy}m 程度` : "";
         this.$locationArea.textContent = this.isGot ? this.area : `${this.area} (キャッシュ)`;
+
+        if (this.isGot) {
+            this.$locationAccuracy.textContent = typeof this.accuracy === "number" ? `半経距離 ${this.accuracy}m 程度` : "不明";
+        } else {
+            this.$locationAccuracy.textContent = "";
+        }
     }
 
 
@@ -75,16 +80,14 @@ export class GeoLocation extends Service {
     async onGet(position) {
         this.app.services.notify.show("message", "", `現在地を処理しています…`);
 
+        console.debug(position);
+        console.debug(JSON.stringify(position));
+
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
+        this.accuracy = typeof position.coords.accuracy === "number" ? Math.round(position.coords.accuracy) : null;
 
-        if ([undefined, null, NaN].includes(position.coords.accuracy)) {
-            this.accuracy = -1;
-            this.$locationAccuracy.textContent = `不明`;
-        } else {
-            this.accuracy = Math.round(position.coords.accuracy);
-            this.updateDisplay();
-        }
+        this.updateDisplay();
 
         const urlPref = "https://nominatim.openstreetmap.org/reverse?"
             + "format=json"
@@ -100,7 +103,8 @@ export class GeoLocation extends Service {
             + "&zoom=12"
             + "&addressdetails=1";
 
-        await fetch(
+
+        const response = await fetch(
             urlCity,
             {
                 headers: {
@@ -108,75 +112,84 @@ export class GeoLocation extends Service {
                 }
             }
         )
-            .then((response) => response.json())
-            .then(async (data) => {
-                if (data === null || data.address === undefined) { return }
-                if (data.address.country_code !== "jp") { return }
 
-                if (data.address.city) {
-                    this.city = data.address.city;
-                    this.suburb = data.address.suburb;
+        const data = await response.json();
 
-                    // 〇区
-                    if (typeof this.suburb === "string") {
-                        if (this.suburb.indexOf("区") !== -1) {
-                            this.city = this.app.services.eew.removeCity(this.city) + this.suburb;
+        if (data === null || data?.address === undefined) {
+            this.app.services.debugLogs.add(
+                "error",
+                `[${this.name}]`,
+                `Could not find current location area: the response is invaild.`
+            );
+            return;
+        }
+
+        if (data.address.country_code !== "jp") {
+            this.app.services.debugLogs.add(
+                "info",
+                `[${this.name}]`,
+                `Current location is outside of Japan.`
+            );
+            return;
+        }
+
+        if (data.address.city) {
+            this.city = data.address.city;
+            this.suburb = data.address.suburb;
+
+            // 〇区
+            if (typeof this.suburb === "string") {
+                if (this.suburb.indexOf("区") !== -1) {
+                    this.city = this.app.services.eew.removeCity(this.city) + this.suburb;
+                }
+            }
+
+            // 同じ市名
+            if (["府中市", "伊達市"].includes(this.city)) {
+                await fetch(urlPref)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        this.pref = data.address.province;
+
+                        switch (this.pref) {
+                            case "東京都":
+                                this.city = "東京府中市";
+                                break;
+
+                            case "広島県":
+                                this.city = "広島府中市";
+                                break;
+
+                            case "北海道":
+                                this.city = "胆振伊達市";
+                                break;
+
+                            case "福島県":
+                                this.city = "福島伊達市";
+                                break;
                         }
-                    }
+                    });
+            }
+        } else if (data.address.suburb) {
+            // 区
+            this.city = data.address.suburb;
 
-                    // 同じ市名
-                    if (["府中市", "伊達市"].includes(this.city)) {
-                        await fetch(urlPref)
-                            .then((response) => response.json())
-                            .then((data) => {
-                                this.pref = data.address.province;
+            if (["北区", "南区", "西区"].includes(this.city)) {
+                this.province = data.address.province;
+                this.area = this.app.services.eew.removePref(this.province) + this.city;
+            }
+        } else if (data.address.town) {
+            // 町村
+            this.city = data.address.town;
+        }
 
-                                switch (this.pref) {
-                                    case "東京都":
-                                        this.city = "東京府中市";
-                                        break;
+        this.getJmaForecastArea(this.city);
 
-                                    case "広島県":
-                                        this.city = "広島府中市";
-                                        break;
-
-                                    case "北海道":
-                                        this.city = "胆振伊達市";
-                                        break;
-
-                                    case "福島県":
-                                        this.city = "福島伊達市";
-                                        break;
-                                }
-                            });
-                    }
-                } else if (data.address.suburb) {
-                    // 区
-                    this.city = data.address.suburb;
-
-                    if (["北区", "南区", "西区"].includes(this.city)) {
-                        this.province = data.address.province;
-                        this.area = this.app.services.eew.removePref(this.province) + this.city;
-                    }
-                } else if (data.address.town) {
-                    // 町村
-                    this.city = data.address.town;
-                }
-            })
-            .then(() => {
-                this.getJmaForecastArea(this.city);
-            })
-            .then(() => {
-                if (!(this.isGot)) {
-                    this.isGot = true;
-                    this.app.services.map.updateUserPoint();
-                    // document.dispatchEvent(this.app.buildEvent);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        this.isGot = true;
+        this.app.services.map.updateUserPoint();
+        // document.dispatchEvent(this.app.buildEvent);
     }
+
 
 
     /**
@@ -186,7 +199,7 @@ export class GeoLocation extends Service {
         this.app.services.debugLogs.add(
             "error",
             `[${this.name}]`,
-            `Geo location is supported, but could not get current user position: ${error}`
+            `Could not get the current user location (GeoLocation is supported): ${JSON.stringify(error)}`
         );
 
         this.updateDisplay();
