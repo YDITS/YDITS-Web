@@ -80,9 +80,6 @@ export class GeoLocation extends Service {
     async onGet(position) {
         this.app.services.notify.show("message", "", `現在地を処理しています…`);
 
-        console.debug(position);
-        console.debug(JSON.stringify(position));
-
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
         this.accuracy = typeof position.coords.accuracy === "number" ? Math.round(position.coords.accuracy) : null;
@@ -196,10 +193,35 @@ export class GeoLocation extends Service {
      * 位置情報を取得できない際の処理を行う。
      */
     onError(error) {
+        if (!(error instanceof GeolocationPositionError)) {
+            console.error(error);
+            return;
+        }
+
+        let errorMessage = "";
+
+        switch (error.code) {
+            case 1:
+                errorMessage = `Could not get the current user location: User denied Geolocation.`;
+                break;
+
+            case 2:
+                errorMessage = `Could not get the current user location: Geolocation is not supported.`;
+                break;
+
+            case 3:
+                errorMessage = `Could not get the current user location (Geolocation is not supported)`;
+                break;
+
+            default:
+                errorMessage = `Could not get the current user location (Geolocation is supported): Timeout.`;
+                break;
+        }
+
         this.app.services.debugLogs.add(
             "error",
             `[${this.name}]`,
-            `Could not get the current user location (GeoLocation is supported): ${JSON.stringify(error)}`
+            errorMessage
         );
 
         this.updateDisplay();
