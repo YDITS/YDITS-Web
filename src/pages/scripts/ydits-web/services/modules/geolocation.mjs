@@ -180,7 +180,7 @@ export class GeoLocation extends Service {
             this.city = data.address.town;
         }
 
-        this.getJmaForecastArea(this.city);
+        await this.getJmaForecastArea(this.city);
 
         this.isGot = true;
         this.app.services.map.updateUserPoint();
@@ -231,26 +231,34 @@ export class GeoLocation extends Service {
     /**
     * 取得した市区町村から、気象庁 緊急地震速報/地方予報区 を取得する。
     */
-    getJmaForecastArea(city) {
+    async getJmaForecastArea(city) {
         this.app.services.notify.show("message", "", `現在地の地区予報区を取得しています…`);
 
-        fetch("./data/jma_area_forecast_local_e.json")
-            .then((response) => response.json())
-            .then((data) => {
-                if (data === null) { return }
+        try {
+            const response = await fetch("./data/jma_area_forecast_local_e.json");
+            const data = await response.json();
 
-                if (city in data) {
-                    this.area = data[city];
-                    this.isGot = true;
-                }
+            if (!data) { return }
+            if (!(city in data)) { return };
 
-                this._localStorage.cacheLocationArea = this.area;
-                this.updateDisplay();
+            this.isGot = true;
+            this.area = data[city];
 
-                document.dispatchEvent(this._getLocationEvent);
+            this._localStorage.cacheLocationArea = this.area;
+            this.updateDisplay();
 
-                this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
-            });
+            document.dispatchEvent(this._getLocationEvent);
+
+            this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
+        } catch (error) {
+            console.error(error);
+
+            this.app.services.debugLogs.add(
+                "error",
+                `[${this.name}]`,
+                `Could not get jma forecast area of the current user location: ${error.stack}`
+            );
+        }
     }
 
 
