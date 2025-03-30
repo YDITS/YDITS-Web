@@ -122,10 +122,9 @@ export class Map extends Service {
 
     /**
      * ユーザーポイントの表示を更新する。
-     * @returns 
      */
     updateUserPoint() {
-        if (!this.app.services.geoLocation.isSupport) { return }
+        if (!this.app.services.geoLocation.isSupported) { return }
 
         if (this.app.services.settings.map.displayUserPoint) {
             this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
