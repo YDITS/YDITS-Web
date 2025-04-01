@@ -14,49 +14,6 @@ import { Service } from "../../../service.mjs";
  * マップを扱う。
  */
 export class Map extends Service {
-    map = null;
-    loopCount = -1;
-    autoMoveCount = null;
-
-    get defaultCenter() {
-        return ([36.0047000, 137.5930000]);
-    }
-
-    get defaultZoom() {
-        return (5);
-    }
-
-
-    get hrpnsTimesUrl() {
-        return ("https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json");
-    }
-
-
-    get tropicalCycloneTargetUrl() {
-        return ("https://www.jma.go.jp/bosai/typhoon/data/targetTc.json");
-    }
-
-
-    get layersControlElement() {
-        return (document.getElementById("layersControl"));
-    }
-
-
-    get hrpnsTimeElement() {
-        return (document.querySelector("#hrpnsTime>.text"));
-    }
-
-
-    hrpnsImgUrl(baseTime, validTime) {
-        return (`https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`);
-    }
-
-
-    tropicalCycloneForecastUrl(tropicalCycloneNumber) {
-        return (`https://www.jma.go.jp/bosai/typhoon/data/${tropicalCycloneNumber}/forecast.json`);
-    }
-
-
     constructor(app) {
         super(app, {
             name: "map",
@@ -68,31 +25,55 @@ export class Map extends Service {
 
         this.app.services.notify.show("message", "", `${this.name}をコンストラクトしています…`);
 
-        this.map = L.map('map', {
-            center: this.defaultCenter,
-            zoom: this.defaultZoom,
-            maxZoom: 10,
-            minZoom: 4,
-            zoomSnap: 0,
-            zoomDelta: 0,
-            zoomControl: false
-        });
+        this.loopCount = -1;
+        this.autoMoveCount = null;
 
-        this.maptilerLayer = L.maptilerLayer({
-            apiKey: "3ft2uVdfAwtgfKQGIT8U",
-            style: "ba979b60-0cf8-4087-8cdc-5bb919540c08",
-        }).addTo(this.map);
+        this.initializeMaps();
+    }
+
+
+    static defaultCenter = [36.0047000, 137.5930000];
+    static defaultZoom = 5;
+    static hrpnsTimesUrl = "https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json";
+    static tropicalCycloneTargetUri = "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json";
+
+
+    get $layersControl() {
+        if (!(this._$layersControl instanceof HTMLElement)) {
+            this._$layersControl = document.getElementById("layersControl");
+        }
+
+        return this._$layersControl;
+    }
+
+
+    get $hrpnsTime() {
+        if (!(this._$hrpnsTime instanceof HTMLElement)) {
+            this._$hrpnsTime = document.querySelector("#hrpnsTime>.text");
+        }
+
+        return this._$hrpnsTime;
+    }
+
+
+    hrpnsImgUrl(baseTime, validTime) {
+        return `https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`;
+    }
+
+
+    tropicalCycloneForecastUrl(tropicalCycloneNumber) {
+        return `https://www.jma.go.jp/bosai/typhoon/data/${tropicalCycloneNumber}/forecast.json`;
     }
 
 
     /**
      * 初期化する。
-     * @returns 
+     * @returns {void}
      */
     async initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
-        if (!this.isGeoLocationSupported) { return }
+        if (!this.app.services.geoLocation.isSupported) { return }
 
         document.addEventListener("getLocation", () => {
             this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
@@ -118,6 +99,29 @@ export class Map extends Service {
         await this.showTyphoon();
         this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
     }
+
+
+    /**
+     * マップインスタンスを初期化する。
+     * @returns {void}
+     */
+    initializeMaps() {
+        this.map = L.map('map', {
+            center: this.defaultCenter,
+            zoom: this.defaultZoom,
+            maxZoom: 10,
+            minZoom: 4,
+            zoomSnap: 0,
+            zoomDelta: 0,
+            zoomControl: false
+        });
+
+        this.maptilerLayer = L.maptilerLayer({
+            apiKey: "3ft2uVdfAwtgfKQGIT8U",
+            style: "ba979b60-0cf8-4087-8cdc-5bb919540c08",
+        }).addTo(this.map);
+    }
+
 
 
     /**
@@ -184,7 +188,7 @@ export class Map extends Service {
         }
 
 
-        this.layersControlElement.appendChild(this.layerControl.onAdd(this.map));
+        this.$layersControl.appendChild(this.layerControl.onAdd(this.map));
     }
 
 
@@ -196,7 +200,7 @@ export class Map extends Service {
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImgUrl(this.hrpnsLatestTargetTime["basetime"], this.hrpnsLatestTargetTime["validtime"]);
         this.hrpns.setUrl(url);
-        this.hrpnsTimeElement.textContent = this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]);
+        this.$hrpnsTime.textContent = this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]);
     }
 
 
@@ -210,7 +214,7 @@ export class Map extends Service {
             opacity: 0.7
         }).addTo(this.map);
         // this.updateLayers();
-        this.hrpnsTimeElement.textContent = this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]);
+        this.$hrpnsTime.textContent = this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]);
     }
 
 
@@ -326,12 +330,14 @@ export class Map extends Service {
                 console.error('Error: Data is not an array.');
             }
 
-            this.hrpnsTimeElement.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+            this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
         });
     }
 
 
-    // 予報円を追加する関数
+    /**
+     * 予報円を追加する。
+     */
     addForecastCircle(forecast) {
         if (forecast && forecast.center && forecast.probabilityCircle) {
             const center = forecast.center;
@@ -364,7 +370,9 @@ export class Map extends Service {
     }
 
 
-    // 強風域を追加する関数
+    /**
+     * 強風域を追加する。
+     */
     addGaleWarningArea(galeWarningArea, typhoonNumber) {
         const center = galeWarningArea.center;
         const radius = galeWarningArea.radius;
@@ -420,7 +428,7 @@ export class Map extends Service {
      */
     async fetchTropicalCycloneTarget() {
         try {
-            const response = await fetch(this.tropicalCycloneTargetUrl);
+            const response = await fetch(this.tropicalCycloneTargetUri);
             if (!response.ok) {
                 throw new Error(`Error fetching rain map data: Status ${response.status}`);
             }
@@ -550,11 +558,6 @@ export class Map extends Service {
      */
     setViewHome() {
         this.setView(this.defaultCenter, this.defaultZoom);
-    }
-
-
-    get isGeoLocationSupported() {
-        return "geolocation" in window.navigator;
     }
 }
 
