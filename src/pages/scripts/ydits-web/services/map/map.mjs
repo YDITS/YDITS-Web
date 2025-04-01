@@ -36,6 +36,7 @@ export class Map extends Service {
     static DEFAULT_ZOOM = 5;
     static HRPNS_TIMES_URI = "https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json";
     static TROPICAL_CYCLONE_TARGET_URI = "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json";
+    static DEFAULT_CIRCLE_OPTIONS = { steps: 32, units: "meters", propreties: { foo: "bar" } };
 
 
     get $layersControl() {
@@ -56,6 +57,15 @@ export class Map extends Service {
     }
 
 
+    get isGeolocationSupported() {
+        if (this._isGeolocationSupported === undefined) {
+            this._isGeolocationSupported = "geolocation" in navigator;
+        }
+
+        return this._isGeolocationSupported;
+    }
+
+
     hrpnsImageUri(baseTime, validTime) {
         return `https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`;
     }
@@ -73,7 +83,7 @@ export class Map extends Service {
     async initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
-        if (!this.app.services.geoLocation.isSupported) { return }
+        if (!this.isGeolocationSupported) { return }
 
         document.addEventListener("getLocation", () => this.updateUserPoint());
 
@@ -96,7 +106,6 @@ export class Map extends Service {
             maxZoom: 10,
             minZoom: 4,
             zoomSnap: 0,
-            zoomDelta: 0,
             zoomControl: false
         });
 
@@ -105,7 +114,6 @@ export class Map extends Service {
             style: "ba979b60-0cf8-4087-8cdc-5bb919540c08",
         }).addTo(this.map);
     }
-
 
 
     /**
@@ -210,7 +218,7 @@ export class Map extends Service {
             opacity: 0.7
         }).addTo(this.map);
         this.$hrpnsTime.textContent = this.formatDatetime(this.hrpnsLatestTargetTime.validtime);
-        this.updateLayers();
+        // this.updateLayers();
     }
 
 
@@ -241,7 +249,7 @@ export class Map extends Service {
      */
     async fetchHrpnsTargetTime() {
         try {
-            const response = await fetch(this.hrpnsTimesUrl);
+            const response = await fetch(Map.HRPNS_TIMES_URI);
             if (!response.ok) {
                 throw new Error(`Error fetching rain map data: Status ${response.status}`);
             }
@@ -426,7 +434,7 @@ export class Map extends Service {
      */
     async fetchTropicalCycloneTarget() {
         try {
-            const response = await fetch(this.tropicalCycloneTargetUri);
+            const response = await fetch(Map.TROPICAL_CYCLONE_TARGET_URI);
             if (!response.ok) {
                 throw new Error(`Error fetching rain map data: Status ${response.status}`);
             }
@@ -451,6 +459,9 @@ export class Map extends Service {
 
                     if (this.app.services.eew.currentId === id) {
                         if (!this.app.services.eew.reports[id].region) {
+                            const sWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
+                            const pWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
+
                             this.app.services.eew.reports[id].region = L.marker([0, 0], {
                                 icon: L.icon({
                                     iconUrl: "./images/hypocenter.png",
@@ -458,20 +469,25 @@ export class Map extends Service {
                                 })
                             }).addTo(this.map);
 
-                            this.app.services.eew.reports[id].sWave = L.circle([0, 0], {
-                                radius: -1,
-                                weight: 1,
-                                color: '#ff4020',
-                                fillColor: '#ff402080',
-                                fillOpacity: 0.25,
+                            this.app.services.eew.reports[id].sWave = L.geoJSON(sWaveCircleJSON, {
+                                style: function () {
+                                    return {
+                                        color: '#ff4020',
+                                        weight: 1,
+                                        fillColor: '#ff402080',
+                                        fillOpacity: 0.25,
+                                    };
+                                },
                             }).addTo(this.map);
 
-                            this.app.services.eew.reports[id].pWave = L.circle([0, 0], {
-                                radius: -1,
-                                weight: 1,
-                                color: '#4080ff',
-                                fillColor: '#00000000',
-                                fillOpacity: 0,
+                            this.app.services.eew.reports[id].pWave = L.geoJSON(pWaveCircleJSON, {
+                                style: function () {
+                                    return {
+                                        color: '#4080ff',
+                                        weight: 1,
+                                        fill: false,
+                                    };
+                                },
                             }).addTo(this.map);
                         }
 
@@ -502,12 +518,17 @@ export class Map extends Service {
                         this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
                     }
 
-                    const REGION_LATLNG = new L.LatLng(this.app.services.eew.reports[id].latitude, this.app.services.eew.reports[id].longitude);
+                    this.app.services.eew.reports[id].sWave.clearLayers();
+                    this.app.services.eew.reports[id].pWave.clearLayers();
+                    const REGION_LNGLAT = [this.app.services.eew.reports[id].longitude, this.app.services.eew.reports[id].latitude];
+                    const REGION_LATLNG = [this.app.services.eew.reports[id].latitude, this.app.services.eew.reports[id].longitude];
+                    const sWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].sWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
+                    const pWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].pWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
                     this.app.services.eew.reports[id].region.setLatLng(REGION_LATLNG);
-                    this.app.services.eew.reports[id].sWave.setLatLng(REGION_LATLNG);
-                    this.app.services.eew.reports[id].pWave.setLatLng(REGION_LATLNG);
-                    this.app.services.eew.reports[id].sWave.setRadius(this.app.services.eew.reports[id].sWavePut);
-                    this.app.services.eew.reports[id].pWave.setRadius(this.app.services.eew.reports[id].pWavePut);
+                    this.app.services.eew.reports[id].sWave.addData(sWaveCircleJSON);
+                    this.app.services.eew.reports[id].pWave.addData(pWaveCircleJSON);
+
+                    console.debug(this.app.services.eew.reports[id].sWave);
                 });
 
                 if (this.app.services.settings.map.autoMove) {
@@ -620,7 +641,9 @@ class CustomLayerControl extends L.Control {
                     this.map.addLayer(layer);
                     this.$hrpnsTime.classList.add("show");
                 } else {
-                    this.map.removeLayer(layer);
+                    if (layer && this.map.hasLayer(layer)) {
+                        this.map.removeLayer(layer);
+                    }
                     this.$hrpnsTime.classList.remove("show");
                 }
 
