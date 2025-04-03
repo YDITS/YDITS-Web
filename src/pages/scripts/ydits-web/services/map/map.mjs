@@ -32,8 +32,8 @@ export class Map extends Service {
     }
 
 
-    static DEFAULT_CENTER = [36.0047000, 137.5930000];
-    static DEFAULT_ZOOM = 5;
+    static DEFAULT_CENTER = [137.5930000, 36.0047000];
+    static DEFAULT_ZOOM = 4;
     static HRPNS_TIMES_URI = "https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json";
     static TROPICAL_CYCLONE_TARGET_URI = "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json";
     static DEFAULT_CIRCLE_OPTIONS = { steps: 32, units: "meters", propreties: { foo: "bar" } };
@@ -83,14 +83,18 @@ export class Map extends Service {
     async initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
+        this.regionImage = await this.map.loadImage('./images/hypocenter.png');
+
+        this.map.on("load", async (event) => {
+            await this.showHrpns();
+            await this.showTyphoon();
+        });
+
         if (!this.isGeolocationSupported) { return }
 
         document.addEventListener("getLocation", () => this.updateUserPoint());
 
-        this.app.services.notify.show("message", "", `hrpnsをイニシャライズしています…`);
-        await this.showHrpns();
-        this.app.services.notify.show("message", "", `typhoonをイニシャライズしています…`);
-        await this.showTyphoon();
+
         this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
     }
 
@@ -100,19 +104,16 @@ export class Map extends Service {
      * @returns {void}
      */
     initializeMaps() {
-        this.map = L.map('map', {
+        maptilersdk.config.apiKey = "3ft2uVdfAwtgfKQGIT8U";
+
+        this.map = new maplibregl.Map({
+            container: "map",
+            style: "https://api.maptiler.com/maps/ba979b60-0cf8-4087-8cdc-5bb919540c08/style.json?key=3ft2uVdfAwtgfKQGIT8U",
             center: Map.DEFAULT_CENTER,
             zoom: Map.DEFAULT_ZOOM,
-            maxZoom: 10,
-            minZoom: 4,
-            zoomSnap: 0,
-            zoomControl: false
+            maxZoom: 9,
+            minZoom: 3,
         });
-
-        this.maptilerLayer = L.maptilerLayer({
-            apiKey: "3ft2uVdfAwtgfKQGIT8U",
-            style: "ba979b60-0cf8-4087-8cdc-5bb919540c08",
-        }).addTo(this.map);
     }
 
 
@@ -214,9 +215,22 @@ export class Map extends Service {
     async showHrpns() {
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
-        this.hrpns = L.tileLayer(url, {
-            opacity: 0.7
-        }).addTo(this.map);
+
+        this.map.addSource('hrpns-source', {
+            'type': 'raster',
+            'tiles': [url],
+            'tileSize': 256,
+        });
+
+        this.map.addLayer({
+            id: "hrpns",
+            source: "hrpns-source",
+            type: "raster",
+            paint: {
+                "raster-opacity": 0.7,
+            },
+        });
+
         this.$hrpnsTime.textContent = this.formatDatetime(this.hrpnsLatestTargetTime.validtime);
         // this.updateLayers();
     }
@@ -226,11 +240,7 @@ export class Map extends Service {
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を非表示する。
      */
     hideHrpns() {
-        if (this.hrpns) {
-            this.map.removeLayer(this.hrpns);
-            this.hrpns = null;
-            this.updateLayers();
-        }
+        this.map.removeLayer("hrpns");
     }
 
 
@@ -276,9 +286,6 @@ export class Map extends Service {
      * 台風情報（予想進路図）を表示する。
      */
     async showTyphoon() {
-        this.typhoon = L.layerGroup().addTo(this.map);
-        this.updateLayers();
-
         this.tropicalCycloneLatestTarget = await this.getTropicalCycloneTarget();
         if (!this.tropicalCycloneLatestTarget) return;
 
@@ -350,28 +357,51 @@ export class Map extends Service {
             const radius = forecast.probabilityCircle.radius;
             const validtime = new Date(forecast.validtime["JST"]); // 予報の時刻
 
-            L.circle([center[0], center[1]], {
-                color: '#ffffff',
-                fillColor: '#ffffff',
-                fillOpacity: 0.2,
-                radius: radius,
-                weight: 1
-            }).addTo(this.typhoon);
+            const circleJSON = turf.circle([center[1], center[0]], (radius * 2), Map.DEFAULT_CIRCLE_OPTIONS);
+
+            this.map.addSource("typhoonForecastCircleSource", {
+                type: "geojson",
+                data: circleJSON,
+            });
+
+            this.map.addLayer({
+                id: "typhoonForecastCirle",
+                type: "circle",
+                source: "typhoonForecastCircleSource",
+                "source-layer": "typhoonForecastCircleSource",
+                paint: {
+                    "circle-color": "#ffffff",
+                    "circle-opacity": 0.2,
+                    "circle-stroke-width": 1,
+                    "circle-stroke-color": "#ffffff"
+                }
+            });
 
             // 予報円の接線をラインで表示
             forecast.probabilityCircle.tangent.forEach(tangent => {
                 const line = tangent.map(point => [point[0], point[1]]);
-                L.polyline(line, { color: '#ffffff', dashArray: '5, 5', weight: 1 }).addTo(this.typhoon);
+                this.map.addLayer({
+                    id: "typhoonForecastLine",
+                    type: "line",
+                    paint: {
+                        "line-color": "#ffffff",
+                        "line-translate": line,
+                        "line-dasharray": [5, 5],
+                        "line-width": 1,
+                    },
+                })
             });
 
-            L.marker([center[0], center[1]], {
-                icon: L.divIcon({
-                    className: 'forecast-icon',
-                    html: `<div class="forecast-time">${validtime.getDate()}日${validtime.getHours()}時</div>`,
-                    iconSize: [100, 40],
-                    minZoom: 6
-                })
-            }).addTo(this.typhoon);
+            this.map.addLayer({
+                id: "typhoonForecastTime",
+                type: "symbol",
+                minzoom: 5,
+                paint: {
+                    "text-field": `${validtime.getDate()}日${validtime.getHours()}時`,
+                    "text-size": 16,
+                    "text-color": "#ffffff",
+                },
+            });
         }
     }
 
@@ -462,33 +492,72 @@ export class Map extends Service {
                             const sWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
                             const pWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
 
-                            this.app.services.eew.reports[id].region = L.marker([0, 0], {
-                                icon: L.icon({
-                                    iconUrl: "./images/hypocenter.png",
-                                    iconSize: [24, 24]
-                                })
-                            }).addTo(this.map);
+                            this.map.addImage(`eewRedionImage_${id}`, this.regionImage.data);
 
-                            this.app.services.eew.reports[id].sWave = L.geoJSON(sWaveCircleJSON, {
-                                style: function () {
-                                    return {
-                                        color: '#ff4020',
-                                        weight: 1,
-                                        fillColor: '#ff402080',
-                                        fillOpacity: 0.25,
-                                    };
+                            this.map.addSource(`eewRedionSource_${id}`, {
+                                type: 'geojson',
+                                data: {
+                                  type: 'FeatureCollection',
+                                  features: [
+                                    {
+                                      type: 'Feature',
+                                      geometry: {
+                                        type: 'Point',
+                                        coordinates: [0, 0],
+                                      },
+                                      properties: {},
+                                    },
+                                  ],
                                 },
-                            }).addTo(this.map);
+                            });
 
-                            this.app.services.eew.reports[id].pWave = L.geoJSON(pWaveCircleJSON, {
-                                style: function () {
-                                    return {
-                                        color: '#4080ff',
-                                        weight: 1,
-                                        fill: false,
-                                    };
+                            this.map.addLayer({
+                                id: `eewRedion_${id}`,
+                                type: "symbol",
+                                source: `eewRedionSource_${id}`,
+                                // "source-layer": `eewRedionSource_${id}`,
+                                layout: {
+                                    // "icon-"
+                                    "icon-image": `eewRedionImage_${id}`,
+                                    "icon-size": 24,
                                 },
-                            }).addTo(this.map);
+                            });
+
+                            this.map.addSource(`eewSWaveSource_${id}`, {
+                                type: "geojson",
+                                data: sWaveCircleJSON,
+                            });
+
+                            this.map.addLayer({
+                                id: `eewSWave_${id}`,
+                                type: "circle",
+                                source: `eewSWaveSource_${id}`,
+                                // "source-layer": `eewSWaveSource_${id}`,
+                                paint: {
+                                    "circle-color": "#ff402080",
+                                    "circle-opacity": 0.25,
+                                    "circle-stroke-width": 1,
+                                    "circle-stroke-color": "#ff4020",
+                                },
+                            });
+
+                            this.map.addSource(`eewPWaveSource_${id}`, {
+                                    type: "geojson",
+                                    data: pWaveCircleJSON,
+                                });
+                                
+                            this.map.addLayer({
+                                    id: `eewPWave_${id}`,
+                                    type: "circle",
+                                    source: `eewPWaveSource_${id}`,
+                                    // "source-layer": `eewPWaveSource_${id}`,
+                                    paint: {
+                                        "circle-color": "#00000000",
+                                        "circle-opacity": 0,
+                                        "circle-stroke-width": 1,
+                                        "circle-stroke-color": "#4080ff",
+                                    },
+                                });
                         }
 
                         this.app.services.eew.reports[id].latitude = this.app.services.eew.reports[id].latitude.replace("N", "");
@@ -518,15 +587,12 @@ export class Map extends Service {
                         this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
                     }
 
-                    this.app.services.eew.reports[id].sWave.clearLayers();
-                    this.app.services.eew.reports[id].pWave.clearLayers();
                     const REGION_LNGLAT = [this.app.services.eew.reports[id].longitude, this.app.services.eew.reports[id].latitude];
-                    const REGION_LATLNG = [this.app.services.eew.reports[id].latitude, this.app.services.eew.reports[id].longitude];
                     const sWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].sWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
                     const pWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].pWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
-                    this.app.services.eew.reports[id].region.setLatLng(REGION_LATLNG);
-                    this.app.services.eew.reports[id].sWave.addData(sWaveCircleJSON);
-                    this.app.services.eew.reports[id].pWave.addData(pWaveCircleJSON);
+                    this.map.getSource(`eewRedionSource_${id}`)._data.features[0].geometry.coordinates = REGION_LNGLAT;
+                    this.map.getSource(`eewSWaveSource_${id}`).setData(sWaveCircleJSON);
+                    this.map.getSource(`eewPWaveSource_${id}`).setData(pWaveCircleJSON);
 
                     console.debug(this.app.services.eew.reports[id].sWave);
                 });
@@ -583,8 +649,11 @@ export class Map extends Service {
      * @param {L.LatLng} latLng - 移動先の緯度経度
      * @param {number} zoom - ズームレベル
      */
-    setView(latLng, zoom) {
-        this.map.flyTo(latLng, zoom);
+    setView(lngLat, zoom) {
+        this.map.flyTo({
+            center: lngLat,
+            zoom: zoom,
+        });
     }
 
 
