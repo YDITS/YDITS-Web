@@ -78,7 +78,7 @@ export class DebugLogs extends Service {
     /**
      * ログを追加する。
      */
-    add(type, title, text) {
+    async add(type, title, text) {
         const time = this.formatDatetime(this.app.services.datetime);
 
         const logEntry = {
@@ -131,7 +131,7 @@ export class DebugLogs extends Service {
     /**
      * ログをページに追加する。
      */
-    addDebugLogsHtml(log) {
+    async addDebugLogsHtml(log) {
         let color = null;
 
         switch (log.type) {
@@ -168,7 +168,7 @@ export class DebugLogs extends Service {
     /**
      * ログをすべて削除する。
      */
-    delete() {
+    async delete() {
         this.debugLogs = [];
         this.debugLogListsElement.innerHTML = "";
         localStorage.removeItem("debugLogs");
