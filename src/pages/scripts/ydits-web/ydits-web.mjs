@@ -116,7 +116,6 @@ export class YditsWeb extends FirebaseApp {
     initUI() {
         this.initMenu();
         this.initLicense();
-        this.initMapLayersMenu();
         this.clockElement.textContent = "----/--/-- --:--:--";
     }
 
@@ -442,17 +441,6 @@ export class YditsWeb extends FirebaseApp {
     initLicense() {
         document.querySelector("#license .closeBtn").addEventListener("click", () => {
             document.getElementById("license").classList.remove("active");
-        });
-    }
-
-
-    /**
-     * マップレイヤー切替機能関連をイニシャライズする。
-     */
-    initMapLayersMenu() {
-        document.getElementById("mapLayersButton").addEventListener("click", () => {
-            document.getElementById("mapLayersMenu").classList.toggle("active");
-            document.getElementById("mapLayersButton").classList.toggle("active");
         });
     }
 
