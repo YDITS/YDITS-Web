@@ -61,7 +61,7 @@ export class YditsWeb extends FirebaseApp {
         this.isDebugLogsMode = false;
 
         this.buildEvent = new Event("build");
-        document.addEventListener("build", () => this.onBuild());
+        document.addEventListener("build", async () => await this.onBuild());
 
         this.clockElement = document.getElementById("clock");
         this.fpsElement = document.getElementById("fps");
@@ -148,7 +148,7 @@ export class YditsWeb extends FirebaseApp {
     /**
      * ハンドルされない例外の処理。
      */
-    on_unhandled_error(error) {
+    async on_unhandled_error(error) {
         console.error(error);
 
         this.services.debugLogs.add(
@@ -173,7 +173,7 @@ export class YditsWeb extends FirebaseApp {
     /**
      * イニシャライズ中の例外処理。
      */
-    on_initialize_error(error) {
+    async on_initialize_error(error) {
         console.error(error);
 
         this.services.debugLogs.add(
@@ -233,8 +233,8 @@ export class YditsWeb extends FirebaseApp {
     /**
      * ビルド完了時の処理
      */
-    onBuild() {
-        this.initialize();
+    async onBuild() {
+        await this.initialize();
 
         if (this.version.level === Version.levels.beta) {
             document.getElementById("betaBanner").classList.add("active");
@@ -251,7 +251,7 @@ export class YditsWeb extends FirebaseApp {
 
         this.startIntervals();
 
-        requestAnimationFrame(() => this.mainloop());
+        requestAnimationFrame(async () => await this.mainloop());
     }
 
 
@@ -268,29 +268,29 @@ export class YditsWeb extends FirebaseApp {
     /**
      * 初期化する。
      */
-    initialize() {
+    async initialize() {
         this.services.settings.initialize();
         this.services.api.dmdata.initialize();
         this.services.api.p2pquake.initialize();
         this.services.eew.initialize();
         this.services.eqinfo.initialize();
-        this.services.map.initialize();
+        await this.services.map.initialize();
     }
 
 
     /**
      * アニメーションメインループ
      */
-    mainloop() {
+    async mainloop() {
         const timeNow = new Date();
-        this.calcFps();
-        this.displayFps();
+        await this.calcFps();
+        await this.displayFps();
         this.services.map.update(timeNow);
-        requestAnimationFrame(() => this.mainloop());
+        requestAnimationFrame(async () => await this.mainloop());
     }
 
 
-    calcFps() {
+    async calcFps() {
         const timeNow = performance.now();
         const elapsed = timeNow - this.lastTime;
         this.frames++;
@@ -303,7 +303,7 @@ export class YditsWeb extends FirebaseApp {
     }
 
 
-    displayFps() {
+    async displayFps() {
         const timeNow = performance.now();
 
         if (timeNow - this.lastFpsUpdateTime >= this.services.settings.debug.fpsMs) {
@@ -318,28 +318,28 @@ export class YditsWeb extends FirebaseApp {
     /**
      * メインループ
      */
-    ntp() {
+    async ntp() {
         this.services.datetime.update();
     }
 
 
-    eew() {
+    async eew() {
         this.services.eew.updateWarn();
         this.services.api.yahooKmoni.get();
     }
 
 
-    hrpns() {
+    async hrpns() {
         this.services.map.updateHrpns();
     }
 
 
-    jmaDataFeed() {
+    async jmaDataFeed() {
         this.services.jmaDataFeed.update();
     }
 
 
-    debugOutput() {
+    async debugOutput() {
         if (!this.services.settings.debug.output) return;
 
         trying(() => {
@@ -460,7 +460,7 @@ export class YditsWeb extends FirebaseApp {
     /**
      * クロックの表示を更新する。
      */
-    clock(time) {
+    async clock(time) {
         let clock;
 
         if (!(time instanceof Datetime) || !(time.gmt instanceof Date)) {
@@ -527,15 +527,15 @@ export class YditsWeb extends FirebaseApp {
  * @param {string} content - ウィンドウの内容
  */
 class Window {
-    constructor(options) {
-        this.type = options.type || null;
-        this.id = options.id ? `win_${options.id}` : null;
-        this.title = options.title || "";
-        this.content = options.content || "";
+    constructor({ type, id, title, content, create }) {
+        this.type = type || Window.types.default;
+        this.id = id ? `win_${id}` : null;
+        this.title = title || "";
+        this.content = content || "";
 
         this.color = Window.windowTypeToColor[this.type] || Window.windowTypeToColor.default;
 
-        if (options.create) {
+        if (create) {
             this.create();
         }
     }
@@ -554,7 +554,7 @@ class Window {
     }
 
 
-    create() {
+    async create() {
         if (document.getElementById(this.id)) {
             throw new Error(`Window with id \`${this.id}\` already exists.`);
         };
@@ -572,7 +572,6 @@ class Window {
                 </dialog>
             `
 
-        // $('body').append(newWindowElement);
         const parser = new DOMParser();
         const doc = parser.parseFromString(newWindowElement, "text/html");
         const dialogElement = doc.body.firstChild;
@@ -584,7 +583,7 @@ class Window {
     }
 
 
-    close() {
+    async close() {
         document.getElementById(this.id).remove();
     }
 }
