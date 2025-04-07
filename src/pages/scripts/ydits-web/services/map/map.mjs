@@ -83,7 +83,9 @@ export class Map extends Service {
     async initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
-        this.regionImage = await this.map.loadImage('./images/hypocenter.png');
+        this.userPointImage = await this.map.loadImage('/images/user_point.png');
+        this.regionImage = await this.map.loadImage('/images/hypocenter.png');
+        this.map.addImage(`userPointImage`, this.userPointImage.data);
         this.map.addImage(`eewRedionImage`, this.regionImage.data);
 
         await this.showHrpns();
@@ -92,7 +94,6 @@ export class Map extends Service {
         if (!this.isGeolocationSupported) { return }
 
         document.addEventListener("getLocation", () => this.updateUserPoint());
-
 
         this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
     }
@@ -120,37 +121,83 @@ export class Map extends Service {
      * ユーザーポイントの表示を更新する。
      */
     updateUserPoint() {
-        if (!this.app.services.geoLocation.isSupported) return;
+        try {
+            const isGeolocationSupported = this.app?.services?.geoLocation?.isSupported;
 
-        if (this.app.services.settings.map.displayUserPoint) {
-            const userLatLng = [this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude];
+            if (!isGeolocationSupported) return;
 
-            const userIcon = L.icon({
-                iconUrl: "./images/user_point.png",
-                iconSize: [24, 24]
+            const isDisplayUserPoint = this.app?.services?.settings?.map?.displayUserPoint;
+            const userPointSource = this.map.getSource("userPointSource");
+
+            if (!isDisplayUserPoint) {
+                this.#removeUserPoint(userPointSource);
+                return;
+            }
+
+            const userLngLat = [this.app.services.geoLocation.longitude, this.app.services.geoLocation.latitude];
+
+            if (!userPointSource) {
+                this.#createUserPoint(userLngLat);
+                return;
+            }
+
+            userPointSource.setData({
+                type: 'FeatureCollection',
+                features: [
+                    {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: userLngLat,
+                        },
+                    },
+                ],
             });
-
-            if (this.userPoint) {
-                this.userPoint.setLatLng(userLatLng);
-                this.userPointCircle.setLatLng(userLatLng).setRadius(this.app.services.geoLocation.accuracy);
-            } else {
-                this.userPoint = L.marker(userLatLng, { icon: userIcon }).addTo(this.map);
-                this.userPointCircle = L.circle(userLatLng, {
-                    radius: this.app.services.geoLocation.accuracy,
-                    weight: 1,
-                    color: '#00000000',
-                    fillColor: '#4080ff80',
-                    fillOpacity: 0.25,
-                }).addTo(this.map);
-            }
-        } else {
-            if (this.userPoint) {
-                this.map.removeLayer(this.userPoint);
-                this.map.removeLayer(this.userPointCircle);
-                this.userPoint = null;
-                this.userPointCircle = null;
-            }
+        } catch (error) {
+            throw new Error(`Unhandled error at updateUserPoint: ${error.message}`, { error: error.stack });
         }
+    }
+
+
+    /**
+     * ユーザーポイントのソースとレイヤーを作成する。
+     */
+    async #createUserPoint(lngLat) {
+        this.map.addSource(`userPointSource`, {
+            type: 'geojson',
+            data: {
+                type: 'FeatureCollection',
+                features: [
+                    {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: lngLat,
+                        },
+                    },
+                ],
+            },
+        });
+
+        this.map.addLayer({
+            id: `userPoint`,
+            type: "symbol",
+            source: `userPointSource`,
+            layout: {
+                "icon-image": `userPointImage`,
+                "icon-size": 0.25,
+            },
+        });
+    }
+
+
+    /**
+     * ユーザーポイントのソースとレイヤーを削除する。
+     */
+    async #removeUserPoint(userPointSource) {
+        if (!userPointSource) return;
+        this.map.removeLayer("userPoint");
+        this.map.removeSource("userPointSource");
     }
 
 
@@ -511,7 +558,6 @@ export class Map extends Service {
                                 id: `eewRedion_${id}`,
                                 type: "symbol",
                                 source: `eewRedionSource_${id}`,
-                                // "source-layer": `eewRedionSource_${id}`,
                                 layout: {
                                     "icon-image": `eewRedionImage`,
                                     "icon-size": 0.25,
@@ -527,10 +573,7 @@ export class Map extends Service {
                                 id: `eewSWave_${id}`,
                                 type: "line",
                                 source: `eewSWaveSource_${id}`,
-                                // "source-layer": `eewSWaveSource_${id}`,
                                 paint: {
-                                    // "fill-color": "#ff402080",
-                                    // "fill-opacity": 0.25,
                                     "line-width": 1,
                                     "line-color": "#ff4020",
                                 },
@@ -545,10 +588,7 @@ export class Map extends Service {
                                 id: `eewPWave_${id}`,
                                 type: "line",
                                 source: `eewPWaveSource_${id}`,
-                                // "source-layer": `eewPWaveSource_${id}`,
                                 paint: {
-                                    // "fill-color": "#00000000",
-                                    // "fill-opacity": 0,
                                     "line-width": 1,
                                     "line-color": "#4080ff",
                                 },
@@ -588,20 +628,18 @@ export class Map extends Service {
                     const sWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].sWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
                     const pWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].pWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
 
-                    this.map.getSource(`eewRedionSource_${id}`).setData(
-                        {
-                            type: 'FeatureCollection',
-                            features: [
-                                {
-                                    type: 'Feature',
-                                    geometry: {
-                                        type: 'Point',
-                                        coordinates: REGION_LNGLAT,
-                                    },
+                    this.map.getSource(`eewRedionSource_${id}`).setData({
+                        type: 'FeatureCollection',
+                        features: [
+                            {
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: REGION_LNGLAT,
                                 },
-                            ],
-                        }
-                    );
+                            },
+                        ],
+                    });
                     this.map.getSource(`eewSWaveSource_${id}`).setData(sWaveCircleJSON);
                     this.map.getSource(`eewPWaveSource_${id}`).setData(pWaveCircleJSON);
                 });
@@ -664,7 +702,10 @@ export class Map extends Service {
             zoom: zoom,
             speed: 2.0,
             curve: 1.0,
+            bearing: 0,
+            pitch: 0,
         });
+
     }
 
 
