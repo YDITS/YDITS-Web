@@ -36,7 +36,7 @@ export class Map extends Service {
     static DEFAULT_ZOOM = 4;
     static HRPNS_TIMES_URI = "https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json";
     static TROPICAL_CYCLONE_TARGET_URI = "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json";
-    static DEFAULT_CIRCLE_OPTIONS = { steps: 32, units: "meters", propreties: { foo: "bar" } };
+    static DEFAULT_CIRCLE_OPTIONS = { steps: 64, units: "meters", propreties: { foo: "bar" } };
 
 
     get $layersControl() {
@@ -84,11 +84,10 @@ export class Map extends Service {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         this.regionImage = await this.map.loadImage('./images/hypocenter.png');
+        this.map.addImage(`eewRedionImage`, this.regionImage.data);
 
-        this.map.on("load", async (event) => {
-            await this.showHrpns();
-            await this.showTyphoon();
-        });
+        await this.showHrpns();
+        await this.showTyphoon();
 
         if (!this.isGeolocationSupported) { return }
 
@@ -488,26 +487,23 @@ export class Map extends Service {
                     if (id === "undefined" || this.app.services.eew.reports[id].isWarning) { return }
 
                     if (this.app.services.eew.currentId === id) {
-                        if (!this.app.services.eew.reports[id].region) {
+                        if (!this.app.services.eew.reports[id].isMapInitialized) {
                             const sWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
                             const pWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
-
-                            this.map.addImage(`eewRedionImage_${id}`, this.regionImage.data);
 
                             this.map.addSource(`eewRedionSource_${id}`, {
                                 type: 'geojson',
                                 data: {
-                                  type: 'FeatureCollection',
-                                  features: [
-                                    {
-                                      type: 'Feature',
-                                      geometry: {
-                                        type: 'Point',
-                                        coordinates: [0, 0],
-                                      },
-                                      properties: {},
-                                    },
-                                  ],
+                                    type: 'FeatureCollection',
+                                    features: [
+                                        {
+                                            type: 'Feature',
+                                            geometry: {
+                                                type: 'Point',
+                                                coordinates: [0, 0],
+                                            },
+                                        },
+                                    ],
                                 },
                             });
 
@@ -517,9 +513,8 @@ export class Map extends Service {
                                 source: `eewRedionSource_${id}`,
                                 // "source-layer": `eewRedionSource_${id}`,
                                 layout: {
-                                    // "icon-"
-                                    "icon-image": `eewRedionImage_${id}`,
-                                    "icon-size": 24,
+                                    "icon-image": `eewRedionImage`,
+                                    "icon-size": 0.25,
                                 },
                             });
 
@@ -530,34 +525,36 @@ export class Map extends Service {
 
                             this.map.addLayer({
                                 id: `eewSWave_${id}`,
-                                type: "circle",
+                                type: "line",
                                 source: `eewSWaveSource_${id}`,
                                 // "source-layer": `eewSWaveSource_${id}`,
                                 paint: {
-                                    "circle-color": "#ff402080",
-                                    "circle-opacity": 0.25,
-                                    "circle-stroke-width": 1,
-                                    "circle-stroke-color": "#ff4020",
+                                    // "fill-color": "#ff402080",
+                                    // "fill-opacity": 0.25,
+                                    "line-width": 1,
+                                    "line-color": "#ff4020",
                                 },
                             });
 
                             this.map.addSource(`eewPWaveSource_${id}`, {
-                                    type: "geojson",
-                                    data: pWaveCircleJSON,
-                                });
-                                
+                                type: "geojson",
+                                data: pWaveCircleJSON,
+                            });
+
                             this.map.addLayer({
-                                    id: `eewPWave_${id}`,
-                                    type: "circle",
-                                    source: `eewPWaveSource_${id}`,
-                                    // "source-layer": `eewPWaveSource_${id}`,
-                                    paint: {
-                                        "circle-color": "#00000000",
-                                        "circle-opacity": 0,
-                                        "circle-stroke-width": 1,
-                                        "circle-stroke-color": "#4080ff",
-                                    },
-                                });
+                                id: `eewPWave_${id}`,
+                                type: "line",
+                                source: `eewPWaveSource_${id}`,
+                                // "source-layer": `eewPWaveSource_${id}`,
+                                paint: {
+                                    // "fill-color": "#00000000",
+                                    // "fill-opacity": 0,
+                                    "line-width": 1,
+                                    "line-color": "#4080ff",
+                                },
+                            });
+
+                            this.app.services.eew.reports[id].isMapInitialized = true;
                         }
 
                         this.app.services.eew.reports[id].latitude = this.app.services.eew.reports[id].latitude.replace("N", "");
@@ -590,11 +587,23 @@ export class Map extends Service {
                     const REGION_LNGLAT = [this.app.services.eew.reports[id].longitude, this.app.services.eew.reports[id].latitude];
                     const sWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].sWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
                     const pWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].pWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
-                    this.map.getSource(`eewRedionSource_${id}`)._data.features[0].geometry.coordinates = REGION_LNGLAT;
+
+                    this.map.getSource(`eewRedionSource_${id}`).setData(
+                        {
+                            type: 'FeatureCollection',
+                            features: [
+                                {
+                                    type: 'Feature',
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: REGION_LNGLAT,
+                                    },
+                                },
+                            ],
+                        }
+                    );
                     this.map.getSource(`eewSWaveSource_${id}`).setData(sWaveCircleJSON);
                     this.map.getSource(`eewPWaveSource_${id}`).setData(pWaveCircleJSON);
-
-                    console.debug(this.app.services.eew.reports[id].sWave);
                 });
 
                 if (this.app.services.settings.map.autoMove) {
@@ -618,11 +627,11 @@ export class Map extends Service {
         if (dateNow - this.autoMoveCount >= 3000) {
             const report = this.app.services.eew.reports[this.app.services.eew.currentId];
             if (report.pWavePut >= 560000) {
-                this.map.setView([report.latitude, report.longitude], 5);
+                this.setView([report.longitude, report.latitude], 5);
             } else if (report.pWavePut >= 280000) {
-                this.map.setView([report.latitude, report.longitude], 6);
+                this.setView([report.longitude, report.latitude], 6);
             } else if (report.pWavePut > 0) {
-                this.map.setView([report.latitude, report.longitude], 7);
+                this.setView([report.longitude, report.latitude], 7);
             }
             this.autoMoveCount = dateNow;
         }
@@ -635,9 +644,9 @@ export class Map extends Service {
     clearEewLayers() {
         Object.keys(this.app.services.eew.reports).forEach(id => {
             if (id !== "undefined" && !this.app.services.eew.reports[id].isWarning) {
-                this.map.removeLayer(this.app.services.eew.reports[id].region);
-                this.map.removeLayer(this.app.services.eew.reports[id].sWave);
-                this.map.removeLayer(this.app.services.eew.reports[id].pWave);
+                this.removeLayer(this.app.services.eew.reports[id].region);
+                this.removeLayer(this.app.services.eew.reports[id].sWave);
+                this.removeLayer(this.app.services.eew.reports[id].pWave);
                 delete this.app.services.eew.reports[id];
             }
         });
@@ -653,6 +662,8 @@ export class Map extends Service {
         this.map.flyTo({
             center: lngLat,
             zoom: zoom,
+            speed: 2.0,
+            curve: 1.0,
         });
     }
 
