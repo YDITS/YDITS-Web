@@ -43,10 +43,19 @@ export class Map extends Service {
 
     get $hrpnsTime() {
         if (!(this.#_$hrpnsTime instanceof HTMLElement)) {
-            this.#_$hrpnsTime = document.querySelector("#hrpnsTime>.text");
+            this.#_$hrpnsTime = document.querySelector("#hrpnsTime");
         }
 
         return this.#_$hrpnsTime;
+    }
+
+
+    get $hrpnsTimeText() {
+        if (!(this.#_$hrpnsTimeText instanceof HTMLElement)) {
+            this.#_$hrpnsTimeText = document.querySelector("#hrpnsTime>.text");
+        }
+
+        return this.#_$hrpnsTimeText;
     }
 
 
@@ -204,7 +213,8 @@ export class Map extends Service {
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
         this.hrpns.setUrl(url);
-        this.$hrpnsTime.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
+        this.$hrpnsTimeText.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
+        this.$hrpnsTime.classList.add("show");
     }
 
 
@@ -230,8 +240,8 @@ export class Map extends Service {
             },
         });
 
-        this.$hrpnsTime.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
-        // this.updateLayers();
+        this.$hrpnsTimeText.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
+        this.$hrpnsTime.classList.add("show");
     }
 
 
@@ -240,6 +250,8 @@ export class Map extends Service {
      */
     async hideHrpns() {
         await this.map.removeLayer("hrpns");
+        this.$hrpnsTime.classList.remove("show");
+        this.$hrpnsTimeText.textContent = "";
     }
 
 
@@ -696,5 +708,6 @@ export class Map extends Service {
 
     #_$layersControl;
     #_$hrpnsTime;
+    #_$hrpnsTimeText;
     #_$isGeolocationSupported;
 }
