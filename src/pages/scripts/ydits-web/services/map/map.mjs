@@ -86,13 +86,17 @@ export class Map extends Service {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         await this.#initializeMaps();
-        this.userPointImage = await this.map.loadImage('/images/user_point.png');
-        this.regionImage = await this.map.loadImage('/images/hypocenter.png');
-        await this.map.addImage(`userPointImage`, this.userPointImage.data);
-        await this.map.addImage(`eewRedionImage`, this.regionImage.data);
 
-        await this.showHrpns();
-        await this.showTyphoon();
+        this.map.once("load", async () => {
+            this.userPointImage = await this.map.loadImage('/images/user_point.png');
+            this.regionImage = await this.map.loadImage('/images/hypocenter.png');
+
+            await this.map.addImage(`userPointImage`, this.userPointImage.data);
+            await this.map.addImage(`eewRedionImage`, this.regionImage.data);
+
+            await this.showHrpns();
+            await this.showTyphoon();
+        });
 
         if (!this.isGeolocationSupported) { return }
 
@@ -100,7 +104,6 @@ export class Map extends Service {
 
         this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
     }
-
 
 
     /**
