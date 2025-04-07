@@ -22,13 +22,6 @@ export class Map extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
-
-        this.app.services.notify.show("message", "", `${this.name}をコンストラクトしています…`);
-
-        this.loopCount = -1;
-        this.autoMoveCount = null;
-
-        this.initializeMaps();
     }
 
 
@@ -40,29 +33,29 @@ export class Map extends Service {
 
 
     get $layersControl() {
-        if (!(this._$layersControl instanceof HTMLElement)) {
-            this._$layersControl = document.getElementById("layersControl");
+        if (!(this.#_$layersControl instanceof HTMLElement)) {
+            this.#_$layersControl = document.getElementById("layersControl");
         }
 
-        return this._$layersControl;
+        return this.#_$layersControl;
     }
 
 
     get $hrpnsTime() {
-        if (!(this._$hrpnsTime instanceof HTMLElement)) {
-            this._$hrpnsTime = document.querySelector("#hrpnsTime>.text");
+        if (!(this.#_$hrpnsTime instanceof HTMLElement)) {
+            this.#_$hrpnsTime = document.querySelector("#hrpnsTime>.text");
         }
 
-        return this._$hrpnsTime;
+        return this.#_$hrpnsTime;
     }
 
 
     get isGeolocationSupported() {
-        if (this._isGeolocationSupported === undefined) {
-            this._isGeolocationSupported = "geolocation" in navigator;
+        if (this.#_$isGeolocationSupported === undefined) {
+            this.#_$isGeolocationSupported = "geolocation" in navigator;
         }
 
-        return this._isGeolocationSupported;
+        return this.#_$isGeolocationSupported;
     }
 
 
@@ -83,65 +76,50 @@ export class Map extends Service {
     async initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
+        await this.#initializeMaps();
         this.userPointImage = await this.map.loadImage('/images/user_point.png');
         this.regionImage = await this.map.loadImage('/images/hypocenter.png');
-        this.map.addImage(`userPointImage`, this.userPointImage.data);
-        this.map.addImage(`eewRedionImage`, this.regionImage.data);
+        await this.map.addImage(`userPointImage`, this.userPointImage.data);
+        await this.map.addImage(`eewRedionImage`, this.regionImage.data);
 
         await this.showHrpns();
         await this.showTyphoon();
 
         if (!this.isGeolocationSupported) { return }
 
-        document.addEventListener("getLocation", () => this.updateUserPoint());
+        document.addEventListener("getLocation", async () => await this.updateUserPoint());
 
         this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
     }
 
 
-    /**
-     * マップインスタンスを初期化する。
-     * @returns {void}
-     */
-    initializeMaps() {
-        maptilersdk.config.apiKey = "3ft2uVdfAwtgfKQGIT8U";
-
-        this.map = new maplibregl.Map({
-            container: "map",
-            style: "https://api.maptiler.com/maps/ba979b60-0cf8-4087-8cdc-5bb919540c08/style.json?key=3ft2uVdfAwtgfKQGIT8U",
-            center: Map.DEFAULT_CENTER,
-            zoom: Map.DEFAULT_ZOOM,
-            maxZoom: 9,
-            minZoom: 3,
-        });
-    }
-
 
     /**
      * ユーザーポイントの表示を更新する。
+     * @returns {Promise<void>}
      */
-    updateUserPoint() {
+    async updateUserPoint() {
         try {
             const isGeolocationSupported = this.app?.services?.geoLocation?.isSupported;
 
             if (!isGeolocationSupported) return;
 
             const isDisplayUserPoint = this.app?.services?.settings?.map?.displayUserPoint;
-            const userPointSource = this.map.getSource("userPointSource");
+            const userPointSource = await this.map.getSource("userPointSource");
 
             if (!isDisplayUserPoint) {
-                this.#removeUserPoint(userPointSource);
+                await this.#removeUserPoint(userPointSource);
                 return;
             }
 
             const userLngLat = [this.app.services.geoLocation.longitude, this.app.services.geoLocation.latitude];
 
             if (!userPointSource) {
-                this.#createUserPoint(userLngLat);
+                await this.#createUserPoint(userLngLat);
                 return;
             }
 
-            userPointSource.setData({
+            await userPointSource.setData({
                 type: 'FeatureCollection',
                 features: [
                     {
@@ -163,7 +141,7 @@ export class Map extends Service {
      * ユーザーポイントのソースとレイヤーを作成する。
      */
     async #createUserPoint(lngLat) {
-        this.map.addSource(`userPointSource`, {
+        await this.map.addSource(`userPointSource`, {
             type: 'geojson',
             data: {
                 type: 'FeatureCollection',
@@ -179,7 +157,7 @@ export class Map extends Service {
             },
         });
 
-        this.map.addLayer({
+        await this.map.addLayer({
             id: `userPoint`,
             type: "symbol",
             source: `userPointSource`,
@@ -196,8 +174,8 @@ export class Map extends Service {
      */
     async #removeUserPoint(userPointSource) {
         if (!userPointSource) return;
-        this.map.removeLayer("userPoint");
-        this.map.removeSource("userPointSource");
+        await this.map.removeLayer("userPoint");
+        await this.map.removeSource("userPointSource");
     }
 
 
@@ -206,7 +184,7 @@ export class Map extends Service {
      * @param {string} datetime - 'yyyyMMDDHHmm' 形式の日時文字列
      * @returns {string} - 'HH:mm' 形式の日時文字列
      */
-    formatDatetime(datetime) {
+    #formatDatetime(datetime) {
         const year = datetime.slice(0, 4);
         const month = datetime.slice(4, 6) - 1;
         const day = datetime.slice(6, 8);
@@ -214,31 +192,6 @@ export class Map extends Service {
         const minute = datetime.slice(10, 12);
         const date = new Date(Date.UTC(year, month, day, hour, minute));
         return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-    }
-
-
-    /**
-     * レイヤーコントロールを更新する。
-     */
-    updateLayers() {
-        if (this.layerControl) {
-            this.map.removeControl(this.layerControl);
-        }
-
-
-        if (this.hrpns || this.typhoon) {
-            this.layerControl = new CustomLayerControl({
-                layers: {
-                    "雨雲レーダー（高解像度降水ナウキャスト）": this.hrpns,
-                    "台風情報（予想進路図）": this.typhoon,
-                },
-                map: this.map
-            });
-
-            this.$layersControl.appendChild(this.layerControl.onAdd(this.map));
-        }
-
-
     }
 
 
@@ -251,7 +204,7 @@ export class Map extends Service {
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
         this.hrpns.setUrl(url);
-        this.$hrpnsTime.textContent = this.formatDatetime(this.hrpnsLatestTargetTime.validtime);
+        this.$hrpnsTime.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
     }
 
 
@@ -262,13 +215,13 @@ export class Map extends Service {
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
 
-        this.map.addSource('hrpns-source', {
+        await this.map.addSource('hrpns-source', {
             'type': 'raster',
             'tiles': [url],
             'tileSize': 256,
         });
 
-        this.map.addLayer({
+        await this.map.addLayer({
             id: "hrpns",
             source: "hrpns-source",
             type: "raster",
@@ -277,7 +230,7 @@ export class Map extends Service {
             },
         });
 
-        this.$hrpnsTime.textContent = this.formatDatetime(this.hrpnsLatestTargetTime.validtime);
+        this.$hrpnsTime.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
         // this.updateLayers();
     }
 
@@ -285,8 +238,8 @@ export class Map extends Service {
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を非表示する。
      */
-    hideHrpns() {
-        this.map.removeLayer("hrpns");
+    async hideHrpns() {
+        await this.map.removeLayer("hrpns");
     }
 
 
@@ -389,7 +342,7 @@ export class Map extends Service {
                 console.error('Error: Data is not an array.');
             }
 
-            this.$hrpnsTime.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+            this.$hrpnsTime.text(this.#formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
         });
     }
 
@@ -397,7 +350,7 @@ export class Map extends Service {
     /**
      * 予報円を追加する。
      */
-    addForecastCircle(forecast) {
+    async addForecastCircle(forecast) {
         if (forecast && forecast.center && forecast.probabilityCircle) {
             const center = forecast.center;
             const radius = forecast.probabilityCircle.radius;
@@ -455,7 +408,7 @@ export class Map extends Service {
     /**
      * 強風域を追加する。
      */
-    addGaleWarningArea(galeWarningArea, typhoonNumber) {
+    async addGaleWarningArea(galeWarningArea, typhoonNumber) {
         const center = galeWarningArea.center;
         const radius = galeWarningArea.radius;
         L.circle([center[0], center[1]], {
@@ -480,7 +433,7 @@ export class Map extends Service {
     /**
      * 台風情報（予想進路図）を非表示する。
      */
-    hideTyphoon() {
+    async hideTyphoon() {
         this.map.removeLayer(this.typhoon);
         this.typhoon = null;
         // this.updateLayers();
@@ -527,10 +480,10 @@ export class Map extends Service {
      * マップの描画を更新する。
      * @param {*} dateNow 
      */
-    update(dateNow) {
+    async update(dateNow) {
         try {
             if (this.app.services.api.yahooKmoni.isEew) {
-                Object.keys(this.app.services.eew.reports).forEach((id) => {
+                Object.keys(this.app.services.eew.reports).forEach(async (id) => {
                     if (id === "undefined" || this.app.services.eew.reports[id].isWarning) { return }
 
                     if (this.app.services.eew.currentId === id) {
@@ -604,7 +557,7 @@ export class Map extends Service {
                         this.app.services.eew.reports[id].pRadius = this.app.services.eew.reports[id].psWave.pRadius * 1000;
 
                         if (this.app.services.eew.reports[id].sRadius != this.app.services.eew.reports[id].lastSWave) {
-                            this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / (60 * ((dateNow - this.loopCount) / 1000));
+                            this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / (60 * ((dateNow - this.#loopCount) / 1000));
                             this.app.services.eew.reports[id].lastSWave = this.app.services.eew.reports[id].sRadius;
                             this.app.services.eew.reports[id].sWavePut = this.app.services.eew.reports[id].sRadius;
                         } else if (this.app.services.eew.reports[id].sRadius == this.app.services.eew.reports[id].lastSWave) {
@@ -612,10 +565,10 @@ export class Map extends Service {
                         }
 
                         if (this.app.services.eew.reports[id].pRadius != this.app.services.eew.reports[id].lastPWave) {
-                            this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / (60 * ((dateNow - this.loopCount) / 1000));
+                            this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / (60 * ((dateNow - this.#loopCount) / 1000));
                             this.app.services.eew.reports[id].lastPWave = this.app.services.eew.reports[id].pRadius;
                             this.app.services.eew.reports[id].pWavePut = this.app.services.eew.reports[id].pRadius;
-                            this.loopCount = dateNow;
+                            this.#loopCount = dateNow;
                         } else if (this.app.services.eew.reports[id].pRadius == this.app.services.eew.reports[id].lastPWave) {
                             this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
                         }
@@ -645,10 +598,10 @@ export class Map extends Service {
                 });
 
                 if (this.app.services.settings.map.autoMove) {
-                    this.autoMoveMap(dateNow);
+                    this.#autoMoveMap(dateNow);
                 }
             } else {
-                this.clearEewLayers();
+                this.#clearEewLayers();
             }
         } catch (error) {
             console.error(error);
@@ -661,8 +614,8 @@ export class Map extends Service {
      * マップを自動で移動する。
      * @param {number} dateNow - 現在の日時
      */
-    autoMoveMap(dateNow) {
-        if (dateNow - this.autoMoveCount >= 3000) {
+    #autoMoveMap(dateNow) {
+        if (dateNow - this.#autoMoveCount >= 3000) {
             const report = this.app.services.eew.reports[this.app.services.eew.currentId];
             if (report.pWavePut >= 560000) {
                 this.setView([report.longitude, report.latitude], 5);
@@ -671,7 +624,7 @@ export class Map extends Service {
             } else if (report.pWavePut > 0) {
                 this.setView([report.longitude, report.latitude], 7);
             }
-            this.autoMoveCount = dateNow;
+            this.#autoMoveCount = dateNow;
         }
     }
 
@@ -679,7 +632,7 @@ export class Map extends Service {
     /**
      * 緊急地震速報（EEW）のレイヤーをクリアする。
      */
-    clearEewLayers() {
+    #clearEewLayers() {
         Object.keys(this.app.services.eew.reports).forEach(id => {
             if (id !== "undefined" && !this.app.services.eew.reports[id].isWarning) {
                 this.removeLayer(this.app.services.eew.reports[id].region);
@@ -696,8 +649,8 @@ export class Map extends Service {
      * @param {L.LatLng} latLng - 移動先の緯度経度
      * @param {number} zoom - ズームレベル
      */
-    setView(lngLat, zoom) {
-        this.map.flyTo({
+    async setView(lngLat, zoom) {
+        await this.map.flyTo({
             center: lngLat,
             zoom: zoom,
             speed: 2.0,
@@ -705,114 +658,43 @@ export class Map extends Service {
             bearing: 0,
             pitch: 0,
         });
-
     }
 
 
     /**
      * マップを初期位置に移動する。
      */
-    setViewHome() {
-        this.setView(Map.DEFAULT_CENTER, Map.DEFAULT_ZOOM);
-    }
-}
-
-
-/**
- * 独自レイヤーコントロールクラス
- */
-class CustomLayerControl extends L.Control {
-    constructor(options) {
-        super(options);
-        this.options = options;
-        this.isEewActive = false;
+    async setViewHome() {
+        await this.setView(Map.DEFAULT_CENTER, Map.DEFAULT_ZOOM);
     }
 
-    get $hrpnsTime() {
-        if (!(this._$hrpnsTime instanceof HTMLElement)) {
-            this._$hrpnsTime = document.getElementById("hrpnsTime");
-        }
 
-        return this._$hrpnsTime;
-    }
-
-    onAdd(map) {
-        this.map = map;
-        this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        this._container.style.backgroundColor = 'white';
-        this._container.style.padding = '10px';
-        this._layerControl = L.DomUtil.create('div', 'layer-control', this._container);
-        this.updateLayerControl();
-        return this._container;
-    }
-
-    updateLayerControl() {
-        this._layerControl.innerHTML = '';
-        const savedLayers = JSON.parse(localStorage.getItem('selectedLayers')) || {};
-
-        if (this.options.layers) {
-            for (const [name, layer] of Object.entries(this.options.layers)) {
-                const controlItem = L.DomUtil.create('div', '', this._layerControl);
-                const checkbox = L.DomUtil.create('input', '', controlItem);
-                checkbox.type = 'checkbox';
-                checkbox.id = name;
-                checkbox.checked = savedLayers[name] || false;
-
-                if (checkbox.checked && !this.isEewActive) {
-                    this.map.addLayer(layer);
-                    this.$hrpnsTime.classList.add("show");
-                } else {
-                    if (layer && this.map.hasLayer(layer)) {
-                        this.map.removeLayer(layer);
-                    }
-                    this.$hrpnsTime.classList.remove("show");
-                }
-
-                L.DomEvent.on(checkbox, 'change', () => {
-                    if (checkbox.checked) {
-                        savedLayers[name] = true;
-                        if (!this.isEewActive) {
-                            this.map.addLayer(layer);
-                            this.$hrpnsTime.classList.add("show");
-                        }
-                    } else {
-                        savedLayers[name] = false;
-                        this.map.removeLayer(layer);
-                        this.$hrpnsTime.classList.remove("show");
-                    }
-                    localStorage.setItem('selectedLayers', JSON.stringify(savedLayers));
-                });
-
-                const label = L.DomUtil.create('label', '', controlItem);
-                label.htmlFor = name;
-                label.innerHTML = name;
-            }
+    /**
+     * マップインスタンスを初期化する。
+     * @returns {Promise<void>}
+     */
+    async #initializeMaps() {
+        try {
+            this.map = await new maplibregl.Map({
+                container: "map",
+                style: `https://api.maptiler.com/maps/ba979b60-0cf8-4087-8cdc-5bb919540c08/style.json?key=${Map.#MAPTILER_API_KEY}`,
+                center: Map.DEFAULT_CENTER,
+                zoom: Map.DEFAULT_ZOOM,
+                maxZoom: 9,
+                minZoom: 3,
+            });
+        } catch (error) {
+            throw new Error(`Could not initialize map: ${error.message}`, { error: error.stack });
         }
     }
 
-    startEew() {
-        this.isEewActive = true;
-        this.updateLayerControlVisibility();
-    }
 
-    stopEew() {
-        this.isEewActive = false;
-        this.updateLayerControlVisibility();
-    }
+    static #MAPTILER_API_KEY = "3ft2uVdfAwtgfKQGIT8U";
+    #loopCount = -1;
+    #autoMoveCount = null;
 
-    updateLayerControlVisibility() {
-        const savedLayers = JSON.parse(localStorage.getItem('selectedLayers')) || {};
 
-        for (const [name, layer] of Object.entries(this.options.layers)) {
-            if (savedLayers[name]) {
-                if (this.isEewActive) {
-                    this.map.removeLayer(layer);
-                    this.$hrpnsTime.classList.remove("show");
-                } else {
-                    this.map.addLayer(layer);
-                    this.$hrpnsTime.classList.add("show");
-                }
-            }
-        }
-    }
+    #_$layersControl;
+    #_$hrpnsTime;
+    #_$isGeolocationSupported;
 }
