@@ -697,6 +697,10 @@ export class Map extends Service {
                 zoom: Map.DEFAULT_ZOOM,
                 maxZoom: 9,
                 minZoom: 3,
+                attributionControl: {
+                    compact: true,
+                    customAttribution: "© 気象庁",
+                },
             });
         } catch (error) {
             throw new Error(`Could not initialize map: ${error.message}`, { error: error.stack });
