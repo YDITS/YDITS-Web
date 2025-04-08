@@ -50,108 +50,95 @@ export class YditsWeb extends FirebaseApp {
         this.initializeStartedTime = performance.now();
 
         if (location.pathname === "/eqhistory/") {
-            this.eqhistoryMode();
+            this.#eqhistoryMode();
             return;
         }
 
         if (location.pathname === "/debug-logs/") {
-            this.debugLogsMode();
+            this.#debugLogsMode();
             return;
         }
 
-        this.setupEventListeners();
-
-        this.isEqhistoryMode = false;
-        this.isDebugLogsMode = false;
+        this.#setupEventListeners();
 
         this.buildEvent = new Event("build");
-        document.addEventListener("build", async () => await this.onBuild());
+        document.addEventListener("build", async () => await this.#onBuild());
 
         this.clockElement = document.getElementById("clock");
         this.fpsElement = document.getElementById("fps");
 
-        this.initializeServices();
-        this.registerServices();
-        this.initUI();
-    }
-
-
-    setupEventListeners() {
-        window.addEventListener("error", (event) => this.on_unhandled_error(event.error));
-        window.addEventListener("online", () => this.onNetworkConnected());
-        window.addEventListener("offline", () => this.onNetworkDisconnected());
-    }
-
-
-    initializeServices() {
-        this.register(Datetime);
-        this.services.datetime.update();
-        this.register(DebugLogs);
-        this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
-    }
-
-
-    registerServices() {
-        try {
-            this.register(Notify);
-            this.register(Eew);
-            this.register(Eqinfo);
-            this.register(JmaDataFeed);
-            this.register(ServiceWorker);
-            this.register(Sounds);
-            this.register(Api);
-            this.register(Settings);
-            this.register(Map);
-
-            try {
-                this.register(PushNotify);
-            } catch (error) {
-                console.error(error);
-                this.services.debugLogs.add("error", `[${this.name}]`, error);
-            }
-
-            this.register(GeoLocation);
-        } catch (error) {
-            this.on_initialize_error(error);
-        }
-    }
-
-
-    initUI() {
-        this.initMenu();
-        this.initLicense();
-        this.clockElement.textContent = "----/--/-- --:--:--";
+        this.#initializeServices();
+        this.#registerServices();
+        this.#initUI();
     }
 
 
     /**
-     * JMA防災情報フィードの取得頻度 (ms)
+     * @type {boolean}
      */
-    jma_data_feed_fetch_interval = 1000 * 60;
+    isEqhistoryMode = false;
 
 
     /**
-     * アニメーションメインループのFPS値
+     * @type {boolean}
      */
-    fps = -1;
+    isDebugLogsMode = false;
 
 
     /**
-     * 最後にFPS値を更新したDate
+     * イベントリスナーを設定する
+     * 
+     * @private
+     * @returns {Promise<void>}
      */
-    lastFpsUpdateTime = -1;
+    async #setupEventListeners() {
+        window.addEventListener("error", (event) => this.#onUnhandledError(event.error));
+        window.addEventListener("online", () => this.#onNetworkConnected());
+        window.addEventListener("offline", () => this.#onNetworkDisconnected());
+    }
 
 
     /**
-     * 最後に計測した `performance.now()` 値
+     * ネットワーク接続時の処理
+     * 
+     * @private
+     * @returns {void}
      */
-    lastTime = -1;
+    #onNetworkConnected() {
+        this.services.debugLogs.add("network", `[${this.name}]`, "Network reconnected.");
+        this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
+
+        setTimeout(() => {
+            this.services.api.wolfx.connect();
+            this.services.eqinfo.reconnect();
+            this.services.map.updateHrpns();
+        }, 3000);
+    }
 
 
     /**
-     * ハンドルされない例外の処理。
+     * ネットワーク切断時の処理
+     * 
+     * @private
+     * @returns {void}
      */
-    async on_unhandled_error(error) {
+    #onNetworkDisconnected() {
+        document.getElementById("statusLamp").style.backgroundColor = "#ff4040";
+        this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
+        this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
+        this.services.api.wolfx.disconnect();
+        this.services.eqinfo.disconnect();
+    }
+
+
+    /**
+     * ハンドルされない例外の処理
+     * 
+     * @private
+     * @param {Error} error
+     * @returns {Promise<void>}
+     */
+    async #onUnhandledError(error) {
         console.error(error);
 
         this.services.debugLogs.add(
@@ -174,9 +161,59 @@ export class YditsWeb extends FirebaseApp {
 
 
     /**
-     * イニシャライズ中の例外処理。
+     * サービスを初期化する
+     * 
+     * @private
+     * @returns {void}
      */
-    async on_initialize_error(error) {
+    #initializeServices() {
+        this.register(Datetime);
+        this.services.datetime.update();
+        this.register(DebugLogs);
+        this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
+    }
+
+
+    /**
+     * サービスを登録する
+     * 
+     * @private
+     * @returns {void}
+     */
+    #registerServices() {
+        try {
+            this.register(Notify);
+            this.register(Eew);
+            this.register(Eqinfo);
+            this.register(JmaDataFeed);
+            this.register(ServiceWorker);
+            this.register(Sounds);
+            this.register(Api);
+            this.register(Settings);
+            this.register(Map);
+
+            try {
+                this.register(PushNotify);
+            } catch (error) {
+                console.error(error);
+                this.services.debugLogs.add("error", `[${this.name}]`, error);
+            }
+
+            this.register(GeoLocation);
+        } catch (error) {
+            this.#onInitializeError(error);
+        }
+    }
+
+
+    /**
+     * イニシャライズ中の例外処理
+     * 
+     * @private
+     * @param {Error} error
+     * @returns {Promise<void>}
+     */
+    async #onInitializeError(error) {
         console.error(error);
 
         this.services.debugLogs.add(
@@ -208,36 +245,13 @@ export class YditsWeb extends FirebaseApp {
 
 
     /**
-     * ネットワーク接続時の処理
-     */
-    onNetworkConnected() {
-        this.services.debugLogs.add("network", `[${this.name}]`, "Network reconnected.");
-        this.services.notify.show("message", "ネットワーク再接続", "ネットワークに接続されました。");
-        setTimeout(() => {
-            this.services.api.wolfx.connect();
-            this.services.eqinfo.reconnect();
-            this.services.map.updateHrpns();
-        }, 3000);
-    }
-
-
-    /**
-     * ネットワーク切断時の処理
-     */
-    onNetworkDisconnected() {
-        document.getElementById("statusLamp").style.backgroundColor = "#ff4040";
-        this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
-        this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
-        this.services.api.wolfx.disconnect();
-        this.services.eqinfo.disconnect();
-    }
-
-
-    /**
      * ビルド完了時の処理
+     * 
+     * @private
+     * @returns {Promise<void>}
      */
-    async onBuild() {
-        await this.initialize();
+    async #onBuild() {
+        await this.#initialize();
 
         if (this.version.level === Version.LEVELS.beta) {
             document.getElementById("betaBanner").classList.add("active");
@@ -252,26 +266,19 @@ export class YditsWeb extends FirebaseApp {
 
         document.getElementById("initializeTime").textContent = `${Math.round(this.initializeTime)}ms`;
 
-        this.startIntervals();
+        this.#startIntervals();
 
-        requestAnimationFrame(async () => await this.mainloop());
-    }
-
-
-    startIntervals() {
-        setInterval(() => this.ntp(), 1000);
-        setInterval(() => this.clock(this.services.datetime), 1000);
-        setInterval(() => this.eew(), 1000);
-        setInterval(() => this.hrpns(), 1000 * 30);
-        setInterval(() => this.jmaDataFeed(), this.jma_data_feed_fetch_interval);
-        setInterval(() => this.debugOutput(), 1000);
+        requestAnimationFrame(() => this.#mainloop());
     }
 
 
     /**
-     * 初期化する。
+     * 初期化する
+     * 
+     * @private
+     * @returns {Promise<void>}
      */
-    async initialize() {
+    async #initialize() {
         this.services.settings.initialize();
         this.services.api.dmdata.initialize();
         this.services.api.p2pquake.initialize();
@@ -282,111 +289,41 @@ export class YditsWeb extends FirebaseApp {
 
 
     /**
-     * アニメーションメインループ
+     * インターバルを開始する
+     * 
+     * @private
+     * @returns {void}
      */
-    mainloop() {
-        const timeNow = new Date();
-        this.calcFps();
-        this.displayFps();
-        this.services.map.update(timeNow);
-        requestAnimationFrame(() => this.mainloop());
-    }
-
-
-    calcFps() {
-        const timeNow = performance.now();
-        const elapsed = timeNow - this.lastTime;
-        this.frames++;
-
-        if (elapsed >= this.services.settings.debug.fpsMs) {
-            this.fps = Math.round((this.frames * 1000) / elapsed);
-            this.frames = 0;
-            this.lastTime = timeNow;
-        }
-    }
-
-
-    displayFps() {
-        const timeNow = performance.now();
-
-        if (timeNow - this.lastFpsUpdateTime >= this.services.settings.debug.fpsMs) {
-            const color = this.fps <= 15 ? "#ff4040ff" : "#202020ff";
-            this.fpsElement.textContent = `${Math.round(this.fps)}FPS`;
-            this.fpsElement.style.backgroundColor = color;
-            this.lastFpsUpdateTime = timeNow;
-        }
+    #startIntervals() {
+        setInterval(async () => await this.#ntp(), 1000);
+        setInterval(async () => await this.#clock(this.services.datetime), 1000);
+        setInterval(async () => await this.#eew(), 1000);
+        setInterval(async () => await this.#hrpns(), 1000 * 30);
+        setInterval(async () => await this.#jmaDataFeed(), this.#jmaDataFeedFetchInterval);
+        setInterval(async () => await this.#debugOutput(), 1000);
     }
 
 
     /**
-     * メインループ
+     * UIをイニシャライズする
+     * 
+     * @private
+     * @returns {Promise<void>}
      */
-    async ntp() {
-        this.services.datetime.update();
-    }
-
-
-    async eew() {
-        this.services.eew.updateWarn();
-        this.services.api.yahooKmoni.get();
-    }
-
-
-    async hrpns() {
-        this.services.map.updateHrpns();
-    }
-
-
-    async jmaDataFeed() {
-        this.services.jmaDataFeed.update();
-    }
-
-
-    async debugOutput() {
-        if (!this.services.settings.debug.output) return;
-
-        safeCall(() => {
-            document.getElementById("debugOutputAppName").textContent = `${this.name} Version ${this.version.string}`;
-        });
-
-        safeCall(() => {
-            document.getElementById("debugOutputUserAgent").textContent = `User Agent: ${navigator.userAgent}`;
-        });
-
-        safeCall(() => {
-            document.getElementById("debugOutputLanguage").textContent = `Client Language: ${navigator.language}`;
-        });
-
-        safeCall(() => {
-            document.getElementById("debugOutputDisplay").textContent = `Display: ${screen.width} x ${screen.height}`;
-        });
-
-        safeCall(() => {
-            document.getElementById("debugOutputWolfxJmaEewSocket").textContent = `Wolfx JMA EEW WebSocket: ${this.services.api.wolfx.jmaEewSocket.socket ? "Connected" : "Disconnected"}`;
-        });
-
-        safeCall(() => {
-            document.getElementById("debugOutputP2pquakeSocket").textContent = `P2P地震情報 WebSocket: ${this.services.api.p2pquake.socket ? "Connected" : "Disconnected"}`;
-        });
-
-        safeCall(() => {
-            let reports = "";
-            Object.keys(this.services.eew.reports[this.services.eew.currentId]).forEach(key => {
-                reports += `${key}: ${this.services.eew.reports[this.services.eew.currentId][key]}, `;
-            });
-            document.getElementById("debugOutputEewData").textContent = `Current EEW Data: ${reports}`;
-        });
-
-        safeCall(() => {
-            document.getElementById("debugOutputWolfxJmaEewData").textContent = `Wolfx Jma EEW Data: ${JSON.stringify(this.services.api.wolfx.jmaEewData)}`;
-        });
+    async #initUI() {
+        await this.#initMenu();
+        await this.#initLicense();
+        this.clockElement.textContent = "----/--/-- --:--:--";
     }
 
 
     /**
-     * メニュー項目をイニシャライズする。
+     * メニュー項目をイニシャライズする
+     * 
+     * @private
+     * @returns {Promise<void>}
      */
-    initMenu() {
+    async #initMenu() {
         document.querySelector("#menu .version").textContent = `Ver ${this.version.string}`;
 
         document.getElementById("menuOpenEqhistory").addEventListener("click", () => {
@@ -440,9 +377,12 @@ export class YditsWeb extends FirebaseApp {
 
 
     /**
-     * ライセンス項目をイニシャライズする。
+     * ライセンス項目をイニシャライズする
+     * 
+     * @private
+     * @returns {Promise<void>}
      */
-    initLicense() {
+    async #initLicense() {
         document.querySelector("#license .closeBtn").addEventListener("click", () => {
             document.getElementById("license").classList.remove("active");
         });
@@ -450,39 +390,174 @@ export class YditsWeb extends FirebaseApp {
 
 
     /**
-     * クロックの表示を更新する。
+     * アニメーションメインループ
+     * 
+     * @private
+     * @returns {void}
      */
-    async clock(time) {
-        let clock;
-
-        if (!(time instanceof Datetime) || !(time.gmt instanceof Date)) {
-            clock = "----/--/-- --:--:--";
-        } else {
-            clock =
-                `${time.fullYear}/` +
-                `${this.zeroPadding(time.month)}/` +
-                `${this.zeroPadding(time.date)} ` +
-                `${this.zeroPadding(time.hours)}:` +
-                `${this.zeroPadding(time.minutes)}:` +
-                `${this.zeroPadding(time.seconds)}`;
-        }
-
-        this.clockElement.textContent = clock;
+    #mainloop() {
+        const timeNow = new Date();
+        const timeNowMs = performance.now();
+        this.#calcFps(timeNowMs);
+        this.#displayFps(timeNowMs);
+        this.services.map.update(timeNow);
+        requestAnimationFrame(() => this.#mainloop());
     }
 
 
     /**
-     * 数値を二桁揃えする。
+     * FPSを計算する
+     * 
+     * @private
+     * @returns {void}
      */
-    zeroPadding(value) {
+    #calcFps(timeNow) {
+        const elapsed = timeNow - this.#lastTime;
+        this.#frames++;
+
+        if (elapsed >= this.services.settings.debug.fpsMs) {
+            this.#fps = Math.round((this.#frames * 1000) / elapsed);
+            this.#frames = 0;
+            this.#lastTime = timeNow;
+        }
+    }
+
+
+    /**
+     * FPSを表示する
+     * 
+     * @private
+     * @returns {void}
+     */
+    #displayFps(timeNow) {
+        if (timeNow - this.#lastFpsUpdateTime >= this.services.settings.debug.fpsMs) {
+            const color = this.#fps <= 15 ? "#ff4040ff" : "#202020ff";
+            this.fpsElement.textContent = `${Math.round(this.#fps)}FPS`;
+            this.fpsElement.style.backgroundColor = color;
+            this.#lastFpsUpdateTime = timeNow;
+        }
+    }
+
+
+    async #ntp() {
+        this.services.datetime.update();
+    }
+
+
+    async #eew() {
+        this.services.eew.updateWarn();
+        this.services.api.yahooKmoni.get();
+    }
+
+
+    async #hrpns() {
+        this.services.map.updateHrpns();
+    }
+
+
+    async #jmaDataFeed() {
+        this.services.jmaDataFeed.update();
+    }
+
+
+    async #debugOutput() {
+        if (!this.services.settings.debug.output) return;
+
+        safeCall(() => {
+            document.getElementById("debugOutputAppName").textContent = `${this.name} Version ${this.version.string}`;
+        });
+
+        safeCall(() => {
+            document.getElementById("debugOutputUserAgent").textContent = `User Agent: ${navigator.userAgent}`;
+        });
+
+        safeCall(() => {
+            document.getElementById("debugOutputLanguage").textContent = `Client Language: ${navigator.language}`;
+        });
+
+        safeCall(() => {
+            document.getElementById("debugOutputDisplay").textContent = `Display: ${screen.width} x ${screen.height}`;
+        });
+
+        safeCall(() => {
+            document.getElementById("debugOutputWolfxJmaEewSocket").textContent = `Wolfx JMA EEW WebSocket: ${this.services.api.wolfx.jmaEewSocket.socket ? "Connected" : "Disconnected"}`;
+        });
+
+        safeCall(() => {
+            document.getElementById("debugOutputP2pquakeSocket").textContent = `P2P地震情報 WebSocket: ${this.services.api.p2pquake.socket ? "Connected" : "Disconnected"}`;
+        });
+
+        safeCall(() => {
+            let reports = "";
+            Object.keys(this.services.eew.reports[this.services.eew.currentId]).forEach(key => {
+                reports += `${key}: ${this.services.eew.reports[this.services.eew.currentId][key]}, `;
+            });
+            document.getElementById("debugOutputEewData").textContent = `Current EEW Data: ${reports}`;
+        });
+
+        safeCall(() => {
+            document.getElementById("debugOutputWolfxJmaEewData").textContent = `Wolfx Jma EEW Data: ${JSON.stringify(this.services.api.wolfx.jmaEewData)}`;
+        });
+    }
+
+
+    /**
+     * クロックの表示を更新する
+     * 
+     * @private
+     * @param {Datetime} time
+     * @returns {Promise<void>}
+     */
+    async #clock(time) {
+        const isValidTime = time instanceof Datetime && time.gmt instanceof Date;
+
+        const clockText = isValidTime
+            ? this.#formatDateTime(time)
+            : "----/--/-- --:--:--";
+
+        this.clockElement.textContent = clockText;
+    }
+
+
+    /**
+     * 日時を表示用の文字列にフォーマットする
+     * 
+     * @private
+     * @param {Datetime} time
+     * @returns {string}
+     */
+    #formatDateTime(time) {
+        return [
+            time.fullYear,
+            this.#zeroPadding(time.month),
+            this.#zeroPadding(time.date)
+        ].join('/') + ' ' + [
+            this.#zeroPadding(time.hours),
+            this.#zeroPadding(time.minutes),
+            this.#zeroPadding(time.seconds)
+        ].join(':');
+    }
+
+
+    /**
+     * 数値を二桁揃えする
+     * 
+     * @private
+     * @param {number} value
+     * @returns {string}
+     */
+    #zeroPadding(value) {
         return ("0" + value).slice(-2);
     }
 
 
     /**
      * 地震履歴ウィンドウ
+     * 
+     * @private
+     * @returns {void}
      */
-    eqhistoryMode() {
+    #eqhistoryMode() {
         this.isEqhistoryMode = true;
 
         this.register(Datetime);
@@ -498,8 +573,11 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * デバッグログウィンドウ
+     * 
+     * @private
+     * @returns {void}
      */
-    debugLogsMode() {
+    #debugLogsMode() {
         this.isDebugLogsMode = true;
 
         this.register(Datetime);
@@ -508,23 +586,78 @@ export class YditsWeb extends FirebaseApp {
 
         this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
     }
+
+
+    /**
+     * JMA防災情報フィードの取得頻度 (ms)
+     * 
+     * @private
+     * @type {number}
+     */
+    #jmaDataFeedFetchInterval = 1000 * 60;
+
+
+    /**
+     * アニメーションメインループのFPS値
+     * 
+     * @private
+     * @type {number}
+     */
+    #fps = -1;
+
+
+    /**
+     * アニメーションメインループのフレーム数
+     * 
+     * @private
+     * @type {number}
+     */
+    #frames = 0;
+
+
+    /**
+     * 最後にFPS値を更新したDate
+     * 
+     * @private
+     * @type {number}
+     */
+    #lastFpsUpdateTime = -1;
+
+
+    /**
+     * 最後に計測した `performance.now()` 値
+     * 
+     * @private
+     * @type {number}
+     */
+    #lastTime = -1;
 }
 
 
 /**
- * ポップアップウィンドウを作成する。
- * @param {Window.types} type - Window.types: ウィンドウのタイプ
- * @param {string} id - 使用する共通ウィンドウID
- * @param {string} title - ウィンドウのタイトル
- * @param {string} content - ウィンドウの内容
+ * ポップアップウィンドウを作成する
  */
 class Window {
-    constructor({ type, id, title, content, create }) {
-        this.type = type || Window.types.default;
+    /**
+     * @param {{
+     *     type?: keyof typeof Window.types,
+     *     id?: string,
+     *     title?: string,
+     *     content?: string,
+     *     create?: boolean,
+     * }} config
+     */
+    constructor({
+        type = Window.types.default,
+        id,
+        title = "",
+        content = "",
+        create = true
+    }) {
+        this.type = type;
         this.id = id ? `win_${id}` : null;
-        this.title = title || "";
-        this.content = content || "";
-
+        this.title = title;
+        this.content = content;
         this.color = Window.windowTypeToColor[this.type] || Window.windowTypeToColor.default;
 
         if (create) {
@@ -533,21 +666,40 @@ class Window {
     }
 
 
+    get element() {
+        return document.getElementById(this.id);
+    }
+
+
+    /**
+     * @readonly
+     * @type {Object<string, string>}
+     */
     static types = {
         message: "message",
         error: "error",
+        default: "message",
     }
 
 
+    /**
+     * @readonly
+     * @type {Object<string, string>}
+     */
     static windowTypeToColor = {
         message: "#404040ff",
         error: "#ff5050ff",
-        default: "#404040ff"
+        default: "#404040ff",
     }
 
 
+    /**
+     * ウィンドウを作成する
+     * 
+     * @returns {Promise<void>}
+     */
     async create() {
-        if (document.getElementById(this.id)) {
+        if (this.element instanceof HTMLElement) {
             throw new Error(`Window with id \`${this.id}\` already exists.`);
         };
 
@@ -575,7 +727,16 @@ class Window {
     }
 
 
+    /**
+     * ウィンドウを閉じる
+     * 
+     * @returns {Promise<void>}
+     */
     async close() {
-        document.getElementById(this.id).remove();
+        if (!(this.element instanceof HTMLElement)) {
+            return;
+        }
+
+        this.element.remove();
     }
 }
