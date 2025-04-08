@@ -57,10 +57,12 @@ async function fetchAndSetElement(query, uri) {
             throw new Error(`Failed to read html {url: ${uri}}: ${error.message}`, { error: error.stack });
         });
 
-    const element = document.querySelector(query)
-        .catch((error) => {
-            throw new Error(`Failed to get element {query: ${query}}: ${error.message}`, { error: error.stack });
-        });
+    let element;
+    try {
+        element = document.querySelector(query);
+    } catch (error) {
+        throw new Error(`Failed to get element {query: ${query}}: ${error.message}`, { error: error.stack });
+    }
 
     if (!element) {
         throw new Error(`Invalid query specified {query: ${query}}: ${error.message}`, { error: error.stack });
