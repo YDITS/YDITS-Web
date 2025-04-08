@@ -280,7 +280,7 @@ export class YditsWeb extends FirebaseApp {
      */
     async #initialize() {
         this.services.settings.initialize();
-        this.services.api.dmdata.initialize();
+        await this.services.api.dmdata.initialize();
         this.services.api.p2pquake.initialize();
         this.services.eew.initialize();
         this.services.eqinfo.initialize();
@@ -637,7 +637,7 @@ export class YditsWeb extends FirebaseApp {
 /**
  * ポップアップウィンドウを作成する
  */
-class Window {
+export class Window {
     /**
      * @param {{
      *     type?: keyof typeof Window.types,
