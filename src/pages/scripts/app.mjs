@@ -9,23 +9,38 @@
  */
 
 /**
- * アプリケーションを作成します。
+ * アプリケーションを作成する
  */
 export class App {
-    services = {};
-
-
-    constructor(config) {
-        this.name = config.name;
-        this.description = config.description;
-        this.version = config.version;
-        this.author = config.author;
-        this.copyright = config.copyright;
+    /**
+     * @param {{
+     *     name: string,
+     *     description: string,
+     *     version: typeof Version,
+     *     author: string,
+     *     copyright: string,
+     * }} config
+     */
+    constructor({
+        name,
+        description,
+        version,
+        author,
+        copyright
+    }) {
+        this.name = name;
+        this.description = description;
+        this.version = version;
+        this.author = author;
+        this.copyright = copyright;
     }
 
 
     /**
-     * 新規のサービスを登録します。
+     * サービスをアプリに登録する
+     * 
+     * @param {typeof Service} NewService
+     * @returns {void}
      */
     register(NewService) {
         const newService = new NewService(this);
@@ -36,4 +51,21 @@ export class App {
 
         this.services[newService.name] = newService;
     }
+
+
+    /**
+     * このアプリのサービス
+     * @returns {Object<string, Service>}
+     */
+    get services() {
+        return this.#services;
+    }
+
+
+    /**
+     * サービスオブジェクト
+     * @type {Object<string, Service>}
+     * @private
+     */
+    #services = {};
 }
