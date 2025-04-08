@@ -9,15 +9,34 @@
  */
 
 /**
- * アプリケーションで稼働するサービスを作成します。
+ * アプリケーションで稼働するサービスを作成する
  */
 export class Service {
-    constructor(app, config) {
+    /**
+     * @param {App} app 
+     * @param {{
+     *     name: string,
+     *     description: string,
+     *     version: typeof Version,
+     *     author: string,
+     *     copyright: string
+     * }} config 
+     */
+    constructor(
+        app,
+        {
+            name,
+            description,
+            version,
+            author,
+            copyright
+        }
+    ) {
         this.app = app;
-        this.name = config.name;
-        this.description = config.description;
-        this.version = config.version;
-        this.author = config.author;
-        this.copyright = config.copyright;
+        this.name = name;
+        this.description = description;
+        this.version = version;
+        this.author = author;
+        this.copyright = copyright;
     }
 }
