@@ -495,10 +495,10 @@ export class Map extends Service {
      * マップの描画を更新する。
      * @param {*} dateNow 
      */
-    async update(dateNow) {
+    update(dateNow) {
         try {
             if (this.app.services.api.yahooKmoni.isEew) {
-                Object.keys(this.app.services.eew.reports).forEach(async (id) => {
+                Object.keys(this.app.services.eew.reports).forEach((id) => {
                     if (id === "undefined" || this.app.services.eew.reports[id].isWarning) { return }
 
                     if (this.app.services.eew.currentId === id) {
