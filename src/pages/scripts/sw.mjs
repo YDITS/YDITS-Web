@@ -8,5 +8,24 @@
  *
  */
 
-self.addEventListener("install", (event) => { });
-self.addEventListener('fetch', (event) => { });
+self.addEventListener("install", async(event) => await onInstall(event));
+self.addEventListener('fetch', async(event) => await onFetch(event));
+
+/**
+ * インストール時のイベントハンドラ
+ * @param {Event} event 
+ * @returns {Promise<void>}
+ */
+async function onInstall(event) {
+    console.log("Service Worker installed.");
+}
+
+
+/**
+ * フェッチ時のイベントハンドラ
+ * @param {Event} event 
+ * @returns {Promise<void>}
+ */
+async function onFetch(event) {
+    console.log("Service Worker fetching.");
+}
