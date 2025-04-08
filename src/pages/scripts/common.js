@@ -49,23 +49,23 @@ async function safeCall(func, ...args) {
 async function fetchAndSetElement(query, uri) {
     const response = await fetch(uri)
         .catch((error) => {
-            throw new Error(`Failed to fetch html {url: ${uri}}: ${error.message}`, { error: error.stack });
+            throw new Error(`Failed to fetch html {url: ${uri}}: ${error.message}`, { cause: error });
         });
 
     const html = await response.text()
         .catch((error) => {
-            throw new Error(`Failed to read html {url: ${uri}}: ${error.message}`, { error: error.stack });
+            throw new Error(`Failed to read html {url: ${uri}}: ${error.message}`, { cause: error });
         });
 
     let element;
     try {
         element = document.querySelector(query);
     } catch (error) {
-        throw new Error(`Failed to get element {query: ${query}}: ${error.message}`, { error: error.stack });
+        throw new Error(`Failed to get element {query: ${query}}: ${error.message}`, { cause: error });
     }
 
     if (!element) {
-        throw new Error(`Invalid query specified {query: ${query}}: ${error.message}`, { error: error.stack });
+        throw new Error(`Invalid query specified {query: ${query}}: ${error.message}`, { cause: error });
     }
 
     element.innerHTML = html;
