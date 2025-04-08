@@ -29,7 +29,7 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。",
-            version: new Version(3, 18, 0, Version.levels.beta),
+            version: new Version(3, 18, 0, Version.LEVELS.beta),
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: {
@@ -235,7 +235,7 @@ export class YditsWeb extends FirebaseApp {
     async onBuild() {
         await this.initialize();
 
-        if (this.version.level === Version.levels.beta) {
+        if (this.version.level === Version.LEVELS.beta) {
             document.getElementById("betaBanner").classList.add("active");
         }
 
