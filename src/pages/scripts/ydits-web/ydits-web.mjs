@@ -24,6 +24,10 @@ import { Api } from "./services/api/api.mjs";
 import { Settings } from "./services/modules/settings.mjs";
 import { Map } from "./services/map/map.mjs";
 
+
+/**
+ * YDITS for Web
+ */
 export class YditsWeb extends FirebaseApp {
     constructor() {
         super({
