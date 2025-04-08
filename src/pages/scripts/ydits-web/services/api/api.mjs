@@ -15,9 +15,12 @@ import { Dmdata } from "./dmdata.mjs";
 import { Wolfx } from "./wolfx.mjs";
 
 /**
- * APIを扱う。
+ * APIを扱う
  */
 export class Api extends Service {
+    /**
+     * @param {App} app 
+     */
     constructor(app) {
         super(app, {
             name: "api",
@@ -28,8 +31,8 @@ export class Api extends Service {
         });
 
         this.p2pquake = new P2pquake(app);
+        if (app.isEqhistoryMode) return;
 
-        if (this.app.isEqhistoryMode) { return; }
         this.wolfx = new Wolfx(app);
         this.yahooKmoni = new YahooKmoni(app);
         this.dmdata = new Dmdata(app);
