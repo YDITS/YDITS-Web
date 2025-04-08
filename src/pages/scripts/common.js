@@ -10,48 +10,61 @@
 
 'use strict';
 
-document.addEventListener("DOMContentLoaded", loadCommonElements);
+document.addEventListener("DOMContentLoaded", async() => await loadCommonElements());
 
-// ---------------------------------------------------------------------------------------------------- //
 
+/**
+ * 共通の要素を読み込む
+ * @returns {Promise<void>}
+ */
 async function loadCommonElements() {
-    await trying(fetchAndSetElement, "header", "/elements/header.html");
+    await safeCall(fetchAndSetElement, "header", "/elements/header.html");
+
     if (new Set(["/", "/eqhistory/", "/debug-logs/"]).has(location.pathname)) { return; }
-    await trying(fetchAndSetElement, "footer", "/elements/footer.html");
+    await safeCall(fetchAndSetElement, "footer", "/elements/footer.html");
 }
 
-// ---------------------------------------------------------------------------------------------------- //
 
-async function trying(func, ...args) {
+/**
+ * エラーを無視して関数を実行する
+ * @param {Function<Promise<any>>} func 
+ * @param  {...any} args 
+ * @returns {Promise<any>}
+ */
+async function safeCall(func, ...args) {
     try {
         return await func(...args);
-    } catch {
-        // Do nothing
+    } catch (error) {
+        console.error(error.stack);
     };
 }
 
-// ---------------------------------------------------------------------------------------------------- //
 
+/**
+ * 要素を Fetch して読み込む
+ * @param {string} query 
+ * @param {string} uri 
+ * @returns {Promise<void>}
+ */
 async function fetchAndSetElement(query, uri) {
-    let response;
+    const response = await fetch(uri)
+        .catch((error) => {
+            throw new Error(`Failed to fetch html {url: ${uri}}: ${error.message}`, { error: error.stack });
+        });
 
-    try {
-        response = await fetch(uri);
-    } catch (error) {
-        throw new Error(`Failed to fetch html {url: ${uri}}: ${error}`);
-    }
+    const html = await response.text()
+        .catch((error) => {
+            throw new Error(`Failed to read html {url: ${uri}}: ${error.message}`, { error: error.stack });
+        });
 
-    const html = await response.text();
-
-    // ---------- //
-
-    const element = document.querySelector(query);
+    const element = document.querySelector(query)
+        .catch((error) => {
+            throw new Error(`Failed to get element {query: ${query}}: ${error.message}`, { error: error.stack });
+        });
 
     if (!element) {
-        throw new Error(`Invalid query specified {query: ${query}}`);
+        throw new Error(`Invalid query specified {query: ${query}}: ${error.message}`, { error: error.stack });
     }
-
-    // ---------- //
 
     element.innerHTML = html;
 }

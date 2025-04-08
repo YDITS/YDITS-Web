@@ -341,31 +341,31 @@ export class YditsWeb extends FirebaseApp {
     async debugOutput() {
         if (!this.services.settings.debug.output) return;
 
-        trying(() => {
+        safeCall(() => {
             document.getElementById("debugOutputAppName").textContent = `${this.name} Version ${this.version.string}`;
         });
 
-        trying(() => {
+        safeCall(() => {
             document.getElementById("debugOutputUserAgent").textContent = `User Agent: ${navigator.userAgent}`;
         });
 
-        trying(() => {
+        safeCall(() => {
             document.getElementById("debugOutputLanguage").textContent = `Client Language: ${navigator.language}`;
         });
 
-        trying(() => {
+        safeCall(() => {
             document.getElementById("debugOutputDisplay").textContent = `Display: ${screen.width} x ${screen.height}`;
         });
 
-        trying(() => {
+        safeCall(() => {
             document.getElementById("debugOutputWolfxJmaEewSocket").textContent = `Wolfx JMA EEW WebSocket: ${this.services.api.wolfx.jmaEewSocket.socket ? "Connected" : "Disconnected"}`;
         });
 
-        trying(() => {
+        safeCall(() => {
             document.getElementById("debugOutputP2pquakeSocket").textContent = `P2P地震情報 WebSocket: ${this.services.api.p2pquake.socket ? "Connected" : "Disconnected"}`;
         });
 
-        trying(() => {
+        safeCall(() => {
             let reports = "";
             Object.keys(this.services.eew.reports[this.services.eew.currentId]).forEach(key => {
                 reports += `${key}: ${this.services.eew.reports[this.services.eew.currentId][key]}, `;
@@ -373,7 +373,7 @@ export class YditsWeb extends FirebaseApp {
             document.getElementById("debugOutputEewData").textContent = `Current EEW Data: ${reports}`;
         });
 
-        trying(() => {
+        safeCall(() => {
             document.getElementById("debugOutputWolfxJmaEewData").textContent = `Wolfx Jma EEW Data: ${JSON.stringify(this.services.api.wolfx.jmaEewData)}`;
         });
     }
