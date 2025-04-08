@@ -284,16 +284,16 @@ export class YditsWeb extends FirebaseApp {
     /**
      * アニメーションメインループ
      */
-    async mainloop() {
+    mainloop() {
         const timeNow = new Date();
-        await this.calcFps();
-        await this.displayFps();
+        this.calcFps();
+        this.displayFps();
         this.services.map.update(timeNow);
-        requestAnimationFrame(async () => await this.mainloop());
+        requestAnimationFrame(() => this.mainloop());
     }
 
 
-    async calcFps() {
+    calcFps() {
         const timeNow = performance.now();
         const elapsed = timeNow - this.lastTime;
         this.frames++;
@@ -306,7 +306,7 @@ export class YditsWeb extends FirebaseApp {
     }
 
 
-    async displayFps() {
+    displayFps() {
         const timeNow = performance.now();
 
         if (timeNow - this.lastFpsUpdateTime >= this.services.settings.debug.fpsMs) {
