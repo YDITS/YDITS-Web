@@ -211,13 +211,7 @@ export class Map extends Service {
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を更新する。
      */
     async updateHrpns() {
-        if (!this.hrpns) return;
-
-        this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
-        const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
-        this.hrpns.setUrl(url);
-        this.$hrpnsTimeText.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
-        this.$hrpnsTime.classList.add("show");
+        this.showHrpns();
     }
 
 
@@ -227,6 +221,11 @@ export class Map extends Service {
     async showHrpns() {
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
+
+        if (this.map.getSource("hrpns-source")) {
+            this.map.removeLayer("hrpns");
+            this.map.removeSource("hrpns-source");
+        }
 
         await this.map.addSource('hrpns-source', {
             'type': 'raster',
