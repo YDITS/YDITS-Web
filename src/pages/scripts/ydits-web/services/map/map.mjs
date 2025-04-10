@@ -649,9 +649,12 @@ export class Map extends Service {
     #clearEewLayers() {
         Object.keys(this.app.services.eew.reports).forEach(id => {
             if (id !== "undefined" && !this.app.services.eew.reports[id].isWarning) {
-                this.removeLayer(this.app.services.eew.reports[id].region);
-                this.removeLayer(this.app.services.eew.reports[id].sWave);
-                this.removeLayer(this.app.services.eew.reports[id].pWave);
+                this.map.removeLayer(`eewRedion_${id}`);
+                this.map.removeLayer(`eewSWave_${id}`);
+                this.map.removeLayer(`eewPWave_${id}`);
+                this.map.removeSource(`eewRedionSource_${id}`);
+                this.map.removeSource(`eewSWaveSource_${id}`);
+                this.map.removeSource(`eewPWaveSource_${id}`);
                 delete this.app.services.eew.reports[id];
             }
         });
