@@ -188,6 +188,8 @@ export class Dmdata extends Service {
 
         if (this.app.services.settings.connect.eew !== 'dmdata') return;
 
+        this.#accessToken = localStorage.getItem('settings-dmdata-access-token');
+
         if (typeof this.#accessToken === "string") {
             await this.#startSocket();
         } else {
@@ -220,11 +222,11 @@ export class Dmdata extends Service {
      * @returns {Promise<void>}
      */
     async #setup() {
-        const responseState = this.#getParam('state');
+        const responseState = this.#getParam('state', location.href);
 
         if (responseState !== Dmdata.#STATE) return;
 
-        const responseError = this.#getParam('error');
+        const responseError = this.#getParam('error', location.href);
 
         if (responseError === null) {
             await this.#getAccessToken();
@@ -241,7 +243,7 @@ export class Dmdata extends Service {
      * @returns {Promise<void>}
      */
     async #getAccessToken() {
-        const responseCode = this.#getParam('code');
+        const responseCode = this.#getParam('code', location.href);
 
         const dmdataFormBody = new URLSearchParams({
             'client_id': Dmdata.#CLIENT_ID,
@@ -351,7 +353,7 @@ export class Dmdata extends Service {
             "DM-D.S.S Account authentication failed."
         );
 
-        const responseErrorDescription = this.#getParam('error_description');
+        const responseErrorDescription = this.#getParam('error_description', location.href);
 
         new Window({
             type: Window.types.error,
@@ -381,7 +383,7 @@ export class Dmdata extends Service {
             url = new URL(url);
         }
 
-        const params = new URLSearchParams(url);
+        const params = url.searchParams;
         const value = params.get(name);
 
         return value;
