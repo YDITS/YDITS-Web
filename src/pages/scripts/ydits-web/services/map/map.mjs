@@ -17,7 +17,7 @@ export class Map extends Service {
     constructor(app) {
         super(app, {
             name: "map",
-            description: "マップを扱うサービスです。",
+            description: "マップを扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
@@ -211,6 +211,10 @@ export class Map extends Service {
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を更新する。
      */
     async updateHrpns() {
+        if (!this.isDisplayHrpns) {
+            return;
+        }
+
         this.showHrpns();
     }
 
@@ -219,6 +223,8 @@ export class Map extends Service {
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を表示する。
      */
     async showHrpns() {
+        this.isDisplayHrpns = true;
+
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
 
@@ -251,7 +257,8 @@ export class Map extends Service {
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を非表示する。
      */
     async hideHrpns() {
-        await this.map.removeLayer("hrpns");
+        this.isDisplayHrpns = false;
+        this.map.removeLayer("hrpns");
         this.$hrpnsTime.classList.remove("show");
         this.$hrpnsTimeText.textContent = "";
     }
@@ -502,6 +509,8 @@ export class Map extends Service {
 
                     if (this.app.services.eew.currentId === id) {
                         if (!this.app.services.eew.reports[id].isMapInitialized) {
+                            this.hideHrpns();
+
                             const sWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
                             const pWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
 
@@ -615,6 +624,10 @@ export class Map extends Service {
                     this.#autoMoveMap(dateNow);
                 }
             } else {
+                if (!this.isDisplayHrpns) {
+                    this.showHrpns();
+                }
+
                 this.#clearEewLayers();
             }
         } catch (error) {

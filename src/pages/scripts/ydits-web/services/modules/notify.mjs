@@ -21,7 +21,7 @@ export class Notify extends Service {
     constructor(app) {
         super(app, {
             name: "notify",
-            description: "ページ内通知のサービスです。",
+            description: "ページ内通知のサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"

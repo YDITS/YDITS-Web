@@ -14,7 +14,7 @@ export class LocalStorage extends Service {
     constructor(app) {
         super(app, {
             name: "localStorage",
-            description: "ローカルストレージを扱うサービスです。",
+            description: "ローカルストレージを扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"

@@ -20,7 +20,7 @@ export class DebugLogs extends Service {
     constructor(app) {
         super(app, {
             name: "debugLogs",
-            description: "デバッグログを管理するサービスです。",
+            description: "デバッグログを管理するサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
