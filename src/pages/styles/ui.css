@@ -30,10 +30,9 @@
 .dialog {
     position: fixed;
     top: calc(50vh - 14rem);
-    left: 0;
+    left: calc(50vw - 16rem);
     display: block;
 
-    margin: auto;
     width: 32rem;
     height: 28rem;
     border: 0;
