@@ -695,33 +695,6 @@ export class Window {
      * 
      * @type {HTMLElement | null}
      */
-    #element = null;
-
-
-    /**
-     * ウィンドウをドラッグ中かどうか
-     * 
-     * @type {boolean}
-     */
-    #isDragging = false;
-
-
-    /**
-     * ドラッグ開始時のオフセットX座標
-     * 
-     * @type {number}
-     */
-    #offsetX = 0;
-
-
-    /**
-     * ドラッグ開始時のオフセットY座標
-     * 
-     * @type {number}
-     */
-    #offsetY = 0;
-
-
     get element() {
         if (!(this.#element instanceof HTMLElement)) {
             this.#element = document.getElementById(this.id);
@@ -752,6 +725,38 @@ export class Window {
 
 
     /**
+     * ウィンドウの要素
+     * 
+     * @type {HTMLElement | null}
+     */
+    #element = null;
+
+
+    /**
+     * ウィンドウをドラッグ中かどうか
+     * 
+     * @type {boolean}
+     */
+    #isDragging = false;
+
+
+    /**
+     * ドラッグ開始時のオフセットX座標
+     * 
+     * @type {number}
+     */
+    #offsetX = 0;
+
+
+    /**
+     * ドラッグ開始時のオフセットY座標
+     * 
+     * @type {number}
+     */
+    #offsetY = 0;
+
+
+    /**
      * ウィンドウを作成する
      * 
      * @returns {Promise<void>}
@@ -778,26 +783,13 @@ export class Window {
         const doc = parser.parseFromString(newWindowElement, "text/html");
         const dialogElement = doc.body.firstChild;
 
+        this.#element = dialogElement;
+
         dialogElement.querySelector(".navBar").style.backgroundColor = this.color;
-        dialogElement.querySelector(".close").addEventListener("click", () => this.close());
-
-        dialogElement.querySelector(".navBar").addEventListener("mousedown", (event) => {
-            this.#isDragging = true;
-            this.#offsetX = event.clientX - dialogElement.getBoundingClientRect().left;
-            this.#offsetY = event.clientY - dialogElement.getBoundingClientRect().top;
-        });
-
-        document.addEventListener("mousemove", (event) => {
-            if (!this.#isDragging) return;
-            const x = event.clientX - this.#offsetX;
-            const y = event.clientY - this.#offsetY;
-            dialogElement.style.left = `${x}px`;
-            dialogElement.style.top = `${y}px`;
-        });
-
-        document.addEventListener("mouseup", () => {
-            this.#isDragging = false;
-        });
+        dialogElement.querySelector(".close").addEventListener("click", async () => await this.close());
+        dialogElement.querySelector(".navBar").addEventListener("mousedown", async (event) => await this.#startDragging(event));
+        document.addEventListener("mousemove", async (event) => await this.#move(event));
+        document.addEventListener("mouseup", async (event) => await this.#stopDragging(event));
 
         document.body.append(dialogElement);
     }
@@ -814,5 +806,44 @@ export class Window {
         }
 
         this.element.remove();
+    }
+
+
+    /**
+     * ドラッグ開始時の処理
+     * 
+     * @param {MouseEvent} event
+     * @returns {Promise<void>}
+     */
+    async #startDragging(event) {
+        this.#isDragging = true;
+        this.#offsetX = event.clientX - this.element.getBoundingClientRect().left;
+        this.#offsetY = event.clientY - this.element.getBoundingClientRect().top;
+    }
+
+
+    /**
+     * ドラッグ終了時の処理
+     * 
+     * @param {MouseEvent} event
+     * @returns {Promise<void>}
+     */
+    async #stopDragging(event) {
+        this.#isDragging = false;
+    }
+
+
+    /**
+     * ドラッグ中の処理
+     * 
+     * @param {MouseEvent} event
+     * @returns {Promise<void>}
+     */
+    async #move(event) {
+        if (!this.#isDragging) return;
+        const x = event.clientX - this.#offsetX;
+        const y = event.clientY - this.#offsetY;
+        this.element.style.left = `${x}px`;
+        this.element.style.top = `${y}px`;
     }
 }
