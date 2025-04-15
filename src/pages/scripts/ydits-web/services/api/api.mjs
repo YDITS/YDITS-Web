@@ -24,7 +24,7 @@ export class Api extends Service {
     constructor(app) {
         super(app, {
             name: "api",
-            description: "APIを扱うサービスです。",
+            description: "APIを扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
