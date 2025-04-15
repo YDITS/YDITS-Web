@@ -314,6 +314,7 @@ export class Settings extends Service {
             this.connect.volcanicEruption = "dmdata";
             this.connect.civilProtection = "dmdata";
             this.display.showWarn = true;
+            this.display.panelRight = false;
             this.map.autoMove = true;
             this.map.displayUserPoint = true;
             this.sound.eewAny = true;
@@ -323,6 +324,7 @@ export class Settings extends Service {
             this.debug.rayout = false;
 
             document.querySelector("#settings_display_warn .toggle-switch").classList.add("on");
+            document.querySelector("#settings_panel_right .toggle-switch").classList.remove("on");
             document.querySelector("#settings_map_auto_move .toggle-switch").classList.add("on");
             document.querySelector("#settings_map_user_point .toggle-switch").classList.add("on");
             document.querySelector("#settings_playSound_eew_any .toggle-switch").classList.add("on");
@@ -331,7 +333,9 @@ export class Settings extends Service {
             document.getElementById('settingsFpsMsSelect').value = '1000';
             document.querySelector("#settingsDebugRayout .toggle-switch").classList.remove("on");
 
+            document.querySelector("main").classList.remove("control-right");
             this.hideDebugRayout();
+            this.hideDebugOutput();
 
             localStorage.clear();
             localStorage.setItem("debugLogs", JSON.stringify(debugLogs.debugLogs));
