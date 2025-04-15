@@ -234,9 +234,9 @@ export class Wolfx extends Service {
         const bgcolor = Colors.parseToCssColor(bgcolorInt);
         const fontColor = Colors.parseToCssColor(fontColorInt);
 
-        this.finalText = this.jmaEewData.isFinal ? "最終" : "";
+        this.finalText = this.jmaEewData.isFinal ? " (最終)" : "";
 
-        this.eewTitleElement.textContent = `緊急地震速報 ${this.jmaEewData.serialText} (${this.finalText})`;
+        this.eewTitleElement.textContent = `緊急地震速報 ${this.jmaEewData.serialText}${this.finalText}`;
         this.eewCalcDesElement.textContent = "最大震度";
         this.eewCalcElement.textContent = this.jmaEewData.maxIntensity;
         this.eewRegionElement.textContent = this.jmaEewData.hypocenter;
