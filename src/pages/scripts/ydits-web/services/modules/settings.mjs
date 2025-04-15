@@ -41,7 +41,8 @@ export class Settings extends Service {
 
 
     display = {
-        showWarn: null
+        showWarn: null,
+        panelRight: null
     }
 
 
@@ -199,24 +200,52 @@ export class Settings extends Service {
         // ----- Display ----- //
         if (localStorage.getItem("settings-display-warn") == 'true') {
             this.display.showWarn = true;
-            document.querySelector("#settings_display .toggle-switch").classList.add("on");
+            document.querySelector("#settings_display_warn .toggle-switch").classList.add("on");
         } else if (localStorage.getItem("settings-display-warn") == 'false') {
             this.display.showWarn = false;
-            document.querySelector("#settings_display .toggle-switch").classList.remove("on");
+            document.querySelector("#settings_display_warn .toggle-switch").classList.remove("on");
         } else {
             this.display.showWarn = true;
-            document.querySelector("#settings_display .toggle-switch").classList.add("on");
+            document.querySelector("#settings_display_warn .toggle-switch").classList.add("on");
         }
 
         document.querySelector("#settings_display .toggle-switch").addEventListener("click", () => {
             if (this.display.showWarn == false) {
                 this.display.showWarn = true;
                 localStorage.setItem('settings-display-warn', 'true');
-                document.querySelector("#settings_display .toggle-switch").classList.add("on");
+                document.querySelector("#settings_display_warn .toggle-switch").classList.add("on");
             } else if (this.display.showWarn == true) {
                 this.display.showWarn = false;
                 localStorage.setItem('settings-display-warn', 'false');
-                document.querySelector("#settings_display .toggle-switch").classList.remove("on");
+                document.querySelector("#settings_display_warn .toggle-switch").classList.remove("on");
+            }
+        });
+
+        if (localStorage.getItem("settings-display-panel-right") == 'true') {
+            this.display.panelRight = true;
+            document.querySelector("#settings_panel_right .toggle-switch").classList.add("on");
+            document.querySelector("main").classList.add("control-right");
+        } else if (localStorage.getItem("settings-display-panel-right") == 'false') {
+            this.display.panelRight = false;
+            document.querySelector("#settings_panel_right .toggle-switch").classList.remove("on");
+            document.querySelector("main").classList.remove("control-right");
+        } else {
+            this.display.panelRight = false;
+            document.querySelector("#settings_panel_right .toggle-switch").classList.remove("on");
+            document.querySelector("main").classList.remove("control-right");
+        }
+
+        document.querySelector("#settings_panel_right .toggle-switch").addEventListener("click", () => {
+            if (this.display.panelRight == false) {
+                this.display.panelRight = true;
+                localStorage.setItem('settings-display-panel-right', 'true');
+                document.querySelector("#settings_panel_right .toggle-switch").classList.add("on");
+                document.querySelector("main").classList.add("control-right");
+            } else if (this.display.panelRight == true) {
+                this.display.panelRight = false;
+                localStorage.setItem('settings-display-panel-right', 'false');
+                document.querySelector("#settings_panel_right .toggle-switch").classList.remove("on");
+                document.querySelector("main").classList.remove("control-right");
             }
         });
 
