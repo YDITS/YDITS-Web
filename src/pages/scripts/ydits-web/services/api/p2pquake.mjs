@@ -14,8 +14,30 @@ import { Service } from "../../../service.mjs";
  * P2P地震情報 APIを扱う。
  */
 export class P2pquake extends Service {
+    constructor(app) {
+        super(app, {
+            name: "p2pquake",
+            description: "P2P地震情報 APIを扱うサービス。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        });
+
+        this.startSocket();
+    }
+
+
+    /**
+     * 保持している地震情報の数
+     * @type {number}
+     */
     eqinfoNum = 0;
 
+
+    /**
+     * 地震情報のID
+     * @type {Object<string, string>}
+     */
     id = {
         id: null,
         lastId: null,
@@ -25,19 +47,45 @@ export class P2pquake extends Service {
         lastSerial: null,
     }
 
+
+    /**
+     * WebSocket インスタンス
+     * 
+     * @type {WebSocket | null}
+     */
     socket = null;
+
+    
+    /**
+     * WebSocket の再接続試行回数
+     * 
+     * @type {number}
+     */
     socketRetryCount = 0;
+
+    
+    /**
+     * エラーが発生しているかどうか
+     * 
+     * @type {boolean}
+     */
     isError = false;
 
-    urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1");
-    urlRestEqinfo = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
-    urlSocket = new URL("wss://api.p2pquake.net/v2/ws");
+    static urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1");
+    static urlRestEqinfo = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
+    static urlSocket = new URL("wss://api.p2pquake.net/v2/ws");
 
     // DEBUG
-    // urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1&offset=16");
-    // urlSocket = new URL("wss://api-realtime-sandbox.p2pquake.net/v2/ws");
+    // static urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1&offset=16");
+    // static urlSocket = new URL("wss://api-realtime-sandbox.p2pquake.net/v2/ws");
 
-    maxScaleText = {
+
+    /**
+     * 最大震度をテキストに変換するオブジェクト
+     * 
+     * @type {Object<string, string>}
+     */
+    static maxScaleToText = {
         "-1": "?",
         "0": "0",
         "10": "1",
@@ -51,7 +99,13 @@ export class P2pquake extends Service {
         "70": "7"
     }
 
-    typesJp = {
+
+    /**
+     * 地震情報の種類を日本語に変換するオブジェクト
+     * 
+     * @type {Object<string, string>}
+     */
+    static typeToJp = {
         "ScalePrompt": "震度速報",
         "Destination": "震源情報",
         "ScaleAndDestination": "震源・震度情報",
@@ -60,7 +114,13 @@ export class P2pquake extends Service {
         "Other": "地震情報"
     }
 
-    tsunamiLevels = {
+
+    /**
+     * 津波情報をテキストに変換するオブジェクト
+     * 
+     * @type {Object<string, string>}
+     */
+    static tsunamiLevels = {
         'None': '津波の心配なし',
         'Unknown': '津波の影響は不明',
         'Checking': '津波の影響を現在調査中',
@@ -69,7 +129,13 @@ export class P2pquake extends Service {
         'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表'
     };
 
-    colors = {
+
+    /**
+     * 震度をコードに変換するオブジェクト
+     * 
+     * @type {Object<string, Object<string, string>>}
+     */
+    static scaleToColors = {
         "-1": {
             "bgcolor": "#8080c0",
             "color": "#ffffff"
@@ -117,29 +183,34 @@ export class P2pquake extends Service {
     }
 
 
-    constructor(app) {
-        super(app, {
-            name: "p2pquake",
-            description: "P2P地震情報 APIを扱うサービスです。",
-            version: "0.0.0",
-            author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
-        });
-
-        this.startSocket();
-    }
-
-
+    /**
+     * 地震情報のリストを管理するクラス
+     */
     List = class {
+        /**
+         * 地震情報のID
+         * 
+         * @type {string | null}
+         */
         id = null;
+
+        /**
+         * 地震情報の種類
+         * 
+         * @type {string | null}
+         */
         type = null;
     }
 
 
-    zeroPadding(value) {
-        value = "0" + value;
-        value = value.slice(-2);
-        return value;
+    /**
+     * 数値を2桁にパディングする
+     * 
+     * @param {number} value 
+     * @returns {string}
+     */
+    #zeroPadding(value) {
+        return String(value).padStart(2, '0');
     }
 
 
@@ -238,7 +309,7 @@ export class P2pquake extends Service {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         if (!this.app.isEqhistoryMode) {
-            fetch(this.urlRestEew)
+            fetch(P2pquake.urlRestEew)
                 .then((response) => response.json())
                 .then((data) => {
                     try {
@@ -270,10 +341,10 @@ export class P2pquake extends Service {
                         } else {
                             this.app.services.eew.reports[DATA.id].originTimeText =
                                 `${this.app.services.eew.reports[DATA.id].originTime.getFullYear()}/` +
-                                `${this.zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getMonth() + 1)}/` +
-                                `${this.zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getDate())} ` +
-                                `${this.zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getHours())}:` +
-                                `${this.zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getMinutes())}`
+                                `${this.#zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getMonth() + 1)}/` +
+                                `${this.#zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getDate())} ` +
+                                `${this.#zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getHours())}:` +
+                                `${this.#zeroPadding(this.app.services.eew.reports[DATA.id].originTime.getMinutes())}`
                         }
 
                         if (DATA.earthquake.hypocenter.name) {
@@ -352,7 +423,7 @@ export class P2pquake extends Service {
                 });
         }
 
-        fetch(this.urlRestEqinfo)
+        fetch(P2pquake.urlRestEqinfo)
             .then((response) => response.json())
             .then((data) => {
                 data.forEach((list) => {
@@ -363,8 +434,8 @@ export class P2pquake extends Service {
                         return
                     }
 
-                    if (list["issue"]["type"] in this.typesJp) {
-                        list["issue"]["typeJp"] = this.typesJp[list["issue"]["type"]];
+                    if (list["issue"]["type"] in P2pquake.typeToJp) {
+                        list["issue"]["typeJp"] = P2pquake.typeToJp[list["issue"]["type"]];
                     } else {
                         list["issue"]["typeJp"] = "";
                     }
@@ -376,16 +447,16 @@ export class P2pquake extends Service {
                     } else {
                         this.app.services.eqinfo.originTimeText =
                             `${this.app.services.eqinfo.originTime.getFullYear()}/` +
-                            `${this.zeroPadding(this.app.services.eqinfo.originTime.getMonth() + 1)}/` +
-                            `${this.zeroPadding(this.app.services.eqinfo.originTime.getDate())} ` +
-                            `${this.zeroPadding(this.app.services.eqinfo.originTime.getHours())}:` +
-                            `${this.zeroPadding(this.app.services.eqinfo.originTime.getMinutes())}`
+                            `${this.#zeroPadding(this.app.services.eqinfo.originTime.getMonth() + 1)}/` +
+                            `${this.#zeroPadding(this.app.services.eqinfo.originTime.getDate())} ` +
+                            `${this.#zeroPadding(this.app.services.eqinfo.originTime.getHours())}:` +
+                            `${this.#zeroPadding(this.app.services.eqinfo.originTime.getMinutes())}`
                     }
 
                     this.app.services.eqinfo.maxScale = list['earthquake']['maxScale'];
 
-                    if (this.app.services.eqinfo.maxScale in this.maxScaleText) {
-                        this.app.services.eqinfo.maxScaleText = this.maxScaleText[String(this.app.services.eqinfo.maxScale)];
+                    if (this.app.services.eqinfo.maxScale in P2pquake.maxScaleToText) {
+                        this.app.services.eqinfo.maxScaleText = P2pquake.maxScaleToText[String(this.app.services.eqinfo.maxScale)];
                     } else {
                         this.app.services.eqinfo.maxScaleText = "?";
                     }
@@ -416,8 +487,8 @@ export class P2pquake extends Service {
 
                     this.app.services.eqinfo.tsunami = list['earthquake']['domesticTsunami'];
 
-                    if (this.app.services.eqinfo.tsunami in this.tsunamiLevels) {
-                        this.app.services.eqinfo.tsunamiJp = this.tsunamiLevels[this.app.services.eqinfo.tsunami];
+                    if (this.app.services.eqinfo.tsunami in P2pquake.tsunamiLevels) {
+                        this.app.services.eqinfo.tsunamiJp = P2pquake.tsunamiLevels[this.app.services.eqinfo.tsunami];
                     } else {
                         this.app.services.eqinfo.tsunamiJp = "津波の影響は不明";
                     }
@@ -425,9 +496,9 @@ export class P2pquake extends Service {
                     let bgcolor;
                     let color;
 
-                    if (this.app.services.eqinfo.maxScale in this.colors) {
-                        bgcolor = this.colors[this.app.services.eqinfo.maxScale]["bgcolor"];
-                        color = this.colors[this.app.services.eqinfo.maxScale]["color"];
+                    if (this.app.services.eqinfo.maxScale in P2pquake.scaleToColors) {
+                        bgcolor = P2pquake.scaleToColors[this.app.services.eqinfo.maxScale]["bgcolor"];
+                        color = P2pquake.scaleToColors[this.app.services.eqinfo.maxScale]["color"];
                     } else {
                         bgcolor = "#404040ff";
                         color = "#ffffffff";
@@ -455,7 +526,7 @@ export class P2pquake extends Service {
 
     startSocket() {
         if (!navigator.onLine) { return }
-        this.socket = new WebSocket(this.urlSocket);
+        this.socket = new WebSocket(P2pquake.urlSocket);
         this.socket.addEventListener("open", (event) => this.socketOpened(event));
         this.socket.addEventListener("close", (event) => this.socketClosed(event));
         this.socket.addEventListener("message", (event) => this.socketGotMessage(event));
@@ -573,10 +644,10 @@ export class P2pquake extends Service {
         } else {
             this.app.services.eew.reports[data._id].originTimeText =
                 `${this.app.services.eew.reports[data._id].originTime.getFullYear()}/` +
-                `${this.zeroPadding(this.app.services.eew.reports[data._id].originTime.getMonth() + 1)}/` +
-                `${this.zeroPadding(this.app.services.eew.reports[data._id].originTime.getDate())} ` +
-                `${this.zeroPadding(this.app.services.eew.reports[data._id].originTime.getHours())}:` +
-                `${this.zeroPadding(this.app.services.eew.reports[data._id].originTime.getMinutes())}`
+                `${this.#zeroPadding(this.app.services.eew.reports[data._id].originTime.getMonth() + 1)}/` +
+                `${this.#zeroPadding(this.app.services.eew.reports[data._id].originTime.getDate())} ` +
+                `${this.#zeroPadding(this.app.services.eew.reports[data._id].originTime.getHours())}:` +
+                `${this.#zeroPadding(this.app.services.eew.reports[data._id].originTime.getMinutes())}`
         }
 
         if (data.earthquake.hypocenter.name) {
@@ -642,8 +713,8 @@ export class P2pquake extends Service {
     whenEqinfo(data) {
         this.app.services.eqinfo.type = data['issue']['type'];
 
-        if (this.app.services.eqinfo.type in this.typesJp) {
-            this.app.services.eqinfo.typeJp = this.typesJp[this.app.services.eqinfo.type];
+        if (this.app.services.eqinfo.type in P2pquake.typeToJp) {
+            this.app.services.eqinfo.typeJp = P2pquake.typeToJp[this.app.services.eqinfo.type];
         } else {
             this.app.services.eqinfo.typeJp = "";
         }
@@ -655,16 +726,16 @@ export class P2pquake extends Service {
         } else {
             this.app.services.eqinfo.originTimeText =
                 `${this.app.services.eqinfo.originTime.getFullYear()}/` +
-                `${this.zeroPadding(this.app.services.eqinfo.originTime.getMonth() + 1)}/` +
-                `${this.zeroPadding(this.app.services.eqinfo.originTime.getDate())} ` +
-                `${this.zeroPadding(this.app.services.eqinfo.originTime.getHours())}:` +
-                `${this.zeroPadding(this.app.services.eqinfo.originTime.getMinutes())}`
+                `${this.#zeroPadding(this.app.services.eqinfo.originTime.getMonth() + 1)}/` +
+                `${this.#zeroPadding(this.app.services.eqinfo.originTime.getDate())} ` +
+                `${this.#zeroPadding(this.app.services.eqinfo.originTime.getHours())}:` +
+                `${this.#zeroPadding(this.app.services.eqinfo.originTime.getMinutes())}`
         }
 
         this.app.services.eqinfo.maxScale = data['earthquake']['maxScale'];
 
-        if (this.app.services.eqinfo.maxScale in this.maxScaleText) {
-            this.app.services.eqinfo.maxScaleText = this.maxScaleText[String(this.app.services.eqinfo.maxScale)];
+        if (this.app.services.eqinfo.maxScale in P2pquake.maxScaleToText) {
+            this.app.services.eqinfo.maxScaleText = P2pquake.maxScaleToText[String(this.app.services.eqinfo.maxScale)];
         } else {
             this.app.services.eqinfo.maxScaleText = "?";
         }
@@ -695,8 +766,8 @@ export class P2pquake extends Service {
 
         this.app.services.eqinfo.tsunami = data['earthquake']['domesticTsunami'];
 
-        if (this.app.services.eqinfo.tsunami in this.tsunamiLevels) {
-            this.app.services.eqinfo.tsunamiJp = this.tsunamiLevels[this.app.services.eqinfo.tsunami];
+        if (this.app.services.eqinfo.tsunami in P2pquake.tsunamiLevels) {
+            this.app.services.eqinfo.tsunamiJp = P2pquake.tsunamiLevels[this.app.services.eqinfo.tsunami];
         } else {
             this.app.services.eqinfo.tsunamiJp = "津波の影響は不明";
         }
@@ -704,9 +775,9 @@ export class P2pquake extends Service {
         let bgcolor;
         let color;
 
-        if (this.app.services.eqinfo.maxScale in this.colors) {
-            bgcolor = this.colors[this.app.services.eqinfo.maxScale]["bgcolor"];
-            color = this.colors[this.app.services.eqinfo.maxScale]["color"];
+        if (this.app.services.eqinfo.maxScale in P2pquake.scaleToColors) {
+            bgcolor = P2pquake.scaleToColors[this.app.services.eqinfo.maxScale]["bgcolor"];
+            color = P2pquake.scaleToColors[this.app.services.eqinfo.maxScale]["color"];
         } else {
             bgcolor = "#404040ff";
             color = "#ffffffff";
