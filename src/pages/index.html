@@ -93,46 +93,46 @@
     <header></header>
 
     <main>
-        <div id="control">
-            <div id="list">
-                <ul>
-                    <li id="menuBtn" title="メニューを開く" tabindex="0" role="button" aria-label="メニューを開く"
-                        aria-roledescription="クリックすると メニュー を開きます。" aria-disabled="false">
+        <div id="control" class="control">
+            <div id="list" class="control-nav">
+                <ul class="control-nav__list">
+                    <li id="menuBtn" class="control-nav__item" title="メニューを開く" tabindex="0" role="button"
+                        aria-label="メニューを開く" aria-roledescription="クリックすると メニュー を開きます。" aria-disabled="false">
                         <span class="material-symbols-outlined">menu</span>
                     </li>
-                    <li id="eqHistoryBtn" title="地震履歴を開く" tabindex="0" role="button" aria-label="地震履歴を開く"
-                        aria-roledescription="クリックすると 地震履歴一覧 を 展開します。" aria-disabled="false">
+                    <li id="eqHistoryBtn" class="control-nav__item" title="地震履歴を開く" tabindex="0" role="button"
+                        aria-label="地震履歴を開く" aria-roledescription="クリックすると 地震履歴一覧 を 展開します。" aria-disabled="false">
                         <span class="material-symbols-outlined">history</span>
                     </li>
-                    <li id="homeBtn" title="マップを初期位置に移動する" tabindex="0" role="button" aria-label="マップを初期位置に移動する"
-                        aria-roledescription="クリックすると マップを初期位置に移動します。" aria-disabled="false">
+                    <li id="homeBtn" class="control-nav__item" title="マップを初期位置に移動する" tabindex="0" role="button"
+                        aria-label="マップを初期位置に移動する" aria-roledescription="クリックすると マップを初期位置に移動します。" aria-disabled="false">
                         <span class="material-symbols-outlined">home_pin</span>
                     </li>
                 </ul>
             </div>
 
-            <div id="panel">
-                <div id="eewField" tabindex="0" role="button">
-                    <span id="eewTitle"></span>
-                    <div class="content">
-                        <div class="left">
-                            <span id="eewCalcDes" class="title">最大震度</span>
-                            <span id="eewCalc"></span>
+            <div id="panel" class="panel">
+                <div id="eewField" class="current-information-field" tabindex="0" role="button">
+                    <span id="eewTitle" class="current-information-field__title"></span>
+                    <div class="current-information-field__content content">
+                        <div class="current-information-field__content-left">
+                            <span id="eewCalcDes" class="current-information-field__scale-title">最大震度</span>
+                            <span id="eewCalc" class="current-information-field__scale"></span>
                         </div>
-                        <div class="right">
-                            <span id="eewRegion"></span>
-                            <div id="eewInfo">
-                                <span id="eewOrigin_time"></span>
-                                <div class="eqinfo">
-                                    <span id="eewMagnitude"></span>
-                                    <span id="eewDepth"></span>
+                        <div class="current-information-field__content-right">
+                            <span id="eewRegion" class="current-information-field__region"></span>
+                            <div id="eewInfo" class="current-information-field__info">
+                                <span id="eewOrigin_time" class="current-information-field__origin-time"></span>
+                                <div class="current-information-field__hypocenter-info">
+                                    <span id="eewMagnitude" class="current-information-field__magnitude"></span>
+                                    <span id="eewDepth" class="current-information-field__depth"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="eqHistoryField"></div>
+                <div id="eqHistoryField" class="eq-history-field"></div>
             </div>
         </div>
 
@@ -156,8 +156,9 @@
         <div id="popup">
             <div class="window" id="menu">
                 <div class="titleBar">
-                    <span id="menuCloseButton" class="material-symbols-outlined closeBtn" title="メニューウィンドウを閉じる" tabindex="0" role="button"
-                        aria-label="メニューウィンドウを閉じる" aria-roledescription="クリックすると メニューウィンドウ を閉じます。">
+                    <span id="menuCloseButton" class="material-symbols-outlined closeBtn" title="メニューウィンドウを閉じる"
+                        tabindex="0" role="button" aria-label="メニューウィンドウを閉じる"
+                        aria-roledescription="クリックすると メニューウィンドウ を閉じます。">
                         close
                     </span>
                     <span class="title">メニュー</span>

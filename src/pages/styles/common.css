@@ -24,6 +24,7 @@
     --header-height-default: 2rem;
     --header-width: env(titlebar-area-width, var(--header-width-default));
     --header-height: env(titlebar-area-height, var(--header-height-default));
+    --header-border-weight: 1px;
     --header-bgcolor: #1f1f1f;
 
     /* footer */
@@ -81,7 +82,7 @@ header {
     overflow: hidden;
 
     background-color: var(--header-bgcolor);
-    border-bottom: 1px solid #2b2b2b;
+    border-bottom: var(--header-border-weight) solid #2b2b2b;
 
     -webkit-app-region: drag;
 }
