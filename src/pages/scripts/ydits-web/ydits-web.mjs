@@ -164,9 +164,9 @@ export class YditsWeb extends FirebaseApp {
      * @returns {void}
      */
     #initializeServices() {
-        this.register(Datetime);
+        this.registerService(Datetime);
         this.services.datetime.update();
-        this.register(DebugLogs);
+        this.registerService(DebugLogs);
         this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
     }
 
@@ -179,7 +179,7 @@ export class YditsWeb extends FirebaseApp {
      */
     #registerServices() {
         try {
-            this.register(ElementsManager);
+            this.registerService(ElementsManager);
             this.services.elementsManager.addElementsById([
                 "clock",
                 "statusLamp",
@@ -206,24 +206,24 @@ export class YditsWeb extends FirebaseApp {
                 "licenseCloseButton",
             ]);
 
-            this.register(Notify);
-            this.register(Eew);
-            this.register(Eqinfo);
-            this.register(JmaDataFeed);
-            this.register(ServiceWorker);
-            this.register(Sounds);
-            this.register(Api);
-            this.register(Settings);
-            this.register(Map);
+            this.registerService(Notify);
+            this.registerService(Eew);
+            this.registerService(Eqinfo);
+            this.registerService(JmaDataFeed);
+            this.registerService(ServiceWorker);
+            this.registerService(Sounds);
+            this.registerService(Api);
+            this.registerService(Settings);
+            this.registerService(Map);
 
             try {
-                this.register(PushNotify);
+                this.registerService(PushNotify);
             } catch (error) {
                 console.error(error);
                 this.services.debugLogs.add("error", `[${this.name}]`, error);
             }
 
-            this.register(GeoLocation);
+            this.registerService(GeoLocation);
         } catch (error) {
             this.#onInitializeError(error);
         }
@@ -584,11 +584,11 @@ export class YditsWeb extends FirebaseApp {
     #eqhistoryMode() {
         this.isEqhistoryMode = true;
 
-        this.register(Datetime);
-        this.register(DebugLogs);
-        this.register(Api);
-        this.register(Notify);
-        this.register(Eqinfo);
+        this.registerService(Datetime);
+        this.registerService(DebugLogs);
+        this.registerService(Api);
+        this.registerService(Notify);
+        this.registerService(Eqinfo);
 
         this.services.api.p2pquake.initialize();
         this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
@@ -604,9 +604,9 @@ export class YditsWeb extends FirebaseApp {
     #debugLogsMode() {
         this.isDebugLogsMode = true;
 
-        this.register(Datetime);
-        this.register(DebugLogs);
-        this.register(Notify);
+        this.registerService(Datetime);
+        this.registerService(DebugLogs);
+        this.registerService(Notify);
 
         this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
     }
