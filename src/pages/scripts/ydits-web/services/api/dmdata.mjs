@@ -21,7 +21,7 @@ export class Dmdata extends Service {
     constructor(app) {
         super(app, {
             name: "dmdata",
-            description: "Project DM-D.S.S (dmdata.jp) APIを扱うサービスです。",
+            description: "Project DM-D.S.S (dmdata.jp) APIを扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
@@ -32,7 +32,6 @@ export class Dmdata extends Service {
     /**
      * アクセストークン
      * 
-     * @private
      * @type {string | null}
      */
     #accessToken = null;
@@ -41,8 +40,6 @@ export class Dmdata extends Service {
     /**
      * 認証のステート
      * 
-     * @static
-     * @private
      * @type {string}
      */
     static #STATE = "h352ly";
@@ -51,8 +48,6 @@ export class Dmdata extends Service {
     /**
      * クライアントID
      * 
-     * @static
-     * @private
      * @type {string}
      */
     static #CLIENT_ID = 'CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV';
@@ -68,7 +63,6 @@ export class Dmdata extends Service {
     /**
      * メッセージEEW受信時の処理
      * 
-     * @private
      * @param {string} data 
      * @returns {Promise<void>}
      */
@@ -218,7 +212,6 @@ export class Dmdata extends Service {
     /**
      * 認証のセットアップを行う
      * 
-     * @private
      * @returns {Promise<void>}
      */
     async #setup() {
@@ -239,7 +232,6 @@ export class Dmdata extends Service {
     /**
      * アクセストークンを取得する
      * 
-     * @private
      * @returns {Promise<void>}
      */
     async #getAccessToken() {
@@ -343,7 +335,6 @@ export class Dmdata extends Service {
     /**
      * 認証エラー時の処理
      * 
-     * @private
      * @returns {Promise<void>}
      */
     async #onSetupError() {
@@ -373,7 +364,6 @@ export class Dmdata extends Service {
     /**
      * URLからパラメーターを取得する
      * 
-     * @private
      * @param {string} name 
      * @param {URL | string} url 
      * @returns {string | null}
@@ -393,7 +383,6 @@ export class Dmdata extends Service {
     /**
      * XMLをパースする
      * 
-     * @private
      * @param {string} data 
      * @returns {Document}
      */
