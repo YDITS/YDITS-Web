@@ -32,11 +32,64 @@ export class Eqinfo extends Service {
     constructor(app) {
         super(app, {
             name: "eqinfo",
-            description: "地震情報を扱うサービスです。",
+            description: "地震情報を扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+    }
+
+
+    /**
+     * 震度をコードに変換するオブジェクト
+     * 
+     * @type {Object<string, Object<string, string>>}
+     */
+    static scaleToColors = {
+        "-1": {
+            "bgcolor": "#8080c0",
+            "color": "#ffffff"
+        },
+        "0": {
+            "bgcolor": "#8080c0",
+            "color": "#ffffff"
+        },
+        "10": {
+            "bgcolor": "#808080",
+            "color": "#ffffff"
+        },
+        "20": {
+            "bgcolor": "#4040c0",
+            "color": "#ffffff"
+        },
+        "30": {
+            "bgcolor": "#40c040",
+            "color": "#ffffff"
+        },
+        "40": {
+            "bgcolor": "#c0c040",
+            "color": "#ffffff"
+        },
+        "45": {
+            "bgcolor": "#c0a040",
+            "color": "#ffffff"
+        },
+        "50": {
+            "bgcolor": "#c08040",
+            "color": "#ffffff"
+        },
+        "55": {
+            "bgcolor": "#c04040",
+            "color": "#ffffff"
+        },
+        "60": {
+            "bgcolor": "#a04040",
+            "color": "#ffffff"
+        },
+        "70": {
+            "bgcolor": "#804080",
+            "color": "#ffffff"
+        }
     }
 
 
@@ -48,10 +101,7 @@ export class Eqinfo extends Service {
 
         this.eqHistoryFieldElement = document.getElementById("eqHistoryField");
 
-        this.settings = this.app.services.settings;
-        this.p2pquake = this.app.services.api.p2pquake;
-
-        switch (this.settings.connect.eqinfo) {
+        switch (this.app.services.settings.connect.eqinfo) {
             case "p2pquake":
                 break;
         }
@@ -111,9 +161,9 @@ export class Eqinfo extends Service {
         let bgcolor;
         let color;
 
-        if (this.maxScale in this.app.services.api.p2pquake.colors) {
-            bgcolor = this.app.services.api.p2pquake.colors[this.maxScale]["bgcolor"];
-            color = this.app.services.api.p2pquake.colors[this.maxScale]["color"];
+        if (this.maxScale in Eqinfo.scaleToColors) {
+            bgcolor = Eqinfo.scaleToColors[this.maxScale]["bgcolor"];
+            color = Eqinfo.scaleToColors[this.maxScale]["color"];
         } else {
             bgcolor = "#404040ff";
             color = "#ffffffff";

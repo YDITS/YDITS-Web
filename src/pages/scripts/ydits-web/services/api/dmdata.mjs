@@ -9,24 +9,19 @@
  */
 
 import { Service } from "../../../service.mjs";
-
-/**!
- * 2024-12-11
- * This class is not used!
- * このクラスは使われていません！
- */
+import { Window } from "../../ydits-web.mjs";
 
 /**
- * Project DM-D.S.S (dmdata.jp) APIを扱う。
+ * Project DM-D.S.S (dmdata.jp) APIを扱う
  */
 export class Dmdata extends Service {
-    accessToken = null;
-
-
+    /**
+     * @param {App} app 
+     */
     constructor(app) {
         super(app, {
             name: "dmdata",
-            description: "Project DM-D.S.S (dmdata.jp) APIを扱うサービスです。",
+            description: "Project DM-D.S.S (dmdata.jp) APIを扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
@@ -35,388 +30,373 @@ export class Dmdata extends Service {
 
 
     /**
-     * 初期化する。
-     * @returns 
+     * アクセストークン
+     * 
+     * @type {string | null}
+     */
+    #accessToken = null;
+
+
+    /**
+     * 認証のステート
+     * 
+     * @type {string}
+     */
+    static #STATE = "h352ly";
+
+
+    /**
+     * クライアントID
+     * 
+     * @type {string}
+     */
+    static #CLIENT_ID = 'CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV';
+
+
+    static #GET_TOKEN_URI = "https://manager.dmdata.jp/account/oauth2/v1/token";
+    static #OAUTH_BASE_URI = "https://manager.dmdata.jp/account/oauth2/v1/auth";
+    static #SOCKET_URI = "https://api.dmdata.jp/v2/socket";
+    static #OAUTH_REDIRECT_URI = "https://webapp.ydits.net/";
+    static #OAUTH_SCOPE = "socket.start socket.list socket.close eew.get.warning eew.get.forecast";
+
+
+    /**
+     * メッセージEEW受信時の処理
+     * 
+     * @param {string} data 
+     * @returns {Promise<void>}
+     */
+    async #whenEew(data) {
+        const document = await this.#xmlParseToDocument(data);
+        console.log(document);
+    }
+
+
+    /**
+     * WebSocket接続を開始する
+     * 
+     * @returns {Promise<void>}
+     */
+    async #startSocket() {
+        const dmdataGetClassifications = ['socket.start', 'socket.list', 'socket.close', 'eew.forecast'];
+
+        try {
+            const response = await fetch(
+                Dmdata.#SOCKET_URI,
+                {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + this.#accessToken },
+                    body: JSON.stringify({ classifications: dmdataGetClassifications, test: 'including' })
+                }
+            );
+
+            const data = await response.json();
+
+            if (data.error === undefined) {
+                dmdataSocket = new WebSocket(data.websocket.url, ['dmdata.v2']);
+
+                dmdataSocket.addEventListener('open', () => {
+                    this.app.services.debugLogs.add("network", `[NETWORK]`, "Successfully connected to dmdata.jp and WebSocket opened.");
+                    document.getElementById("statusLamp").style.backgroundColor = "#4040ff";
+                });
+
+                dmdataSocket.addEventListener('close', (event) => {
+                    this.app.services.debugLogs.add("network", `[NETWORK]`, "Successfully disconnected from dmdata.jp and WebSocket closed.");
+                    this.app.services.settings.connect.eew = "yahoo-kmoni";
+                });
+
+                dmdataSocket.addEventListener('message', async (event) => {
+                    const message = JSON.parse(event.data);
+
+                    if (message.type === 'ping') {
+                        dmdataSocket.send(JSON.stringify({ type: 'pong', pingId: message.pingId }));
+                    }
+                    if (message.type === 'data' && message.format === 'xml') {
+                        await this.#whenEew(message.body);
+                    }
+                });
+
+                dmdataSocket.onerror(event => {
+                    this.app.services.debugLogs.add(
+                        "error",
+                        `[NETWORK]`,
+                        `Failed to connect to dmdata.jp: ${event.error}`
+                    );
+
+                    new Window({
+                        type: Window.types.error,
+                        id: "errorDmdataConnection",
+                        create: true,
+                        title: "DM-D.S.S 接続エラー",
+                        content: `
+                            <p>
+                                WebSocket接続中にエラーが発生しました。<br>
+                                <code>
+                                    ${event}
+                                </code>
+                            </p>
+                        `,
+                    });
+
+                    this.app.services.settings.connect.eew = "yahoo-kmoni";
+                });
+            } else {
+                if (document.getElementById('win_dmdata_oauth_error') === null) {
+                    this.app.services.debugLogs.add(
+                        "error",
+                        `[NETWORK]`,
+                        `Failed to connect to dmdata.jp.: ${data.error.message}`
+                    );
+
+                    new Window({
+                        type: Window.types.error,
+                        id: "errorDmdataConnection",
+                        create: true,
+                        title: "DM-D.S.S 接続エラー",
+                        content: `
+                            <p>
+                                WebSocket接続に失敗しました。<br>
+                                <code>
+                                    ${data.error.message}
+                                </code>
+                            </p>
+                        `,
+                    });
+
+                    this.app.services.settings.connect.eew = "yahoo-kmoni";
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+
+    /**
+     * 初期化する
+     * 
+     * @returns {Promise<void>}
      */
     async initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
-        let settings = this.app.services.settings;
+        if (this.app.services.settings.connect.eew !== 'dmdata') return;
 
-        if (settings.connect.eew !== 'dmdata') { return }
+        this.#accessToken = localStorage.getItem('settings-dmdata-access-token');
 
-        if (this.accessToken !== null) {
-            debugLogs.add("network", "[NETWORK]", "The access token for dmdata.jp is correct.")
-            $('#settings_dmdata_init').hide();
-            $('#settings_dmdata_main').show();
-            dmdataSocketStart();
+        if (typeof this.#accessToken === "string") {
+            await this.#startSocket();
         } else {
-            const state = "Ze4VX8";
-            const resCode = this.getParam('code');
-            const resState = this.getParam('state');
+            await this.#setup();
+        }
+    }
 
-            if (resState === state) {
-                let resError = this.getParam('error');
-                let resError_description = this.getParam('error_description');
 
-                if (resError === null) {
-                    const dmdataFormData = {
-                        'client_id': 'CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV',
-                        'grant_type': 'authorization_code',
-                        'code': resCode
-                    }
-                    const dmdataFormBody = new URLSearchParams(dmdataFormData).toString();
+    /**
+     * アカウントを認証する
+     * 
+     * @returns {void}
+     */
+    connect() {
+        let url = new URL(Dmdata.#OAUTH_BASE_URI);
+        url.searchParams.set('client_id', Dmdata.#CLIENT_ID);
+        url.searchParams.set('response_type', 'code');
+        url.searchParams.set('redirect_uri', Dmdata.#OAUTH_REDIRECT_URI);
+        url.searchParams.set('scope', Dmdata.#OAUTH_SCOPE);
+        url.searchParams.set('state', Dmdata.#STATE);
 
-                    fetch('https://manager.dmdata.jp/account/oauth2/v1/token', {
-                        method: 'POST',
-                        Host: 'manager.dmdata.jp',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: dmdataFormBody
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data['error'] === undefined) {
-                                this.accessToken = data['access_token'];
-                                localStorage.setItem('settings-dmdata-access-token', this.accessToken);
-                                $('#settings_dmdata_init').hide();
-                                $('#settings_dmdata_main').show();
-                                dmdataSocketStart()
-                            } else if (data['error'] === 'invalid_grant') {
-                                debugLogs.add("error", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+        window.open(url.toString(), '_blank');
+    }
 
-                                $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
 
-                                win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
+    /**
+     * 認証のセットアップを行う
+     * 
+     * @returns {Promise<void>}
+     */
+    async #setup() {
+        const responseState = this.#getParam('state', location.href);
 
-                                $('#win_dmdata_oauth_error>.content').html(`
-                                    <p>
-                                        dmdataとの接続を続行するにはDM-D.S.Sアカウントを再度連携をしてください。<br>
-                                        <code>
-                                            ${data['error']}<br>
-                                            ${data['error_description']}<br>
-                                        </code>
-                                    </p>
-                                    <button class="btn_ok">OK</button>
-                                `)
+        if (responseState !== Dmdata.#STATE) return;
 
-                                $('#win_dmdata_oauth_error .navBar').css({
-                                    'background-color': '#c04040',
-                                    'color': '#ffffff'
-                                })
+        const responseError = this.#getParam('error', location.href);
 
-                                $('#win_dmdata_oauth_error .content').css({
-                                    'padding': '1em'
-                                })
+        if (responseError === null) {
+            await this.#getAccessToken();
+        } else {
+            await this.#onSetupError();
+        }
+    }
 
-                                $('#win_dmdata_oauth_error .content .btn_ok').css({
-                                    'position': 'absolute',
-                                    'right': '3em',
-                                    'bottom': '3em',
-                                    'width': '10em'
-                                })
 
-                                $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
-                                    $('#win_dmdata_oauth_error').remove()
-                                })
-                            } else {
-                                debugLogs.add("error", "[NETWORK]", "DM-D.S.S Account authentication failed.")
+    /**
+     * アクセストークンを取得する
+     * 
+     * @returns {Promise<void>}
+     */
+    async #getAccessToken() {
+        const responseCode = this.#getParam('code', location.href);
 
-                                $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
+        const dmdataFormBody = new URLSearchParams({
+            'client_id': Dmdata.#CLIENT_ID,
+            'grant_type': 'authorization_code',
+            'code': responseCode
+        }).toString();
 
-                                win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
-
-                                $('#win_dmdata_oauth_error>.content').html(`
-                                    <p>
-                                        DM-D.S.S アカウント認証でエラーが発生しました。<br>
-                                        設定をリセットした場合は再度アカウント連携をしてください。<br>
-                                        <code>
-                                            ${data['error']}<br>
-                                            ${data['error_description']}<br>
-                                        </code>
-                                    </p>
-                                    <button class="btn_ok">OK</button>
-                                `)
-
-                                $('#win_dmdata_oauth_error .navBar').css({
-                                    'background-color': '#c04040',
-                                    'color': '#ffffff'
-                                })
-
-                                $('#win_dmdata_oauth_error .content').css({
-                                    'padding': '1em'
-                                })
-
-                                $('#win_dmdata_oauth_error .content .btn_ok').css({
-                                    'position': 'absolute',
-                                    'right': '3em',
-                                    'bottom': '3em',
-                                    'width': '10em'
-                                })
-
-                                $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
-                                    $('#win_dmdata_oauth_error').remove()
-                                })
-                            }
-                        })
-                        .catch(error => {
-                            console.error(error);
-                            debugLogs.add("error", "[NETWORK]", "DM-D.S.S Account authentication failed.")
-
-                            $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
-
-                            win('win_dmdata_oauth_error', 'DM-D.S.S アカウント認証エラー');
-
-                            $('#win_dmdata_oauth_error>.content').html(`
-                                <p>
-                                    DM-D.S.S アカウント認証時にエラーが発生しました。<br>
-                                    <code>${error}</code>
-                                </p>
-                                <button class="btn_ok">OK</button>
-                            `)
-
-                            $('#win_dmdata_oauth_error .navBar').css({
-                                'background-color': '#c04040',
-                                'color': '#ffffff'
-                            })
-
-                            $('#win_dmdata_oauth_error .content').css({
-                                'padding': '1em'
-                            })
-
-                            $('#win_dmdata_oauth_error .content .btn_ok').css({
-                                'position': 'absolute',
-                                'right': '3em',
-                                'bottom': '3em',
-                                'width': '10em'
-                            })
-
-                            $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
-                                $('#win_dmdata_oauth_error').remove()
-                            })
-                        })
-
-                } else {
-                    debugLogs.add("error", "[NETWORK]", "DM-D.S.S Account authentication failed.")
-
-                    $('#eewTitle').text("Error; dmdataの接続設定を確認してください。");
-
-                    win('win_dmdata_oauth_error', 'DM-D.S.S アカウント連携エラー');
-
-                    $('#win_dmdata_oauth_error>.content').html(`
-                            <p>
-                                ${resError}<br>
-                                ${resError_description}
-                            </p>
-                            <button class="btn_ok">OK</button>
-                        `)
-
-                    $('#win_dmdata_oauth_error .navBar').css({
-                        'background-color': '#c04040',
-                        'color': '#ffffff'
-                    })
-
-                    $('#win_dmdata_oauth_error .content').css({
-                        'padding': '1em'
-                    })
-
-                    $('#win_dmdata_oauth_error .content .btn_ok').css({
-                        'position': 'absolute',
-                        'right': '3em',
-                        'bottom': '3em',
-                        'width': '10em'
-                    })
-
-                    $(document).on('click', '#win_dmdata_oauth_error .content .btn_ok', function () {
-                        $('#win_dmdata_oauth_error').remove()
-                    })
+        try {
+            const response = await fetch(
+                Dmdata.#GET_TOKEN_URI,
+                {
+                    method: 'POST',
+                    Host: 'manager.dmdata.jp',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: dmdataFormBody
                 }
+            );
+
+            const data = await response.json();
+
+            if (data['error'] === undefined) {
+                this.#accessToken = data['access_token'];
+                localStorage.setItem('settings-dmdata-access-token', this.#accessToken);
+                await this.#startSocket();
+                return;
+            } else if (data['error'] === 'invalid_grant') {
+                this.app.services.debugLogs.add(
+                    "error",
+                    "[NETWORK]",
+                    "DM-D.S.S Account authentication failed."
+                );
+
+                new Window({
+                    type: Window.types.error,
+                    id: "errorDmdataOAuth",
+                    create: true,
+                    title: "DM-D.S.S アカウント認証エラー",
+                    content: `
+                        <p>
+                            dmdataとの接続を続行するにはDM-D.S.Sアカウントを再度連携をしてください。<br>
+                            <code>
+                                ${data['error']}<br>
+                                ${data['error_description']}<br>
+                            </code>
+                        </p>
+                    `,
+                });
+            } else {
+                this.app.services.debugLogs.add(
+                    "error",
+                    "[NETWORK]",
+                    "DM-D.S.S Account authentication failed."
+                );
+
+                new Window({
+                    type: Window.types.error,
+                    id: "errorDmdataOAuth",
+                    create: true,
+                    title: "DM-D.S.S アカウント認証エラー",
+                    content: `
+                        <p>
+                            DM-D.S.S アカウント認証でエラーが発生しました。<br>
+                            設定をリセットした場合は再度アカウント連携をしてください。<br>
+                            <code>
+                                ${data['error']}<br>
+                                ${data['error_description']}<br>
+                            </code>
+                        </p>
+                    `,
+                });
             }
+        } catch (error) {
+            this.app.services.debugLogs.add(
+                "error",
+                "[NETWORK]",
+                "DM-D.S.S Account authentication failed."
+            );
+
+            new Window({
+                type: Window.types.error,
+                id: "errorDmdataOAuth",
+                create: true,
+                title: "DM-D.S.S アカウント認証エラー",
+                content: `
+                    <p>
+                        DM-D.S.S アカウント認証時にエラーが発生しました。<br>
+                        <code>${error}</code>
+                    </p>
+                `,
+            });
+        }
+    }
+
+
+    /**
+     * 認証エラー時の処理
+     * 
+     * @returns {Promise<void>}
+     */
+    async #onSetupError() {
+        this.app.services.debugLogs.add(
+            "error",
+            "[NETWORK]",
+            "DM-D.S.S Account authentication failed."
+        );
+
+        const responseErrorDescription = this.#getParam('error_description', location.href);
+
+        new Window({
+            type: Window.types.error,
+            id: "errorDmdataOAuth",
+            create: true,
+            title: "DM-D.S.S アカウント連携エラー",
+            content: `
+                <p>
+                    ${responseError}<br>
+                    ${responseErrorDescription}
+                </p>
+            `,
+        });
+    }
+
+
+    /**
+     * URLからパラメーターを取得する
+     * 
+     * @param {string} name 
+     * @param {URL | string} url 
+     * @returns {string | null}
+     */
+    #getParam(name, url) {
+        if (typeof url === "string") {
+            url = new URL(url);
         }
 
+        const params = url.searchParams;
+        const value = params.get(name);
+
+        return value;
     }
 
 
     /**
-     * dmdata.jp にアカウントを認証する。
-     * @param {*} debugLogs 
+     * XMLをパースする
+     * 
+     * @param {string} data 
+     * @returns {Document}
      */
-    connect(debugLogs) {
-        const dmdataOAuthBaseUrl = 'https://manager.dmdata.jp/account/oauth2/v1/auth';
-        const state = "Ze4VX8";
-        const dmdataOAuthConfig = '?client_id=CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV' +
-            '&response_type=code' +
-            '&redirect_uri=https:%2F%2Fwebapp.ydits.net%2F' +
-            '&scope=socket.start%20socket.list%20socket.close%20eew.get.warning%20eew.get.forecast' +
-            `&state=${state}`
+    async #xmlParseToDocument(data) {
+        const buffer = new Uint8Array(
+            atob(data).split('').map((c) => c.charCodeAt(0))
+        );
+        const textDecoder = new TextDecoder();
+        const decompressor = new Zlib.Gunzip();
+        const decompressed = textDecoder.decode(decompressor.decompress(buffer));
 
-        debugLogs.add("network", "[NETWORK]", "OAuth authentication to dmdata.jp.")
-        window.open(dmdataOAuthBaseUrl + dmdataOAuthConfig, '_blank');
-    }
+        const parser = new DOMParser();
+        const document = parser.parseFromString(decompressed, 'application/xml');
 
-
-    /**
-     * URLからパラメーターを取得する。
-     * @param {*} name 
-     * @param {*} url 
-     * @returns 
-     */
-    getParam(name, url) {
-        if (!url) url = window.location.href;
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
-
-
-    /**
-     * WebSocket接続を開始する。
-     */
-    startSocket() {
-        const dmdataSocketUrl = 'https://api.dmdata.jp/v2/socket';
-        const dmdataGetClassifications = ['socket.start', 'socket.list', 'socket.close', 'eew.forecast'];
-
-        fetch(
-            dmdataSocketUrl,
-            {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + dmdataAccessToken },
-                body: JSON.stringify({ classifications: dmdataGetClassifications, test: 'including' })
-            }
-        )
-            .then((response) => response.json())
-            .then(data => {
-                if (data.error === undefined) {
-                    dmdataSocket = new WebSocket(data.websocket.url, ['dmdata.v2']);
-
-                    dmdataSocket.addEventListener('open', () => {
-                        debugLogs.add("network", `[NETWORK]`, "Successfully connected to dmdata.jp and WebSocket opened.");
-                        $('#eewTitle').text("緊急地震速報は発表されていません");
-                        $('#statusLamp').css({ 'background-color': '#4040ff' });
-                    });
-
-                    dmdataSocket.addEventListener('close', (event) => {
-                        debugLogs.add("network", `[NETWORK]`, "Successfully disconnected from dmdata.jp and WebSocket closed.");
-                        settings.connect.eew = "yahoo-kmoni";
-                    });
-
-                    dmdataSocket.addEventListener('message', (event) => {
-                        const message = JSON.parse(event.data);
-
-                        if (message.type === 'ping') {
-                            dmdataSocket.send(JSON.stringify({ type: 'pong', pingId: message.pingId }));
-                        }
-                        if (message.type === 'data' && message.format === 'xml') {
-                            dmdataEew(message.body);
-                        }
-                    });
-
-                    dmdataSocket.onerror(event => {
-                        debugLogs.add("error", `[NETWORK]`, `Failed to connect to dmdata.jp.: ${event}`);
-
-                        win('win_dmdata_oauth_error', 'dmdata接続エラー');
-
-                        $('#win_dmdata_oauth_error>.content').html(`
-                        <p>
-                            WebSocket接続中にエラーが発生しました。<br>
-                            <code>
-                                ${event}
-                            </code>
-                        </p>
-                        <button class="btn_retry">再試行</button>
-                    `)
-
-                        $('#win_dmdata_oauth_error .navBar').css({
-                            'background-color': '#c04040',
-                            'color': '#ffffff'
-                        })
-
-                        $('#win_dmdata_oauth_error .content').css({
-                            'padding': '1em'
-                        })
-
-                        $('#win_dmdata_oauth_error .content .btn_retry').css({
-                            'position': 'absolute',
-                            'right': '3em',
-                            'bottom': '3em',
-                            'width': '10em'
-                        })
-
-                        $('#win_dmdata_oauth_error .content .btn_retry').on('click', function () {
-                            $('#win_dmdata_oauth_error').remove()
-                            setTimeout('dmdataSocketStart()', 500);
-                        })
-
-                        settings.connect.eew = "yahoo-kmoni";
-                    });
-                } else {
-                    if (document.getElementById('win_dmdata_oauth_error') === null) {
-                        debugLogs.add("error", `[NETWORK]`, `Failed to connect to dmdata.jp.: ${data.error.message}`);
-
-                        win('win_dmdata_oauth_error', 'dmdata接続エラー');
-
-                        $('#win_dmdata_oauth_error>.content').html(`
-                        <p>
-                            WebSocket接続に失敗しました。<br>
-                            <code>
-                                ${data.error.message}
-                            </code>
-                        </p>
-                        <button class="btn_retry">再試行</button>
-                    `)
-
-                        $('#win_dmdata_oauth_error .navBar').css({
-                            'background-color': '#c04040',
-                            'color': '#ffffff'
-                        })
-
-                        $('#win_dmdata_oauth_error .content').css({
-                            'padding': '1em'
-                        })
-
-                        $('#win_dmdata_oauth_error .content .btn_retry').css({
-                            'position': 'absolute',
-                            'right': '3em',
-                            'bottom': '3em',
-                            'width': '10em'
-                        })
-
-                        $('#win_dmdata_oauth_error .content .btn_retry').on('click', function () {
-                            $('#win_dmdata_oauth_error').remove()
-                            setTimeout('dmdataSocketStart()', 500);
-                        })
-
-                        settings.connect.eew = "yahoo-kmoni"
-                    }
-                }
-            })
-            .catch(error => {
-                console.error(error);
-            })
-    }
-
-
-    /**
-     * メッセージEEWの受信時。
-     * @param {*} data 
-     */
-    whenEew(data) {
-        data = this.bodyToDocument(data);
-        console.log(data);
-    }
-
-
-    /**
-     * XMLをパースする。
-     * @param {*} data 
-     * @returns 
-     */
-    bodyToDocument(data) {
-        const buffer = new Uint8Array(atob(data).split('').map(c => c.charCodeAt(0)));
-        return new DOMParser().parseFromString(new TextDecoder().decode(new Zlib.Gunzip(buffer).decompress()), 'application/xml');
+        return document;
     }
 }

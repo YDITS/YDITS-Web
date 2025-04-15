@@ -9,25 +9,95 @@
  */
 
 /**
- * アプリケーションを作成します。
+ * アプリケーションを作成する
  */
 export class App {
-    services = {};
-
-
-    constructor(config) {
-        this.name = config.name;
-        this.description = config.description;
-        this.version = config.version;
-        this.author = config.author;
-        this.copyright = config.copyright;
+    /**
+     * @param {{
+     *     name: string,
+     *     description: string,
+     *     version: Version,
+     *     author: string,
+     *     copyright: string,
+     * }} config
+     */
+    constructor({
+        name,
+        description,
+        version,
+        author,
+        copyright
+    }) {
+        this.#name = name;
+        this.#description = description;
+        this.#version = version;
+        this.#author = author;
+        this.#copyright = copyright;
     }
 
 
     /**
-     * 新規のサービスを登録します。
+     * このアプリのサービス
+     * @returns {Object<string, Service>}
      */
-    register(NewService) {
+    get services() {
+        return this.#services;
+    }
+
+
+
+    /**
+     * アプリの名前
+     * @returns {string}
+     */
+    get name() {
+        return this.#name;
+    }
+
+
+    /**
+     * アプリの説明
+     * @returns {string}
+     */
+    get description() {
+        return this.#description;
+    }
+
+
+    /**
+     * アプリのバージョン
+     * @returns {Version | null}
+     */
+    get version() {
+        return this.#version;
+    }
+
+
+    /**
+     * アプリの作者
+     * @returns {string}
+     */
+    get author() {
+        return this.#author;
+    }
+
+
+    /**
+     * アプリの著作権
+     * @returns {string}
+     */
+    get copyright() {
+        return this.#copyright;
+    }
+
+
+    /**
+     * サービスを登録する
+     * 
+     * @param {class<Service>} NewService
+     * @returns {void}
+     */
+    registerService(NewService) {
         const newService = new NewService(this);
 
         if (!newService.name) {
@@ -36,4 +106,47 @@ export class App {
 
         this.services[newService.name] = newService;
     }
+
+
+    /**
+     * アプリの名前
+     * @type {string}
+     */
+    #name = "";
+
+
+    /**
+     * アプリの説明
+     * @type {string}
+     */
+    #description = "";
+
+
+    /**
+     * アプリのバージョン
+     * @type {Version | null}
+     */
+    #version = null;
+
+
+    /**
+     * アプリの作者
+     * @type {string}
+     */
+    #author = "";
+
+
+    /**
+     * アプリの著作権
+     * @type {string}
+     */
+    #copyright = "";
+
+
+    /**
+     * サービスオブジェクト
+     * @type {Object<string, Service>}
+     * @private
+     */
+    #services = {};
 }

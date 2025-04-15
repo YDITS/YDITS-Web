@@ -54,7 +54,7 @@ export class Settings extends Service {
     constructor(app) {
         super(app, {
             name: "settings",
-            description: "設定を扱うサービスです。",
+            description: "設定を扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"

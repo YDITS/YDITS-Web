@@ -17,7 +17,7 @@ export class PushNotify extends Service {
     constructor(app) {
         super(app, {
             name: "pushNotify",
-            description: "プッシュ通知を扱うサービスです。",
+            description: "プッシュ通知を扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"

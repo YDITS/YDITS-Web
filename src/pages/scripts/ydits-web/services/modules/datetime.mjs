@@ -17,7 +17,7 @@ export class Datetime extends Service {
     constructor(app) {
         super(app, {
             name: "datetime",
-            description: "現在時刻を管理するサービスです。",
+            description: "現在時刻を管理するサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"

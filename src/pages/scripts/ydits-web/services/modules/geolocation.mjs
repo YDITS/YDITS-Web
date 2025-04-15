@@ -18,7 +18,7 @@ export class GeoLocation extends Service {
     constructor(app) {
         super(app, {
             name: "geoLocation",
-            description: "位置情報を管理するサービスです。",
+            description: "位置情報を管理するサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"

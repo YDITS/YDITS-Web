@@ -280,8 +280,8 @@ main {
 
 #hrpnsTime {
     position: absolute;
-    bottom: 3rem;
-    left: .7em;
+    bottom: 1rem;
+    left: 1rem;
     display: none;
     flex-direction: column;
     justify-content: center;

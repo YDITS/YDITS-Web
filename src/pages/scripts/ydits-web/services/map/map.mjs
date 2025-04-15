@@ -14,177 +14,196 @@ import { Service } from "../../../service.mjs";
  * マップを扱う。
  */
 export class Map extends Service {
-    map = null;
-    loopCount = -1;
-    autoMoveCount = null;
-
-    get defaultCenter() {
-        return ([36.0047000, 137.5930000]);
-    }
-
-    get defaultZoom() {
-        return (5);
-    }
-
-
-    get hrpnsTimesUrl() {
-        return ("https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json");
-    }
-
-
-    get tropicalCycloneTargetUrl() {
-        return ("https://www.jma.go.jp/bosai/typhoon/data/targetTc.json");
-    }
-
-
-    get layersControlElement() {
-        return (document.getElementById("layersControl"));
-    }
-
-
-    get hrpnsTimeElement() {
-        return (document.querySelector("#hrpnsTime>.text"));
-    }
-
-
-    hrpnsImgUrl(baseTime, validTime) {
-        return (`https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`);
-    }
-
-
-    tropicalCycloneForecastUrl(tropicalCycloneNumber) {
-        return (`https://www.jma.go.jp/bosai/typhoon/data/${tropicalCycloneNumber}/forecast.json`);
-    }
-
-
     constructor(app) {
         super(app, {
             name: "map",
-            description: "マップを扱うサービスです。",
+            description: "マップを扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+    }
 
-        this.app.services.notify.show("message", "", `${this.name}をコンストラクトしています…`);
 
-        this.map = L.map('map', {
-            center: this.defaultCenter,
-            zoom: this.defaultZoom,
-            maxZoom: 10,
-            minZoom: 4,
-            zoomSnap: 0,
-            zoomDelta: 0,
-            zoomControl: false
-        });
+    static DEFAULT_CENTER = [137.5930000, 36.0047000];
+    static DEFAULT_ZOOM = 4;
+    static HRPNS_TIMES_URI = "https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json";
+    static TROPICAL_CYCLONE_TARGET_URI = "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json";
+    static DEFAULT_CIRCLE_OPTIONS = { steps: 64, units: "meters", propreties: { foo: "bar" } };
 
-        this.maptilerLayer = L.maptilerLayer({
-            apiKey: "3ft2uVdfAwtgfKQGIT8U",
-            style: "ba979b60-0cf8-4087-8cdc-5bb919540c08",
-        }).addTo(this.map);
+
+    get $layersControl() {
+        if (!(this.#_$layersControl instanceof HTMLElement)) {
+            this.#_$layersControl = document.getElementById("layersControl");
+        }
+
+        return this.#_$layersControl;
+    }
+
+
+    get $hrpnsTime() {
+        if (!(this.#_$hrpnsTime instanceof HTMLElement)) {
+            this.#_$hrpnsTime = document.querySelector("#hrpnsTime");
+        }
+
+        return this.#_$hrpnsTime;
+    }
+
+
+    get $hrpnsTimeText() {
+        if (!(this.#_$hrpnsTimeText instanceof HTMLElement)) {
+            this.#_$hrpnsTimeText = document.querySelector("#hrpnsTime>.text");
+        }
+
+        return this.#_$hrpnsTimeText;
+    }
+
+
+    get isGeolocationSupported() {
+        if (this.#_$isGeolocationSupported === undefined) {
+            this.#_$isGeolocationSupported = "geolocation" in navigator;
+        }
+
+        return this.#_$isGeolocationSupported;
+    }
+
+
+    hrpnsImageUri(baseTime, validTime) {
+        return `https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`;
+    }
+
+
+    tropicalCycloneForecastUrl(tropicalCycloneNumber) {
+        return `https://www.jma.go.jp/bosai/typhoon/data/${tropicalCycloneNumber}/forecast.json`;
     }
 
 
     /**
      * 初期化する。
-     * @returns 
+     * @returns {void}
      */
     async initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
-        if (!this.isGeoLocationSupported) { return }
+        await this.#initializeMaps();
 
-        document.addEventListener("getLocation", () => {
-            this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
-                icon: L.icon({
-                    iconUrl: "./images/user_point.png",
-                    iconSize: [24, 24]
-                })
-            }).addTo(this.map);
+        this.map.once("load", async () => {
+            this.userPointImage = await this.map.loadImage('/images/user_point.png');
+            this.regionImage = await this.map.loadImage('/images/hypocenter.png');
 
-            this.userPointCircle = L.circle([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
-                radius: this.app.services.geoLocation.accuracy,
-                weight: 1,
-                color: '#00000000',
-                fillColor: '#4080ff80',
-                fillOpacity: 0.25,
-            }).addTo(this.map);
+            await this.map.addImage(`userPointImage`, this.userPointImage.data);
+            await this.map.addImage(`eewRedionImage`, this.regionImage.data);
 
+            await this.showHrpns();
+            await this.showTyphoon();
         });
 
-        this.app.services.notify.show("message", "", `hrpnsをイニシャライズしています…`);
-        await this.showHrpns();
-        this.app.services.notify.show("message", "", `typhoonをイニシャライズしています…`);
-        await this.showTyphoon();
+        if (!this.isGeolocationSupported) { return }
+
+        document.addEventListener("getLocation", async () => await this.updateUserPoint());
+
         this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
     }
 
 
     /**
      * ユーザーポイントの表示を更新する。
+     * @returns {Promise<void>}
      */
-    updateUserPoint() {
-        if (!this.app.services.geoLocation.isSupported) { return }
+    async updateUserPoint() {
+        try {
+            const isGeolocationSupported = this.app?.services?.geoLocation?.isSupported;
 
-        if (this.app.services.settings.map.displayUserPoint) {
-            this.userPoint = L.marker([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
-                icon: L.icon({
-                    iconUrl: "./images/user_point.png",
-                    iconSize: [24, 24]
-                })
-            }).addTo(this.map);
+            if (!isGeolocationSupported) return;
 
-            this.userPointCircle = L.circle([this.app.services.geoLocation.latitude, this.app.services.geoLocation.longitude], {
-                radius: this.app.services.geoLocation.accuracy,
-                weight: 1,
-                color: '#00000000',
-                fillColor: '#4080ff80',
-                fillOpacity: 0.25,
-            }).addTo(this.map);
-        } else {
-            this.map.removeLayer(this.userPoint);
-            this.map.removeLayer(this.userPointCircle);
-            this.userPoint = null;
-            this.userPointCircle = null;
+            const isDisplayUserPoint = this.app?.services?.settings?.map?.displayUserPoint;
+            const userPointSource = await this.map.getSource("userPointSource");
+
+            if (!isDisplayUserPoint) {
+                await this.#removeUserPoint(userPointSource);
+                return;
+            }
+
+            const userLngLat = [this.app.services.geoLocation.longitude, this.app.services.geoLocation.latitude];
+
+            if (!userPointSource) {
+                await this.#createUserPoint(userLngLat);
+                return;
+            }
+
+            await userPointSource.setData({
+                type: 'FeatureCollection',
+                features: [
+                    {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: userLngLat,
+                        },
+                    },
+                ],
+            });
+        } catch (error) {
+            throw new Error(`Unhandled error at updateUserPoint: ${error.message}`, { error: error.stack });
         }
     }
 
 
     /**
-     * 引数に渡されたString `yyyyMMDDHHmm` を `yyyy年MM月DD日 HH時mm分` に変換する
+     * ユーザーポイントのソースとレイヤーを作成する。
      */
-    formatDatetime(datetime) {
+    async #createUserPoint(lngLat) {
+        await this.map.addSource(`userPointSource`, {
+            type: 'geojson',
+            data: {
+                type: 'FeatureCollection',
+                features: [
+                    {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: lngLat,
+                        },
+                    },
+                ],
+            },
+        });
+
+        await this.map.addLayer({
+            id: `userPoint`,
+            type: "symbol",
+            source: `userPointSource`,
+            layout: {
+                "icon-image": `userPointImage`,
+                "icon-size": 0.25,
+            },
+        });
+    }
+
+
+    /**
+     * ユーザーポイントのソースとレイヤーを削除する。
+     */
+    async #removeUserPoint(userPointSource) {
+        if (!userPointSource) return;
+        await this.map.removeLayer("userPoint");
+        await this.map.removeSource("userPointSource");
+    }
+
+
+    /**
+     * 日時文字列をフォーマットする。
+     * @param {string} datetime - 'yyyyMMDDHHmm' 形式の日時文字列
+     * @returns {string} - 'HH:mm' 形式の日時文字列
+     */
+    #formatDatetime(datetime) {
         const year = datetime.slice(0, 4);
         const month = datetime.slice(4, 6) - 1;
         const day = datetime.slice(6, 8);
         const hour = datetime.slice(8, 10);
         const minute = datetime.slice(10, 12);
         const date = new Date(Date.UTC(year, month, day, hour, minute));
-        // return `${jstDate.getFullYear()}年${String(jstDate.getMonth() + 1).padStart(2, '0')}月${String(jstDate.getDate()).padStart(2, '0')}日 ${String(jstDate.getHours()).padStart(2, '0')}時${String(jstDate.getMinutes()).padStart(2, '0')}分`;
         return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-    }
-
-
-    /**
-     * 説明が記載されていません。
-     */
-    updateLayers() {
-        if (this.hrpns) {
-            this.layerControl = new CustomLayerControl({
-                layers: {
-                    "雨雲レーダー（高解像度降水ナウキャスト）": this.hrpns,
-                    "台風情報（予想進路図）": this.typhoon,
-                },
-                map: this.map
-            });
-        }
-
-        if (this.layerControl) {
-            this.map.removeControl(this.layerControl);
-        }
-
-
-        this.layersControlElement.appendChild(this.layerControl.onAdd(this.map));
     }
 
 
@@ -192,11 +211,11 @@ export class Map extends Service {
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を更新する。
      */
     async updateHrpns() {
-        if (!this.hrpns) { return; }
-        this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
-        const url = this.hrpnsImgUrl(this.hrpnsLatestTargetTime["basetime"], this.hrpnsLatestTargetTime["validtime"]);
-        this.hrpns.setUrl(url);
-        this.hrpnsTimeElement.textContent = this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]);
+        if (!this.isDisplayHrpns) {
+            return;
+        }
+
+        this.showHrpns();
     }
 
 
@@ -204,23 +223,44 @@ export class Map extends Service {
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を表示する。
      */
     async showHrpns() {
+        this.isDisplayHrpns = true;
+
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
-        const url = this.hrpnsImgUrl(this.hrpnsLatestTargetTime["basetime"], this.hrpnsLatestTargetTime["validtime"]);
-        this.hrpns = L.tileLayer(url, {
-            opacity: 0.7
-        }).addTo(this.map);
-        // this.updateLayers();
-        this.hrpnsTimeElement.textContent = this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]);
+        const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
+
+        if (this.map.getSource("hrpns-source")) {
+            this.map.removeLayer("hrpns");
+            this.map.removeSource("hrpns-source");
+        }
+
+        await this.map.addSource('hrpns-source', {
+            'type': 'raster',
+            'tiles': [url],
+            'tileSize': 256,
+        });
+
+        await this.map.addLayer({
+            id: "hrpns",
+            source: "hrpns-source",
+            type: "raster",
+            paint: {
+                "raster-opacity": 0.7,
+            },
+        });
+
+        this.$hrpnsTimeText.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
+        this.$hrpnsTime.classList.add("show");
     }
 
 
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を非表示する。
      */
-    hideHrpns() {
-        this.map.removeLayer(this.hrpns);
-        this.hrpns = null;
-        this.updateLayers();
+    async hideHrpns() {
+        this.isDisplayHrpns = false;
+        this.map.removeLayer("hrpns");
+        this.$hrpnsTime.classList.remove("show");
+        this.$hrpnsTimeText.textContent = "";
     }
 
 
@@ -239,7 +279,7 @@ export class Map extends Service {
      */
     async fetchHrpnsTargetTime() {
         try {
-            const response = await fetch(this.hrpnsTimesUrl);
+            const response = await fetch(Map.HRPNS_TIMES_URI);
             if (!response.ok) {
                 throw new Error(`Error fetching rain map data: Status ${response.status}`);
             }
@@ -266,11 +306,8 @@ export class Map extends Service {
      * 台風情報（予想進路図）を表示する。
      */
     async showTyphoon() {
-        this.typhoon = L.layerGroup().addTo(this.map);
-        this.updateLayers();
-
         this.tropicalCycloneLatestTarget = await this.getTropicalCycloneTarget();
-        if (!this.tropicalCycloneLatestTarget) return null;
+        if (!this.tropicalCycloneLatestTarget) return;
 
         this.tropicalCycloneLatestTarget.forEach(async target => {
             const url = this.tropicalCycloneForecastUrl(target);
@@ -326,46 +363,73 @@ export class Map extends Service {
                 console.error('Error: Data is not an array.');
             }
 
-            this.hrpnsTimeElement.text(this.formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
+            this.$hrpnsTime.text(this.#formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
         });
     }
 
 
-    // 予報円を追加する関数
-    addForecastCircle(forecast) {
+    /**
+     * 予報円を追加する。
+     */
+    async addForecastCircle(forecast) {
         if (forecast && forecast.center && forecast.probabilityCircle) {
             const center = forecast.center;
             const radius = forecast.probabilityCircle.radius;
             const validtime = new Date(forecast.validtime["JST"]); // 予報の時刻
 
-            L.circle([center[0], center[1]], {
-                color: '#ffffff',
-                fillColor: '#ffffff',
-                fillOpacity: 0.2,
-                radius: radius,
-                weight: 1
-            }).addTo(this.typhoon);
+            const circleJSON = turf.circle([center[1], center[0]], (radius * 2), Map.DEFAULT_CIRCLE_OPTIONS);
+
+            this.map.addSource("typhoonForecastCircleSource", {
+                type: "geojson",
+                data: circleJSON,
+            });
+
+            this.map.addLayer({
+                id: "typhoonForecastCirle",
+                type: "circle",
+                source: "typhoonForecastCircleSource",
+                "source-layer": "typhoonForecastCircleSource",
+                paint: {
+                    "circle-color": "#ffffff",
+                    "circle-opacity": 0.2,
+                    "circle-stroke-width": 1,
+                    "circle-stroke-color": "#ffffff"
+                }
+            });
 
             // 予報円の接線をラインで表示
             forecast.probabilityCircle.tangent.forEach(tangent => {
                 const line = tangent.map(point => [point[0], point[1]]);
-                L.polyline(line, { color: '#ffffff', dashArray: '5, 5', weight: 1 }).addTo(this.typhoon);
+                this.map.addLayer({
+                    id: "typhoonForecastLine",
+                    type: "line",
+                    paint: {
+                        "line-color": "#ffffff",
+                        "line-translate": line,
+                        "line-dasharray": [5, 5],
+                        "line-width": 1,
+                    },
+                })
             });
 
-            L.marker([center[0], center[1]], {
-                icon: L.divIcon({
-                    className: 'forecast-icon',
-                    html: `<div class="forecast-time">${validtime.getDate()}日${validtime.getHours()}時</div>`,
-                    iconSize: [100, 40],
-                    minZoom: 6
-                })
-            }).addTo(this.typhoon);
+            this.map.addLayer({
+                id: "typhoonForecastTime",
+                type: "symbol",
+                minzoom: 5,
+                paint: {
+                    "text-field": `${validtime.getDate()}日${validtime.getHours()}時`,
+                    "text-size": 16,
+                    "text-color": "#ffffff",
+                },
+            });
         }
     }
 
 
-    // 強風域を追加する関数
-    addGaleWarningArea(galeWarningArea, typhoonNumber) {
+    /**
+     * 強風域を追加する。
+     */
+    async addGaleWarningArea(galeWarningArea, typhoonNumber) {
         const center = galeWarningArea.center;
         const radius = galeWarningArea.radius;
         L.circle([center[0], center[1]], {
@@ -390,7 +454,7 @@ export class Map extends Service {
     /**
      * 台風情報（予想進路図）を非表示する。
      */
-    hideTyphoon() {
+    async hideTyphoon() {
         this.map.removeLayer(this.typhoon);
         this.typhoon = null;
         // this.updateLayers();
@@ -420,7 +484,7 @@ export class Map extends Service {
      */
     async fetchTropicalCycloneTarget() {
         try {
-            const response = await fetch(this.tropicalCycloneTargetUrl);
+            const response = await fetch(Map.TROPICAL_CYCLONE_TARGET_URI);
             if (!response.ok) {
                 throw new Error(`Error fetching rain map data: Status ${response.status}`);
             }
@@ -444,29 +508,69 @@ export class Map extends Service {
                     if (id === "undefined" || this.app.services.eew.reports[id].isWarning) { return }
 
                     if (this.app.services.eew.currentId === id) {
-                        if (!this.app.services.eew.reports[id].region) {
-                            this.app.services.eew.reports[id].region = L.marker([0, 0], {
-                                icon: L.icon({
-                                    iconUrl: "./images/hypocenter.png",
-                                    iconSize: [24, 24]
-                                })
-                            }).addTo(this.map);
+                        if (!this.app.services.eew.reports[id].isMapInitialized) {
+                            this.hideHrpns();
 
-                            this.app.services.eew.reports[id].sWave = L.circle([0, 0], {
-                                radius: -1,
-                                weight: 1,
-                                color: '#ff4020',
-                                fillColor: '#ff402080',
-                                fillOpacity: 0.25,
-                            }).addTo(this.map);
+                            const sWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
+                            const pWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
 
-                            this.app.services.eew.reports[id].pWave = L.circle([0, 0], {
-                                radius: -1,
-                                weight: 1,
-                                color: '#4080ff',
-                                fillColor: '#00000000',
-                                fillOpacity: 0,
-                            }).addTo(this.map);
+                            this.map.addSource(`eewRedionSource_${id}`, {
+                                type: 'geojson',
+                                data: {
+                                    type: 'FeatureCollection',
+                                    features: [
+                                        {
+                                            type: 'Feature',
+                                            geometry: {
+                                                type: 'Point',
+                                                coordinates: [0, 0],
+                                            },
+                                        },
+                                    ],
+                                },
+                            });
+
+                            this.map.addLayer({
+                                id: `eewRedion_${id}`,
+                                type: "symbol",
+                                source: `eewRedionSource_${id}`,
+                                layout: {
+                                    "icon-image": `eewRedionImage`,
+                                    "icon-size": 0.25,
+                                },
+                            });
+
+                            this.map.addSource(`eewSWaveSource_${id}`, {
+                                type: "geojson",
+                                data: sWaveCircleJSON,
+                            });
+
+                            this.map.addLayer({
+                                id: `eewSWave_${id}`,
+                                type: "line",
+                                source: `eewSWaveSource_${id}`,
+                                paint: {
+                                    "line-width": 1,
+                                    "line-color": "#ff4020",
+                                },
+                            });
+
+                            this.map.addSource(`eewPWaveSource_${id}`, {
+                                type: "geojson",
+                                data: pWaveCircleJSON,
+                            });
+
+                            this.map.addLayer({
+                                id: `eewPWave_${id}`,
+                                type: "line",
+                                source: `eewPWaveSource_${id}`,
+                                paint: {
+                                    "line-width": 1,
+                                    "line-color": "#4080ff",
+                                },
+                            });
+
+                            this.app.services.eew.reports[id].isMapInitialized = true;
                         }
 
                         this.app.services.eew.reports[id].latitude = this.app.services.eew.reports[id].latitude.replace("N", "");
@@ -476,7 +580,7 @@ export class Map extends Service {
                         this.app.services.eew.reports[id].pRadius = this.app.services.eew.reports[id].psWave.pRadius * 1000;
 
                         if (this.app.services.eew.reports[id].sRadius != this.app.services.eew.reports[id].lastSWave) {
-                            this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / (60 * ((dateNow - this.loopCount) / 1000));
+                            this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / (60 * ((dateNow - this.#loopCount) / 1000));
                             this.app.services.eew.reports[id].lastSWave = this.app.services.eew.reports[id].sRadius;
                             this.app.services.eew.reports[id].sWavePut = this.app.services.eew.reports[id].sRadius;
                         } else if (this.app.services.eew.reports[id].sRadius == this.app.services.eew.reports[id].lastSWave) {
@@ -484,10 +588,10 @@ export class Map extends Service {
                         }
 
                         if (this.app.services.eew.reports[id].pRadius != this.app.services.eew.reports[id].lastPWave) {
-                            this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / (60 * ((dateNow - this.loopCount) / 1000));
+                            this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / (60 * ((dateNow - this.#loopCount) / 1000));
                             this.app.services.eew.reports[id].lastPWave = this.app.services.eew.reports[id].pRadius;
                             this.app.services.eew.reports[id].pWavePut = this.app.services.eew.reports[id].pRadius;
-                            this.loopCount = dateNow;
+                            this.#loopCount = dateNow;
                         } else if (this.app.services.eew.reports[id].pRadius == this.app.services.eew.reports[id].lastPWave) {
                             this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
                         }
@@ -496,37 +600,35 @@ export class Map extends Service {
                         this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
                     }
 
-                    const REGION_LATLNG = new L.LatLng(this.app.services.eew.reports[id].latitude, this.app.services.eew.reports[id].longitude);
-                    this.app.services.eew.reports[id].region.setLatLng(REGION_LATLNG);
-                    this.app.services.eew.reports[id].sWave.setLatLng(REGION_LATLNG);
-                    this.app.services.eew.reports[id].pWave.setLatLng(REGION_LATLNG);
-                    this.app.services.eew.reports[id].sWave.setRadius(this.app.services.eew.reports[id].sWavePut);
-                    this.app.services.eew.reports[id].pWave.setRadius(this.app.services.eew.reports[id].pWavePut);
+                    const REGION_LNGLAT = [this.app.services.eew.reports[id].longitude, this.app.services.eew.reports[id].latitude];
+                    const sWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].sWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
+                    const pWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].pWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
+
+                    this.map.getSource(`eewRedionSource_${id}`).setData({
+                        type: 'FeatureCollection',
+                        features: [
+                            {
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: REGION_LNGLAT,
+                                },
+                            },
+                        ],
+                    });
+                    this.map.getSource(`eewSWaveSource_${id}`).setData(sWaveCircleJSON);
+                    this.map.getSource(`eewPWaveSource_${id}`).setData(pWaveCircleJSON);
                 });
 
                 if (this.app.services.settings.map.autoMove) {
-                    if (dateNow - this.autoMoveCount >= 1000 * 3) {
-                        if (this.app.services.eew.reports[this.app.services.eew.currentId].pWavePut >= 560000) {
-                            this.map.setView([this.app.services.eew.reports[this.app.services.eew.currentId].latitude, this.app.services.eew.reports[this.app.services.eew.currentId].longitude], 5);
-                        } else if (this.app.services.eew.reports[this.app.services.eew.currentId].pWavePut >= 280000) {
-                            this.map.setView([this.app.services.eew.reports[this.app.services.eew.currentId].latitude, this.app.services.eew.reports[this.app.services.eew.currentId].longitude], 6);
-                        } else if (this.app.services.eew.reports[this.app.services.eew.currentId].pWavePut > 0) {
-                            this.map.setView([this.app.services.eew.reports[this.app.services.eew.currentId].latitude, this.app.services.eew.reports[this.app.services.eew.currentId].longitude], 7);
-                        }
-
-                        this.autoMoveCount = dateNow
-                    }
+                    this.#autoMoveMap(dateNow);
                 }
             } else {
-                Object.keys(this.app.services.eew.reports).forEach((id) => {
-                    if (id === "undefined") { return; }
-                    if (this.app.services.eew.reports[id].isWarning) { return; }
+                if (!this.isDisplayHrpns) {
+                    this.showHrpns();
+                }
 
-                    this.map.removeLayer(this.app.services.eew.reports[id].region);
-                    this.map.removeLayer(this.app.services.eew.reports[id].sWave);
-                    this.map.removeLayer(this.app.services.eew.reports[id].pWave);
-                    delete this.app.services.eew.reports[id];
-                });
+                this.#clearEewLayers();
             }
         } catch (error) {
             console.error(error);
@@ -536,121 +638,98 @@ export class Map extends Service {
 
 
     /**
-     * マップを移動する。
-     * @param {*} latLng 
-     * @param {*} zoom 
+     * マップを自動で移動する。
+     * @param {number} dateNow - 現在の日時
      */
-    setView(latLng, zoom) {
-        this.map.flyTo(latLng, zoom);
+    #autoMoveMap(dateNow) {
+        if (dateNow - this.#autoMoveCount >= 3000) {
+            const report = this.app.services.eew.reports[this.app.services.eew.currentId];
+            if (report.pWavePut >= 560000) {
+                this.setView([report.longitude, report.latitude], 5);
+            } else if (report.pWavePut >= 280000) {
+                this.setView([report.longitude, report.latitude], 6);
+            } else if (report.pWavePut > 0) {
+                this.setView([report.longitude, report.latitude], 7);
+            }
+            this.#autoMoveCount = dateNow;
+        }
+    }
+
+
+    /**
+     * 緊急地震速報（EEW）のレイヤーをクリアする。
+     */
+    #clearEewLayers() {
+        Object.keys(this.app.services.eew.reports).forEach(id => {
+            if (id !== "undefined" && !this.app.services.eew.reports[id].isWarning) {
+                this.map.removeLayer(`eewRedion_${id}`);
+                this.map.removeLayer(`eewSWave_${id}`);
+                this.map.removeLayer(`eewPWave_${id}`);
+                this.map.removeSource(`eewRedionSource_${id}`);
+                this.map.removeSource(`eewSWaveSource_${id}`);
+                this.map.removeSource(`eewPWaveSource_${id}`);
+                delete this.app.services.eew.reports[id];
+            }
+        });
+    }
+
+
+    /**
+     * マップを移動する。
+     * @param {L.LatLng} latLng - 移動先の緯度経度
+     * @param {number} zoom - ズームレベル
+     */
+    async setView(lngLat, zoom) {
+        await this.map.flyTo({
+            center: lngLat,
+            zoom: zoom,
+            speed: 2.0,
+            curve: 1.0,
+            bearing: 0,
+            pitch: 0,
+        });
     }
 
 
     /**
      * マップを初期位置に移動する。
      */
-    setViewHome() {
-        this.setView(this.defaultCenter, this.defaultZoom);
+    async setViewHome() {
+        await this.setView(Map.DEFAULT_CENTER, Map.DEFAULT_ZOOM);
     }
 
 
-    get isGeoLocationSupported() {
-        return "geolocation" in window.navigator;
-    }
-}
-
-
-/**
- * 独自レイヤーコントロールクラス
- */
-class CustomLayerControl extends L.Control {
-    constructor(options) {
-        super(options);
-        this.options = options || {};
-        this.eewActive = false; // EEWの状態を示すプロパティ
-    }
-
-    get hrpnsTimeElement() {
-        return (document.getElementById("hrpnsTime"));
-    }
-
-    onAdd(map) {
-        this.map = map; // 地図オブジェクトをクラスのプロパティとして保存
-        this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        this._container.style.backgroundColor = 'white';
-        this._container.style.padding = '10px';
-        this._layerControl = L.DomUtil.create('div', 'layer-control', this._container);
-        this.updateLayerControl();
-        return this._container;
-    }
-
-    updateLayerControl() {
-        this._layerControl.innerHTML = '';
-        const savedLayers = JSON.parse(localStorage.getItem('selectedLayers')) || {};
-
-        if (this.options.layers) {
-            for (const [name, layer] of Object.entries(this.options.layers)) {
-                const controlItem = L.DomUtil.create('div', '', this._layerControl);
-                const checkbox = L.DomUtil.create('input', '', controlItem);
-                checkbox.type = 'checkbox';
-                checkbox.id = name;
-                checkbox.checked = savedLayers[name] || false;
-
-                if (checkbox.checked && !this.eewActive) {
-                    this.map.addLayer(layer);
-                    this.hrpnsTimeElement.classList.add("show");
-                } else {
-                    this.map.removeLayer(layer);
-                    this.hrpnsTimeElement.classList.remove("show");
-                }
-
-                L.DomEvent.on(checkbox, 'change', () => {
-                    if (checkbox.checked) {
-                        savedLayers[name] = true;
-                        if (!this.eewActive) {
-                            this.map.addLayer(layer);
-                            this.hrpnsTimeElement.classList.add("show");
-                        }
-                    } else {
-                        savedLayers[name] = false;
-                        this.map.removeLayer(layer);
-                        this.hrpnsTimeElement.classList.remove("show");
-                    }
-                    localStorage.setItem('selectedLayers', JSON.stringify(savedLayers));
-                });
-
-                const label = L.DomUtil.create('label', '', controlItem);
-                label.htmlFor = name;
-                label.innerHTML = name;
-            }
+    /**
+     * マップインスタンスを初期化する。
+     * @returns {Promise<void>}
+     */
+    async #initializeMaps() {
+        try {
+            this.map = await new maplibregl.Map({
+                container: "map",
+                style: `https://api.maptiler.com/maps/ba979b60-0cf8-4087-8cdc-5bb919540c08/style.json?key=${Map.#MAPTILER_API_KEY}`,
+                center: Map.DEFAULT_CENTER,
+                zoom: Map.DEFAULT_ZOOM,
+                maxZoom: 9,
+                minZoom: 3,
+                attributionControl: {
+                    compact: true,
+                    customAttribution: "© 気象庁",
+                },
+            });
+        } catch (error) {
+            throw new Error(`Could not initialize map: ${error.message}`, { error: error.stack });
         }
     }
 
-    // EEWの開始を検知するメソッド
-    startEew() {
-        this.eewActive = true;
-        this.updateLayerControlVisibility();
-    }
 
-    // EEWの終了を検知するメソッド
-    stopEew() {
-        this.eewActive = false;
-        this.updateLayerControlVisibility();
-    }
+    static #MAPTILER_API_KEY = "3ft2uVdfAwtgfKQGIT8U";
+    #loopCount = -1;
+    #autoMoveCount = null;
 
-    // レイヤーの表示/非表示を更新するメソッド
-    updateLayerControlVisibility() {
-        const savedLayers = JSON.parse(localStorage.getItem('selectedLayers')) || {};
 
-        for (const [name, layer] of Object.entries(this.options.layers)) {
-            if (savedLayers[name]) {
-                if (this.eewActive) {
-                    this.map.removeLayer(layer);
-                    this.hrpnsTimeElement.classList.remove("show");
-                } else {
-                    this.map.addLayer(layer);
-                    this.hrpnsTimeElement.classList.add("show");
-                }
-            }
-        }
-    }
+    #_$layersControl;
+    #_$hrpnsTime;
+    #_$hrpnsTimeText;
+    #_$isGeolocationSupported;
 }

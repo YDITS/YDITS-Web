@@ -14,14 +14,107 @@ import { Service } from "../../../service.mjs";
  * 緊急地震速報を扱う。
  */
 export class Eew extends Service {
+    /**
+     * @param {App} app 
+     */
+    constructor(app) {
+        super(app, {
+            name: "eew",
+            description: "緊急地震速報を扱う。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        });
+
+        this.datetime = app.services.datetime;
+        this.geolocation = app.services.geoLocation;
+
+        this.#initializeElements();
+        this.#setupEventListeners();
+    }
+
+
+    /**
+     * 要素を初期化する。
+     * 
+     * @returns {void}
+     */
+    #initializeElements() {
+        this.eewNotifyElement = document.getElementById("eewNotify");
+        this.warnElement = document.getElementById("eewWarn");
+        this.scaleElement = document.getElementById("eewScale");
+        this.scaleAboutElement = document.getElementById("eewScaleAbout");
+        this.arrivalTimeElement = document.getElementById("eewArrivalTime");
+        this.arrivalTimeAboudElement = document.getElementById("eewArrivalTimeAbout");
+        this.locateElement = document.getElementById("eewLocate");
+        this.errorElement = document.getElementById("eewError");
+    }
+
+
+    /**
+     * イベントリスナーを設定する。
+     * 
+     * @returns {void}
+     */
+    #setupEventListeners() {
+        this.eewNotifyElement.addEventListener("click", () => this.displayWarn());
+        this.warnElement.querySelector(".closeBtn").addEventListener("click", () => this.hideWarn());
+    }
+
+
+    /**
+     * 緊急地震速報が発表されているかどうか
+     * @type {boolean}
+     */
     isEew = false;
+
+
+    /**
+     * 現在の緊急地震速報のID
+     * @type {string | null}
+     */
     currentId = null;
+
+
+    /**
+     * 前回の緊急地震速報のID
+     * @type {string | null}
+     */
     currentIdLast = null;
+
+
+    /**
+     * 緊急地震速報のレポート
+     * @type {Object<string, Report>}
+     */
     reports = {};
+
+
+    /**
+     * 警報地域のテキスト
+     * @type {string}
+     */
     warnAreasText = "";
+
+
+    /**
+     * 警報地域のリスト
+     * @type {Eew.WarnArea[]}
+     */
     warnAreas = [];
+
+
+    /**
+     * ユーザーの地域が警報対象かどうか
+     * @type {boolean}
+     */
     isUserAreaWarn = false;
 
+
+    /**
+     * 震度のテキスト
+     * @type {Object<string, string>}
+     */
     maxScaleText = {
         "-1": "?",
         "0": "0",
@@ -36,6 +129,10 @@ export class Eew extends Service {
         "7": "7"
     }
 
+
+    /**
+     * 緊急地震速報のレポート
+     */
     Report = class {
         isWarning = false;
         type = null;
@@ -66,6 +163,10 @@ export class Eew extends Service {
         lastPWave = null;
     }
 
+
+    /**
+     * 緊急地震速報の警報地域
+     */
     WarnArea = class {
         name = null;
         pref = null;
@@ -84,33 +185,10 @@ export class Eew extends Service {
     }
 
 
-    constructor(app) {
-        super(app, {
-            name: "eew",
-            description: "緊急地震速報を扱うサービスです。",
-            version: "0.0.0",
-            author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
-        });
-
-        this.datetime = app.services.datetime;
-        this.geolocation = app.services.geoLocation;
-
-        this.warnElement = document.getElementById("eewWarn");
-        this.scaleElement = document.getElementById("eewScale");
-        this.scaleAboutElement = document.getElementById("eewScaleAbout");
-        this.arrivalTimeElement = document.getElementById("eewArrivalTime");
-        this.arrivalTimeAboudElement = document.getElementById("eewArrivalTimeAbout");
-        this.locateElement = document.getElementById("eewLocate");
-        this.errorElement = document.getElementById("eewError");
-
-        document.getElementById("eewNotify").addEventListener("click", () => this.displayWarn());
-        document.querySelector("#eewWarn .closeBtn").addEventListener("click", () => this.hideWarn());
-    }
-
-
     /**
-     * 初期化する。
+     * 初期化する
+     * 
+     * @returns {void}
     */
     initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
@@ -123,7 +201,10 @@ export class Eew extends Service {
 
 
     /**
-     * 緊急地震速報（警報）発表時の処理。
+     * 緊急地震速報（警報）発表時の処理
+     * 
+     * @param {Object} data
+     * @returns {void}
      */
     warning(data) {
         let areas = [];
@@ -139,168 +220,172 @@ export class Eew extends Service {
 
 
     /**
-     * フィールドの表示を更新する。
+     * フィールドの表示を更新する
+     * 
+     * @returns {void}
      */
-    updateField() {
-        if (this.isEew) {
-            const REPORT = this.reports[this.currentId];
-            let bgcolor = null;
-            let fontColor = null;
+    // updateField() {
+    //     if (this.isEew) {
+    //         const REPORT = this.reports[this.currentId];
+    //         let bgcolor = null;
+    //         let fontColor = null;
 
-            switch (REPORT.maxScale) {
-                case 10:
-                    bgcolor = "#808080";
-                    fontColor = "#ffffff";
-                    break;
-                case 20:
-                    bgcolor = "#4040c0";
-                    fontColor = "#ffffff";
-                    break;
-                case 30:
-                    bgcolor = "#40c040";
-                    fontColor = "#ffffff";
-                    break;
-                case 40:
-                    bgcolor = "#c0c040";
-                    fontColor = "#ffffff";
-                    break;
-                case 45:
-                    bgcolor = "#c0a040";
-                    fontColor = "#ffffff";
-                    break;
-                case 50:
-                    bgcolor = "#c08040";
-                    fontColor = "#ffffff";
-                    break;
-                case 55:
-                    bgcolor = "#c04040";
-                    fontColor = "#ffffff";
-                    break;
-                case 60:
-                    bgcolor = "#a04040";
-                    fontColor = "#ffffff";
-                    break;
-                case 70:
-                    bgcolor = "#804080";
-                    fontColor = "#ffffff";
-                    break;
+    //         switch (REPORT.maxScale) {
+    //             case 10:
+    //                 bgcolor = "#808080";
+    //                 fontColor = "#ffffff";
+    //                 break;
+    //             case 20:
+    //                 bgcolor = "#4040c0";
+    //                 fontColor = "#ffffff";
+    //                 break;
+    //             case 30:
+    //                 bgcolor = "#40c040";
+    //                 fontColor = "#ffffff";
+    //                 break;
+    //             case 40:
+    //                 bgcolor = "#c0c040";
+    //                 fontColor = "#ffffff";
+    //                 break;
+    //             case 45:
+    //                 bgcolor = "#c0a040";
+    //                 fontColor = "#ffffff";
+    //                 break;
+    //             case 50:
+    //                 bgcolor = "#c08040";
+    //                 fontColor = "#ffffff";
+    //                 break;
+    //             case 55:
+    //                 bgcolor = "#c04040";
+    //                 fontColor = "#ffffff";
+    //                 break;
+    //             case 60:
+    //                 bgcolor = "#a04040";
+    //                 fontColor = "#ffffff";
+    //                 break;
+    //             case 70:
+    //                 bgcolor = "#804080";
+    //                 fontColor = "#ffffff";
+    //                 break;
 
-                default:
-                    bgcolor = "#8080c0";
-                    fontColor = "#ffffff";
-                    break;
-            }
+    //             default:
+    //                 bgcolor = "#8080c0";
+    //                 fontColor = "#ffffff";
+    //                 break;
+    //         }
 
-            if (REPORT.isCancel) {
-                bgcolor = "#7f7fc0";
-                fontColor = "#010101";
-            }
+    //         if (REPORT.isCancel) {
+    //             bgcolor = "#7f7fc0";
+    //             fontColor = "#010101";
+    //         }
 
-            if (REPORT.isWarning) {
-                REPORT.type = "警報";
-            } else {
-                REPORT.type = "";
-            }
+    //         if (REPORT.isWarning) {
+    //             REPORT.type = "警報";
+    //         } else {
+    //             REPORT.type = "";
+    //         }
 
-            $('#eewTitle').text(`緊急地震速報 ${REPORT.type}(${REPORT.reportNumText})`);
-            $('#eewCalc').text(REPORT.maxScaleText);
-            $('#eewRegion').text(REPORT.regionName);
-            $('#eewOrigin_time').text(`発生日時: ${REPORT.originTimeText}`);
-            $('#eewMagnitude').text(`規模 ${REPORT.magnitudeText}`);
-            $('#eewDepth').text(`深さ ${REPORT.depthText}`);
+    //         $('#eewTitle').text(`緊急地震速報 ${REPORT.type}(${REPORT.reportNumText})`);
+    //         $('#eewCalc').text(REPORT.maxScaleText);
+    //         $('#eewRegion').text(REPORT.regionName);
+    //         $('#eewOrigin_time').text(`発生日時: ${REPORT.originTimeText}`);
+    //         $('#eewMagnitude').text(`規模 ${REPORT.magnitudeText}`);
+    //         $('#eewDepth').text(`深さ ${REPORT.depthText}`);
 
-            $('#eewField').css({
-                'background-color': bgcolor,
-                'color': fontColor
-            })
+    //         $('#eewField').css({
+    //             'background-color': bgcolor,
+    //             'color': fontColor
+    //         })
 
-            this.app.services.map.layerControl.startEew();
-        } else {
-            $('#eewTitle').text(`緊急地震速報は発表されていません`);
-            $('#eewCalc').text("");
-            $('#eewRegion').text("");
-            $('#eewOrigin_time').text("");
-            $('#eewMagnitude').text("");
-            $('#eewDepth').text("");
+    //         this.app.services.map.layerControl.startEew();
+    //     } else {
+    //         $('#eewTitle').text(`緊急地震速報は発表されていません`);
+    //         $('#eewCalc').text("");
+    //         $('#eewRegion').text("");
+    //         $('#eewOrigin_time').text("");
+    //         $('#eewMagnitude').text("");
+    //         $('#eewDepth').text("");
 
-            $('#eewField').css({
-                'background-color': "#404040ff",
-                'color': "#ffffffff"
-            });
+    //         $('#eewField').css({
+    //             'background-color': "#404040ff",
+    //             'color': "#ffffffff"
+    //         });
 
-            this.app.services.map.layerControl.stopEew();
-        }
-    }
+    //         this.app.services.map.layerControl.stopEew();
+    //     }
+    // }
 
 
     /**
      * 情報に応じてサウンドを再生する。
      */
-    sound() {
-        if (this.reports[this.currentId].isCancel == true) {
-            if (this.app.services.settings.sound.eewCancel == true) {
-                this.app.services.sounds.eewVoiceCancel.play();
-            }
-        } else {
-            if (!(this.app.services.settings.sound.eewAny)) { return }
+    // sound() {
+    //     if (this.reports[this.currentId].isCancel == true) {
+    //         if (this.app.services.settings.sound.eewCancel == true) {
+    //             this.app.services.sounds.eewVoiceCancel.play();
+    //         }
+    //     } else {
+    //         if (!(this.app.services.settings.sound.eewAny)) { return }
 
-            if (this.reports[this.currentId].isWarning) {
-                this.app.services.sounds.eew.play();
-                this.app.services.sounds.eewWarnVoice.play();
-            }
+    //         if (this.reports[this.currentId].isWarning) {
+    //             this.app.services.sounds.eew.play();
+    //             this.app.services.sounds.eewWarnVoice.play();
+    //         }
 
-            if (
-                (this.reports[this.currentId].maxScale !== this.reports[this.currentId].maxScaleLast) ||
-                (this.currentId !== this.currentIdLast)
-            ) {
+    //         if (
+    //             (this.reports[this.currentId].maxScale !== this.reports[this.currentId].maxScaleLast) ||
+    //             (this.currentId !== this.currentIdLast)
+    //         ) {
 
-                switch (this.reports[this.currentId].maxScale) {
-                    case 10:
-                        this.app.services.sounds.eewVoice1.play();
-                        break;
+    //             switch (this.reports[this.currentId].maxScale) {
+    //                 case 10:
+    //                     this.app.services.sounds.eewVoice1.play();
+    //                     break;
 
-                    case 20:
-                        this.app.services.sounds.eewVoice2.play();
-                        break;
+    //                 case 20:
+    //                     this.app.services.sounds.eewVoice2.play();
+    //                     break;
 
-                    case 30:
-                        this.app.services.sounds.eewVoice3.play();
-                        break;
+    //                 case 30:
+    //                     this.app.services.sounds.eewVoice3.play();
+    //                     break;
 
-                    case 40:
-                        this.app.services.sounds.eewVoice4.play();
-                        break;
+    //                 case 40:
+    //                     this.app.services.sounds.eewVoice4.play();
+    //                     break;
 
-                    case 45:
-                        this.app.services.sounds.eewVoice5.play();
-                        break;
+    //                 case 45:
+    //                     this.app.services.sounds.eewVoice5.play();
+    //                     break;
 
-                    case 50:
-                        this.app.services.sounds.eewVoice6.play();
-                        break;
+    //                 case 50:
+    //                     this.app.services.sounds.eewVoice6.play();
+    //                     break;
 
-                    case 55:
-                        this.app.services.sounds.eewVoice7.play();
-                        break;
+    //                 case 55:
+    //                     this.app.services.sounds.eewVoice7.play();
+    //                     break;
 
-                    case 60:
-                        this.app.services.sounds.eewVoice8.play();
-                        break;
+    //                 case 60:
+    //                     this.app.services.sounds.eewVoice8.play();
+    //                     break;
 
-                    case 70:
-                        this.app.services.sounds.eewVoice9.play();
-                        break;
+    //                 case 70:
+    //                     this.app.services.sounds.eewVoice9.play();
+    //                     break;
 
-                    default:
-                        break;
-                }
-            }
-        }
-    }
+    //                 default:
+    //                     break;
+    //             }
+    //         }
+    //     }
+    // }
 
 
     /**
-     * 警報画面の表示を更新する。
+     * 警報画面の表示を更新する
+     * 
+     * @returns {void}
      */
     updateWarn() {
         this.warnAreas.forEach(area => {
@@ -347,7 +432,9 @@ export class Eew extends Service {
 
 
     /**
-     * 警報画面を表示する。
+     * 警報画面を表示する
+     * 
+     * @returns {void}
      */
     displayWarn() {
         if (!this.app.services.settings.display.showWarn) { return; }
@@ -357,7 +444,9 @@ export class Eew extends Service {
 
 
     /**
-     * 警報画面を非表示する。
+     * 警報画面を非表示する
+     * 
+     * @returns {void}
      */
     hideWarn() {
         this.warnElement.classList.remove("active");
@@ -365,7 +454,9 @@ export class Eew extends Service {
 
 
     /**
-     * すべての緊急地震速報イベントを終了する。
+     * すべての緊急地震速報イベントを終了する
+     * 
+     * @returns {void}
      */
     end() {
         this.isEew = false;
@@ -374,7 +465,9 @@ export class Eew extends Service {
     }
 
     /**
-     * 緊急地震速報（警報）イベントを終了する。
+     * 緊急地震速報（警報）イベントを終了する
+     * 
+     * @returns {void}
     */
     endWarn() {
         this.hideWarn();
@@ -384,7 +477,10 @@ export class Eew extends Service {
 
 
     /**
-     * 文字列の末尾に都府県を付与する。
+     * 文字列の末尾に都府県を付与する
+     * 
+     * @param {string} string
+     * @returns {string}
      */
     addPref(string) {
         switch (string) {
@@ -407,7 +503,10 @@ export class Eew extends Service {
 
 
     /**
-     * 文字列の末尾から都府県を削除する。
+     * 文字列の末尾から都府県を削除する
+     * 
+     * @param {string} string
+     * @returns {string}
      */
     removePref(string) {
         switch (string) {
@@ -430,7 +529,10 @@ export class Eew extends Service {
 
 
     /**
-     * 文字列の末尾から市区町村を削除する。
+     * 文字列の末尾から市区町村を削除する
+     * 
+     * @param {string} string
+     * @returns {string}
      */
     removeCity(string) {
         string = string.replace("市", "");
@@ -442,7 +544,10 @@ export class Eew extends Service {
 
 
     /**
-     * P2P地震情報の震度値を文字列に変換する。
+     * P2P地震情報の震度値を文字列に変換する
+     * 
+     * @param {number} value
+     * @returns {string}
      */
     parseScale(value) {
         switch (value) {
@@ -464,29 +569,31 @@ export class Eew extends Service {
 
 
     /**
-     * プッシュ通知を送信する。
+     * プッシュ通知を送信する
+     * 
+     * @returns {void}
      */
-    push() {
-        if (this.reports[this.currentId].reportNum === this.reports[this.currentId].reportNumLast || this.reports[this.currentId].isWarning) { return }
+    // push() {
+    //     if (this.reports[this.currentId].reportNum === this.reports[this.currentId].reportNumLast || this.reports[this.currentId].isWarning) { return }
 
-        try {
-            if (this.reports[this.currentId].isCancel) {
-                this.app.services.pushNotify.notify(
-                    `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
-                    {
-                        body: "先程の緊急地震速報は取り消されました。"
-                    }
-                );
-            } else {
-                this.app.services.pushNotify.notify(
-                    `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
-                    {
-                        body: `${this.reports[this.currentId].regionName}で地震発生。予想最大震度は${this.reports[this.currentId].maxScaleText}です。`
-                    }
-                )
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    //     try {
+    //         if (this.reports[this.currentId].isCancel) {
+    //             this.app.services.pushNotify.notify(
+    //                 `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
+    //                 {
+    //                     body: "先程の緊急地震速報は取り消されました。"
+    //                 }
+    //             );
+    //         } else {
+    //             this.app.services.pushNotify.notify(
+    //                 `緊急地震速報 ${this.reports[this.currentId].type}(${this.reports[this.currentId].reportNumText})`,
+    //                 {
+    //                     body: `${this.reports[this.currentId].regionName}で地震発生。予想最大震度は${this.reports[this.currentId].maxScaleText}です。`
+    //                 }
+    //             )
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // }
 }

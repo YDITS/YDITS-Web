@@ -20,7 +20,7 @@ export class JmaDataFeed extends Service {
     constructor(app) {
         super(app, {
             name: "jmaDataFeed",
-            description: "気象庁防災情報電文を扱うサービスです。",
+            description: "気象庁防災情報電文を扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
