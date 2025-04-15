@@ -9,6 +9,7 @@
  */
 
 import { Service } from "../../../service.mjs";
+import { Window } from "../../ydits-web.mjs";
 
 /**
  * 設定を扱う。
@@ -435,6 +436,27 @@ export class Settings extends Service {
                 document.querySelector("#settingsDebugRayout .toggle-switch").classList.remove("on");
                 this.hideDebugRayout();
             }
+        });
+
+        // ----- Create New Window ----- //
+        document.getElementById("createNewWindowButton").addEventListener("click", () => {
+            new Window({
+                type: Window.types.default,
+                id: `window_${Date.now()}`,
+                title: `テストウィンドウ`,
+                content: `これはウィンドウ作成のテストです。このウィンドウは移動できます。`,
+                create: true,
+            });
+        });
+
+        document.getElementById("createNewErrorWindowButton").addEventListener("click", () => {
+            new Window({
+                type: Window.types.error,
+                id: `window_${Date.now()}`,
+                title: `テストウィンドウ - エラー`,
+                content: `これはエラーウィンドウ作成のテストです。このウィンドウは移動できます。`,
+                create: true,
+            });
         });
 
         // ----- FPS ----- //
