@@ -14,6 +14,9 @@ import { Service } from "../../../service.mjs";
  * P2P地震情報 APIを扱う。
  */
 export class P2pquake extends Service {
+    /**
+     * @param {App} app 
+     */
     constructor(app) {
         super(app, {
             name: "p2pquake",
@@ -55,7 +58,7 @@ export class P2pquake extends Service {
      */
     socket = null;
 
-    
+
     /**
      * WebSocket の再接続試行回数
      * 
@@ -63,7 +66,7 @@ export class P2pquake extends Service {
      */
     socketRetryCount = 0;
 
-    
+
     /**
      * エラーが発生しているかどうか
      * 
@@ -71,12 +74,44 @@ export class P2pquake extends Service {
      */
     isError = false;
 
+
+    /**
+     * キープアライブの間隔
+     * 
+     * @type {number}
+     */
+    static KEEP_ALIVE_INTERVAL = 20 * 1000;
+
+
+    /**
+     * 緊急地震速報のURL
+     * 
+     * @type {URL}
+     */
     static urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1");
-    static urlRestEqinfo = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
-    static urlSocket = new URL("wss://api.p2pquake.net/v2/ws");
 
     // DEBUG
     // static urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1&offset=16");
+
+
+    /**
+     * 地震情報のURL
+     * 
+     * @type {URL}
+     */
+    static urlRestEqinfo = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
+
+    // DEBUG
+    // static urlRestEqinfo = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100&offset=16");
+
+    /**
+     * WebSocketのURL
+     *
+     * @type {URL}
+     */
+    static urlSocket = new URL("wss://api.p2pquake.net/v2/ws");
+
+    // DEBUG
     // static urlSocket = new URL("wss://api-realtime-sandbox.p2pquake.net/v2/ws");
 
 
@@ -214,6 +249,12 @@ export class P2pquake extends Service {
     }
 
 
+    /**
+     * 地震情報をプッシュする
+     * 
+     * @param {number} code 
+     * @returns {void}
+     */
     push(code) {
         try {
             switch (code) {
@@ -305,6 +346,11 @@ export class P2pquake extends Service {
     }
 
 
+    /**
+     * 初期化する
+     * 
+     * @returns {void}
+     */
     initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
@@ -524,40 +570,58 @@ export class P2pquake extends Service {
     }
 
 
+    /**
+     * WebSocket を開始する
+     * 
+     * @returns {void}
+     */
     startSocket() {
         if (!navigator.onLine) { return }
+        if (this.socket instanceof WebSocket) { return }
+
         this.socket = new WebSocket(P2pquake.urlSocket);
-        this.socket.addEventListener("open", (event) => this.socketOpened(event));
-        this.socket.addEventListener("close", (event) => this.socketClosed(event));
-        this.socket.addEventListener("message", (event) => this.socketGotMessage(event));
-        this.socket.addEventListener("error", (event) => this.socketError(event));
+        this.socket.addEventListener("open", (event) => this.#socketOpened(event));
+        this.socket.addEventListener("close", (event) => this.#socketClosed(event));
+        this.socket.addEventListener("message", (event) => this.#socketGotMessage(event));
+        this.socket.addEventListener("error", (event) => this.#socketError(event));
     }
 
 
-    socketOpened(event) {
+    /**
+     * WebSocket に接続したときの処理
+     * 
+     * @param {Event} event 
+     * @returns {void}
+     */
+    #socketOpened(event) {
         this.app.services.debugLogs.add(
             "network",
             `[${this.name}]`,
             "Connected to p2pquake WebSocket."
         );
 
-        this.isError = false;
-
-        this.keepAlive();
+        this.#startKeepAliveTimer();
 
         if (this.socketRetryCount > 0) {
             this.app.services.notify.show(
                 "message",
                 "WebSocket再接続",
-                "P2P地震情報 (p2pquake.net) に再接続しました。"
+                "P2P地震情報 WebSocket に再接続しました。"
             );
         }
 
+        this.isError = false;
         this.socketRetryCount = 0;
     }
 
 
-    socketClosed(event) {
+    /**
+     * WebSocket が切断されたときの処理
+     * 
+     * @param {CloseEvent} event 
+     * @returns {void}
+     */
+    #socketClosed(event) {
         this.socket = null;
 
         this.app.services.debugLogs.add(
@@ -572,7 +636,7 @@ export class P2pquake extends Service {
             this.app.services.notify.show(
                 "error",
                 "WebSocket切断",
-                "P2P地震情報 (p2pquake.net) から切断されました。再接続を試行します。"
+                "P2P地震情報 WebSocket から切断しました。再接続試行中..."
             );
         }
 
@@ -590,7 +654,13 @@ export class P2pquake extends Service {
     }
 
 
-    socketGotMessage(message) {
+    /**
+     * WebSocket のメッセージを受信したときの処理
+     * 
+     * @param {MessageEvent<any>} message 
+     * @returns {void}
+     */
+    #socketGotMessage(message) {
         try {
             const DATA = JSON.parse(message.data);
 
@@ -600,11 +670,11 @@ export class P2pquake extends Service {
 
             switch (DATA["code"]) {
                 case 551:
-                    this.whenEqinfo(DATA);
+                    this.#whenEqinfo(DATA);
                     break;
 
                 case 556:
-                    this.whenEew(DATA);
+                    this.#whenEew(DATA);
                     break;
 
                 default:
@@ -616,7 +686,13 @@ export class P2pquake extends Service {
     }
 
 
-    whenEew(data) {
+    /**
+     * EEW 情報を処理する
+     * 
+     * @param {Object} data 
+     * @returns {void}
+     */
+    #whenEew(data) {
         if (data["test"]) { return }
 
         if (this.app.services.eew.reports[data._id] === undefined) {
@@ -710,7 +786,13 @@ export class P2pquake extends Service {
     }
 
 
-    whenEqinfo(data) {
+    /**
+     * 地震情報を処理する
+     * 
+     * @param {Object} data 
+     * @returns {void}
+     */
+    #whenEqinfo(data) {
         this.app.services.eqinfo.type = data['issue']['type'];
 
         if (this.app.services.eqinfo.type in P2pquake.typeToJp) {
@@ -795,7 +877,13 @@ export class P2pquake extends Service {
     }
 
 
-    socketError(event) {
+    /**
+     * WebSocket のエラーが発生した場合の処理
+     * 
+     * @param {Event} event 
+     * @returns {void}
+     */
+    #socketError(event) {
         this.app.services.debugLogs.add(
             "error",
             `[${this.name}]`,
@@ -808,13 +896,13 @@ export class P2pquake extends Service {
             this.app.services.notify.show(
                 "error",
                 "エラー",
-                "P2P地震情報 (p2pquake.net) に接続できません。10秒後に再接続を試行します。"
+                "P2P地震情報 WebSocket 接続エラー - 再接続試行中..."
             );
         } else {
             this.app.services.notify.show(
                 "error",
                 "エラー",
-                "P2P地震情報 (p2pquake.net) に接続できませんでした。"
+                "P2P地震情報 WebSocket 接続エラー"
             );
         }
 
@@ -822,17 +910,31 @@ export class P2pquake extends Service {
     }
 
 
-    keepAlive() {
-        const KEEP_ALIVE_INTERVAL_ID = setInterval(
-            () => {
-                if (this.socket) {
-                    this.socket.send('ping');
-                } else {
-                    clearInterval(KEEP_ALIVE_INTERVAL_ID);
-                }
-            },
-            // Set the interval to 20 seconds to prevent the service worker from becoming inactive.
-            20 * 1000
+    /**
+     * キープアライブのタイマーを開始する
+     * 
+     * @returns {void}
+     */
+    #startKeepAliveTimer() {
+        const INTERVAL_ID = setInterval(
+            () => this.#keepAlive(INTERVAL_ID),
+            P2pquake.KEEP_ALIVE_INTERVAL
         );
+    }
+
+
+    /**
+     * キープアライブを行う
+     * 
+     * @param {number} intervalId 
+     * @returns {void}
+     */
+    #keepAlive(intervalId) {
+        if (!(this.socket instanceof WebSocket)) {
+            clearInterval(intervalId);
+            return;
+        }
+
+        this.socket.send('ping');
     }
 }
