@@ -12,6 +12,7 @@ import { FirebaseApp } from "../firebase/app.mjs";
 import { Version } from "../version.mjs";
 import { Datetime } from "./services/modules/datetime.mjs";
 import { DebugLogs } from "./services/modules/debug-logs.mjs";
+import { ElementsManager } from "./services/modules/elements.mjs";
 import { Notify } from "./services/modules/notify.mjs";
 import { GeoLocation } from "./services/modules/geolocation.mjs";
 import { Eew } from "./services/eew/eew.mjs";
@@ -24,7 +25,6 @@ import { Api } from "./services/api/api.mjs";
 import { Settings } from "./services/modules/settings.mjs";
 import { Map } from "./services/map/map.mjs";
 
-
 /**
  * YDITS for Web
  */
@@ -32,7 +32,7 @@ export class YditsWeb extends FirebaseApp {
     constructor() {
         super({
             name: "YDITS for Web",
-            description: "『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。",
+            description: "『防災情報をすぐに確認できるWebアプリケーション。",
             version: new Version(3, 18, 0, Version.LEVELS.beta),
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
@@ -63,9 +63,6 @@ export class YditsWeb extends FirebaseApp {
 
         this.buildEvent = new Event("build");
         document.addEventListener("build", async () => await this.#onBuild());
-
-        this.clockElement = document.getElementById("clock");
-        this.fpsElement = document.getElementById("fps");
 
         this.#initializeServices();
         this.#registerServices();
@@ -123,7 +120,7 @@ export class YditsWeb extends FirebaseApp {
      * @returns {void}
      */
     #onNetworkDisconnected() {
-        document.getElementById("statusLamp").style.backgroundColor = "#ff4040";
+        this.services.elementsManager.getElementById("statusLamp").style.backgroundColor = "#ff4040";
         this.services.debugLogs.add("error", `[${this.name}]`, "Network disconnected.");
         this.services.notify.show("error", "ネットワーク接続なし", "ネットワークが切断されました。");
         this.services.api.wolfx.disconnect();
@@ -182,6 +179,33 @@ export class YditsWeb extends FirebaseApp {
      */
     #registerServices() {
         try {
+            this.register(ElementsManager);
+            this.services.elementsManager.addElementsById([
+                "clock",
+                "statusLamp",
+                "fps",
+                "initializeTime",
+                "betaBanner",
+                "menuOpenEqhistory",
+                "menuBtn",
+                "eqHistoryBtn",
+                "homeBtn",
+                "popup",
+                "menu",
+                "menuCloseButton",
+                "menuVersion",
+                "menuJmaDataFeed",
+                "menuSettings",
+                "menuLicense",
+                "menuHelp",
+                "control",
+                "eqHistoryField",
+                "mapWrapper",
+                "settings",
+                "license",
+                "licenseCloseButton",
+            ]);
+
             this.register(Notify);
             this.register(Eew);
             this.register(Eqinfo);
@@ -254,7 +278,7 @@ export class YditsWeb extends FirebaseApp {
         await this.#initialize();
 
         if (this.version.level === Version.LEVELS.beta) {
-            document.getElementById("betaBanner").classList.add("active");
+            this.services.elementsManager.getElementById("betaBanner").classList.add("active");
         }
 
         this.upTime = performance.now();
@@ -264,7 +288,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version.string}. Initialize time: ${Math.round(this.initializeTime)}ms.`);
         this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
 
-        document.getElementById("initializeTime").textContent = `${Math.round(this.initializeTime)}ms`;
+        this.services.elementsManager.getElementById("initializeTime").textContent = `${Math.round(this.initializeTime)}ms`;
 
         this.#startIntervals();
 
@@ -313,7 +337,7 @@ export class YditsWeb extends FirebaseApp {
     async #initUI() {
         await this.#initMenu();
         await this.#initLicense();
-        this.clockElement.textContent = "----/--/-- --:--:--";
+        this.services.elementsManager.getElementById("clock").textContent = "----/--/-- --:--:--";
     }
 
 
@@ -324,9 +348,9 @@ export class YditsWeb extends FirebaseApp {
      * @returns {Promise<void>}
      */
     async #initMenu() {
-        document.querySelector("#menu .version").textContent = `Ver ${this.version.string}`;
+        this.services.elementsManager.getElementById("menuVersion").textContent = `Ver ${this.version.string}`;
 
-        document.getElementById("menuOpenEqhistory").addEventListener("click", () => {
+        this.services.elementsManager.getElementById("menuOpenEqhistory").addEventListener("click", () => {
             window.open(
                 '/eqhistory/',
                 'popupWindow',
@@ -334,23 +358,23 @@ export class YditsWeb extends FirebaseApp {
             );
         });
 
-        document.getElementById("menuBtn").addEventListener("click", () => {
-            document.getElementById("popup").classList.add("active");
-            document.getElementById("menu").classList.add("active");
+        this.services.elementsManager.getElementById("menuBtn").addEventListener("click", () => {
+            this.services.elementsManager.getElementById("popup").classList.add("active");
+            this.services.elementsManager.getElementById("menu").classList.add("active");
         });
 
-        document.querySelector("#menu .closeBtn").addEventListener("click", () => {
-            document.getElementById("popup").classList.remove("active");
-            document.getElementById("menu").classList.remove("active");
+        this.services.elementsManager.getElementById("menuCloseButton").addEventListener("click", () => {
+            this.services.elementsManager.getElementById("popup").classList.remove("active");
+            this.services.elementsManager.getElementById("menu").classList.remove("active");
         });
 
-        document.getElementById("eqHistoryBtn").addEventListener("click", () => {
-            document.getElementById("control").classList.toggle("mobile");
-            document.getElementById("eqHistoryField").classList.toggle("mobile");
-            document.getElementById("mapWrapper").classList.toggle("mobile");
+        this.services.elementsManager.getElementById("eqHistoryBtn").addEventListener("click", () => {
+            this.services.elementsManager.getElementById("control").classList.toggle("mobile");
+            this.services.elementsManager.getElementById("eqHistoryField").classList.toggle("mobile");
+            this.services.elementsManager.getElementById("mapWrapper").classList.toggle("mobile");
         });
 
-        document.getElementById("homeBtn").addEventListener("click", () => {
+        this.services.elementsManager.getElementById("homeBtn").addEventListener("click", () => {
             this.services.map.setViewHome();
         });
 
@@ -358,15 +382,15 @@ export class YditsWeb extends FirebaseApp {
         //     document.getElementById("jmaDataFeed").classList.add("active");
         // });
 
-        document.getElementById("menuSettings").addEventListener("click", () => {
-            document.getElementById("settings").classList.add("active");
+        this.services.elementsManager.getElementById("menuSettings").addEventListener("click", () => {
+            this.services.elementsManager.getElementById("settings").classList.add("active");
         });
 
-        document.getElementById("menuLicense").addEventListener("click", () => {
-            document.getElementById("license").classList.add("active");
+        this.services.elementsManager.getElementById("menuLicense").addEventListener("click", () => {
+            this.services.elementsManager.getElementById("license").classList.add("active");
         });
 
-        document.getElementById("menuHelp").addEventListener("click", () => {
+        this.services.elementsManager.getElementById("menuHelp").addEventListener("click", () => {
             window.open(
                 '/help/',
                 'popupWindow',
@@ -383,8 +407,8 @@ export class YditsWeb extends FirebaseApp {
      * @returns {Promise<void>}
      */
     async #initLicense() {
-        document.querySelector("#license .closeBtn").addEventListener("click", () => {
-            document.getElementById("license").classList.remove("active");
+        this.services.elementsManager.getElementById("licenseCloseButton").addEventListener("click", () => {
+            this.services.elementsManager.getElementById("license").classList.remove("active");
         });
     }
 
@@ -432,8 +456,8 @@ export class YditsWeb extends FirebaseApp {
     #displayFps(timeNow) {
         if (timeNow - this.#lastFpsUpdateTime >= this.services.settings.debug.fpsMs) {
             const color = this.#fps <= 15 ? "#ff4040ff" : "#202020ff";
-            this.fpsElement.textContent = `${Math.round(this.#fps)}FPS`;
-            this.fpsElement.style.backgroundColor = color;
+            this.services.elementsManager.getElementById("fps").textContent = `${Math.round(this.#fps)}FPS`;
+            this.services.elementsManager.getElementById("fps").style.backgroundColor = color;
             this.#lastFpsUpdateTime = timeNow;
         }
     }
@@ -515,7 +539,7 @@ export class YditsWeb extends FirebaseApp {
             ? this.#formatDateTime(time)
             : "----/--/-- --:--:--";
 
-        this.clockElement.textContent = clockText;
+        this.services.elementsManager.getElementById("clock").textContent = clockText;
     }
 
 
@@ -666,13 +690,48 @@ export class Window {
     }
 
 
+    /**
+     * ウィンドウの要素
+     * 
+     * @type {HTMLElement | null}
+     */
+    #element = null;
+
+
+    /**
+     * ウィンドウをドラッグ中かどうか
+     * 
+     * @type {boolean}
+     */
+    #isDragging = false;
+
+
+    /**
+     * ドラッグ開始時のオフセットX座標
+     * 
+     * @type {number}
+     */
+    #offsetX = 0;
+
+
+    /**
+     * ドラッグ開始時のオフセットY座標
+     * 
+     * @type {number}
+     */
+    #offsetY = 0;
+
+
     get element() {
-        return document.getElementById(this.id);
+        if (!(this.#element instanceof HTMLElement)) {
+            this.#element = document.getElementById(this.id);
+        }
+
+        return this.#element;
     }
 
 
     /**
-     * @readonly
      * @type {Object<string, string>}
      */
     static types = {
@@ -683,7 +742,6 @@ export class Window {
 
 
     /**
-     * @readonly
      * @type {Object<string, string>}
      */
     static windowTypeToColor = {
@@ -722,6 +780,24 @@ export class Window {
 
         dialogElement.querySelector(".navBar").style.backgroundColor = this.color;
         dialogElement.querySelector(".close").addEventListener("click", () => this.close());
+
+        dialogElement.querySelector(".navBar").addEventListener("mousedown", (event) => {
+            this.#isDragging = true;
+            this.#offsetX = event.clientX - dialogElement.getBoundingClientRect().left;
+            this.#offsetY = event.clientY - dialogElement.getBoundingClientRect().top;
+        });
+
+        document.addEventListener("mousemove", (event) => {
+            if (!this.#isDragging) return;
+            const x = event.clientX - this.#offsetX;
+            const y = event.clientY - this.#offsetY;
+            dialogElement.style.left = `${x}px`;
+            dialogElement.style.top = `${y}px`;
+        });
+
+        document.addEventListener("mouseup", () => {
+            this.#isDragging = false;
+        });
 
         document.body.append(dialogElement);
     }
