@@ -14,13 +14,16 @@ import { Colors } from "../modules/colors.mjs";
 
 
 /**
- * Wolfx API.
+ * Wolfx API
  */
 export class Wolfx extends Service {
+    /**
+     * @param {App} app 
+     */
     constructor(app) {
         super(app, {
             name: "wolfx",
-            description: "Wolfx API を扱うサービスです。",
+            description: "Wolfx API を扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
@@ -38,13 +41,31 @@ export class Wolfx extends Service {
     }
 
 
-    lastEventId = -1;
-    lastMaxIntensity = "";
-    lastSerial = -1;
+    /**
+     * 最後のイベントID
+     * @type {number | null}
+     */
+    lastEventId = null;
 
 
     /**
-     * Elements をイニシャライズする。
+     * 最後の最大震度
+     * @type {string | null}
+     */
+    lastMaxIntensity = null;
+
+
+    /**
+     * 最後のシリアル
+     * @type {number | null}
+     */
+    lastSerial = null;
+
+
+    /**
+     * Elements をイニシャライズする
+     * 
+     * @returns {void}
      */
     initializeElements() {
         this.eewFieldElement = document.getElementById("eewField");
@@ -59,7 +80,9 @@ export class Wolfx extends Service {
 
 
     /**
-     * JMA EEW をRESTから取得する。
+     * JMA EEW をRESTから取得する
+     * 
+     * @returns {Promise<void>}
      */
     async fetch() {
         const rest = new WolfxJmaEewRest();
@@ -69,7 +92,9 @@ export class Wolfx extends Service {
 
 
     /**
-     * JMA EEW Socket に接続する。
+     * JMA EEW Socket に接続する
+     * 
+     * @returns {void}
      */
     connect() {
         try {
@@ -89,7 +114,9 @@ export class Wolfx extends Service {
 
 
     /**
-     * JMA EEW Socket から切断する。
+     * JMA EEW Socket から切断する
+     * 
+     * @returns {void}
      */
     disconnect() {
         try {
@@ -101,9 +128,13 @@ export class Wolfx extends Service {
 
 
     /**
-     * JMA EEW Socket オープン時の処理。
+     * JMA EEW Socket オープン時の処理
+     * 
+     * @param {Event} event
+     * @param {boolean} isRetried 
+     * @returns {void}
      */
-    onJmaEewSocketOpened(isRetried) {
+    onJmaEewSocketOpened(event, isRetried) {
         this.app.services.debugLogs.add(
             "network",
             `[${this.name}]`,
@@ -114,16 +145,19 @@ export class Wolfx extends Service {
             this.app.services.notify.show(
                 "message",
                 "WebSocket再接続",
-                "Wolfx JMA EEW に再接続しました。"
+                "Wolfx JMA EEW WebSocket に再接続しました。"
             );
         }
     }
 
 
     /**
-     * JMA EEW Socket クローズ時の処理。
+     * JMA EEW Socket クローズ時の処理
+     * 
+     * @param {CloseEvent} event
+     * @returns {void}
      */
-    onJmaEewSocketClosed() {
+    onJmaEewSocketClosed(event) {
         this.app.services.debugLogs.add(
             "network",
             `[${this.name}]`,
@@ -135,24 +169,31 @@ export class Wolfx extends Service {
         this.app.services.notify.show(
             "message",
             "WebSocket切断",
-            "Wolfx JMA EEW から切断されました。再接続を試行します。"
+            "Wolfx JMA EEW WebSocket から切断しました。再接続試行中..."
         );
     }
 
 
     /**
-    * JMA EEW Socket 情報更新時の処理。
+    * JMA EEW Socket 情報更新時の処理
+    * 
+    * @param {MessageEvent<any>} event
+    * @param {WolfxJmaEewData} data 
+    * @returns {void}
     */
-    onJmaEewSocketUpdated(data) {
+    onJmaEewSocketUpdated(event, data) {
         if (!(data instanceof WolfxJmaEewData)) return;
         this.jmaEewData = data;
     }
 
 
     /**
-     * JMA EEW Socket エラー時の処理。
+     * JMA EEW Socket エラー時の処理
+     * 
+     * @param {Event} event
+     * @returns {void}
      */
-    onJmaEewSocketError() {
+    onJmaEewSocketError(event) {
         this.app.services.debugLogs.add(
             "error",
             `[${this.name}]`,
@@ -162,10 +203,13 @@ export class Wolfx extends Service {
 
 
     /**
-     * 表示更新。
+     * 表示更新
+     * 
+     * @param {WolfxJmaEewData} data 
+     * @returns {void}
      */
     update(data) {
-        if (!data && !(data instanceof WolfxJmaEewData)) { return; }
+        if (!(data instanceof WolfxJmaEewData)) return;
 
         const nowTime = this.app.services.datetime.gmt;
         const isValid = data.isValid(nowTime);
@@ -179,7 +223,9 @@ export class Wolfx extends Service {
 
 
     /**
-     * EEW発表時。
+     * EEW発表時
+     * 
+     * @returns {void}
      */
     onEew() {
         const scale = Intensity.wolfxToYdits[this.jmaEewData.maxIntensity];
@@ -212,7 +258,9 @@ export class Wolfx extends Service {
 
 
     /**
-     * EEW未発表時。
+     * EEW未発表時
+     * 
+     * @returns {void}
      */
     onNotEew() {
         this.eewTitleElement.textContent = `緊急地震速報は発表されていません`;
@@ -231,7 +279,9 @@ export class Wolfx extends Service {
 
 
     /**
-     * サウンドを再生する。
+     * サウンドを再生する
+     * 
+     * @returns {void}
      */
     sound() {
         if (this.jmaEewData.isCancel) {
@@ -300,7 +350,9 @@ export class Wolfx extends Service {
 
 
     /**
-     * プッシュ通知を送信する。
+     * プッシュ通知を送信する
+     * 
+     * @returns {void}
      */
     push() {
         if (this.jmaEewData.serial === this.lastSerial) { return }
@@ -336,15 +388,15 @@ export class Wolfx extends Service {
 
 
 /**
- * Woldfx JMA EEW REST.
+ * Woldfx JMA EEW REST
  */
 export class WolfxJmaEewRest {
     endpoint = new URL("https://api.wolfx.jp/jma_eew.json");
 
 
     /**
-     * エンドポイントから情報を取得する。
-     * @returns {WolfxJmaEewData} - 取得した Wolfx JMA EEW のデータクラス。
+     * エンドポイントから情報を取得する
+     * @returns {Promise<WolfxJmaEewData>} - 取得した Wolfx JMA EEW のデータクラス
      */
     async fetch() {
         const response = await fetch(this.endpoint);
@@ -359,12 +411,12 @@ export class WolfxJmaEewRest {
 
 
 /**
- * Woldfx JMA EEW WebSocket.
+ * Woldfx JMA EEW WebSocket
  */
 export class WolfxJmaEewSocket {
     /**
      * @param {Object} options
-     * @param {Object} callbacks - 各コールバック関数のオブジェクト。
+     * @param {Object} callbacks - 各コールバック関数のオブジェクト
      */
     constructor(options, callbacks) {
         if (!callbacks.onOpened) {
@@ -386,7 +438,7 @@ export class WolfxJmaEewSocket {
         this.callbacks = callbacks;
 
         /**
-         * WebSocketクローズ時に再接続するかどうか。
+         * WebSocketクローズ時に再接続するかどうか
          * @type {bool}
          */
         this.autoReconnect = options.autoReconnect || true;
@@ -400,21 +452,24 @@ export class WolfxJmaEewSocket {
 
 
     /**
-     * エンドポイント。
+     * エンドポイント
      * @type {URL}
      */
     endpoint = new URL("wss://ws-api.wolfx.jp/jma_eew");
 
 
     /**
-     * 接続中に取得したデータリスト。
+     * 接続中に取得したデータリスト
      * @type {List}
      */
     data = [];
 
 
     /**
-     * エンドポイントへWebSocket接続を開始する。
+     * エンドポイントへWebSocket接続を開始する
+     * 
+     * @param {URL} endpoint
+     * @returns {Promise<void>}
      */
     async connect(endpoint) {
         try {
@@ -435,7 +490,7 @@ export class WolfxJmaEewSocket {
             "close",
             (event) => this.onClosed(
                 event,
-                () => this.callbacks.onClosed()
+                (event) => this.callbacks.onClosed(event)
             )
         );
 
@@ -443,22 +498,24 @@ export class WolfxJmaEewSocket {
             "message",
             (event) => this.onMessage(
                 event,
-                (data) => this.callbacks.onUpdated(data)
+                (event, data) => this.callbacks.onUpdated(event, data)
             )
         );
 
         this.socket.addEventListener(
             "error",
-            (event) => this.socketError(
+            (event) => this.onError(
                 event,
-                () => this.callbacks.onError()
+                (event) => this.callbacks.onError(event)
             )
         );
     }
 
 
     /**
-     * WebSocket接続を切断する。
+     * WebSocket接続を切断する
+     * 
+     * @returns {void}
      */
     disconnect() {
         this.socket.close();
@@ -466,25 +523,29 @@ export class WolfxJmaEewSocket {
 
 
     /**
-     * WebSocket接続がオープンした時の処理。
+     * WebSocket接続がオープンした時の処理
+     * 
      * @param {Event} event
-     * @param {Function} callback - コールバック関数。
+     * @param {Function} callback - コールバック関数
+     * @returns {void}
      */
     onOpened(event, callback) {
         let isRetried = false;
 
         if (this.socketRetryCount > 0) isRetried = true;
 
-        callback(isRetried);
+        callback(event, isRetried);
 
         this.socketRetryCount = 0;
     }
 
 
     /**
-     * WebSocket接続がクローズした時の処理。
-     * @param {Event} event
-     * @param {Function} callback - コールバック関数。
+     * WebSocket接続がクローズした時の処理
+     * 
+     * @param {CloseEvent} event
+     * @param {Function} callback - コールバック関数
+     * @returns {void}
      */
     onClosed(event, callback) {
         this.socket = null;
@@ -502,14 +563,16 @@ export class WolfxJmaEewSocket {
             );
         }
 
-        callback();
+        callback(event);
     }
 
 
     /**
-     * WebSocket接続でメッセージを受け取った時の処理。
-     * @param {Event} event
-     * @param {Function} callback - コールバック関数。
+     * WebSocket接続でメッセージを受け取った時の処理
+     * 
+     * @param {MessageEvent<any>} event
+     * @param {Function} callback - コールバック関数
+     * @returns {void}
      */
     onMessage(event, callback) {
         try {
@@ -531,7 +594,7 @@ export class WolfxJmaEewSocket {
                 throw new Error(`Unknown data type was response: ${data.type}`);
             }
 
-            callback(data);
+            callback(event, data);
         } catch (error) {
             throw new Error(`Unhandled error at onMessage: ${error}`);
         }
@@ -539,21 +602,25 @@ export class WolfxJmaEewSocket {
 
 
     /**
-     * WebSocket接続でエラーが発生した時の処理。
+     * WebSocket接続でエラーが発生した時の処理
+     * 
      * @param {Event} event
-     * @param {Function} callback - コールバック関数。
+     * @param {Function} callback - コールバック関数
+     * @returns {void}
      */
     onError(event, callback) {
-        callback();
+        callback(event);
     }
 }
 
 
 /**
- * Wolfx ハートビートパケット のデータクラス。
- * @param {JSON} jsonData - Wolfx ハートビートパケット のJSONデータクラス。
+ * Wolfx ハートビートパケット のデータクラス
  */
 export class WolfxHeartbeatData {
+    /**
+     * @param {Object<string, string>} data - Wolfx ハートビートパケット のJSONデータクラス
+     */
     constructor(data) {
         this.type = "heartbeat";
         this.ver = data["ver"] || null;
@@ -565,10 +632,12 @@ export class WolfxHeartbeatData {
 
 
 /**
- * Wolfx JMA EEW のデータクラス。
- * @param {JSON} jsonData - Wolfx JMA EEW のJSONデータクラス。
+ * Wolfx JMA EEW のデータクラス
  */
 export class WolfxJmaEewData {
+    /**
+     * @param {Object<string, boolean|number|string|Date|Object[]>} data - Wolfx JMA EEW のJSONデータクラス
+     */
     constructor(data) {
         this.type = "jma_eew";
         this.title = data["Title"] || null;
@@ -599,37 +668,59 @@ export class WolfxJmaEewData {
         this.originalText = data["OriginalText"];
     }
 
-    VALID_EEW_DURATION_SECONDS = 180;
+
+    /**
+     * 緊急地震速報が有効な時間
+     * @type {number}
+     */
+    static VALID_EEW_DURATION_SECONDS = 180;
 
 
     /**
-     * 渡された日時において、緊急地震速報が有効かどうかを検証し、結果を返す。
+     * 渡された日時において、緊急地震速報が有効かどうか
      * 発表から3分以上経過している場合は無効とする。
-     * @param {Datetime} nowTime - 検証対象の Datetime クラス。
-     * @return {bool} - 緊急地震速報が有効かどうか。
+     * 
+     * @param {Datetime} nowTime - 検証対象の Datetime クラス
+     * @return {bool} - 緊急地震速報が有効かどうか
      */
     isValid(nowTime) {
         const _nowTime = nowTime.getTime();
         const announcedTime = this.announcedTime.getTime();
-        return this.VALID_EEW_DURATION_SECONDS >= ((_nowTime - announcedTime) / 1000)
+        return WolfxJmaEewData.VALID_EEW_DURATION_SECONDS >= ((_nowTime - announcedTime) / 1000)
     }
 
 
+    /**
+     * 警報のテキスト
+     * @return {string}
+     */
     get warnText() {
         return this.isWarning ? "警報" : "予報";
     }
 
 
+    /**
+     * 報数のテキスト
+     * @return {string}
+     */
     get serialText() {
         return `第${this.serial}報`;
     }
 
 
+    /**
+     * 震源の規模のテキスト
+     * @return {string}
+     */
     get magnitudeText() {
         return `M ${this.magnitude}`;
     }
 
 
+    /**
+     * 震源の深さのテキスト
+     * @return {string}
+     */
     get depthText() {
         if (typeof this.depth === "number") {
             return `約${this.depth}km`;
@@ -640,10 +731,19 @@ export class WolfxJmaEewData {
 }
 
 
+/**
+ * Wolfx JMA EEW 警報地域のデータクラス
+*/
 class WolfxJmaEewWarnAreas {
+    /**
+     * @type {WolfxJmaEewWarnArea[]}
+     */
     areas = [];
 
 
+    /**
+     * @param {[Object<string, string|number|Date>]} areas - Wolfx JMA EEW 警報地域のJSONデータクラス
+     */
     constructor(areas = []) {
         areas.forEach(area => {
             this.areas.push(
@@ -654,7 +754,13 @@ class WolfxJmaEewWarnAreas {
 }
 
 
+/**
+ * Wolfx JMA EEW 警報地域のデータクラス
+*/
 class WolfxJmaEewWarnArea {
+    /**
+     * @param {Object<string, string|number|Date>} area - Wolfx JMA EEW 警報地域のJSONデータクラス
+     */
     constructor(area = {}) {
         this.name = typeof area["Chiiki"] === "string" ? area["Chiiki"] : "";
         this.intUpper = Number.isInteger(area["Shindo1"]) ? area["Shindo1"] : null;
@@ -665,6 +771,10 @@ class WolfxJmaEewWarnArea {
     }
 
 
+    /**
+     * 警報かどうか
+     * @return {bool}
+     */
     get isWarn() {
         if (this.type === "警報") { return true } else { return false };
     }
