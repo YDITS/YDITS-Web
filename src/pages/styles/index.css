@@ -205,8 +205,8 @@ main {
     box-sizing: border-box;
     width: 100%;
 
-    padding: 0.5rem 1rem;
-    gap: 2rem;
+    padding: 0.5rem 1.5rem;
+    gap: 1.5rem;
 
     transition: background-color 0.3s, padding-top 0.3s, padding-bottom 0.3s, font-size 0.3s;
     cursor: pointer;
