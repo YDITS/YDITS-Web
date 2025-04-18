@@ -503,132 +503,69 @@ export class Map extends Service {
      */
     update(dateNow) {
         try {
-            if (this.app.services.api.yahooKmoni.isEew) {
-                Object.keys(this.app.services.eew.reports).forEach((id) => {
-                    if (id === "undefined" || this.app.services.eew.reports[id].isWarning) { return }
+            if (!this.app.services.api.yahooKmoni.isEew) {
+                if (!this.isDisplayHrpns) this.showHrpns();
+                this.#clearEewLayers();
+                return;
+            }
 
-                    if (this.app.services.eew.currentId === id) {
-                        if (!this.app.services.eew.reports[id].isMapInitialized) {
-                            this.hideHrpns();
+            Object.keys(this.app.services.eew.reports).forEach((id) => {
+                if (id === "undefined" || this.app.services.eew.reports[id].isWarning) return;
 
-                            const sWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
-                            const pWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
-
-                            this.map.addSource(`eewRedionSource_${id}`, {
-                                type: 'geojson',
-                                data: {
-                                    type: 'FeatureCollection',
-                                    features: [
-                                        {
-                                            type: 'Feature',
-                                            geometry: {
-                                                type: 'Point',
-                                                coordinates: [0, 0],
-                                            },
-                                        },
-                                    ],
-                                },
-                            });
-
-                            this.map.addLayer({
-                                id: `eewRedion_${id}`,
-                                type: "symbol",
-                                source: `eewRedionSource_${id}`,
-                                layout: {
-                                    "icon-image": `eewRedionImage`,
-                                    "icon-size": 0.25,
-                                },
-                            });
-
-                            this.map.addSource(`eewSWaveSource_${id}`, {
-                                type: "geojson",
-                                data: sWaveCircleJSON,
-                            });
-
-                            this.map.addLayer({
-                                id: `eewSWave_${id}`,
-                                type: "line",
-                                source: `eewSWaveSource_${id}`,
-                                paint: {
-                                    "line-width": 1,
-                                    "line-color": "#ff4020",
-                                },
-                            });
-
-                            this.map.addSource(`eewPWaveSource_${id}`, {
-                                type: "geojson",
-                                data: pWaveCircleJSON,
-                            });
-
-                            this.map.addLayer({
-                                id: `eewPWave_${id}`,
-                                type: "line",
-                                source: `eewPWaveSource_${id}`,
-                                paint: {
-                                    "line-width": 1,
-                                    "line-color": "#4080ff",
-                                },
-                            });
-
-                            this.app.services.eew.reports[id].isMapInitialized = true;
-                        }
-
-                        this.app.services.eew.reports[id].latitude = this.app.services.eew.reports[id].latitude.replace("N", "");
-                        this.app.services.eew.reports[id].longitude = this.app.services.eew.reports[id].longitude.replace("E", "");
-
-                        this.app.services.eew.reports[id].sRadius = this.app.services.eew.reports[id].psWave.sRadius * 1000;
-                        this.app.services.eew.reports[id].pRadius = this.app.services.eew.reports[id].psWave.pRadius * 1000;
-
-                        if (this.app.services.eew.reports[id].sRadius != this.app.services.eew.reports[id].lastSWave) {
-                            this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / (60 * ((dateNow - this.#loopCount) / 1000));
-                            this.app.services.eew.reports[id].lastSWave = this.app.services.eew.reports[id].sRadius;
-                            this.app.services.eew.reports[id].sWavePut = this.app.services.eew.reports[id].sRadius;
-                        } else if (this.app.services.eew.reports[id].sRadius == this.app.services.eew.reports[id].lastSWave) {
-                            this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
-                        }
-
-                        if (this.app.services.eew.reports[id].pRadius != this.app.services.eew.reports[id].lastPWave) {
-                            this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / (60 * ((dateNow - this.#loopCount) / 1000));
-                            this.app.services.eew.reports[id].lastPWave = this.app.services.eew.reports[id].pRadius;
-                            this.app.services.eew.reports[id].pWavePut = this.app.services.eew.reports[id].pRadius;
-                            this.#loopCount = dateNow;
-                        } else if (this.app.services.eew.reports[id].pRadius == this.app.services.eew.reports[id].lastPWave) {
-                            this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
-                        }
-                    } else {
-                        this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
-                        this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                if (this.app.services.eew.currentId === id) {
+                    if (!this.app.services.eew.reports[id].isMapInitialized) {
+                        this.#addEewLayers(id);
                     }
 
-                    const REGION_LNGLAT = [this.app.services.eew.reports[id].longitude, this.app.services.eew.reports[id].latitude];
-                    const sWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].sWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
-                    const pWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].pWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
+                    this.app.services.eew.reports[id].latitude = this.app.services.eew.reports[id].latitude.replace("N", "");
+                    this.app.services.eew.reports[id].longitude = this.app.services.eew.reports[id].longitude.replace("E", "");
 
-                    this.map.getSource(`eewRedionSource_${id}`).setData({
-                        type: 'FeatureCollection',
-                        features: [
-                            {
-                                type: 'Feature',
-                                geometry: {
-                                    type: 'Point',
-                                    coordinates: REGION_LNGLAT,
-                                },
+                    this.app.services.eew.reports[id].sRadius = this.app.services.eew.reports[id].psWave.sRadius * 1000;
+                    this.app.services.eew.reports[id].pRadius = this.app.services.eew.reports[id].psWave.pRadius * 1000;
+
+                    if (this.app.services.eew.reports[id].sRadius != this.app.services.eew.reports[id].lastSWave) {
+                        this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / (60 * ((dateNow - this.#loopCount) / 1000));
+                        this.app.services.eew.reports[id].lastSWave = this.app.services.eew.reports[id].sRadius;
+                        this.app.services.eew.reports[id].sWavePut = this.app.services.eew.reports[id].sRadius;
+                    } else if (this.app.services.eew.reports[id].sRadius == this.app.services.eew.reports[id].lastSWave) {
+                        this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
+                    }
+
+                    if (this.app.services.eew.reports[id].pRadius != this.app.services.eew.reports[id].lastPWave) {
+                        this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / (60 * ((dateNow - this.#loopCount) / 1000));
+                        this.app.services.eew.reports[id].lastPWave = this.app.services.eew.reports[id].pRadius;
+                        this.app.services.eew.reports[id].pWavePut = this.app.services.eew.reports[id].pRadius;
+                        this.#loopCount = dateNow;
+                    } else if (this.app.services.eew.reports[id].pRadius == this.app.services.eew.reports[id].lastPWave) {
+                        this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                    }
+                } else {
+                    this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
+                    this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                }
+
+                const REGION_LNGLAT = [this.app.services.eew.reports[id].longitude, this.app.services.eew.reports[id].latitude];
+                const sWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].sWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
+                const pWaveCircleJSON = turf.circle(REGION_LNGLAT, this.app.services.eew.reports[id].pWavePut, Map.DEFAULT_CIRCLE_OPTIONS);
+
+                this.map.getSource(`eewRedionSource_${id}`).setData({
+                    type: 'FeatureCollection',
+                    features: [
+                        {
+                            type: 'Feature',
+                            geometry: {
+                                type: 'Point',
+                                coordinates: REGION_LNGLAT,
                             },
-                        ],
-                    });
-                    this.map.getSource(`eewSWaveSource_${id}`).setData(sWaveCircleJSON);
-                    this.map.getSource(`eewPWaveSource_${id}`).setData(pWaveCircleJSON);
+                        },
+                    ],
                 });
+                this.map.getSource(`eewSWaveSource_${id}`).setData(sWaveCircleJSON);
+                this.map.getSource(`eewPWaveSource_${id}`).setData(pWaveCircleJSON);
+            });
 
-                if (this.app.services.settings.map.autoMove) {
-                    this.#autoMoveMap(dateNow);
-                }
-            } else {
-                if (!this.isDisplayHrpns) {
-                    this.showHrpns();
-                }
-
-                this.#clearEewLayers();
+            if (this.app.services.settings.map.autoMove) {
+                this.#autoMoveMap(dateNow);
             }
         } catch (error) {
             console.error(error);
@@ -653,6 +590,75 @@ export class Map extends Service {
             }
             this.#autoMoveCount = dateNow;
         }
+    }
+
+
+    /**
+     * 緊急地震速報（EEW）のレイヤーを追加する。
+     */
+    #addEewLayers(id) {
+        this.hideHrpns();
+
+        const sWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
+        const pWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
+
+        this.map.addSource(`eewRedionSource_${id}`, {
+            type: 'geojson',
+            data: {
+                type: 'FeatureCollection',
+                features: [
+                    {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [0, 0],
+                        },
+                    },
+                ],
+            },
+        });
+
+        this.map.addLayer({
+            id: `eewRedion_${id}`,
+            type: "symbol",
+            source: `eewRedionSource_${id}`,
+            layout: {
+                "icon-image": `eewRedionImage`,
+                "icon-size": 0.25,
+            },
+        });
+
+        this.map.addSource(`eewSWaveSource_${id}`, {
+            type: "geojson",
+            data: sWaveCircleJSON,
+        });
+
+        this.map.addLayer({
+            id: `eewSWave_${id}`,
+            type: "line",
+            source: `eewSWaveSource_${id}`,
+            paint: {
+                "line-width": 1,
+                "line-color": "#ff4020",
+            },
+        });
+
+        this.map.addSource(`eewPWaveSource_${id}`, {
+            type: "geojson",
+            data: pWaveCircleJSON,
+        });
+
+        this.map.addLayer({
+            id: `eewPWave_${id}`,
+            type: "line",
+            source: `eewPWaveSource_${id}`,
+            paint: {
+                "line-width": 1,
+                "line-color": "#4080ff",
+            },
+        });
+
+        this.app.services.eew.reports[id].isMapInitialized = true;
     }
 
 
