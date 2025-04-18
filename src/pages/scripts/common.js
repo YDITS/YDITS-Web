@@ -10,7 +10,7 @@
 
 'use strict';
 
-document.addEventListener("DOMContentLoaded", async() => await loadCommonElements());
+document.addEventListener("DOMContentLoaded", async () => await loadCommonElements());
 
 
 /**

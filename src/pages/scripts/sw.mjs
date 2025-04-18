@@ -8,8 +8,8 @@
  *
  */
 
-self.addEventListener("install", async(event) => await onInstall(event));
-self.addEventListener('fetch', async(event) => await onFetch(event));
+self.addEventListener("install", async (event) => await onInstall(event));
+self.addEventListener('fetch', async (event) => await onFetch(event));
 
 /**
  * インストール時のイベントハンドラ
