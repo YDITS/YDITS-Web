@@ -581,6 +581,7 @@ export class WolfxJmaEewSocket {
             if (data.type === "heartbeat") {
                 try {
                     data = new WolfxHeartbeatData(data);
+                    this.onGetHeartbeat(data);
                 } catch (error) {
                     throw new Error(`Failed to parse data of Wolfx Heartbeat JSON data: ${error}`);
                 }
@@ -610,6 +611,20 @@ export class WolfxJmaEewSocket {
      */
     onError(event, callback) {
         callback(event);
+    }
+
+
+    /**
+     * ハートビートパケットを受け取った時の処理
+     * 
+     * @param {WolfxHeartbeatData} data
+     * @returns {void}
+     */
+    onGetHeartbeat(data) {
+        this.socket.send(JSON.stringify({
+            type: "pong",
+            timestamp: data.timestamp,
+        }));
     }
 }
 
