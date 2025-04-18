@@ -11,7 +11,16 @@
 import { Render } from "https://cdn.yoneyo.com/scripts/render/render-v1.0.0.mjs";
 
 
-document.addEventListener("DOMContentLoaded", async () => {
+window.safeCall = safeCall;
+
+document.addEventListener("DOMContentLoaded", async () => await loadCommonElements());
+
+
+/**
+ * 共通の要素を読み込む
+ * @returns {Promise<void>}
+ */
+async function loadCommonElements() {
     /**
      * @type {Render}
      */
@@ -63,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }),
         ]
     }
-});
+}
 
 
 /**
@@ -73,6 +82,10 @@ document.addEventListener("DOMContentLoaded", async () => {
  * @returns {Promise<any>}
  */
 async function safeCall(func, ...args) {
+    if (typeof func !== "function") {
+        throw new Error("Invalid function specified.");
+    }
+
     try {
         return await func(...args);
     } catch (error) {
