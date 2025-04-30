@@ -9,8 +9,6 @@
  */
 
 import { Service } from "../../service.mjs";
-import { DebugLogs } from "./modules/debug-logs.mjs";
-import { PushNotify } from "./modules/push-notify.mjs";
 
 /**
  * サービスワーカーを管理する
@@ -25,11 +23,16 @@ export class ServiceWorker extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
-        this.#appServices = app.services;
-        this.#debugLogsService = this.#appServices.debugLogs;
-
-        this.#register();
+        (async () => {
+            await this.#register();
+        })();
     }
+
+
+    /**
+     * @type {ServiceWorkerRegistration | null}
+     */
+    registration = null;
 
 
     /**
@@ -46,21 +49,8 @@ export class ServiceWorker extends Service {
 
 
     /**
-     * アプリケーションサービス
-     * @type {Service | null}
-     */
-    #appServices = null;
-
-
-    /**
-     * デバッグログサービス
-     * @type {DebugLogs | null}
-     */
-    #debugLogsService = null;
-
-
-    /**
-     * Cache: サービスワーカーがサポートされているかどうか
+     * Cache: サービスワーカーがサポートされているかどうか  
+     * サポートされている場合は true とする。
      * @type {boolean | null}
      */
     #isSupported = null;
@@ -72,27 +62,27 @@ export class ServiceWorker extends Service {
      */
     async #register() {
         if (!this.isSupported) {
-            this.#debugLogsService.add("info", `[${this.name}]`, "Service worker is not supported on this browser.");
+            this.app.services.add("info", `[${this.name}]`, "Service worker is not supported on this browser.");
             return;
         }
 
         try {
             this.registration = await navigator.serviceWorker.register(
-                "./scripts/sw.mjs",
-                { scope: "./scripts/", }
+                "/scripts/sw.mjs",
+                { scope: "/scripts/", }
             );
-
-            if (this.registration.installing) {
-                await this.#onServiceWorkerInstalling();
-            } else if (this.registration.waiting) {
-                await this.#onServiceWorkerInstalled();
-            } else if (this.registration.active) {
-                await this.#onServiceWorkerActive();
-            }
-
-            await this.#initializePushNotify();
         } catch (error) {
             await this.#onFailedToRegister(error);
+        }
+
+        if (!(this.registration instanceof ServiceWorkerRegistration)) return;
+
+        if (this.registration.installing) {
+            await this.#onServiceWorkerInstalling();
+        } else if (this.registration.waiting) {
+            await this.#onServiceWorkerInstalled();
+        } else if (this.registration.active) {
+            await this.#onServiceWorkerActive();
         }
     }
 
@@ -102,7 +92,7 @@ export class ServiceWorker extends Service {
      * @returns {Promise<void>}
      */
     async #onServiceWorkerInstalling() {
-        this.#debugLogsService.add("info", `[${this.name}]`, "Service worker installing.");
+        this.app.services.debugLogs.add("info", `[${this.name}]`, "Service Worker is being installed.");
     }
 
 
@@ -111,7 +101,7 @@ export class ServiceWorker extends Service {
      * @returns {Promise<void>}
      */
     async #onServiceWorkerInstalled() {
-        this.#debugLogsService.add("info", `[${this.name}]`, "Service worker installed.");
+        this.app.services.debugLogs.add("info", `[${this.name}]`, "Service worker has been installed.");
     }
 
 
@@ -119,7 +109,9 @@ export class ServiceWorker extends Service {
      * サービスワーカーがアクティブなときの処理
      * @returns {Promise<void>}
      */
-    async #onServiceWorkerActive() { }
+    async #onServiceWorkerActive() {
+        this.app.services.debugLogs.add("info", `[${this.name}]`, "Service Worker has been activated.");
+    }
 
 
     /**
@@ -128,15 +120,6 @@ export class ServiceWorker extends Service {
      * @returns {Promise<void>}
      */
     async #onFailedToRegister(error) {
-        this.#debugLogsService.add("error", `[${this.name}]`, `Service worker registration failed: ${error.stack}`);
-    }
-
-
-    /**
-     * プッシュ通知をイニシャライズする
-     * @returns {Promise<void>}
-     */
-    async #initializePushNotify() {
-        this.pushNotify = new PushNotify(this.app);
+        this.app.services.debugLogs.add("error", `[${this.name}]`, `Failed to register Service Worker : ${error.stack}`);
     }
 }
