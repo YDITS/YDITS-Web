@@ -9,7 +9,7 @@
  */
 
 import { FirebaseApp } from "../packages/firebase-app-creater/app.js";
-import { Version } from "../packages/version/version.js";
+import { Version } from "https://cdn.yoneyo.com/scripts/version/version-v1.0.0.mjs";
 import { safecall } from "../packages/safecaller/safecaller.js";
 
 import { Datetime } from "./services/datetime/datetime.js";
@@ -35,7 +35,7 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "『防災情報をすぐに確認できるWebアプリケーション。",
-            version: new Version(3, 18, 0, Version.LEVELS.beta),
+            version: new Version(3, 18, 0, Version.levels.beta),
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: {
