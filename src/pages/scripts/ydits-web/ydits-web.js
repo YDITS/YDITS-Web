@@ -10,7 +10,7 @@
 
 import { FirebaseApp } from "../packages/firebase-app-creater/app.js";
 import { Version } from "../packages/version/version.js";
-import { safecall } from "../packages/safecaller/safecaller";
+import { safecall } from "../packages/safecaller/safecaller.js";
 
 import { Datetime } from "./services/datetime/datetime.js";
 import { DebugLogs } from "./services/debug-logs/debug-logs.js";
