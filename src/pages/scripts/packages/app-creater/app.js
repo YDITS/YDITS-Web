@@ -35,7 +35,7 @@ export class App {
         this.#version = version;
         this.#author = author;
         this.#copyright = copyright;
-        this.#serviceManager = new ServiceManager();
+        this.#serviceManager = new ServiceManager({ app: this });
     }
 
 

@@ -8,7 +8,22 @@
  *
  */
 
+import { App } from "../app.js";
+
 export class ServiceManager {
+    /**
+     * @param {{
+     *     app: App,
+     * }}
+     */
+    constructor({ app }) {
+        if (!(app instanceof App)) {
+            throw new TypeError("The `app` parameter must be an instance of App.");
+        }
+        this.#app = app;
+    }
+    
+    
     /**
      * サービスオブジェクト
      * @returns {Object<string, Service>}
@@ -24,7 +39,7 @@ export class ServiceManager {
      * @returns {void}
      */
     register(NewService) {
-        const newService = new NewService(this);
+        const newService = new NewService(this.#app);
 
         if (!newService.name) {
             throw new Error('`name` is required in the service.');
@@ -32,6 +47,13 @@ export class ServiceManager {
 
         this.services[newService.name] = newService;
     }
+
+
+    /**
+     * アプリケーションインスタンス
+     * @type {App | null}
+     */
+    #app = null;
 
 
     /**
