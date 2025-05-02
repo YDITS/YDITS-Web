@@ -8,6 +8,6 @@
  *
  */
 
-import { YditsWeb } from "./ydits-web/ydits-web.mjs";
+import { YditsWeb } from "./ydits-web/ydits-web.js";
 
 new YditsWeb();

@@ -8,7 +8,7 @@
  *
  */
 
-import { Service } from "../../../service.mjs";
+import { Service } from "../../../packages/app-creater/service.js";
 
 /**
  * 地震情報を扱う。

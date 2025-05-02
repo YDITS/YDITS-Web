@@ -8,7 +8,7 @@
  *
  */
 
-import { Service } from "../../../service.mjs";
+import { Service } from "../../../packages/app-creater/service.js";
 
 /**
  * 現在時刻を管理する。

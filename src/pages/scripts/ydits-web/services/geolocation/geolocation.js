@@ -8,8 +8,8 @@
  *
  */
 
-import { Service } from "../../../service.mjs";
-import { LocalStorage } from "./local-storage.mjs";
+import { Service } from "../../../packages/app-creater/service.js";
+import { LocalStorage } from "../local-storage/local-storage.js";
 
 /**
  * 位置情報を管理する。

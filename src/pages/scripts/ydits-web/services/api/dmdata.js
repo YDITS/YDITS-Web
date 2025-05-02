@@ -8,8 +8,8 @@
  *
  */
 
-import { Service } from "../../../service.mjs";
-import { Window } from "../../ydits-web.mjs";
+import { Service } from "../../../packages/app-creater/service.js";
+import { Window } from "../../ydits-web.js";
 
 /**
  * Project DM-D.S.S (dmdata.jp) APIを扱う

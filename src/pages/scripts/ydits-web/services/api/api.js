@@ -8,11 +8,11 @@
  *
  */
 
-import { Service } from "../../../service.mjs";
-import { YahooKmoni } from "./yahoo-kmoni.mjs";
-import { P2pquake } from "./p2pquake.mjs";
-import { Dmdata } from "./dmdata.mjs";
-import { Wolfx } from "./wolfx.mjs";
+import { Service } from "../../../packages/app-creater/service.js";
+import { YahooKmoni } from "./yahoo-kmoni.js";
+import { P2pquake } from "./p2pquake.js";
+import { Dmdata } from "./dmdata.js";
+import { Wolfx } from "./wolfx.js";
 
 /**
  * APIを扱う

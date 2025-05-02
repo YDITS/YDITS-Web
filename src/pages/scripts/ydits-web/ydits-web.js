@@ -8,22 +8,22 @@
  *
  */
 
-import { FirebaseApp } from "../firebase/app.mjs";
-import { Version } from "../version.mjs";
-import { Datetime } from "./services/modules/datetime.mjs";
-import { DebugLogs } from "./services/modules/debug-logs.mjs";
-import { ElementsManager } from "./services/modules/elements.mjs";
-import { Notify } from "./services/modules/notify.mjs";
-import { GeoLocation } from "./services/modules/geolocation.mjs";
-import { Eew } from "./services/eew/eew.mjs";
-import { Eqinfo } from "./services/eqinfo/eqinfo.mjs";
-import { JmaDataFeed } from "./services/jma/jma-data-feed.mjs";
-import { ServiceWorker } from "./services/service-worker.mjs";
-import { PushNotify } from "./services/modules/push-notify.mjs";
-import { Sounds } from "./services/modules/sounds.mjs";
-import { Api } from "./services/api/api.mjs";
-import { Settings } from "./services/modules/settings.mjs";
-import { Map } from "./services/map/map.mjs";
+import { FirebaseApp } from "../packages/firebase-app-creater/app.js";
+import { Version } from "../packages/version/version.js";
+import { Datetime } from "./services/datetime/datetime.js";
+import { DebugLogs } from "./services/debug-logs/debug-logs.js";
+import { ElementsManager } from "./services/elements/elements.js";
+import { Notify } from "./services/notify/notify.js";
+import { GeoLocation } from "./services/geolocation/geolocation.js";
+import { Eew } from "./services/eew/eew.js";
+import { Eqinfo } from "./services/eqinfo/eqinfo.js";
+import { JmaDataFeed } from "./services/jma/jma-data-feed.js";
+import { ServiceWorker } from "./services/service-worker/service-worker.js";
+import { PushNotify } from "./services/push-notify/push-notify.js";
+import { Sounds } from "./services/sounds/sounds.js";
+import { Api } from "./services/api/api.js";
+import { Settings } from "./services/settings/settings.js";
+import { Map } from "./services/map/map.js";
 
 /**
  * YDITS for Web

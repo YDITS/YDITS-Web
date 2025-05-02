@@ -8,8 +8,8 @@
  *
  */
 
-import { Service } from "../../../service.mjs";
-import { Window } from "../../ydits-web.mjs";
+import { Service } from "../../../packages/app-creater/service.js";
+import { Window } from "../../ydits-web.js";
 
 /**
  * 設定を扱う。

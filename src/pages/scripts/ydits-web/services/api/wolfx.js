@@ -8,9 +8,9 @@
  *
  */
 
-import { Service } from "../../../service.mjs";
-import { Intensity } from "../modules/intensity.mjs";
-import { Colors } from "../modules/colors.mjs";
+import { Service } from "../../../packages/app-creater/service.js";
+import { Intensity } from "../intensity/intensity.js";
+import { Colors } from "../colors/colors.js";
 
 
 /**

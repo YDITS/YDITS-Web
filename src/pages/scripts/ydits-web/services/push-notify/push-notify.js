@@ -8,7 +8,7 @@
  *
  */
 
-import { Service } from "../../../service.mjs"
+import { Service } from "../../../packages/app-creater/service.js";
 
 /**
  * プッシュ通知を扱う。
