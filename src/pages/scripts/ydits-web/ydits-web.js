@@ -279,7 +279,7 @@ export class YditsWeb extends FirebaseApp {
     async #onBuild() {
         await this.#initialize();
 
-        if (this.version.level === Version.LEVELS.beta) {
+        if (this.version.level === Version.levels.beta) {
             this.services.elementsManager.getElementById("betaBanner").classList.add("active");
         }
 
