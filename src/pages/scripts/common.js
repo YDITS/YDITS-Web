@@ -10,7 +10,7 @@
 
 import { Render } from "https://cdn.yoneyo.com/scripts/render/render-v1.0.0.mjs";
 
-
+window.Render = Render;
 window.safeCall = safeCall;
 
 document.addEventListener("DOMContentLoaded", async () => await loadCommonElements());
@@ -39,7 +39,8 @@ async function loadCommonElements() {
     });
 
     /**
-     * @returns {Element[]}
+     * ヘッダー
+     * @returns {HTMLElement[]}
      */
     function header() {
         return [
@@ -57,7 +58,8 @@ async function loadCommonElements() {
     }
 
     /**
-     * @returns {Element[]}
+     * フッター
+     * @returns {HTMLElement[]}
      */
     function footer() {
         return [
@@ -76,9 +78,9 @@ async function loadCommonElements() {
 
 
 /**
- * エラーを無視して関数を実行する
- * @param {Function<Promise<any>>} func 
- * @param  {...any} args 
+ * エラーを無視して安全に関数を実行する
+ * @param {Function} func
+ * @param  {...any} args
  * @returns {Promise<any>}
  */
 async function safeCall(func, ...args) {
@@ -89,6 +91,6 @@ async function safeCall(func, ...args) {
     try {
         return await func(...args);
     } catch (error) {
-        console.error(error.stack);
+        console.error(error);
     };
 }
