@@ -8,7 +8,7 @@
  *
  */
 
-import { App } from "../app-creater/app.js";
+import { App } from "../app-creator/app.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
 
@@ -36,7 +36,21 @@ export class FirebaseApp extends App {
      */
     constructor(config) {
         super(config);
-        this.firebase = initializeApp(config.firebase);
-        this.analytics = getAnalytics(this.firebase);
+        this.#firebase = initializeApp(config.firebase);
+        this.#firebaseAnalytics = getAnalytics(this.#firebase);
     }
+
+
+    /**
+     * Firebaseアプリケーションインスタンス
+     * @type {*}
+     */
+    #firebase = null;
+
+
+    /**
+     * Firebaseアナリティクスインスタンス
+     * @type {*}
+     */
+    #firebaseAnalytics = null;
 }
