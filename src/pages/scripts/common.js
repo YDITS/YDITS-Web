@@ -10,11 +10,7 @@
 
 import { Render } from "https://cdn.yoneyo.com/scripts/render/render-v1.0.0.mjs";
 
-window.Render = Render;
-window.safeCall = safeCall;
-
 document.addEventListener("DOMContentLoaded", async () => await loadCommonElements());
-
 
 /**
  * 共通の要素を読み込む
@@ -74,23 +70,4 @@ async function loadCommonElements() {
             }),
         ]
     }
-}
-
-
-/**
- * エラーを無視して安全に関数を実行する
- * @param {Function} func
- * @param  {...any} args
- * @returns {Promise<any>}
- */
-async function safeCall(func, ...args) {
-    if (typeof func !== "function") {
-        throw new Error("Invalid function specified.");
-    }
-
-    try {
-        return await func(...args);
-    } catch (error) {
-        console.error(error);
-    };
 }
