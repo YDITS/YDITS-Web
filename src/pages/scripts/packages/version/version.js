@@ -1,10 +1,12 @@
 /*
  *
- * YDITS for Web
+ * Version
  *
  * Copyright (C) よね/Yone
  *
- * Licensed under the Apache License 2.0.
+ * Licensed under the MIT License.
+ * 
+ * https://github.com/yone1130/version/
  *
  */
 

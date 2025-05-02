@@ -1,3 +1,13 @@
+/**!
+ *
+ * Safe Caller
+ *
+ * Copyright (C) よね/Yone
+ *
+ * Licensed under the MIT License.
+ *
+ */
+
 /**
  * エラーを無視して安全に関数を実行する
  * 

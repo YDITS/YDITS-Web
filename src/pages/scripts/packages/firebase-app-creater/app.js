@@ -1,10 +1,10 @@
-/*
+/**!
  *
- * YDITS for Web
+ * Firebase App Creater
  *
  * Copyright (C) よね/Yone
  *
- * Licensed under the Apache License 2.0.
+ * Licensed under the MIT License.
  *
  */
 
