@@ -8,7 +8,7 @@
  *
  */
 
-import { App } from "./app";
+import { App } from "./app.js";
 
 /**
  * アプリケーションで稼働するサービスを作成する
