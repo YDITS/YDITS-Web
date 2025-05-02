@@ -1,12 +1,14 @@
 /*
  *
- * YDITS for Web
+ * App Creater
  *
  * Copyright (C) よね/Yone
  *
- * Licensed under the Apache License 2.0.
+ * Licensed under the MIT License.
  *
  */
+
+import { ServiceManager } from "./src/service-manager";
 
 /**
  * アプリケーションを作成する
@@ -33,6 +35,7 @@ export class App {
         this.#version = version;
         this.#author = author;
         this.#copyright = copyright;
+        this.#serviceManager = new ServiceManager();
     }
 
 
@@ -41,9 +44,8 @@ export class App {
      * @returns {Object<string, Service>}
      */
     get services() {
-        return this.#services;
+        return this.#serviceManager.services;
     }
-
 
 
     /**
@@ -93,18 +95,11 @@ export class App {
 
     /**
      * サービスを登録する
-     * 
      * @param {class<Service>} NewService
      * @returns {void}
      */
     registerService(NewService) {
-        const newService = new NewService(this);
-
-        if (!newService.name) {
-            throw new Error('`name` is required in the service.');
-        }
-
-        this.services[newService.name] = newService;
+        this.#serviceManager.register(NewService);
     }
 
 
@@ -144,9 +139,8 @@ export class App {
 
 
     /**
-     * サービスオブジェクト
-     * @type {Object<string, Service>}
-     * @private
+     * サービスマネージャーインスタンス
+     * @type {ServiceManager | null}
      */
-    #services = {};
+    #serviceManager = null;
 }
