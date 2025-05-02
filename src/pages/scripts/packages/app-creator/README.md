@@ -1,16 +1,16 @@
-# App Creater
+# App Creator
 
 ## Overview
 
-**App Creater** is a library of App Creation Framework for JavaScript.
+**App Creator** is a library of App Creation Framework for JavaScript.
 
 ## Usage
 
 1. Import
 
 ```js
-import { App } from "@/app-creater/app.js";
-import { Service } from "@/app-creater/service.js";
+import { App } from "@/app-creator/app.js";
+import { Service } from "@/app-creator/service.js";
 ```
 
 2. Use
@@ -30,7 +30,7 @@ class MyService extends Service {
     }
 
     hello() {
-        console.log("Hello App Creater!");
+        console.log("Hello App Creator!");
     }
 }
 
