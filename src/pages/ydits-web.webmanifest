@@ -25,7 +25,7 @@
         }
     ],
     "background": {
-        "service_worker": "./scripts/ydits-web/sw.mjs",
+        "service_worker": "./scripts/ydits-web/sw.js",
         "type": "module"
     }
 }
