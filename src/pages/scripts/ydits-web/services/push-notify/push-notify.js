@@ -14,6 +14,9 @@ import { Service } from "../../../packages/app-creator/src/service.js";
  * プッシュ通知を扱う。
  */
 export class PushNotify extends Service {
+    /**
+     * @param {App} app
+     */
     constructor(app) {
         super(app, {
             name: "pushNotify",
@@ -29,6 +32,7 @@ export class PushNotify extends Service {
 
     /**
      * 初期化する。
+     * @returns {void}
      */
     initialize() {
         if (!this.isSupport) { return }
@@ -40,7 +44,8 @@ export class PushNotify extends Service {
 
     /**
      * プッシュ通知の権限を要求する。
-    */
+     * @returns {void}
+     */
     requestPermission() {
         Notification.requestPermission()
             .then((permission) => this.checkRequestPermission(permission));
@@ -50,7 +55,8 @@ export class PushNotify extends Service {
     /**
      * プッシュ通知の権限要求に許可したか確認する。
      * @param {NotificationPermission} permission
-    */
+     * @returns {void}
+     */
     checkRequestPermission(permission) {
         if (permission === "granted") {
             this.onGrantedPermission();
@@ -60,6 +66,7 @@ export class PushNotify extends Service {
 
     /**
      * プッシュ通知の権限要求に許可した時の処理。
+     * @returns {void}
      */
     onGrantedPermission() {
         this.notify(
@@ -72,12 +79,14 @@ export class PushNotify extends Service {
 
 
     /**
-     * プッシュ通知を送信する。
-     * @returns {Notification}
+     * 通知を送信する。
+     * @param {string} title 通知のタイトル
+     * @param {NotificationOptions} options 通知のオプション
+     * @returns {Notification | void}
      */
     notify(title, options) {
         if (!this.isSupport) {
-            throw new Error("Notification permission is not arrowed.");
+            throw new Error("Notification permission is not allowed.");
         }
 
         if (options.icon !== undefined) {
@@ -112,7 +121,7 @@ export class PushNotify extends Service {
 
     /**
      * プッシュ通知に対応しているか。
-     * @returns {boolean} 対応している時はtrueを返す。
+     * @type {boolean} 対応している時はtrueを返す。
      */
     get isSupport() {
         return ("Notification" in window);
@@ -121,7 +130,7 @@ export class PushNotify extends Service {
 
     /**
      * プッシュ通知の権限があるか。
-     * @returns {boolean} 権限がある時はtrueを返す。
+     * @type {boolean} 権限がある時はtrueを返す。
      */
     get isPremission() {
         return (Notification.permission === "granted");
@@ -130,7 +139,7 @@ export class PushNotify extends Service {
 
     /**
      * プッシュ通知のアイコン画像のパスを返す。
-     * @returns {URL} 画像のURL
+     * @type {URL} 画像のURL
      */
     get notifyIcon() {
         return new URL("https://cdn.ydits.net/images/ydits_logos/ydits_icon.png");
