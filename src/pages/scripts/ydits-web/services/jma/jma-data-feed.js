@@ -8,7 +8,7 @@
  *
  */
 
-import { Service } from "../../../packages/app-creator/service.js";
+import { Service } from "../../../packages/app-creator/src/service.js";
 
 /**
  * 気象庁防災情報電文を扱う。

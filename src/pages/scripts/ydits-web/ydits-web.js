@@ -8,9 +8,9 @@
  *
  */
 
-import { FirebaseApp } from "../packages/firebase-app-creator/app.js";
+import { FirebaseApp } from "../packages/firebase-app-creator/src/app.js";
 import { Version } from "https://cdn.yoneyo.com/scripts/version/version-v1.0.0.mjs";
-import { safecall } from "../packages/safecaller/safecaller.js";
+import { safecall } from "../packages/safecaller/src/safecaller.js";
 
 import { Datetime } from "./services/datetime/datetime.js";
 import { DebugLogs } from "./services/debug-logs/debug-logs.js";

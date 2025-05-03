@@ -8,8 +8,7 @@
  *
  */
 
-import { Service } from "../../../packages/app-creator/service.js";
-
+import { Service } from "../../../packages/app-creator/src/service.js";
 
 /**
  * 要素を管理する

@@ -8,7 +8,8 @@
  *
  */
 
-import { Service } from "../../../packages/app-creator/service.js";
+import { Service } from "../../../packages/app-creator/src/service.js";
+
 import { Window } from "../../ydits-web.js";
 
 /**

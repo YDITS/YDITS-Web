@@ -8,7 +8,7 @@
  *
  */
 
-import { App } from "../app-creator/app.js";
+import { App } from "../../app-creator/src/app";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
 

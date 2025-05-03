@@ -8,7 +8,7 @@
  *
  */
 
-import { Service } from "../../../packages/app-creator/service.js";
+import { Service } from "../../../packages/app-creator/src/service.js";
 
 /**
  * 緊急地震速報を扱う。
