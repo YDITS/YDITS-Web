@@ -14,18 +14,19 @@ import { Service } from "../../../packages/app-creator/src/service.js";
  * サービスワーカーを管理する
  */
 export class ServiceWorker extends Service {
+    /**
+     * @param {App} app
+     */
     constructor(app) {
         super(app, {
             name: "serviceWorker",
             description: "サービスワーカを管理するサービス。",
             version: "0.0.0",
             author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
+            copyright: "Copyright © よね/Yone",
         });
 
-        (async () => {
-            await this.#register();
-        })();
+        this.#register();
     }
 
 
