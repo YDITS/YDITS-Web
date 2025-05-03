@@ -26,5 +26,5 @@ export async function safecall(func, ...args) {
         return await func(...args);
     } catch (error) {
         console.error(error);
-    };
+    }
 }

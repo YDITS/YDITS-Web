@@ -9,7 +9,6 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
-
 import { LocalStorage } from "../local-storage/local-storage.js";
 
 /**

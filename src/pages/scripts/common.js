@@ -23,14 +23,14 @@ async function loadCommonElements() {
      * @type {Render}
      */
 
-    (async() => render.build({
+    (async () => render.build({
         target: document.querySelector("header"),
         children: header(),
     }))();
 
     if (["/", "/eqhistory/", "/debug-logs/"].includes(location.pathname)) return;
 
-    (async() => render.build({
+    (async () => render.build({
         target: document.querySelector("footer"),
         children: footer(),
     }))();

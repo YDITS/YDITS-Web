@@ -22,8 +22,8 @@ export class ServiceManager {
         }
         this.#app = app;
     }
-    
-    
+
+
     /**
      * サービスオブジェクト
      * @returns {Object<string, Service>}
