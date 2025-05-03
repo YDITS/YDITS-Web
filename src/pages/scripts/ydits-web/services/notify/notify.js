@@ -14,24 +14,44 @@ import { Service } from "../../../packages/app-creator/src/service.js";
  * ページ内通知を扱う。
  */
 export class Notify extends Service {
-    lastNotifyId = null;
-    lastEewNotifyId = null;
-
-
+    /**
+     * @param {App} app
+     */
     constructor(app) {
         super(app, {
             name: "notify",
             description: "ページ内通知のサービス。",
             version: "0.0.0",
             author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
-        })
+            copyright: "Copyright © よね/Yone",
+        });
 
         this.notifyElement = document.getElementById("notify");
         this.eewNotifyElement = document.getElementById("eewNotify");
     }
 
 
+    /**
+     * 最後の通知ID
+     * @type {*}
+     */
+    lastNotifyId = null;
+
+    
+    /**
+     * 最後の緊急地震速報通知ID
+     * @type {*}
+     */
+    lastEewNotifyId = null;
+
+
+    /**
+     * 通知を表示する。
+     * @param {string} type - 通知の種類。'message'、'error'、'eew'のいずれか
+     * @param {string} title - 通知のタイトル
+     * @param {string} text - 通知の内容
+     * @returns {void}
+     */
     show(type, title, text) {
         let color = null;
         let hideAfter = null;
@@ -88,6 +108,10 @@ export class Notify extends Service {
     }
 
 
+    /**
+     * 通知を非表示にする。
+     * @returns {void}
+     */
     hide() {
         this.notifyElement.classList.remove("active");
     }
