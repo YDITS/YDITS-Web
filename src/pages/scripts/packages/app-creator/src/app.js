@@ -8,7 +8,7 @@
  *
  */
 
-import { ServiceManager } from "./src/service-manager.js";
+import { ServiceManager } from "./service-manager.js";
 
 /**
  * アプリケーションを作成する
