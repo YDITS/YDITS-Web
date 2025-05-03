@@ -12,6 +12,7 @@ import { FirebaseApp } from "../packages/firebase-app-creator/src/app.js";
 import { Version } from "https://cdn.yoneyo.com/scripts/version/version-v1.0.0.mjs";
 import { safecall } from "../packages/safecaller/src/safecaller.js";
 
+import firebaseConfig from "./firebase-config.json" with { type: "json" };
 import { Datetime } from "./services/datetime/datetime.js";
 import { DebugLogs } from "./services/debug-logs/debug-logs.js";
 import { ElementsManager } from "./services/elements/elements.js";
@@ -38,15 +39,7 @@ export class YditsWeb extends FirebaseApp {
             version: new Version(3, 18, 0, Version.levels.beta),
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
-            firebase: {
-                apiKey: "AIzaSyBibDJX9w02oum1vSTMW3D4Stigya5Y9oE",
-                authDomain: "ydits-for-web.firebaseapp.com",
-                projectId: "ydits-for-web",
-                storageBucket: "ydits-for-web.appspot.com",
-                messagingSenderId: "177926103278",
-                appId: "1:177926103278:web:da2bdcadb1d47b9ae653ff",
-                measurementId: "G-SYYZ9EM05T"
-            }
+            firebase: firebaseConfig,
         });
 
         this.initializeStartedTime = performance.now();
