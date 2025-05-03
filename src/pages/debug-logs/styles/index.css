@@ -1,0 +1,17 @@
+@charset "UTF-8";
+
+/* 
+
+    YDITS for Web
+
+    Copyright (C) よね/Yone
+
+    Licensed under the Apache License 2.0.
+
+*/
+
+#debugLogLists {
+    width: 100%;
+    padding: 1rem 1rem;
+    overflow: auto;
+}

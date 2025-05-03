@@ -4,10 +4,10 @@
 
 ## 概要
 
-防災情報をすぐに確認できるウェブアプリケーションです。
+**YDITS for Web** は防災情報をすぐに確認できるウェブアプリケーションです。
 
 https://webapp.ydits.net/ で公開しています。  
-紹介サイトはこちら: https://www.ydits.net/apps/web/
+紹介サイト: https://www.ydits.net/apps/web/
 
 ## 利用方法
 
@@ -17,6 +17,4 @@ https://webapp.ydits.net/ で公開しています。
 
 [Apache License 2.0](./LICENSE) のもとでライセンスされます。
 
-[NOTICE](./NOTICE.md) も必ずご確認ください。
-
-Copyright (C) よね/Yone
+Copyright &copy; よね/Yone

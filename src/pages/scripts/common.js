@@ -1,4 +1,4 @@
-/*
+/**!
  *
  * YDITS for Web
  *
@@ -8,14 +8,69 @@
  *
  */
 
-'use strict';
+import { Render } from "https://cdn.yoneyo.com/scripts/render/render-v1.0.0.mjs";
 
-function loadCommonElements() {
-    $("header").load("/elements/header.html");
-    $("footer").load("/elements/footer.html");
+const render = new Render();
+
+document.addEventListener("DOMContentLoaded", async () => await loadCommonElements());
+
+/**
+ * 共通の要素を読み込む
+ * @returns {Promise<void>}
+ */
+async function loadCommonElements() {
+    /**
+     * @type {Render}
+     */
+
+    (async () => render.build({
+        target: document.querySelector("header"),
+        children: header(),
+    }))();
+
+    if (["/", "/eqhistory/", "/debug-logs/"].includes(location.pathname)) return;
+
+    (async () => render.build({
+        target: document.querySelector("footer"),
+        children: footer(),
+    }))();
+
 }
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => loadCommonElements()
-);
+
+/**
+ * ヘッダー
+ * @returns {HTMLElement[]}
+ */
+function header() {
+    return [
+        render.$div({
+            className: "wrapper",
+            children: [
+                render.$h1({
+                    id: "headerTitle",
+                    className: "header__title",
+                    textContent: "YDITS for Web",
+                }),
+            ],
+        }),
+    ]
+}
+
+/**
+ * フッター
+ * @returns {HTMLElement[]}
+ */
+function footer() {
+    return [
+        render.$div({
+            className: "wrapper",
+            children: [
+                render.$p({
+                    id: "footerCopyright",
+                    innerHTML: "&copy; よね/Yone",
+                }),
+            ],
+        }),
+    ]
+}

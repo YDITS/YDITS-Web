@@ -2,13 +2,16 @@
     "manifest_version": 3,
     "name": "YDITS for Web",
     "short_name": "YDITS-Web",
-    "description": "『YDITS for Web』は防災情報をすぐに確認できるWebアプリケーションです。",
-    "version": "3.17.2.0",
+    "description": "防災情報をすぐに確認できるWebアプリケーション。",
+    "version": "3.18.0.0",
     "minimum_chrome_version": "116",
     "scope": "/",
     "start_url": "./index.html",
     "display": "standalone",
-    "display_override": ["window-controls-overlay", "standalone"],
+    "display_override": [
+        "window-controls-overlay",
+        "standalone"
+    ],
     "icons": [
         {
             "src": "https://cdn.ydits.net/images/ydits_logos/ydits_icon_512px.png",
@@ -22,7 +25,7 @@
         }
     ],
     "background": {
-        "service_worker": "./sw.mjs",
+        "service_worker": "./scripts/ydits-web/sw.js",
         "type": "module"
     }
 }

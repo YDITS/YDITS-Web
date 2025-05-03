@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 /* 
 
     YDITS for Web
@@ -7,7 +9,6 @@
     Licensed under the Apache License 2.0.
 
 */
-@charset "UTF-8";
 
 html {
     font-size: 16px;

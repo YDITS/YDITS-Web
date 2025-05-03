@@ -12,6 +12,9 @@
 
 <head>
     <meta charset="UTF-8">
+
+    <!-- Meta -->
+    <title>YDITS for Web</title>
     <meta name="application-name" content="YDITS for Web">
     <meta name="description" content="『YDITS for Web』は防災情報をすぐに確認できるWebアプリケーションです。">
     <meta name="keywords" content="YDITS for Web, YDITS-Web, YDITS, よね/Yone, よね, Yone">
@@ -20,8 +23,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <title>YDITS for Web</title>
+    <noscript>
+        <meta http-equiv="refresh" content="0; URL=/noscript/">
+    </noscript>
 
+    <!-- OGP -->
     <meta property="og:url" content="https://webapp.ydits.net/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="YDITS for Web">
@@ -31,20 +37,15 @@
     <meta name="twitter:site" content="@YDITS_JP">
     <meta name="twitter:card" content="summary">
 
+    <!-- Icons -->
     <link rel="shortcut icon" type="image/x-icon" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png">
     <link rel="apple-touch-icon-precomposed" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png">
     <link rel="fluid-icon" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png" title="YDITS for Web">
+
+    <!-- Manifest -->
     <link rel="manifest" href="./ydits-web.webmanifest">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-        integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-        crossorigin="">
-    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.css" rel="stylesheet" />
-
-    <link rel="stylesheet" href="./styles/common.css">
-    <link rel="stylesheet" href="./styles/ui.css">
-    <link rel="stylesheet" href="./styles/index.css">
-
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -53,6 +54,24 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 
+    <!-- Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@^5.3.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <link href="https://cdn.maptiler.com/maptiler-geocoding-control/v2.1.4/style.css" rel="stylesheet">
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="/styles/ui.css">
+    <link rel="stylesheet" href="/styles/index.css">
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@^5.3.0/dist/maplibre-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
+    <script src="/scripts/common.js" type="module"></script>
+    <script src="/scripts/main.js" type="module"></script>
+
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TWBJ0TEFRJ"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -61,63 +80,52 @@
 
         gtag('config', 'G-TWBJ0TEFRJ');
     </script>
-
-    <script src="./scripts/libs/jquery-3.6.0.js"></script>
-    <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.8.4/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.umd.js"></script>
-    <script src="https://cdn.maptiler.com/leaflet-maptilersdk/v2.0.0/leaflet-maptilersdk.js"></script>
-
-    <script src="./scripts/common.js"></script>
-    <script src="./scripts/main.mjs" type="module"></script>
-    <noscript>
-        <meta http-equiv="refresh" content="0; URL=./noscript/">
-    </noscript>
 </head>
 
 <body>
     <header></header>
 
     <main>
-        <div id="control">
-            <div id="list">
-                <ul>
-                    <li id="menuBtn" title="メニューを開く">
+        <div id="control" class="control">
+            <div id="list" class="control-nav">
+                <ul class="control-nav__list">
+                    <li id="menuBtn" class="control-nav__item" title="メニューを開く" tabindex="0" role="button"
+                        aria-label="メニューを開く" aria-roledescription="クリックすると メニュー を開きます。" aria-disabled="false">
                         <span class="material-symbols-outlined">menu</span>
                     </li>
-                    <li id="eqHistoryBtn" title="地震履歴を開く">
+                    <li id="eqHistoryBtn" class="control-nav__item" title="地震履歴を開く" tabindex="0" role="button"
+                        aria-label="地震履歴を開く" aria-roledescription="クリックすると 地震履歴一覧 を 展開します。" aria-disabled="false">
                         <span class="material-symbols-outlined">history</span>
                     </li>
-                    <li id="homeBtn" title="マップを初期位置に移動する">
+                    <li id="homeBtn" class="control-nav__item" title="マップを初期位置に移動する" tabindex="0" role="button"
+                        aria-label="マップを初期位置に移動する" aria-roledescription="クリックすると マップを初期位置に移動します。" aria-disabled="false">
                         <span class="material-symbols-outlined">home_pin</span>
                     </li>
                 </ul>
             </div>
 
-            <div id="panel">
-                <div id="eewField">
-                    <span id="eewTitle"></span>
-                    <div class="content">
-                        <div class="left">
-                            <span class="title">最大震度</span>
-                            <span id="eewCalc"></span>
+            <div id="panel" class="panel">
+                <div id="eewField" class="current-information-field" tabindex="0" role="button">
+                    <span id="eewTitle" class="current-information-field__title"></span>
+                    <div class="current-information-field__content content">
+                        <div class="current-information-field__content-left">
+                            <span id="eewCalcDes" class="current-information-field__scale-title">最大震度</span>
+                            <span id="eewCalc" class="current-information-field__scale"></span>
                         </div>
-                        <div class="right">
-                            <span id="eewRegion"></span>
-                            <div id="eewInfo">
-                                <span id="eewOrigin_time"></span>
-                                <div class="eqinfo">
-                                    <span id="eewMagnitude"></span>
-                                    <span id="eewDepth"></span>
+                        <div class="current-information-field__content-right">
+                            <span id="eewRegion" class="current-information-field__region"></span>
+                            <div id="eewInfo" class="current-information-field__info">
+                                <span id="eewOrigin_time" class="current-information-field__origin-time"></span>
+                                <div class="current-information-field__hypocenter-info">
+                                    <span id="eewMagnitude" class="current-information-field__magnitude"></span>
+                                    <span id="eewDepth" class="current-information-field__depth"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="eqHistoryField"></div>
+                <div id="eqHistoryField" class="eq-history-field"></div>
             </div>
         </div>
 
@@ -136,35 +144,30 @@
                 <span class="title">雨雲レーダー</span>
                 <span class="text"></span>
             </div>
-
-            <div id="mapLayersMenu" class="map-controler window">
-                <div class="titleBar">
-                    <span class="title">マップレイヤー表示切替</span>
-                </div>
-
-                <div id="layersControl" class="content">
-                    <p>
-                        緊急地震速報の発表中は、地震動到達予想円を見やすくするためにマップ上のすべてのレイヤーが一時的に非表示になります。<br>緊急地震速報が終了した後は、ユーザーが設定したもとの表示状態に自動的に戻ります。
-                    </p>
-                </div>
-            </div>
-
-            <div id="mapLayersButton" class="map-controler">
-                <img class="material-symbols-outlined open"
-                    src="./images/layers_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="MapLayersIcon" srcset="">
-                <img class="material-symbols-outlined close"
-                    src="./images/close_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="MapLayersIcon" srcset="">
-            </div>
         </div>
 
         <div id="popup">
             <div class="window" id="menu">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">close</span>
+                    <span id="menuCloseButton" class="material-symbols-outlined closeBtn" title="メニューウィンドウを閉じる"
+                        tabindex="0" role="button" aria-label="メニューウィンドウを閉じる"
+                        aria-roledescription="クリックすると メニューウィンドウ を閉じます。">
+                        close
+                    </span>
                     <span class="title">メニュー</span>
                 </div>
 
                 <div class="content">
+                    <div class="lists">
+                        <div class="list top bottom" id="menuOpenEqhistory" title="地震履歴ウィンドウを開く" tabindex="0"
+                            role="button" aria-label="地震履歴ウィンドウを開く" aria-roledescription="クリックすると 地震履歴ウィンドウ を開きます。">
+                            <span class="material-symbols-outlined">
+                                open_in_new
+                            </span>
+                            地震履歴ウィンドウ
+                        </div>
+                    </div>
+
                     <!-- <div class="lists">
                         <div class="list top bottom" id="menuJmaDataFeed">
                             <span class="material-symbols-outlined">
@@ -175,25 +178,42 @@
                     </div> -->
 
                     <div class="lists">
-                        <div class="list top" id="menuSettings">
+                        <div class="list top" id="menuSettings" title="設定を開く" tabindex="0" role="button"
+                            aria-label="設定を開く" aria-roledescription="クリックすると 設定 を開きます。">
                             <span class="material-symbols-outlined">
                                 settings
                             </span>
                             設定
                         </div>
 
-                        <div class="list" id="menuLicense">
+                        <div class="list" id="menuHelp" title="ヘルプを開く" tabindex="0" role="button" aria-label="ヘルプを開く"
+                            aria-roledescription="クリックすると ヘルプ を開きます。">
+                            <span class="material-symbols-outlined">
+                                help
+                            </span>
+                            ヘルプ
+                        </div>
+
+                        <div class="list" id="menuLicense" title="ライセンス情報に関するウィンドウを開く" tabindex="0" role="button"
+                            aria-label="ライセンス情報に関するウィンドウを開く" aria-roledescription="クリックすると ライセンス情報に関するウィンドウ を開きます。">
                             <span class="material-symbols-outlined">
                                 info
                             </span>
                             ライセンス情報
                         </div>
 
-                        <a class="list" id="menuHelp" target="_blank" href="./help/">
+                        <a class="list" id="menuGithub" target="_blank" href="https://github.com/YDITS/YDITS-Web/">
                             <span class="material-symbols-outlined">
-                                help
+                                code
                             </span>
-                            ヘルプ
+                            GitHub リポジトリ
+                        </a>
+
+                        <a class="list" id="menuContact" target="_blank" href="https://www.yoneyo.com/#contact">
+                            <span class="material-symbols-outlined">
+                                mail
+                            </span>
+                            お問い合わせ
                         </a>
 
                         <a class="list" id="menuTerms" target="_blank" href="https://policies.ydits.net/terms/webapp/">
@@ -203,29 +223,16 @@
                             利用規約
                         </a>
 
-                        <a class="list" id="menuTerms" target="_blank" href="https://policies.ydits.net/privacy/site/">
+                        <a class="list bottom" id="menuTerms" target="_blank"
+                            href="https://policies.ydits.net/privacy/site/">
                             <span class="material-symbols-outlined">
                                 policy
                             </span>
                             プライバシーポリシー
                         </a>
-
-                        <a class="list" id="menuTerms" target="_blank" href="https://github.com/YDITS/YDITS-Web/">
-                            <span class="material-symbols-outlined">
-                                code
-                            </span>
-                            GitHub リポジトリ
-                        </a>
-
-                        <a class="list bottom" id="menuContact" target="_blank" href="https://www.yoneyo.com/#contact">
-                            <span class="material-symbols-outlined">
-                                mail
-                            </span>
-                            お問い合わせ
-                        </a>
                     </div>
 
-                    <p class="version"></p>
+                    <p id="menuVersion" class="version"></p>
                 </div>
             </div>
 
@@ -410,6 +417,17 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="item" id="settings_panel_right">
+                            <label>
+                                <h3>パネルを右側に表示</h3>
+                            </label>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -529,7 +547,31 @@
                 </div>
 
                 <div class="content">
-                    <p>これらの設定は開発用です。通常は使用しないでください。<br>有効にするとパフォーマンスが低下したり、正常に動作しなくなる可能性があります。</p>
+                    <p>これらの設定は開発用です。</p>
+
+                    <div class="list">
+                        <div class="item">
+                            <label>
+                                <h3>前回の起動所要時間</h3>
+                            </label>
+                            <div class="content">
+                                <span id="initializeTime"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list">
+                        <div class="item" id="settingsDebugOutput">
+                            <label>
+                                <h3>デバッグオーバーレイ</h3>
+                            </label>
+                            <div class="content">
+                                <div class="toggle-switch">
+                                    <div class="span"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="list">
                         <div class="item" id="settingsDebugRayout">
@@ -562,6 +604,11 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="list">
+                        <button id="createNewWindowButton">Create a new window</button>
+                        <button id="createNewErrorWindowButton">Create a new error window</button>
+                    </div>
                 </div>
             </div>
 
@@ -574,6 +621,7 @@
                 <div class="content">
                     <p>デバッグログが送信されることはありません。</p>
                     <button id="writeDebugLogsToClipboardButton">ログをクリップボードにコピー</button>
+                    <button id="openDebugLogs">デバッグログウィンドウを開く</button>
                     <button id="deleteDebugLogsButton">デバッグログを削除</button>
                     <ul id="debugLogLists"></ul>
                 </div>
@@ -581,7 +629,7 @@
 
             <div class="window settings_list" id="license">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">
+                    <span id="licenseCloseButton" class="material-symbols-outlined closeBtn">
                         arrow_back
                     </span>
 
@@ -678,7 +726,7 @@
                                 </p>
 
                                 <p>
-                                    <a target="_blank" href="">
+                                    <a target="_blank" href="https://xml.kishou.go.jp/xmlpull.html">
                                         気象庁防災情報XMLフォーマット形式電文（PULL型）
 
                                         <span class="material-symbols-outlined open-in-new">
@@ -723,7 +771,7 @@
 
                         <li class="rhkdmh srajis">
                             <h3>
-                                <a target="_blank" href="https://dmdata.jp/">
+                                <a target="_blank" href="https://www.ydits.net/docs/dmdata/">
                                     Project DM-D.S.S
 
                                     <span class="material-symbols-outlined open-in-new">
@@ -739,6 +787,30 @@
 
                                 <p>
                                     &copy; dmdata.jp
+                                </p>
+                            </div>
+                        </li>
+
+                        <hr class="enwfew">
+
+                        <li class="rhkdmh srajis">
+                            <h3>
+                                <a target="_blank" href="https://wolfx.jp/">
+                                    Wolfx API
+
+                                    <span class="material-symbols-outlined open-in-new">
+                                        open_in_new
+                                    </span>
+                                </a>
+                            </h3>
+
+                            <div class="rhkdmh">
+                                <p>
+                                    緊急地震速報データ WebSocket API の提供
+                                </p>
+
+                                <p>
+                                    &copy; Wolfx Project
                                 </p>
                             </div>
                         </li>
@@ -811,8 +883,8 @@
 
                         <li class="rhkdmh srajis">
                             <h3>
-                                <a target="_blank" href="https://jquery.com/">
-                                    jQuery
+                                <a target="_blank" href="https://axios-http.com/">
+                                    Axios
 
                                     <span class="material-symbols-outlined open-in-new">
                                         open_in_new
@@ -822,7 +894,11 @@
 
                             <div class="rhkdmh">
                                 <p>
-                                    Version 3.6.0 を利用
+                                    HTTPクライアントの提供<br>
+                                </p>
+
+                                <p>
+                                    最新バージョンを利用
                                 </p>
                             </div>
 
@@ -830,7 +906,8 @@
                                 <p>
                                     Licensed under the&NonBreakingSpace;
 
-                                    <a target="_blank" href="https://jquery.com/license/#source-code">
+                                    <a target="_blank"
+                                        href="https://raw.githubusercontent.com/axios/axios-docs/refs/heads/master/LICENSE">
                                         MIT License
 
                                         <span class="material-symbols-outlined open-in-new">
@@ -840,7 +917,7 @@
                                 </p>
 
                                 <p>
-                                    &copy; OpenJS Foundation, jQuery contributors
+                                    &copy; Matt Zabriskie, Axios contributors
                                 </p>
                             </div>
                         </li>
@@ -849,8 +926,8 @@
 
                         <li class="rhkdmh srajis">
                             <h3>
-                                <a target="_blank" href="https://leafletjs.com/">
-                                    Leaflet
+                                <a target="_blank" href="https://maplibre.org/">
+                                    MapLibre GL JS
 
                                     <span class="material-symbols-outlined open-in-new">
                                         open_in_new
@@ -860,11 +937,11 @@
 
                             <div class="rhkdmh">
                                 <p>
-                                    地図描画ライブラリの提供<br>
+                                    マップ描画ライブラリの提供<br>
                                 </p>
 
                                 <p>
-                                    Version 1.9.4 を利用
+                                    Version 5.3.0 を利用
                                 </p>
                             </div>
 
@@ -873,7 +950,7 @@
                                     Licensed under the&NonBreakingSpace;
 
                                     <a target="_blank"
-                                        href="https://raw.githubusercontent.com/Leaflet/Leaflet/main/LICENSE">
+                                        href="https://raw.githubusercontent.com/maplibre/maplibre-gl-js/refs/heads/main/LICENSE.txt">
                                         BSD 2-Clause License
 
                                         <span class="material-symbols-outlined open-in-new">
@@ -883,7 +960,7 @@
                                 </p>
 
                                 <p>
-                                    &copy; Volodymyr Agafonkin, CloudMade
+                                    &copy; MapLibre contributors
                                 </p>
                             </div>
                         </li>
@@ -903,7 +980,7 @@
 
                             <div class="rhkdmh">
                                 <p>
-                                    地図画像の提供<br>
+                                    マップ画像の提供<br>
                                 </p>
                             </div>
 
@@ -926,6 +1003,32 @@
 
                                 <p>
                                     &copy; OpenStreetMap contributors
+                                </p>
+                            </div>
+                        </li>
+
+                        <hr class="enwfew">
+
+                        <li class="rhkdmh srajis">
+                            <h3>
+                                <a target="_blank" href="https://www.maptiler.com/">
+                                    MapTiler
+
+                                    <span class="material-symbols-outlined open-in-new">
+                                        open_in_new
+                                    </span>
+                                </a>
+                            </h3>
+
+                            <div class="rhkdmh">
+                                <p>
+                                    マップ画像の提供<br>
+                                </p>
+                            </div>
+
+                            <div class="rhkdmh">
+                                <p>
+                                    &copy; MapTiler
                                 </p>
                             </div>
                         </li>
@@ -1006,6 +1109,22 @@
                     </p>
                 </div>
             </div>
+        </div>
+
+        <div id="betaBanner">
+            <span id="betaBannerText">Beta</span>
+        </div>
+
+        <div id="debugOutput">
+            <code id="debugOutputAppName"></code>
+            <code id="debugOutputTitle">Debug Mode</code>
+            <code id="debugOutputUserAgent"></code>
+            <code id="debugOutputLanguage"></code>
+            <code id="debugOutputDisplay"></code>
+            <code id="debugOutputWolfxJmaEewSocket"></code>
+            <code id="debugOutputP2pquakeSocket"></code>
+            <code id="debugOutputEewData"></code>
+            <code id="debugOutputWolfxJmaEewData"></code>
         </div>
     </main>
 </body>
