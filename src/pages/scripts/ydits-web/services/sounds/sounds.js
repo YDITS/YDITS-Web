@@ -14,6 +14,20 @@ import { Service } from "../../../packages/app-creator/src/service.js";
  * サウンドを扱う。
  */
 export class Sounds extends Service {
+    /**
+     * @param {App} app
+     */
+    constructor(app) {
+        super(app, {
+            name: "sounds",
+            description: "サウンドを扱うサービス。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        });
+    }
+
+
     notify = new Audio("./sounds/notify-sound.m4a");
     eew = new Audio("./sounds/eew.wav");
     eewWarnVoice = new Audio("./sounds/eew_warn_v.mp3");
@@ -37,15 +51,4 @@ export class Sounds extends Service {
     eqinfoVoice7 = new Audio("./sounds/info_7_v.mp3");
     eqinfoVoice8 = new Audio("./sounds/info_8_v.mp3");
     eqinfoVoice9 = new Audio("./sounds/info_9_v.mp3");
-
-
-    constructor(app) {
-        super(app, {
-            name: "sounds",
-            description: "サウンドを扱うサービス。",
-            version: "0.0.0",
-            author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
-        });
-    }
 }
