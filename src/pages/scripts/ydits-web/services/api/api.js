@@ -8,7 +8,7 @@
  *
  */
 
-import { Service } from "../../../packages/app-creater/service.js";
+import { Service } from "../../../packages/app-creator/service.js";
 import { YahooKmoni } from "./yahoo-kmoni.js";
 import { P2pquake } from "./p2pquake.js";
 import { Dmdata } from "./dmdata.js";

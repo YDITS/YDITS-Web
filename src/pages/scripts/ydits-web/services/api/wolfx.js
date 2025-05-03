@@ -8,7 +8,7 @@
  *
  */
 
-import { Service } from "../../../packages/app-creater/service.js";
+import { Service } from "../../../packages/app-creator/service.js";
 import { Intensity } from "../intensity/intensity.js";
 import { Colors } from "../colors/colors.js";
 

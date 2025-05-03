@@ -8,7 +8,7 @@
  *
  */
 
-import { Service } from "../../../packages/app-creater/service.js";
+import { Service } from "../../../packages/app-creator/service.js";
 
 /**
  * P2P地震情報 APIを扱う。

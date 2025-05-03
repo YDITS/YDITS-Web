@@ -8,7 +8,7 @@
  *
  */
 
-import { FirebaseApp } from "../packages/firebase-app-creater/app.js";
+import { FirebaseApp } from "../packages/firebase-app-creator/app.js";
 import { Version } from "https://cdn.yoneyo.com/scripts/version/version-v1.0.0.mjs";
 import { safecall } from "../packages/safecaller/safecaller.js";
 
