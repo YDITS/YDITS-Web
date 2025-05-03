@@ -15,55 +15,105 @@ import { Window } from "../../ydits-web.js";
  * 設定を扱う。
  */
 export class Settings extends Service {
-    connect = {
-        eew: null,
-        eqinfo: null,
-        tsunami: null,
-        volcanicEruption: null,
-        civilProtection: null
-    }
-
-
-    map = {
-        autoMove: null,
-        displayUserPoint: null,
-        layers: {
-            hrpns: null
-        }
-    }
-
-
-    sound = {
-        eewAny: null,
-        eewCancel: null,
-        eqinfo: null
-    }
-
-
-    display = {
-        showWarn: null,
-        panelRight: null
-    }
-
-
-    debug = {
-        rayout: null,
-        fpsMs: 1000,
-        output: false,
-    }
-
-
+    /**
+     * @param {App} app
+     */
     constructor(app) {
         super(app, {
             name: "settings",
             description: "設定を扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
+            copyright: "Copyright © よね/Yone",
         });
     }
 
 
+    /**
+     * 接続関連
+     * @type {{
+     *     eew: string,
+     *     eqinfo: string,
+     *     tsunami: string,
+     *     volcanicEruption: string,
+     *     civilProtection: string,
+     * }}
+     */
+    connect = {
+        eew: null,
+        eqinfo: null,
+        tsunami: null,
+        volcanicEruption: null,
+        civilProtection: null,
+    }
+
+
+    /**
+     * マップ関連
+     * @type {{
+     *     autoMove: boolean,
+     *     displayUserPoint: boolean,
+     *     layers: {
+     *         hrpns: boolean,
+     *     },
+     * }}
+     */
+    map = {
+        autoMove: true,
+        displayUserPoint: true,
+        layers: {
+            hrpns: true,
+        },
+    }
+
+
+    /**
+     * 音声関連
+     * @type {{
+     *     eewAny: boolean,
+     *     eewCancel: boolean,
+     *     eqinfo: boolean
+     * }}
+     */
+    sound = {
+        eewAny: true,
+        eewCancel: true,
+        eqinfo: true,
+    }
+
+
+    /**
+     * 表示関連
+     * @type {{
+     *     showWarn: boolean,
+     *     panelRight: boolean
+     * }}
+     */
+    display = {
+        showWarn: true,
+        panelRight: false,
+    }
+
+
+    /**
+     * デバッグ関連
+     * @type {{
+     *     rayout: boolean,
+     *     fpsMs: number,
+     *     output: boolean,
+     * }}
+     */
+    debug = {
+        rayout: false,
+        fpsMs: 1000,
+        output: false,
+    }
+
+
+    /**
+     * イニシャライズする
+     * @returns {void}
+     */
     initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
@@ -549,16 +599,28 @@ export class Settings extends Service {
     }
 
 
+    /**
+     * デバッグオーバーレイを表示する
+     * @returns {void}
+     */
     showDebugOutput() {
         document.getElementById("debugOutput").classList.add("active");
     }
 
 
+    /**
+     * デバッグオーバーレイを非表示にする
+     * @returns {void}
+     */
     hideDebugOutput() {
         document.getElementById("debugOutput").classList.remove("active");
     }
 
 
+    /**
+     * デバッグレイアウトを表示する
+     * @returns {void}
+     */
     showDebugRayout() {
         document.querySelectorAll('*').forEach(function (element) {
             element.style.outline = '1px solid #00ff00ff';
@@ -566,6 +628,10 @@ export class Settings extends Service {
     }
 
 
+    /**
+     * デバッグレイアウトを非表示にする
+     * @returns {void}
+     */
     hideDebugRayout() {
         document.querySelectorAll('*').forEach(function (element) {
             element.style.outline = 'unset';
@@ -573,6 +639,12 @@ export class Settings extends Service {
     }
 
 
+    /**
+     * クリップボードにデバッグログを書き込む
+     * @param {Function} onCompleted 
+     * @param {Function} onError 
+     * @returns {void}
+     */
     writeDebugLogsToClipboard(onCompleted, onError) {
         if (!navigator.clipboard) {
             onError();
