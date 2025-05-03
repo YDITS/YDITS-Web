@@ -10,6 +10,9 @@
 
 import { App } from "./app.js";
 
+/**
+ * サービスマネージャー
+ */
 export class ServiceManager {
     /**
      * @param {{
