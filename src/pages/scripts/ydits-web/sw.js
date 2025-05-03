@@ -34,7 +34,6 @@ class ServiceWorkerBackground {
      * @returns {Promise<void>}
      */
     async #onInstall(event) {
-        console.log("Service Worker has been installed.");
         console.debug(self);
         console.debug(this);
     }
