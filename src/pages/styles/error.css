@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+/* 
+
+    YDITS for Web
+
+    Copyright (C) よね/Yone
+
+    Licensed under the Apache License 2.0.
+
+*/
+
+main {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: calc(100dvh - var(--header-height));
+    padding: 2rem 10vw;
+    text-align: center;
+}
+
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 2rem;
+}
+
+.error-title {
+    font-size: 3rem;
+}
+
+.error-button {
+    width: fit-content;
+    color: unset;
+
+    &:hover {
+        text-decoration: unset;
+    }
+}
