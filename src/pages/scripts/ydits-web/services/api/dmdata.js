@@ -9,7 +9,7 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
-import { Window } from "../../ydits-web.js";
+import { PopupDialog } from "../../../packages/popup-dialog/src/popup-dialog.js";
 
 /**
  * Project DM-D.S.S (dmdata.jp) APIを扱う
@@ -123,8 +123,8 @@ export class Dmdata extends Service {
                         `Failed to connect to dmdata.jp: ${event.error}`
                     );
 
-                    new Window({
-                        type: Window.types.error,
+                    new PopupDialog({
+                        type: PopupDialog.types.error,
                         id: "errorDmdataConnection",
                         create: true,
                         title: "DM-D.S.S 接続エラー",
@@ -148,8 +148,8 @@ export class Dmdata extends Service {
                         `Failed to connect to dmdata.jp.: ${data.error.message}`
                     );
 
-                    new Window({
-                        type: Window.types.error,
+                    new PopupDialog({
+                        type: PopupDialog.types.error,
                         id: "errorDmdataConnection",
                         create: true,
                         title: "DM-D.S.S 接続エラー",
@@ -270,8 +270,8 @@ export class Dmdata extends Service {
                     "DM-D.S.S Account authentication failed."
                 );
 
-                new Window({
-                    type: Window.types.error,
+                new PopupDialog({
+                    type: PopupDialog.types.error,
                     id: "errorDmdataOAuth",
                     create: true,
                     title: "DM-D.S.S アカウント認証エラー",
@@ -292,8 +292,8 @@ export class Dmdata extends Service {
                     "DM-D.S.S Account authentication failed."
                 );
 
-                new Window({
-                    type: Window.types.error,
+                new PopupDialog({
+                    type: PopupDialog.types.error,
                     id: "errorDmdataOAuth",
                     create: true,
                     title: "DM-D.S.S アカウント認証エラー",
@@ -316,8 +316,8 @@ export class Dmdata extends Service {
                 "DM-D.S.S Account authentication failed."
             );
 
-            new Window({
-                type: Window.types.error,
+            new PopupDialog({
+                type: PopupDialog.types.error,
                 id: "errorDmdataOAuth",
                 create: true,
                 title: "DM-D.S.S アカウント認証エラー",
@@ -346,8 +346,8 @@ export class Dmdata extends Service {
 
         const responseErrorDescription = this.#getParam('error_description', location.href);
 
-        new Window({
-            type: Window.types.error,
+        new PopupDialog({
+            type: PopupDialog.types.error,
             id: "errorDmdataOAuth",
             create: true,
             title: "DM-D.S.S アカウント連携エラー",
