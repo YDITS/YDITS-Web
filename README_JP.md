@@ -1,6 +1,6 @@
 # YDITS for Web
 
-[→ English](./README.md)
+[English →](./README.md)
 
 ## 概要
 

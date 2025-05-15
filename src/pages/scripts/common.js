@@ -9,68 +9,32 @@
  */
 
 import { Render } from "https://cdn.yoneyo.com/scripts/render/render-v1.0.0.mjs";
+import { DomLoader } from "./components/loader.js";
+import { Header } from "./components/header.js";
+import { Footer } from "./components/footer.js";
 
 const render = new Render();
+const header = new Header({ render });
+const footer = new Footer({ render });
 
-document.addEventListener("DOMContentLoaded", async () => await loadCommonElements());
+/** @type {LoadItem[]} */
+const loaderConfig = [
+    {
+        component: header,
+        targetSelector: "header",
+    },
+    {
+        component: footer,
+        targetSelector: "footer",
+        condition: (location) => !["/", "/eqhistory/", "/debug-logs/"].includes(location.pathname),
+    },
+];
 
-/**
- * 共通の要素を読み込む
- * @returns {Promise<void>}
- */
-async function loadCommonElements() {
-    /**
-     * @type {Render}
-     */
+const domLoader = new DomLoader({
+    render: render,
+    items: loaderConfig
+});
 
-    (async () => render.build({
-        target: document.querySelector("header"),
-        children: header(),
-    }))();
-
-    if (["/", "/eqhistory/", "/debug-logs/"].includes(location.pathname)) return;
-
-    (async () => render.build({
-        target: document.querySelector("footer"),
-        children: footer(),
-    }))();
-
-}
-
-
-/**
- * ヘッダー
- * @returns {HTMLElement[]}
- */
-function header() {
-    return [
-        render.$div({
-            className: "wrapper",
-            children: [
-                render.$h1({
-                    id: "headerTitle",
-                    className: "header__title",
-                    textContent: "YDITS for Web",
-                }),
-            ],
-        }),
-    ]
-}
-
-/**
- * フッター
- * @returns {HTMLElement[]}
- */
-function footer() {
-    return [
-        render.$div({
-            className: "wrapper",
-            children: [
-                render.$p({
-                    id: "footerCopyright",
-                    innerHTML: "&copy; よね/Yone",
-                }),
-            ],
-        }),
-    ]
-}
+document.addEventListener("DOMContentLoaded", () => {
+    domLoader.load();
+});

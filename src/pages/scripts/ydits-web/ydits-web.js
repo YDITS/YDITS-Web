@@ -11,6 +11,7 @@
 import { FirebaseApp } from "../packages/firebase-app-creator/src/app.js";
 import { Version } from "https://cdn.yoneyo.com/scripts/version/version-v1.0.0.mjs";
 import { safecall } from "../packages/safecaller/src/safecaller.js";
+import { PopupDialog } from "../packages/popup-dialog/src/popup-dialog.js";
 
 import firebaseConfig from "./firebase-config.json" with { type: "json" };
 import { Datetime } from "./services/datetime/datetime.js";
@@ -36,7 +37,7 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "防災情報をすぐに確認できるWebアプリケーション。",
-            version: new Version(3, 18, 0, Version.levels.stable),
+            version: new Version(3, 18, 1, Version.levels.stable),
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: firebaseConfig,
@@ -139,8 +140,8 @@ export class YditsWeb extends FirebaseApp {
             `Unhandled error: ${error.stack}.`
         )
 
-        new Window({
-            type: Window.types.error,
+        new PopupDialog({
+            type: PopupDialog.types.error,
             id: "errorUnhandled",
             create: true,
             title: "エラー",
@@ -250,8 +251,8 @@ export class YditsWeb extends FirebaseApp {
             `
         );
 
-        new Window({
-            type: Window.types.error,
+        new PopupDialog({
+            type: PopupDialog.types.error,
             id: "errorInitialize",
             create: true,
             title: "エラー",
@@ -650,195 +651,4 @@ export class YditsWeb extends FirebaseApp {
      * @type {number}
      */
     #lastTime = -1;
-}
-
-
-/**
- * ポップアップウィンドウを作成する
- */
-export class Window {
-    /**
-     * @param {{
-     *     type?: keyof typeof Window.types,
-     *     id?: string,
-     *     title?: string,
-     *     content?: string,
-     *     create?: boolean,
-     * }} config
-     */
-    constructor({
-        type = Window.types.default,
-        id,
-        title = "",
-        content = "",
-        create = true
-    }) {
-        this.type = type;
-        this.id = id ? `win_${id}` : null;
-        this.title = title;
-        this.content = content;
-        this.color = Window.windowTypeToColor[this.type] || Window.windowTypeToColor.default;
-
-        if (create) {
-            this.create();
-        }
-    }
-
-
-    /**
-     * ウィンドウの要素
-     * 
-     * @type {HTMLElement | null}
-     */
-    get element() {
-        if (!(this.#element instanceof HTMLElement)) {
-            this.#element = document.getElementById(this.id);
-        }
-
-        return this.#element;
-    }
-
-
-    /**
-     * @type {Object<string, string>}
-     */
-    static types = {
-        message: "message",
-        error: "error",
-        default: "message",
-    }
-
-
-    /**
-     * @type {Object<string, string>}
-     */
-    static windowTypeToColor = {
-        message: "#404040ff",
-        error: "#ff5050ff",
-        default: "#404040ff",
-    }
-
-
-    /**
-     * ウィンドウの要素
-     * 
-     * @type {HTMLElement | null}
-     */
-    #element = null;
-
-
-    /**
-     * ウィンドウをドラッグ中かどうか
-     * 
-     * @type {boolean}
-     */
-    #isDragging = false;
-
-
-    /**
-     * ドラッグ開始時のオフセットX座標
-     * 
-     * @type {number}
-     */
-    #offsetX = 0;
-
-
-    /**
-     * ドラッグ開始時のオフセットY座標
-     * 
-     * @type {number}
-     */
-    #offsetY = 0;
-
-
-    /**
-     * ウィンドウを作成する
-     * 
-     * @returns {Promise<void>}
-     */
-    async create() {
-        if (this.element instanceof HTMLElement) {
-            throw new Error(`Window with id \`${this.id}\` already exists.`);
-        };
-
-        const newWindowElement = `
-                <dialog class="dialog" id="${this.id}">
-                    <div class="navBar">
-                        <h2 class="title">${this.title}</h2>
-                        <span class="close material-symbols-outlined">close</span>
-                    </div>
-    
-                    <div class="content">
-                        ${this.content}
-                    </div>
-                </dialog>
-            `
-
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(newWindowElement, "text/html");
-        const dialogElement = doc.body.firstChild;
-
-        this.#element = dialogElement;
-
-        dialogElement.querySelector(".navBar").style.backgroundColor = this.color;
-        dialogElement.querySelector(".close").addEventListener("click", async () => await this.close());
-        dialogElement.querySelector(".navBar").addEventListener("mousedown", async (event) => await this.#startDragging(event));
-        document.addEventListener("mousemove", async (event) => await this.#move(event));
-        document.addEventListener("mouseup", async (event) => await this.#stopDragging(event));
-
-        document.body.append(dialogElement);
-    }
-
-
-    /**
-     * ウィンドウを閉じる
-     * 
-     * @returns {Promise<void>}
-     */
-    async close() {
-        if (!(this.element instanceof HTMLElement)) {
-            return;
-        }
-
-        this.element.remove();
-    }
-
-
-    /**
-     * ドラッグ開始時の処理
-     * 
-     * @param {MouseEvent} event
-     * @returns {Promise<void>}
-     */
-    async #startDragging(event) {
-        this.#isDragging = true;
-        this.#offsetX = event.clientX - this.element.getBoundingClientRect().left;
-        this.#offsetY = event.clientY - this.element.getBoundingClientRect().top;
-    }
-
-
-    /**
-     * ドラッグ終了時の処理
-     * 
-     * @param {MouseEvent} event
-     * @returns {Promise<void>}
-     */
-    async #stopDragging(event) {
-        this.#isDragging = false;
-    }
-
-
-    /**
-     * ドラッグ中の処理
-     * 
-     * @param {MouseEvent} event
-     * @returns {Promise<void>}
-     */
-    async #move(event) {
-        if (!this.#isDragging) return;
-        const x = event.clientX - this.#offsetX;
-        const y = event.clientY - this.#offsetY;
-        this.element.style.left = `${x}px`;
-        this.element.style.top = `${y}px`;
-    }
 }

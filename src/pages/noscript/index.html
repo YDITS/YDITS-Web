@@ -50,6 +50,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="/styles/ui.css">
+    <link rel="stylesheet" href="/styles/error.css">
     <link rel="stylesheet" href="./styles/index.css">
 </head>
 
@@ -60,15 +61,20 @@
         </div>
     </header>
 
-    <main>
-        <noscript>
-            <h2 id="pageTitle">JavaScript が無効</h1>
-                <p id="text">
-                    お使いのブラウザでは、JavaScript が無効、もしくは許可されていません。<br>
-                    当サービスを利用するにはJavaScriptが必要です。
-                </p>
-        </noscript>
-        <a class="button" href="/">再読み込み</a>
+    <main class="error-page">
+        <no-script style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        ">
+            <h1 class="error-title">JavaScript が無効</h1>
+            <p class="error-description">
+                お使いのブラウザでは、JavaScript が無効、もしくは許可されていません。<br>
+                当サービスを利用するには JavaScript が必要です。
+            </p>
+        </no-script>
+        <a class="button error-button" href="/">再読み込み</a>
     </main>
 
     <footer>

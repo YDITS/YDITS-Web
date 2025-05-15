@@ -76,28 +76,62 @@
     <header></header>
 
     <main>
-        <h2 id="pageTitle">サポートブラウザ</h2>
+        <h1 id="pageTitle">サポートブラウザ</h1>
 
         <div class="content">
-            <section>
-                <h3 class="description">
+            <section class="support-browser-type support-browser-type--supported">
+                <h2 class="support-browser-type-description">
                     YDITS for Web では、以下のブラウザをサポートしています。
-                </h3>
+                </h2>
 
-                <ul>
-                    <li>Google Chrome (最新バージョン)</li>
-                    <li>Mozilla Firefox (最新バージョン)</li>
-                    <li>Microsoft Edge (最新バージョン)</li>
+                <ul class="browser-category-list">
+                    <li class="browser-category-item">
+                        <h3 class="browser-category-title">
+                            Chromium ベース - Blink系 (V8) 準拠
+                        </h3>
+
+                        <ul class="browser-list">
+                            <li class="browser-item">Google Chrome (最新バージョン)</li>
+                            <li class="browser-item">Microsoft Edge (最新バージョン)</li>
+                            <li class="browser-item">Vivaldi (最新バージョン)</li>
+                            <li class="browser-item">Opera (最新バージョン)</li>
+                        </ul>
+                    </li>
+
+                    <li class="browser-category-item">
+                        <h3 class="browser-category-title">
+                            Firefox ベース - Gecko系 (SpiderMonkey) 準拠
+                        </h3>
+
+                        <ul class="browser-list">
+                            <li class="browser-item">Mozilla Firefox (最新バージョン)</li>
+                            <li class="browser-item">Floorp (最新バージョン)</li>
+                        </ul>
+                    </li>
                 </ul>
             </section>
 
-            <section>
-                <h3 class="description">
-                    以下のブラウザは正しく動作しない可能性があります。
-                </h3>
+            <section class="support-browser-type support-browser-type--unsupported">
+                <h2 class="support-browser-type-description">
+                    以下のブラウザは、一部の機能が正しく動作しない可能性があります。
+                </h2>
 
-                <ul>
-                    <li>Safari</li>
+                <ul class="browser-category-list">
+                    <li class="browser-category-item">
+                        <h3 class="browser-category-title">
+                            WebKit系 (JavaScriptCore)
+                        </h3>
+
+                        <ul class="browser-list">
+                            <li class="browser-item">
+                                <h4>Apple Safari</h4>
+
+                                <ul class="browser-description">
+                                    <li>プッシュ通知が利用できない可能性があります。</li>
+                                    <li>Service Worker が利用できない可能性があります。</li>
+                                </ul>
+                            </li>
+                        </ul>
                 </ul>
             </section>
         </div>

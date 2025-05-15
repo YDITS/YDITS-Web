@@ -9,7 +9,7 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
-import { Window } from "../../ydits-web.js";
+import { PopupDialog } from "../../../packages/popup-dialog/src/popup-dialog.js";
 
 /**
  * 設定を扱う。
@@ -523,9 +523,9 @@ export class Settings extends Service {
 
         // ----- Create New Window ----- //
         document.getElementById("createNewWindowButton").addEventListener("click", () => {
-            new Window({
-                type: Window.types.default,
-                id: `window_${Date.now()}`,
+            new PopupDialog({
+                type: PopupDialog.types.default,
+                id: Date.now(),
                 title: `テストウィンドウ`,
                 content: `これはウィンドウ作成のテストです。このウィンドウは移動できます。`,
                 create: true,
@@ -533,9 +533,9 @@ export class Settings extends Service {
         });
 
         document.getElementById("createNewErrorWindowButton").addEventListener("click", () => {
-            new Window({
-                type: Window.types.error,
-                id: `window_${Date.now()}`,
+            new PopupDialog({
+                type: PopupDialog.types.error,
+                id: Date.now(),
                 title: `テストウィンドウ - エラー`,
                 content: `これはエラーウィンドウ作成のテストです。このウィンドウは移動できます。`,
                 create: true,

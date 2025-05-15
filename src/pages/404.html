@@ -51,7 +51,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="/styles/ui.css">
-    <link rel="stylesheet" href="/styles/404.css">
+    <link rel="stylesheet" href="/styles/error.css">
 
     <!-- Scripts -->
     <script src="/scripts/common.js" type="module"></script>
@@ -73,12 +73,12 @@
 <body>
     <header></header>
 
-    <main>
-        <h2 id="pageTitle">404 Not found</h2>
-        <div id="text">
+    <main class="error-page">
+        <h2 class="error-title">404 Not found</h2>
+        <div class="error-description">
             <p>リクエストされたページが見つかりません。</p>
         </div>
-        <a class="button" href="/">ホームへ</a>
+        <a class="button error-button" href="/">ホームへ</a>
     </main>
 
     <footer></footer>
