@@ -106,7 +106,7 @@ export class Wolfx extends Service {
                 {
                     onOpened: (isRetried) => this.onJmaEewSocketOpened(isRetried),
                     onClosed: () => this.onJmaEewSocketClosed(),
-                    onUpdated: (data) => this.onJmaEewSocketUpdated(data),
+                    onUpdated: (event, data) => this.onJmaEewSocketUpdated(event, data),
                     onError: () => this.onJmaEewSocketError(),
                 }
             );

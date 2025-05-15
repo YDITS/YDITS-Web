@@ -9,14 +9,22 @@
  */
 
 import { WolfxHeartbeatData } from "./data/heart-beat.js";
+import { WolfxJmaEewData } from "./data/jma-eew.js";
 
 /**
  * Woldfx JMA EEW WebSocket
  */
 export class WolfxJmaEewSocket {
     /**
-     * @param {Object} options
-     * @param {Object} callbacks - 各コールバック関数のオブジェクト
+     * @param {{
+     *     autoReconnect: boolean,
+     * }} options
+     * @param {{
+     *     onOpened: (event) => void,
+     *     onClosed: (event) => void,
+     *     onUpdated: (event: Event, data: WolfxJmaEewData | WolfxHeartbeatData) => void,
+     *     onError: (event) => void,
+     * }} callbacks - 各コールバック関数のオブジェクト
      */
     constructor(options, callbacks) {
         if (!callbacks.onOpened) {
@@ -41,7 +49,7 @@ export class WolfxJmaEewSocket {
          * WebSocketクローズ時に再接続するかどうか
          * @type {bool}
          */
-        this.autoReconnect = options.autoReconnect || true;
+        this.autoReconnect = typeof options.autoReconnect === "boolean" ? options.autoReconnect : true;
 
         try {
             this.connect(this.endpoint);
@@ -60,7 +68,7 @@ export class WolfxJmaEewSocket {
 
     /**
      * 接続中に取得したデータリスト
-     * @type {List}
+     * @type {[]}
      */
     data = [];
 
@@ -126,7 +134,7 @@ export class WolfxJmaEewSocket {
      * WebSocket接続がオープンした時の処理
      * 
      * @param {Event} event
-     * @param {Function} callback - コールバック関数
+     * @param {(event: Event, isRetried: boolean) => void} callback - コールバック関数
      * @returns {void}
      */
     onOpened(event, callback) {
@@ -144,7 +152,7 @@ export class WolfxJmaEewSocket {
      * WebSocket接続がクローズした時の処理
      * 
      * @param {CloseEvent} event
-     * @param {Function} callback - コールバック関数
+     * @param {(event: Event) => void} callback - コールバック関数
      * @returns {void}
      */
     onClosed(event, callback) {
@@ -171,23 +179,26 @@ export class WolfxJmaEewSocket {
      * WebSocket接続でメッセージを受け取った時の処理
      * 
      * @param {MessageEvent<any>} event
-     * @param {Function} callback - コールバック関数
+     * @param {(event: Event, data: WolfxJmaEewData | WolfxHeartbeatData) => void} callback - コールバック関数
      * @returns {void}
      */
     onMessage(event, callback) {
         try {
-            let data = JSON.parse(event.data);
+            let raw = JSON.parse(event.data);
 
-            if (data.type === "heartbeat") {
+            /**@type {WolfxJmaEewData | WolfxHeartbeatData}*/
+            let data;
+
+            if (raw.type === "heartbeat") {
                 try {
-                    data = new WolfxHeartbeatData(data);
+                    data = new WolfxHeartbeatData(raw);
                     this.onGetHeartbeat(data);
                 } catch (error) {
                     throw new Error(`Failed to parse data of Wolfx Heartbeat JSON data: ${error}`);
                 }
-            } else if (data.type === "jma_eew") {
+            } else if (raw.type === "jma_eew") {
                 try {
-                    data = new WolfxJmaEewData(data);
+                    data = new WolfxJmaEewData(raw);
                 } catch (error) {
                     throw new Error(`Failed to parse data of Wolfx JMA EEW JSON data: ${error}`);
                 }
@@ -206,7 +217,7 @@ export class WolfxJmaEewSocket {
      * WebSocket接続でエラーが発生した時の処理
      * 
      * @param {Event} event
-     * @param {Function} callback - コールバック関数
+     * @param {(event: Event) => void} callback - コールバック関数
      * @returns {void}
      */
     onError(event, callback) {
