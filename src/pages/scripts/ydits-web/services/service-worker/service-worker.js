@@ -69,8 +69,8 @@ export class ServiceWorker extends Service {
 
         try {
             this.registration = await navigator.serviceWorker.register(
-                "/scripts/sw.mjs",
-                { scope: "/scripts/", }
+                "/scripts/ydits-web/sw.js",
+                { scope: "/scripts/ydits-web/", }
             );
         } catch (error) {
             await this.#onFailedToRegister(error);
