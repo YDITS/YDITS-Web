@@ -287,7 +287,7 @@ export class Wolfx extends Service {
      * @returns {void}
      */
     sound() {
-        if (this.jmaEewData.isCancel) {
+        if (this.jmaEewData.isCancel || this.jmaEewData.eventId !== this.lastEventId) {
             if (this.app.services.settings.sound.eewCancel == true) {
                 this.app.services.sounds.eewVoiceCancel.play();
             }
@@ -298,7 +298,7 @@ export class Wolfx extends Service {
 
         if (!this.app.services.settings.sound.eewAny) { return }
 
-        if (this.jmaEewData.isWarning) {
+        if (this.jmaEewData.isWarning && this.jmaEewData.eventId !== this.lastEventId) {
             this.app.services.sounds.eew.play();
             this.app.services.sounds.eewWarnVoice.play();
         }
