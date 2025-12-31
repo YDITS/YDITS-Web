@@ -420,7 +420,7 @@ export class YditsWeb extends FirebaseApp {
         const timeNowMs = performance.now();
         this.#calcFps(timeNowMs);
         this.#displayFps(timeNowMs);
-        this.services.map.update(timeNow);
+        this.services.map.update(timeNow, this.#fps);
         requestAnimationFrame(() => this.#mainloop());
     }
 
