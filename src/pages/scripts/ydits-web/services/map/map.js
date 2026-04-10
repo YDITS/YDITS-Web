@@ -83,7 +83,7 @@ export class Map extends Service {
      * @param {string} baseTime 
      * @param {string} validTime 
      * @returns {string}
-     */    
+     */
     hrpnsImageUri(baseTime, validTime) {
         return `https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`;
     }
@@ -111,9 +111,11 @@ export class Map extends Service {
         this.map.once("load", async () => {
             this.userPointImage = await this.map.loadImage('/images/user_point.png');
             this.regionImage = await this.map.loadImage('/images/hypocenter.png');
+            this.typhoonCenterImage = await this.map.loadImage('/images/typhoon_center.png');
 
             await this.map.addImage(`userPointImage`, this.userPointImage.data);
             await this.map.addImage(`eewRedionImage`, this.regionImage.data);
+            await this.map.addImage(`typhoonCenterImage`, this.typhoonCenterImage.data);
 
             await this.showHrpns();
             await this.showTyphoon();
@@ -179,16 +181,11 @@ export class Map extends Service {
         await this.map.addSource(`userPointSource`, {
             type: 'geojson',
             data: {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: lngLat,
-                        },
-                    },
-                ],
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: lngLat,
+                },
             },
         });
 
@@ -351,6 +348,15 @@ export class Map extends Service {
                 const analysisData = data.find(item => item.part && item.part.en === "Analysis");
                 const forecasts = data.filter(item => item.part && item.part.en && item.part.en.startsWith("Forecast for"));
 
+                // 強風域を表示
+                if (analysisData && analysisData.galeWarningArea) {
+                    const typhoonNumber = titleData.typhoonNumber.slice(-2).replace(/^0+/, '');
+                    this.addGaleWarningArea(analysisData.galeWarningArea, typhoonNumber, typhoonId);
+                }
+
+                // 予報円を追加
+                forecasts.forEach((forecast, index) => this.addForecastCircle(forecast, `${typhoonId}_${index}`));
+
                 if (analysisData && analysisData.track && analysisData.track.typhoon) {
                     // 台風進路の座標を抽出
                     const typhoonTrackCoords = analysisData.track.typhoon.map(point => [point[1], point[0]]);
@@ -382,27 +388,35 @@ export class Map extends Service {
 
                     // 台風の中心位置にマーカーを追加
                     if (analysisData.center) {
-                        const el = document.createElement('div');
-                        el.style.backgroundImage = 'url(/images/close_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg)';
-                        el.style.width = '24px';
-                        el.style.height = '24px';
-                        el.style.backgroundSize = '100%';
+                        console.debug("center is enabled.");
+                        const centerSourceId = `typhoonCenterSource_${typhoonId}`;
+                        this.map.addSource(centerSourceId, {
+                            type: "geojson",
+                            data: {
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [analysisData.center[1], analysisData.center[0]],
+                                },
+                            },
+                        });
+                        this.typhoonSourceIds.push(centerSourceId);
+                        console.debug("center source has added.");
 
-                        const centerMarker = new maplibregl.Marker(el)
-                            .setLngLat([analysisData.center[1], analysisData.center[0]])
-                            .setPopup(new maplibregl.Popup({offset: 25}).setText(`台風中心: [${analysisData.center[0]}, ${analysisData.center[1]}]`))
-                            .addTo(this.map);
-                        this.typhoonMarkers.push(centerMarker);
+                        const centerLayerId = `typhoonCenterLayer_${typhoonId}`;
+                        this.map.addLayer({
+                            id: centerLayerId,
+                            type: 'symbol',
+                            source: centerSourceId,
+                            layout: {
+                                "symbol-sort-key": 1,
+                                "icon-image": `typhoonCenterImage`,
+                                "icon-size": 1,
+                            },
+                        });
+                        this.typhoonLayerIds.push(centerLayerId);
+                        console.debug("center layer has added.");
                     }
-                }
-
-                // 予報円を追加
-                forecasts.forEach((forecast, index) => this.addForecastCircle(forecast, `${typhoonId}_${index}`));
-
-                // 強風域を表示
-                if (analysisData && analysisData.galeWarningArea) {
-                    const typhoonNumber = titleData.typhoonNumber.slice(-2).replace(/^0+/, '');
-                    this.addGaleWarningArea(analysisData.galeWarningArea, typhoonNumber, typhoonId);
                 }
             } else {
                 console.error('Error: Data is not an array.');
@@ -505,17 +519,19 @@ export class Map extends Service {
                 id: timeLayerId,
                 type: "symbol",
                 source: timeSourceId,
-                minzoom: 5,
                 layout: {
+                    "symbol-sort-key": 0,
                     "text-field": `${validtime.getDate()}日${validtime.getHours()}時`,
-                    "text-size": 16,
+                    "text-size": 14,
                     "text-font": ["Noto Sans JP Regular"],
                     "text-allow-overlap": true,
                     "text-anchor": "top",
-                    "text-offset": [0, 0.5]
+                    "text-offset": [0, 0.5],
                 },
                 paint: {
                     "text-color": "#ffffff",
+                    "text-halo-width": 2,
+                    "text-halo-color": "rgba(0, 0, 0, 0.4)",
                 },
             });
             this.typhoonSourceIds.push(timeSourceId);
@@ -567,13 +583,40 @@ export class Map extends Service {
         });
         this.typhoonLayerIds.push(galeStrokeLayerId);
 
-        const el = document.createElement('div');
-        el.innerHTML = `<div style="font-family: 'Noto Sans JP Regular'; font-size: 16px; color: #ffffff; font-weight: bold;">${typhoonNumber}号</div>`;
-
-        const galeMarker = new maplibregl.Marker(el)
-            .setLngLat(center)
-            .addTo(this.map);
-        this.typhoonMarkers.push(galeMarker);
+        // 予報時刻のテキストを追加
+        const numberSourceId = `typhoonNumberSource_${typhoonId}`;
+        this.map.addSource(numberSourceId, {
+            type: 'geojson',
+            data: {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: center,
+                },
+            },
+        });
+        const numberLayerId = `typhoonNumberLayer_${typhoonId}`;
+        this.map.addLayer({
+            id: numberLayerId,
+            type: "symbol",
+            source: numberSourceId,
+            layout: {
+                "symbol-sort-key": 0,
+                "text-field": `${typhoonNumber}号`,
+                "text-size": 14,
+                "text-font": ["Noto Sans JP Regular"],
+                "text-allow-overlap": true,
+                "text-anchor": "top",
+                "text-offset": [0, 0.5]
+            },
+            paint: {
+                "text-color": "#ffffff",
+                "text-halo-width": 2,
+                "text-halo-color": "rgba(0, 0, 0, 0.4)",
+            },
+        });
+        this.typhoonSourceIds.push(numberSourceId);
+        this.typhoonLayerIds.push(numberLayerId);
     }
 
 
@@ -597,7 +640,7 @@ export class Map extends Service {
         this.typhoonLayerIds = [];
         this.typhoonSourceIds = [];
         this.typhoonMarkers = [];
-    }""
+    } ""
 
 
     /**
@@ -904,7 +947,7 @@ export class Map extends Service {
      */
     #_$hrpnsTime;
 
-    
+
     /**
      * Element: 雨雲レーダー時刻テキスト
      * @type {HTMLElement}
