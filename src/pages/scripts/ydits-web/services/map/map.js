@@ -686,7 +686,7 @@ export class Map extends Service {
      * @param {*} dateNow
      * @returns {void}
      */
-    update(dateNow) {
+    update(dateNow, fps) {
         try {
             if (!this.app.services.api.yahooKmoni.isEew) {
                 if (!this.isDisplayHrpns) this.showHrpns();
@@ -709,7 +709,7 @@ export class Map extends Service {
                     this.app.services.eew.reports[id].pRadius = this.app.services.eew.reports[id].psWave.pRadius * 1000;
 
                     if (this.app.services.eew.reports[id].sRadius != this.app.services.eew.reports[id].lastSWave) {
-                        this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / 60;
+                        this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / fps;
                         this.app.services.eew.reports[id].lastSWave = this.app.services.eew.reports[id].sRadius;
                         this.app.services.eew.reports[id].sWavePut = this.app.services.eew.reports[id].sRadius;
                     } else if (this.app.services.eew.reports[id].sRadius == this.app.services.eew.reports[id].lastSWave) {
@@ -717,7 +717,7 @@ export class Map extends Service {
                     }
 
                     if (this.app.services.eew.reports[id].pRadius != this.app.services.eew.reports[id].lastPWave) {
-                        this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / 60;
+                        this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / fps;
                         this.app.services.eew.reports[id].lastPWave = this.app.services.eew.reports[id].pRadius;
                         this.app.services.eew.reports[id].pWavePut = this.app.services.eew.reports[id].pRadius;
                         this.#loopCount = dateNow;
