@@ -247,30 +247,62 @@ export class Map extends Service {
      * @returns {Promise<void>}
      */
     async showHrpns() {
+        await this.hideHrpns();
         this.isDisplayHrpns = true;
 
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
 
-        if (this.map.getSource("hrpns-source")) {
-            this.map.removeLayer("hrpns");
-            this.map.removeSource("hrpns-source");
+        const zoomPairs = [2, 4, 6, 8, 10];
+
+        for (const z of zoomPairs) {
+            const sIdOdd = `hrpns-source-${z}-o`;
+            const lIdOdd = `hrpns-${z}-o`;
+            const sIdEven = `hrpns-source-${z}-e`;
+            const lIdEven = `hrpns-${z}-e`;
+
+            await this.map.addSource(sIdOdd, {
+                'type': 'raster',
+                'tiles': [url],
+                'tileSize': 64, // Display tiles map zoom level +2 (×4)
+                'minzoom': z,
+                'maxzoom': z
+            });
+
+            await this.map.addLayer({
+                id: lIdOdd,
+                source: sIdOdd,
+                type: "raster",
+                minzoom: z - 2,
+                maxzoom: z - 1,
+                paint: {
+                    "raster-opacity": 0.7,
+                    "raster-resampling": "nearest",
+                    "raster-fade-duration": 0
+                },
+            });
+
+            await this.map.addSource(sIdEven, {
+                'type': 'raster',
+                'tiles': [url],
+                'tileSize': 128, // Display tiles map zoom level +1 (×2)
+                'minzoom': z,
+                'maxzoom': z
+            });
+
+            await this.map.addLayer({
+                id: lIdEven,
+                source: sIdEven,
+                type: "raster",
+                minzoom: z - 1,
+                maxzoom: z,
+                paint: {
+                    "raster-opacity": 0.7,
+                    "raster-resampling": "nearest",
+                    "raster-fade-duration": 0
+                },
+            });
         }
-
-        await this.map.addSource('hrpns-source', {
-            'type': 'raster',
-            'tiles': [url],
-            'tileSize': 256,
-        });
-
-        await this.map.addLayer({
-            id: "hrpns",
-            source: "hrpns-source",
-            type: "raster",
-            paint: {
-                "raster-opacity": 0.7,
-            },
-        });
 
         this.$hrpnsTimeText.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
         this.$hrpnsTime.classList.add("show");
@@ -283,7 +315,18 @@ export class Map extends Service {
      */
     async hideHrpns() {
         this.isDisplayHrpns = false;
-        this.map.removeLayer("hrpns");
+
+        const zoomPairs = [2, 4, 6, 8, 10];
+        for (const z of zoomPairs) {
+            const suffixes = ['o', 'e'];
+            for (const s of suffixes) {
+                const layerId = `hrpns-${z}-${s}`;
+                const sourceId = `hrpns-source-${z}-${s}`;
+                if (this.map.getLayer(layerId)) this.map.removeLayer(layerId);
+                if (this.map.getSource(sourceId)) this.map.removeSource(sourceId);
+            }
+        }
+
         this.$hrpnsTime.classList.remove("show");
         this.$hrpnsTimeText.textContent = "";
     }
@@ -348,20 +391,16 @@ export class Map extends Service {
                 const analysisData = data.find(item => item.part && item.part.en === "Analysis");
                 const forecasts = data.filter(item => item.part && item.part.en && item.part.en.startsWith("Forecast for"));
 
-                // 強風域を表示
                 if (analysisData && analysisData.galeWarningArea) {
                     const typhoonNumber = titleData.typhoonNumber.slice(-2).replace(/^0+/, '');
                     this.addGaleWarningArea(analysisData.galeWarningArea, typhoonNumber, typhoonId);
                 }
 
-                // 予報円を追加
                 forecasts.forEach((forecast, index) => this.addForecastCircle(forecast, `${typhoonId}_${index}`));
 
                 if (analysisData && analysisData.track && analysisData.track.typhoon) {
-                    // 台風進路の座標を抽出
                     const typhoonTrackCoords = analysisData.track.typhoon.map(point => [point[1], point[0]]);
 
-                    // 進路ラインソースとレイヤーを追加
                     const trackSourceId = `typhoonTrackSource_${typhoonId}`;
                     this.map.addSource(trackSourceId, {
                         type: 'geojson',
@@ -386,7 +425,6 @@ export class Map extends Service {
                     this.typhoonSourceIds.push(trackSourceId);
                     this.typhoonLayerIds.push(trackLayerId);
 
-                    // 台風の中心位置にマーカーを追加
                     if (analysisData.center) {
                         console.debug("center is enabled.");
                         const centerSourceId = `typhoonCenterSource_${typhoonId}`;
@@ -470,7 +508,6 @@ export class Map extends Service {
             });
             this.typhoonLayerIds.push(circleStrokeLayerId);
 
-            // 予報円の接線をラインで表示
             if (forecast.probabilityCircle.tangent) {
                 forecast.probabilityCircle.tangent.forEach((tangent, index) => {
                     const lineCoords = tangent.map(point => [point[1], point[0]]);
@@ -502,7 +539,6 @@ export class Map extends Service {
                 });
             }
 
-            // 予報時刻のテキストを追加
             const timeSourceId = `typhoonForecastTimeSource_${forecastId}`;
             this.map.addSource(timeSourceId, {
                 type: 'geojson',
