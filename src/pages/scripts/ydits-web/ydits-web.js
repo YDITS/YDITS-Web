@@ -318,7 +318,8 @@ export class YditsWeb extends FirebaseApp {
         setInterval(async () => await this.#ntp(), 1000);
         setInterval(async () => await this.#clock(this.services.datetime), 1000);
         setInterval(async () => await this.#eew(), 1000);
-        setInterval(async () => await this.#hrpns(), 1000 * 30);
+        setInterval(async () => await this.#hrpns(), 1000 * 60);
+        setInterval(async () => await this.#typhoon(), 1000 * 300);
         setInterval(async () => await this.#jmaDataFeed(), this.#jmaDataFeedFetchInterval);
         setInterval(async () => await this.#debugOutput(), 1000);
     }
@@ -472,6 +473,11 @@ export class YditsWeb extends FirebaseApp {
 
     async #hrpns() {
         this.services.map.updateHrpns();
+    }
+
+
+    async #typhoon() {
+        this.services.map.updateTyphoon();
     }
 
 

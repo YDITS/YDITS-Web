@@ -118,7 +118,7 @@ export class Map extends Service {
             await this.map.addImage(`typhoonCenterImage`, this.typhoonCenterImage.data);
 
             await this.showHrpns();
-            await this.showTyphoon();
+            await this.displayTyphoon();
         });
 
         if (!this.isGeolocationSupported) { return }
@@ -366,8 +366,8 @@ export class Map extends Service {
      * @returns {Promise<void>}
      */
     async updateTyphoon() {
-        await this.hideTyphoon();
-        await this.showTyphoon();
+        await this.removeTyphoon();
+        await this.displayTyphoon();
     }
 
 
@@ -375,7 +375,7 @@ export class Map extends Service {
      * 台風情報（予想進路図）を表示する
      * @returns {Promise<void>}
      */
-    async showTyphoon() {
+    async displayTyphoon() {
         this.tropicalCycloneLatestTarget = await this.getTropicalCycloneTarget();
         if (!this.tropicalCycloneLatestTarget) return;
 
@@ -393,13 +393,74 @@ export class Map extends Service {
 
                 if (analysisData && analysisData.galeWarningArea) {
                     const typhoonNumber = titleData.typhoonNumber.slice(-2).replace(/^0+/, '');
-                    this.addGaleWarningArea(analysisData.galeWarningArea, typhoonNumber, typhoonId);
+                    this.addWarningAreas(analysisData.stormWarningArea, analysisData.galeWarningArea, typhoonId);
+                    this.addTyphoonNumber(
+                        typhoonId,
+                        [analysisData.galeWarningArea.center?.[1], analysisData.galeWarningArea.center?.[0]],
+                        analysisData.center,
+                        typhoonNumber
+                    );
                 }
 
-                forecasts.forEach((forecast, index) => this.addForecastCircle(forecast, `${typhoonId}_${index}`));
+                forecasts.forEach((forecast, index) => this.addForecastCircles(forecast, `${typhoonId}_${index}`));
 
                 if (analysisData && analysisData.track && analysisData.track.typhoon) {
+                    if (analysisData.center) {
+                        const centerSourceId = `typhoonCenterSource_${typhoonId}`;
+                        this.map.addSource(centerSourceId, {
+                            type: "geojson",
+                            data: {
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [analysisData.center[1], analysisData.center[0]],
+                                },
+                            },
+                        });
+                        this.typhoonSourceIds.push(centerSourceId);
+
+                        const centerLayerId = `typhoonCenterLayer_${typhoonId}`;
+                        this.map.addLayer({
+                            id: centerLayerId,
+                            type: 'symbol',
+                            source: centerSourceId,
+                            layout: {
+                                "symbol-sort-key": 1,
+                                "icon-image": `typhoonCenterImage`,
+                                "icon-size": 1,
+                            },
+                        });
+                        this.typhoonLayerIds.push(centerLayerId);
+                    }
+
+                    const preTyphoonTrackCoords = analysisData.track.preTyphoon.map(point => [point[1], point[0]]);
                     const typhoonTrackCoords = analysisData.track.typhoon.map(point => [point[1], point[0]]);
+
+                    const trackPreSourceId = `preTyphoonTrackSource_${typhoonId}`;
+                    this.map.addSource(trackPreSourceId, {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: preTyphoonTrackCoords,
+                            },
+                        },
+                    });
+                    const trackPreLayerId = `preTyphoonTrackLayer_${typhoonId}`;
+                    this.map.addLayer({
+                        id: trackPreLayerId,
+                        type: 'line',
+                        source: trackPreSourceId,
+                        paint: {
+                            'line-color': '#ffffff',
+                            'line-width': 0.5,
+                            'line-dasharray': [5, 5],
+                            'line-opacity': 0.5,
+                        },
+                    });
+                    this.typhoonSourceIds.push(trackPreSourceId);
+                    this.typhoonLayerIds.push(trackPreLayerId);
 
                     const trackSourceId = `typhoonTrackSource_${typhoonId}`;
                     this.map.addSource(trackSourceId, {
@@ -419,42 +480,12 @@ export class Map extends Service {
                         source: trackSourceId,
                         paint: {
                             'line-color': '#ffffff',
-                            'line-width': 1,
+                            'line-width': 0.5,
+                            'line-opacity': 0.5,
                         },
                     });
                     this.typhoonSourceIds.push(trackSourceId);
                     this.typhoonLayerIds.push(trackLayerId);
-
-                    if (analysisData.center) {
-                        console.debug("center is enabled.");
-                        const centerSourceId = `typhoonCenterSource_${typhoonId}`;
-                        this.map.addSource(centerSourceId, {
-                            type: "geojson",
-                            data: {
-                                type: 'Feature',
-                                geometry: {
-                                    type: 'Point',
-                                    coordinates: [analysisData.center[1], analysisData.center[0]],
-                                },
-                            },
-                        });
-                        this.typhoonSourceIds.push(centerSourceId);
-                        console.debug("center source has added.");
-
-                        const centerLayerId = `typhoonCenterLayer_${typhoonId}`;
-                        this.map.addLayer({
-                            id: centerLayerId,
-                            type: 'symbol',
-                            source: centerSourceId,
-                            layout: {
-                                "symbol-sort-key": 1,
-                                "icon-image": `typhoonCenterImage`,
-                                "icon-size": 1,
-                            },
-                        });
-                        this.typhoonLayerIds.push(centerLayerId);
-                        console.debug("center layer has added.");
-                    }
                 }
             } else {
                 console.error('Error: Data is not an array.');
@@ -469,7 +500,7 @@ export class Map extends Service {
      * @param {string} forecastId - 予報のユニークID
      * @return {Promise<void>}
      */
-    async addForecastCircle(forecast, forecastId) {
+    async addForecastCircles(forecast, forecastId) {
         if (forecast && forecast.center && forecast.probabilityCircle) {
             const center = [forecast.center[1], forecast.center[0]];
             const radius = forecast.probabilityCircle.radius;
@@ -503,7 +534,7 @@ export class Map extends Service {
                 source: circleSourceId,
                 paint: {
                     "line-color": "#ffffff",
-                    "line-width": 1,
+                    "line-width": 0.5,
                 }
             });
             this.typhoonLayerIds.push(circleStrokeLayerId);
@@ -531,7 +562,7 @@ export class Map extends Service {
                         paint: {
                             'line-color': '#ffffff',
                             'line-dasharray': [5, 5],
-                            'line-width': 1,
+                            'line-width': 0.5,
                         },
                     });
                     this.typhoonSourceIds.push(tangentSourceId);
@@ -575,51 +606,16 @@ export class Map extends Service {
         }
     }
 
-
     /**
-     * 強風域を追加する
-     * @param {Object} galeWarningArea - 強風域の情報
-     * @param {string} typhoonNumber - 台風番号
+     * 台風番号を追加する
      * @param {string} typhoonId - 台風のユニークID
-     * @return {Promise<void>}
+     * @param {*} galeWarningAreaCenter 
+     * @param {*} typhoonCenter 
+     * @param {number} typhoonNumber 
      */
-    async addGaleWarningArea(galeWarningArea, typhoonNumber, typhoonId) {
-        const center = [galeWarningArea.center[1], galeWarningArea.center[0]];
-        const radius = galeWarningArea.radius;
-        const circleJSON = turf.circle(center, radius, Map.DEFAULT_CIRCLE_OPTIONS);
+    async addTyphoonNumber(typhoonId, galeWarningAreaCenter, typhoonCenter, typhoonNumber) {
+        const center = galeWarningAreaCenter ?? typhoonCenter;
 
-        const galeSourceId = `typhoonGaleSource_${typhoonId}`;
-        this.map.addSource(galeSourceId, {
-            type: "geojson",
-            data: circleJSON,
-        });
-        this.typhoonSourceIds.push(galeSourceId);
-
-        const galeLayerId = `typhoonGaleLayer_${typhoonId}`;
-        this.map.addLayer({
-            id: galeLayerId,
-            type: "fill",
-            source: galeSourceId,
-            paint: {
-                "fill-color": '#ffee00',
-                "fill-opacity": 0.3,
-            }
-        });
-        this.typhoonLayerIds.push(galeLayerId);
-
-        const galeStrokeLayerId = `typhoonGaleStrokeLayer_${typhoonId}`;
-        this.map.addLayer({
-            id: galeStrokeLayerId,
-            type: "line",
-            source: galeSourceId,
-            paint: {
-                "line-color": '#ffee00',
-                "line-width": 1,
-            }
-        });
-        this.typhoonLayerIds.push(galeStrokeLayerId);
-
-        // 予報時刻のテキストを追加
         const numberSourceId = `typhoonNumberSource_${typhoonId}`;
         this.map.addSource(numberSourceId, {
             type: 'geojson',
@@ -657,10 +653,93 @@ export class Map extends Service {
 
 
     /**
+     * 暴風域と強風域を追加する
+     * @param {Object} galeWarningArea - 強風域の情報
+     * @param {string} typhoonId - 台風のユニークID
+     * @return {Promise<void>}
+     */
+    async addWarningAreas(stormWarningArea, galeWarningArea, typhoonId) {
+        if (galeWarningArea) {
+            const galeWarningAreaCenter = [galeWarningArea.center?.[1], galeWarningArea.center?.[0]];
+            const galeWarningAreaRadius = galeWarningArea.radius;
+            const galeWarningAreaCircleJSON = turf.circle(galeWarningAreaCenter, galeWarningAreaRadius, Map.DEFAULT_CIRCLE_OPTIONS);
+
+            const galeSourceId = `typhoonGaleSource_${typhoonId}`;
+            this.map.addSource(galeSourceId, {
+                type: "geojson",
+                data: galeWarningAreaCircleJSON,
+            });
+            this.typhoonSourceIds.push(galeSourceId);
+
+            const galeLayerId = `typhoonGaleLayer_${typhoonId}`;
+            this.map.addLayer({
+                id: galeLayerId,
+                type: "fill",
+                source: galeSourceId,
+                paint: {
+                    "fill-color": '#e0e000',
+                    "fill-opacity": 0.3,
+                }
+            });
+            this.typhoonLayerIds.push(galeLayerId);
+
+            const galeStrokeLayerId = `typhoonGaleStrokeLayer_${typhoonId}`;
+            this.map.addLayer({
+                id: galeStrokeLayerId,
+                type: "line",
+                source: galeSourceId,
+                paint: {
+                    "line-color": '#e0e000',
+                    "line-width": 0.5,
+                }
+            });
+            this.typhoonLayerIds.push(galeStrokeLayerId);
+        }
+
+        if (stormWarningArea) {
+            const stormWarningAreaCenter = [stormWarningArea.arc?.[0]?.[0]?.[1], stormWarningArea.arc?.[0]?.[0]?.[0]];
+            const stormWarningAreaRadius = stormWarningArea.arc?.[0]?.[1];
+            const stormWarningAreaCircleJSON = turf.circle(stormWarningAreaCenter, stormWarningAreaRadius, Map.DEFAULT_CIRCLE_OPTIONS);
+
+            const stormSourceId = `typhoonStormSouce_${typhoonId}`;
+            this.map.addSource(stormSourceId, {
+                type: "geojson",
+                data: stormWarningAreaCircleJSON,
+            });
+            this.typhoonSourceIds.push(stormSourceId);
+
+            const stormLayerId = `typhoonStormLayer_${typhoonId}`;
+            this.map.addLayer({
+                id: stormLayerId,
+                type: "fill",
+                source: stormSourceId,
+                paint: {
+                    "fill-color": '#e04000',
+                    "fill-opacity": 0.5,
+                }
+            });
+            this.typhoonLayerIds.push(stormLayerId);
+
+            const stormStrokeLayerId = `typhoonStormStrokeLayer_${typhoonId}`;
+            this.map.addLayer({
+                id: stormStrokeLayerId,
+                type: "line",
+                source: stormSourceId,
+                paint: {
+                    "line-color": '#e04000',
+                    "line-width": 1^0.5,
+                }
+            });
+            this.typhoonLayerIds.push(stormStrokeLayerId);
+        }
+    }
+
+
+    /**
      * 台風情報（予想進路図）を非表示する
      * @returns {Promise<void>}
      */
-    async hideTyphoon() {
+    async removeTyphoon() {
         this.typhoonLayerIds.forEach(id => {
             if (this.map.getLayer(id)) {
                 this.map.removeLayer(id);
@@ -862,7 +941,7 @@ export class Map extends Service {
             type: "line",
             source: `eewSWaveSource_${id}`,
             paint: {
-                "line-width": 1,
+                "line-width": 0.5,
                 "line-color": "#ff4020",
             },
         });
@@ -877,7 +956,7 @@ export class Map extends Service {
             type: "line",
             source: `eewPWaveSource_${id}`,
             paint: {
-                "line-width": 1,
+                "line-width": 0.5,
                 "line-color": "#4080ff",
             },
         });
