@@ -1,6 +1,6 @@
 # YDITS for Web
 
-[English →](./README.md)
+[Read in English >](./README.md)
 
 ## 概要
 
@@ -17,4 +17,4 @@ https://webapp.ydits.net/ で公開しています。
 
 [Apache License 2.0](./LICENSE) のもとでライセンスされます。
 
-Copyright &copy; よね/Yone
+Copyright © よね/Yone
