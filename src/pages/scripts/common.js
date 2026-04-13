@@ -9,33 +9,58 @@
  *
  */
 
-import { Render } from "https://cdn.yoneyo.com/scripts/render/render-v1.0.0.mjs";
-import { DomLoader } from "./components/loader.js";
-import { Header } from "./components/header.js";
-import { Footer } from "./components/footer.js";
+import { Render } from "https://cdn.yoneyo.com/scripts/render@1.0.0/render.js";
 
 const render = new Render();
-const header = new Header({ render });
-const footer = new Footer({ render });
 
-/** @type {LoadItem[]} */
-const loaderConfig = [
-    {
-        component: header,
-        targetSelector: "header",
-    },
-    {
-        component: footer,
-        targetSelector: "footer",
-        condition: (location) => !["/", "/eqhistory/", "/debug-logs/"].includes(location.pathname),
-    },
-];
+loadCommonComponents();
 
-const domLoader = new DomLoader({
-    render: render,
-    items: loaderConfig
-});
+function loadCommonComponents() {
+    const $headerWrapper = document.querySelector("header");
+    const $footerWrapper = document.querySelector("footer");
 
-document.addEventListener("DOMContentLoaded", () => {
-    domLoader.load();
-});
+    render.build({
+        target: $headerWrapper,
+        children: $header("YDITS for Web"),
+    });
+
+    if (shouldLoadFooter()) {
+        render.build({
+            target: $footerWrapper,
+            children: $footer("© よね/Yone"),
+        });
+    }
+}
+
+function shouldLoadFooter(location) {
+    return !["/", "/eqhistory/", "/debug-logs/"].includes(location.pathname);
+}
+
+function $header(title) {
+    return [
+        render.$div({
+            className: "wrapper",
+            children: [
+                render.$h1({
+                    id: "headerTitle",
+                    className: "header__title",
+                    textContent: title,
+                }),
+            ],
+        }),
+    ];
+}
+
+function $footer(copyright) {
+    return [
+        render.$div({
+            className: "wrapper",
+            children: [
+                render.$p({
+                    id: "footerCopyright",
+                    textContent: copyright,
+                }),
+            ],
+        }),
+    ];
+}
