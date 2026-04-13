@@ -79,7 +79,7 @@ main {
     padding: 8px 0;
 }
 
-#list ul li:hover {
+#list ul li:active {
     background-color: rgba(255, 255, 255, .5);
 }
 
@@ -212,7 +212,7 @@ main {
     transition: background-color 0.3s, padding-top 0.3s, padding-bottom 0.3s, font-size 0.3s;
     cursor: pointer;
 
-    &:hover {
+    &:active {
         background-color: #ffffff40;
         padding-top: 1rem;
         padding-bottom: 1rem;
@@ -363,7 +363,7 @@ main {
     z-index: 1;
 }
 
-#mapLayersButton:hover {
+#mapLayersButton:active {
     background-color: #303030;
 }
 
@@ -505,7 +505,7 @@ main {
     font-size: 1.75rem;
 }
 
-.window .closeBtn:hover {
+.window .closeBtn:active {
     background-color: rgba(127, 127, 127, .9);
 }
 
@@ -579,7 +579,7 @@ main {
     border-bottom-right-radius: 2rem;
 }
 
-.window .lists .list:hover {
+.window .lists .list:active {
     background-color: rgba(127, 127, 127, .9);
 }
 
@@ -699,7 +699,7 @@ main {
     cursor: pointer;
 }
 
-.window button:hover {
+.window button:active {
     background-color: #707070ff;
 }
 
