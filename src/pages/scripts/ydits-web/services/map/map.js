@@ -249,6 +249,9 @@ export class Map extends Service {
      */
     async showHrpns() {
         await this.hideHrpns();
+
+        if (this.app.services.api.yahooKmoni.isEew) return;
+
         this.isDisplayHrpns = true;
 
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
@@ -377,8 +380,14 @@ export class Map extends Service {
      * @returns {Promise<void>}
      */
     async displayTyphoon() {
+        this.removeTyphoon();
+
+        if (this.app.services.api.yahooKmoni.isEew) return;
+
         this.tropicalCycloneLatestTarget = await this.getTropicalCycloneTarget();
         if (!this.tropicalCycloneLatestTarget) return;
+
+        this.isDisplayTyphoon = true;
 
         this.tropicalCycloneLatestTarget.forEach(async (target) => {
             const url = this.tropicalCycloneForecastUrl(target);
@@ -728,7 +737,7 @@ export class Map extends Service {
                 source: stormSourceId,
                 paint: {
                     "line-color": '#e04000',
-                    "line-width": 1^0.5,
+                    "line-width": 1 ^ 0.5,
                 }
             });
             this.typhoonLayerIds.push(stormStrokeLayerId);
@@ -756,7 +765,8 @@ export class Map extends Service {
         this.typhoonLayerIds = [];
         this.typhoonSourceIds = [];
         this.typhoonMarkers = [];
-    } ""
+        this.isDisplayTyphoon = false;
+    } 
 
 
     /**
@@ -803,18 +813,45 @@ export class Map extends Service {
      * @returns {void}
      */
     update(dateNow, fps) {
-        try {
-            if (!this.app.services.api.yahooKmoni.isEew) {
-                if (!this.isDisplayHrpns) this.showHrpns();
-                this.#clearEewLayers();
-                return;
+        const isEewOnYahooKmoni = this.app.services.api.yahooKmoni.isEew;
+        const eewReports = this.app.services.eew.reports;
+        const currentEewId = this.app.services.eew.currentId
+
+        if (!isEewOnYahooKmoni) {
+            if (!this.isDisplayHrpns) {
+                this.showHrpns();
             }
 
-            Object.keys(this.app.services.eew.reports).forEach((id) => {
-                if (id === "undefined" || this.app.services.eew.reports[id].isWarning) return;
+            if (!this.isDisplayTyphoon) {
+                this.displayTyphoon();
+            }
 
-                if (this.app.services.eew.currentId === id) {
-                    if (!this.app.services.eew.reports[id].isMapInitialized) {
+            this.#clearEewLayers();
+            return;
+        }
+
+        try {
+            this.hideHrpns();
+            this.removeTyphoon();
+
+            Object.keys(eewReports).forEach((id) => {
+                const report = this.app.services.eew.reports[id];
+
+                if (
+                    typeof id !== "string" ||
+                    report.isWarning ||
+                    !report.latitude ||
+                    !report.longitude ||
+                    !report.psWave
+                ) {
+                    return;
+                }
+
+                if (currentEewId === id) {
+                    if (!report.isMapInitialized) {
+                        if (!this.map.hasImage('eewRedionImage')) {
+                            return;
+                        }
                         this.#addEewLayers(id);
                     }
 
@@ -870,7 +907,7 @@ export class Map extends Service {
             }
         } catch (error) {
             console.error(error);
-            this.app.services.debugLogs.add("error", `[${this.name}]`, `EEW Map update error: ${error.stack}`);
+            // this.app.services.debugLogs.add("error", `[${this.name}]`, `EEW Map update error: ${error.stack}`);
         }
     }
 
@@ -883,12 +920,10 @@ export class Map extends Service {
     #autoMoveMap(dateNow) {
         if (dateNow - this.#autoMoveCount >= 3000) {
             const report = this.app.services.eew.reports[this.app.services.eew.currentId];
-            if (report.pWavePut >= 560000) {
-                this.setView([report.longitude, report.latitude], 5);
-            } else if (report.pWavePut >= 280000) {
-                this.setView([report.longitude, report.latitude], 6);
+            if (report.pWavePut >= 300000) {
+                this.setView([report.longitude, report.latitude], 4);
             } else if (report.pWavePut > 0) {
-                this.setView([report.longitude, report.latitude], 7);
+                this.setView([report.longitude, report.latitude], 5);
             }
             this.#autoMoveCount = dateNow;
         }
@@ -900,8 +935,9 @@ export class Map extends Service {
      * @param {string} id - EEWのID
      * @returns {void}
      */
-    #addEewLayers(id) {
-        this.hideHrpns();
+    async #addEewLayers(id) {
+        await this.hideHrpns();
+        await this.removeTyphoon();
 
         const sWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
         const pWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
@@ -929,6 +965,7 @@ export class Map extends Service {
             layout: {
                 "icon-image": `eewRedionImage`,
                 "icon-size": 0.25,
+                "icon-allow-overlap": true,
             },
         });
 
@@ -942,7 +979,7 @@ export class Map extends Service {
             type: "line",
             source: `eewSWaveSource_${id}`,
             paint: {
-                "line-width": 0.5,
+                "line-width": 1,
                 "line-color": "#ff4020",
             },
         });
@@ -957,7 +994,7 @@ export class Map extends Service {
             type: "line",
             source: `eewPWaveSource_${id}`,
             paint: {
-                "line-width": 0.5,
+                "line-width": 1,
                 "line-color": "#4080ff",
             },
         });

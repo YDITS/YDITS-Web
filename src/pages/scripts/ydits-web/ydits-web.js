@@ -473,12 +473,16 @@ export class YditsWeb extends FirebaseApp {
 
 
     async #hrpns() {
-        this.services.map.updateHrpns();
+        if (!this.services.api.yahooKmoni.isEew) {
+            this.services.map.updateHrpns();
+        }
     }
 
 
     async #typhoon() {
-        this.services.map.updateTyphoon();
+        if (!this.services.api.yahooKmoni.isEew) {
+            this.services.map.updateTyphoon();
+        }
     }
 
 
