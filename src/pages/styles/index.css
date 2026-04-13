@@ -79,6 +79,10 @@ main {
     padding: 8px 0;
 }
 
+#list ul li {
+    transition: background-color 0.3s;
+}
+
 #list ul li:active {
     background-color: rgba(255, 255, 255, .5);
 }
@@ -361,6 +365,7 @@ main {
     background-color: #101010;
     cursor: pointer;
     z-index: 1;
+    transition: background-color 0.3s;
 }
 
 #mapLayersButton:active {
@@ -503,6 +508,7 @@ main {
     height: 2.5rem;
     border-radius: 100%;
     font-size: 1.75rem;
+    transition: background-color 0.3s;
 }
 
 .window .closeBtn:active {
@@ -566,6 +572,7 @@ main {
     /* border-radius: 2rem; */
     padding: 1.2rem 2rem;
     background-color: rgba(127, 127, 127, .3);
+    transition: background-color 0.3s;
 }
 
 .window .lists .list.top {
@@ -697,6 +704,7 @@ main {
     color: #ffffffff;
 
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .window button:active {
