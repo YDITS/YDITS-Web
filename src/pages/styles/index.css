@@ -17,6 +17,8 @@
         100svh - var(--header-height) - var(--header-border-weight)
     );
 
+    --active-feedback-transition-duration: 0.1s;
+
     --control-width: 32rem;
 }
 
@@ -82,7 +84,7 @@ main {
 }
 
 #list ul li {
-    transition: background-color 0.3s;
+    transition: background-color var(--active-feedback-transition-duration);
 }
 
 #list ul li:active {
@@ -216,7 +218,7 @@ main {
     gap: 1.5rem;
 
     transition:
-        background-color 0.3s,
+        background-color var(--active-feedback-transition-duration),
         padding-top 0.3s,
         padding-bottom 0.3s,
         font-size 0.3s;
@@ -370,7 +372,7 @@ main {
     background-color: #101010;
     cursor: pointer;
     z-index: 1;
-    transition: background-color 0.3s;
+    transition: background-color var(--active-feedback-transition-duration);
 }
 
 #mapLayersButton:active {
@@ -513,7 +515,7 @@ main {
     height: 2.5rem;
     border-radius: 100%;
     font-size: 1.75rem;
-    transition: background-color 0.3s;
+    transition: background-color var(--active-feedback-transition-duration);
 }
 
 .window .closeBtn:active {
@@ -708,7 +710,7 @@ main {
     color: #ffffffff;
 
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color var(--active-feedback-transition-duration);
 }
 
 .window button:active {
