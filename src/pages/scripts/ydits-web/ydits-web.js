@@ -67,8 +67,11 @@ export class YditsWeb extends FirebaseApp {
     }
 
 
+    /**
+     * @returns {Promise<void>}
+     */
     async initialize() {
-        this.initializeStartedTime = performance.now();
+        this.#initializeStartedTime = performance.now();
 
         this.locationToExecute[location.pathname]?.(this);
 
@@ -85,8 +88,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * イベントリスナーを設定する
-     * 
-     * @private
      * @returns {Promise<void>}
      */
     async #setupEventListeners() {
@@ -98,8 +99,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * ネットワーク接続時の処理
-     * 
-     * @private
      * @returns {void}
      */
     #onNetworkConnected() {
@@ -116,8 +115,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * ネットワーク切断時の処理
-     * 
-     * @private
      * @returns {void}
      */
     #onNetworkDisconnected() {
@@ -131,8 +128,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * ハンドルされない例外の処理
-     * 
-     * @private
      * @param {Error} error
      * @returns {Promise<void>}
      */
@@ -160,8 +155,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * サービスを初期化する
-     * 
-     * @private
      * @returns {void}
      */
     #initializeServices() {
@@ -174,8 +167,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * サービスを登録する
-     * 
-     * @private
      * @returns {void}
      */
     #registerServices() {
@@ -233,18 +224,18 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * イニシャライズ中の例外処理
-     * 
-     * @private
-     * @param {Error} error
+     * @param {Error | unknown} error
      * @returns {Promise<void>}
      */
     async #onInitializeError(error) {
+        const stack = error instanceof Error ? error.stack : null;
+
         console.error(error);
 
         this.services.debugLogs.add(
             "error",
             `[${this.name}]`,
-            `Failed Application initialization: ${error.stack}.`
+            `Failed Application initialization: ${stack ?? error}.`
         );
 
         this.services.notify.show(
@@ -252,7 +243,7 @@ export class YditsWeb extends FirebaseApp {
             "エラー",
             `
                 イニシャライズ中にエラーが発生しました。<br>
-                <code>${error.stack}</code>
+                <code>${stack ?? error}</code>
             `
         );
 
@@ -263,7 +254,7 @@ export class YditsWeb extends FirebaseApp {
             title: "エラー",
             content: `
                 イニシャライズ中にエラーが発生しました。<br>
-                <code>${error.stack}</code>
+                <code>${stack ?? error}</code>
             `
         });
     }
@@ -271,8 +262,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * ビルド完了時の処理
-     * 
-     * @private
      * @returns {Promise<void>}
      */
     async #onBuild() {
@@ -284,12 +273,14 @@ export class YditsWeb extends FirebaseApp {
 
         this.upTime = performance.now();
         this.startupTime = this.services.datetime.gmt.getTime();
-        this.initializeTime = this.upTime - this.initializeStartedTime;
 
-        this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version.string}. Initialize time: ${Math.round(this.initializeTime)}ms.`);
-        this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
+        if (typeof this.#initializeStartedTime === "number") {
+            this.#initializeTime = this.upTime - this.#initializeStartedTime;
+            this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version.string}. Initialize time: ${Math.round(this.#initializeTime)}ms.`);
+            this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
+            this.services.elementsManager.getElementById("initializeTime").textContent = `${Math.round(this.#initializeTime)}ms`;
+        }
 
-        this.services.elementsManager.getElementById("initializeTime").textContent = `${Math.round(this.initializeTime)}ms`;
 
         this.#startIntervals();
 
@@ -299,8 +290,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * 初期化する
-     * 
-     * @private
      * @returns {Promise<void>}
      */
     async #initialize() {
@@ -315,8 +304,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * インターバルを開始する
-     * 
-     * @private
      * @returns {void}
      */
     #startIntervals() {
@@ -332,8 +319,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * UIをイニシャライズする
-     * 
-     * @private
      * @returns {Promise<void>}
      */
     async #initUI() {
@@ -345,8 +330,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * メニュー項目をイニシャライズする
-     * 
-     * @private
      * @returns {Promise<void>}
      */
     async #initMenu() {
@@ -404,8 +387,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * ライセンス項目をイニシャライズする
-     * 
-     * @private
      * @returns {Promise<void>}
      */
     async #initLicense() {
@@ -417,8 +398,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * アニメーションメインループ
-     * 
-     * @private
      * @returns {void}
      */
     #mainloop() {
@@ -433,8 +412,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * FPSを計算する
-     * 
-     * @private
      * @returns {void}
      */
     #calcFps(timeNow) {
@@ -451,8 +428,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * FPSを表示する
-     * 
-     * @private
      * @returns {void}
      */
     #displayFps(timeNow) {
@@ -538,8 +513,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * クロックの表示を更新する
-     * 
-     * @private
      * @param {Datetime} time
      * @returns {Promise<void>}
      */
@@ -556,8 +529,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * 日時を表示用の文字列にフォーマットする
-     * 
-     * @private
      * @param {Datetime} time
      * @returns {string}
      */
@@ -576,8 +547,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * 数値を二桁揃えする
-     * 
-     * @private
      * @param {number} value
      * @returns {string}
      */
@@ -588,8 +557,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * 地震履歴ウィンドウ
-     * 
-     * @private
      * @returns {void}
      */
     #eqhistoryMode() {
@@ -608,8 +575,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * デバッグログウィンドウ
-     * 
-     * @private
      * @returns {void}
      */
     #debugLogsMode() {
@@ -624,9 +589,21 @@ export class YditsWeb extends FirebaseApp {
 
 
     /**
+     * イニシャライズ開始時の `performance.now()` 値
+     * @type {number | null}
+     */
+    #initializeStartedTime = null;
+
+
+    /**
+     * イニシャライズ所要時間
+     * @type {number | null}
+     */
+    #initializeTime = null;
+
+
+    /**
      * JMA防災情報フィードの取得頻度 (ms)
-     * 
-     * @private
      * @type {number}
      */
     #jmaDataFeedFetchInterval = 1000 * 60;
@@ -634,8 +611,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * アニメーションメインループのFPS値
-     * 
-     * @private
      * @type {number}
      */
     #fps = -1;
@@ -643,8 +618,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * アニメーションメインループのフレーム数
-     * 
-     * @private
      * @type {number}
      */
     #frames = 0;
@@ -652,8 +625,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * 最後にFPS値を更新したDate
-     * 
-     * @private
      * @type {number}
      */
     #lastFpsUpdateTime = -1;
@@ -661,8 +632,6 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * 最後に計測した `performance.now()` 値
-     * 
-     * @private
      * @type {number}
      */
     #lastTime = -1;
