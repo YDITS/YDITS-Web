@@ -1,13 +1,13 @@
 /**!
- *
- * YDITS for Web
- *
- * Copyright (C) よね/Yone
- * Licensed under the Apache License 2.0.
- * 
- * https://github.com/YDITS/YDITS-Web
- *
- */
+*
+* YDITS for Web
+*
+* Copyright (C) よね/Yone
+* Licensed under the Apache License 2.0.
+* 
+* https://github.com/YDITS/YDITS-Web
+*
+*/
 
 import { FirebaseApp } from "../packages/firebase-app-creator/src/app.js";
 import { Version } from "https://cdn.yoneyo.com/scripts/version/version-v1.0.0.mjs";
@@ -43,27 +43,6 @@ export class YditsWeb extends FirebaseApp {
             copyright: "Copyright © よね/Yone",
             firebase: firebaseConfig,
         });
-
-        this.initializeStartedTime = performance.now();
-
-        if (location.pathname === "/eqhistory/") {
-            this.#eqhistoryMode();
-            return;
-        }
-
-        if (location.pathname === "/debug-logs/") {
-            this.#debugLogsMode();
-            return;
-        }
-
-        this.#setupEventListeners();
-
-        this.buildEvent = new Event("build");
-        document.addEventListener("build", async () => await this.#onBuild());
-
-        this.#initializeServices();
-        this.#registerServices();
-        this.#initUI();
     }
 
 
@@ -77,6 +56,31 @@ export class YditsWeb extends FirebaseApp {
      * @type {boolean}
      */
     isDebugLogsMode = false;
+
+
+    /**
+     * @type {Object<string, (self: YditsWeb) => void>}
+     */
+    locationToExecute = {
+        "/eqhistory/": (self) => self.#eqhistoryMode(),
+        "/debug-logs/": (self) => self.#debugLogsMode(),
+    }
+
+
+    async initialize() {
+        this.initializeStartedTime = performance.now();
+
+        this.locationToExecute[location.pathname]?.(this);
+
+        this.#setupEventListeners();
+
+        this.buildEvent = new Event("build");
+        document.addEventListener("build", async () => await this.#onBuild());
+
+        this.#initializeServices();
+        this.#registerServices();
+        this.#initUI();
+    }
 
 
     /**

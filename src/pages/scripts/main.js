@@ -11,4 +11,5 @@
 
 import { YditsWeb } from "./ydits-web/ydits-web.js";
 
-new YditsWeb();
+const app = new YditsWeb();
+await app.initialize();
