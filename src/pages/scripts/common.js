@@ -24,7 +24,7 @@ function loadCommonComponents() {
         children: $header("YDITS for Web"),
     });
 
-    if (shouldLoadFooter()) {
+    if (shouldLoadFooter(location)) {
         render.build({
             target: $footerWrapper,
             children: $footer("© よね/Yone"),
@@ -32,10 +32,18 @@ function loadCommonComponents() {
     }
 }
 
-function shouldLoadFooter(location) {
-    return !["/", "/eqhistory/", "/debug-logs/"].includes(location.pathname);
+/**
+ * @param {Location} _location 
+ * @returns {boolean}
+ */
+function shouldLoadFooter(_location) {
+    return !["/", "/eqhistory/", "/debug-logs/"].includes(_location.pathname);
 }
 
+/**
+ * @param {string} title 
+ * @returns {Array<HTMLElement>}
+ */
 function $header(title) {
     return [
         render.$div({
@@ -51,6 +59,10 @@ function $header(title) {
     ];
 }
 
+/**
+ * @param {string} copyright 
+ * @returns {Array<HTMLElement>}
+ */
 function $footer(copyright) {
     return [
         render.$div({
