@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "target": "esnext",
         "checkJs": true,
-        "strict": true,
-
+        "strict": true
     }
 }
