@@ -15,6 +15,9 @@ const render = new Render();
 
 loadCommonComponents();
 
+/**
+ * @returns {void}
+ */
 function loadCommonComponents() {
     const $headerWrapper = document.querySelector("header");
     const $footerWrapper = document.querySelector("footer");
