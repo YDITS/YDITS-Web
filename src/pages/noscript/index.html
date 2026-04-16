@@ -68,7 +68,7 @@
     </header>
 
     <main class="error-page">
-        <no-script style="
+        <noscript style="
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -76,11 +76,14 @@
         ">
             <h1 class="error-title">JavaScript が無効</h1>
             <p class="error-description">
-                お使いのブラウザでは、JavaScript が無効、もしくは許可されていません。<br>
+                お使いのブラウザでは、JavaScript が無効になっているか、または許可されていません。<br>
                 本アプリを利用するには JavaScript が必要です。
             </p>
-        </no-script>
-        <a class="button error-button" href="/">再読み込み</a>
+        </noscript>
+
+        <a class="button error-button" href="/">
+            再読み込み
+        </a>
     </main>
 
     <footer>
