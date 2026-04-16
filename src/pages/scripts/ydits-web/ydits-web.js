@@ -68,6 +68,55 @@ export class YditsWeb extends FirebaseApp {
 
 
     /**
+     * イニシャライズ開始時の `performance.now()` 値
+     * @type {number | null}
+     */
+    #initializeStartedTime = null;
+
+
+    /**
+     * イニシャライズ所要時間
+     * @type {number | null}
+     */
+    #initializeTime = null;
+
+
+    /**
+     * JMA防災情報フィードの取得頻度 (ms)
+     * @type {number}
+     */
+    #jmaDataFeedFetchInterval = 1000 * 60;
+
+
+    /**
+     * アニメーションメインループのFPS値
+     * @type {number}
+     */
+    #fps = -1;
+
+
+    /**
+     * アニメーションメインループのフレーム数
+     * @type {number}
+     */
+    #frames = 0;
+
+
+    /**
+     * 最後にFPS値を更新したDate
+     * @type {number}
+     */
+    #lastFpsUpdateTime = -1;
+
+
+    /**
+     * 最後に計測した `performance.now()` 値
+     * @type {number}
+     */
+    #lastTime = -1;
+
+
+    /**
      * @returns {Promise<void>}
      */
     async initialize() {
@@ -586,53 +635,4 @@ export class YditsWeb extends FirebaseApp {
 
         this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
     }
-
-
-    /**
-     * イニシャライズ開始時の `performance.now()` 値
-     * @type {number | null}
-     */
-    #initializeStartedTime = null;
-
-
-    /**
-     * イニシャライズ所要時間
-     * @type {number | null}
-     */
-    #initializeTime = null;
-
-
-    /**
-     * JMA防災情報フィードの取得頻度 (ms)
-     * @type {number}
-     */
-    #jmaDataFeedFetchInterval = 1000 * 60;
-
-
-    /**
-     * アニメーションメインループのFPS値
-     * @type {number}
-     */
-    #fps = -1;
-
-
-    /**
-     * アニメーションメインループのフレーム数
-     * @type {number}
-     */
-    #frames = 0;
-
-
-    /**
-     * 最後にFPS値を更新したDate
-     * @type {number}
-     */
-    #lastFpsUpdateTime = -1;
-
-
-    /**
-     * 最後に計測した `performance.now()` 値
-     * @type {number}
-     */
-    #lastTime = -1;
 }
