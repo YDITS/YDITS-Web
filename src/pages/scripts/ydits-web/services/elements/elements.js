@@ -9,12 +9,16 @@
  *
  */
 
+import { App } from "../../../packages/app-creator/src/app.js";
 import { Service } from "../../../packages/app-creator/src/service.js";
 
 /**
  * 要素を管理する
  */
 export class ElementsManager extends Service {
+    /**
+     * @param {App} app
+     */
     constructor(app) {
         super(app, {
             name: "elementsManager",
@@ -25,23 +29,34 @@ export class ElementsManager extends Service {
         });
     }
 
+    /**
+     * @type {Object<string, HTMLElement>}
+     */
     #elements = {};
 
     /**
      * 要素を追加する
-     * @param {string} id 
+     * @param {string} id
+     * @returns {void}
      */
     addElementById(id) {
         if (this.#elements[id]) {
             return;
         }
 
-        this.#elements[id] = document.getElementById(id);
+        const element = document.getElementById(id);
+
+        if (!element) {
+            return;
+        }
+
+        this.#elements[id] = element;
     }
 
     /**
      * 複数の要素を追加する
-     * @param {string[]} ids 
+     * @param {string[]} ids
+     * @returns {void}
      */
     addElementsById(ids) {
         for (const id of ids) {
@@ -52,9 +67,13 @@ export class ElementsManager extends Service {
     /**
      * 要素を取得する
      * @param {string} id 
-     * @returns {Element}
+     * @returns {HTMLElement}
      */
     getElementById(id) {
+        if (!this.#elements[id]) {
+            this.addElementById(id);
+        }
+
         return this.#elements[id];
     }
 }
