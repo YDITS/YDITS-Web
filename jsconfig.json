@@ -3,6 +3,11 @@
         "module": "esnext",
         "moduleResolution": "bundler",
         "target": "esnext",
+        "lib": [
+            "ESNext",
+            "DOM",
+            "WebWorker"
+        ],
         "checkJs": true,
         "strict": true
     }
