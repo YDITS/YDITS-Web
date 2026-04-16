@@ -52,7 +52,7 @@ function $header(title) {
         render.$div({
             className: "wrapper",
             children: [
-                render.$h1({
+                render.$h2({
                     id: "headerTitle",
                     className: "header__title",
                     textContent: title,
