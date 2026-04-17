@@ -14,7 +14,7 @@ import { Version } from "https://cdn.yoneyo.com/scripts/version/version-v1.0.0.m
 import { safecall } from "../packages/safecaller/src/safecaller.js";
 import { PopupDialog } from "../packages/popup-dialog/src/popup-dialog.js";
 
-import firebaseConfig from "./firebase-config.json" with { type: "json" };
+import firebaseConfig from "./firebase-config.js";
 import { Datetime } from "./services/datetime/datetime.js";
 import { DebugLogs } from "./services/debug-logs/debug-logs.js";
 import { ElementsManager } from "./services/elements/elements.js";

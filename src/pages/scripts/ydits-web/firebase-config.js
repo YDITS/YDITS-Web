@@ -1,4 +1,15 @@
-{
+/**!
+*
+* YDITS for Web
+*
+* Copyright (C) よね/Yone
+* Licensed under the Apache License 2.0.
+*
+* https://github.com/YDITS/YDITS-Web
+*
+*/
+
+export default {
     "apiKey": "AIzaSyBibDJX9w02oum1vSTMW3D4Stigya5Y9oE",
     "authDomain": "ydits-for-web.firebaseapp.com",
     "projectId": "ydits-for-web",
