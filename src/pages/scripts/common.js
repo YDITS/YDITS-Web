@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -16,6 +16,7 @@ const render = new Render();
 loadCommonComponents();
 
 /**
+ * 共通コンポーネントを読み込む
  * @returns {void}
  */
 function loadCommonComponents() {
@@ -36,7 +37,8 @@ function loadCommonComponents() {
 }
 
 /**
- * @param {Location} _location 
+ * フッター表示の判定
+ * @param {Location} _location
  * @returns {boolean}
  */
 function shouldLoadFooter(_location) {
@@ -44,7 +46,8 @@ function shouldLoadFooter(_location) {
 }
 
 /**
- * @param {string} title 
+ * ヘッダー
+ * @param {string} title
  * @returns {Array<HTMLElement>}
  */
 function $header(title) {
@@ -63,7 +66,8 @@ function $header(title) {
 }
 
 /**
- * @param {string} copyright 
+ * フッター
+ * @param {string} copyright
  * @returns {Array<HTMLElement>}
  */
 function $footer(copyright) {

@@ -116,7 +116,7 @@ export class YditsWeb extends FirebaseApp {
     /**
      * @returns {Promise<void>}
      */
-    async initialize() {
+    async run() {
         this.#initializeStarteFrame = performance.now();
 
         this.locationToExecute[location.pathname]?.(this);
@@ -349,7 +349,6 @@ export class YditsWeb extends FirebaseApp {
             this.#displayInitializedNotify();
             this.services.elementsManager.getElementById("initializeTime").textContent = `${Math.round(this.#initializeTime)}ms`;
         }
-
 
         this.#startIntervals();
 
