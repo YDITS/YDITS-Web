@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -29,7 +29,6 @@ export class Settings extends Service {
         });
     }
 
-
     /**
      * 接続関連
      * @type {{
@@ -47,7 +46,6 @@ export class Settings extends Service {
         volcanicEruption: null,
         civilProtection: null,
     }
-
 
     /**
      * マップ関連
@@ -67,7 +65,6 @@ export class Settings extends Service {
         },
     }
 
-
     /**
      * 音声関連
      * @type {{
@@ -82,7 +79,6 @@ export class Settings extends Service {
         eqinfo: true,
     }
 
-
     /**
      * 表示関連
      * @type {{
@@ -94,7 +90,6 @@ export class Settings extends Service {
         showWarn: true,
         panelRight: false,
     }
-
 
     /**
      * デバッグ関連
@@ -109,7 +104,6 @@ export class Settings extends Service {
         fpsMs: 1000,
         output: false,
     }
-
 
     /**
      * イニシャライズする
@@ -599,7 +593,6 @@ export class Settings extends Service {
         );
     }
 
-
     /**
      * デバッグオーバーレイを表示する
      * @returns {void}
@@ -608,7 +601,6 @@ export class Settings extends Service {
         document.getElementById("debugOutput").classList.add("active");
     }
 
-
     /**
      * デバッグオーバーレイを非表示にする
      * @returns {void}
@@ -616,7 +608,6 @@ export class Settings extends Service {
     hideDebugOutput() {
         document.getElementById("debugOutput").classList.remove("active");
     }
-
 
     /**
      * デバッグレイアウトを表示する
@@ -628,7 +619,6 @@ export class Settings extends Service {
         });
     }
 
-
     /**
      * デバッグレイアウトを非表示にする
      * @returns {void}
@@ -639,11 +629,10 @@ export class Settings extends Service {
         });
     }
 
-
     /**
      * クリップボードにデバッグログを書き込む
-     * @param {Function} onCompleted 
-     * @param {Function} onError 
+     * @param {Function} onCompleted
+     * @param {Function} onError
      * @returns {void}
      */
     writeDebugLogsToClipboard(onCompleted, onError) {

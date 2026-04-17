@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -30,7 +30,6 @@ export class PushNotify extends Service {
         this.initialize();
     }
 
-
     /**
      * 初期化する。
      * @returns {void}
@@ -42,7 +41,6 @@ export class PushNotify extends Service {
         this.requestPermission();
     }
 
-
     /**
      * プッシュ通知の権限を要求する。
      * @returns {void}
@@ -51,7 +49,6 @@ export class PushNotify extends Service {
         Notification.requestPermission()
             .then((permission) => this.checkRequestPermission(permission));
     }
-
 
     /**
      * プッシュ通知の権限要求に許可したか確認する。
@@ -63,7 +60,6 @@ export class PushNotify extends Service {
             this.onGrantedPermission();
         }
     }
-
 
     /**
      * プッシュ通知の権限要求に許可した時の処理。
@@ -77,7 +73,6 @@ export class PushNotify extends Service {
             }
         );
     }
-
 
     /**
      * 通知を送信する。
@@ -119,7 +114,6 @@ export class PushNotify extends Service {
         }
     }
 
-
     /**
      * プッシュ通知に対応しているか。
      * @type {boolean} 対応している時はtrueを返す。
@@ -128,7 +122,6 @@ export class PushNotify extends Service {
         return ("Notification" in window);
     }
 
-
     /**
      * プッシュ通知の権限があるか。
      * @type {boolean} 権限がある時はtrueを返す。
@@ -136,7 +129,6 @@ export class PushNotify extends Service {
     get isPremission() {
         return (Notification.permission === "granted");
     }
-
 
     /**
      * プッシュ通知のアイコン画像のパスを返す。

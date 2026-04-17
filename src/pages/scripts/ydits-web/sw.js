@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -16,7 +16,6 @@ class ServiceWorkerBackground {
     constructor() {
         this.#setupEventListeners();
     }
-
 
     /**
      * イベントリスナーをセットアップする
@@ -39,7 +38,6 @@ class ServiceWorkerBackground {
         console.debug(this);
     }
 
-
     /**
      * プッシュ通知を取得したときの処理
      * @param {PushEvent} event
@@ -60,7 +58,7 @@ class ServiceWorkerBackground {
                 console.error("Invalid push data format:", parsedData);
                 return;
             };
-            
+
             await this.#showNotification({
                 title: parsedData.title,
                 message: parsedData.body,
@@ -91,15 +89,13 @@ class ServiceWorkerBackground {
         );
     }
 
-
     /**
      * バックグラウンド同期を取得したときの処理
-     * 
+     *
      * @param {SyncEvent} event
      * @returns {Promise<void>}
      */
     async #onSync(event) { }
 }
-
 
 new ServiceWorkerBackground();

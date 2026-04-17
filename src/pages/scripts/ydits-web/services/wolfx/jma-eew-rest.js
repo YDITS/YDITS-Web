@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -16,7 +16,6 @@ import { WolfxJmaEewData } from "./data/jma-eew.js";
  */
 export class WolfxJmaEewRest {
     endpoint = new URL("https://api.wolfx.jp/jma_eew.json");
-
 
     /**
      * エンドポイントから情報を取得する

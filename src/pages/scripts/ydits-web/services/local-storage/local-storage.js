@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -24,20 +24,16 @@ export class LocalStorage extends Service {
         this._cacheLocationArea = this._localStorageGetItem(LocalStorage.cacheLocationAreaKey);
     }
 
-
     static cacheLocationAreaKey = "cacheLocationArea";
-
 
     get cacheLocationArea() {
         return this._cacheLocationArea;
     }
 
-
     set cacheLocationArea(value) {
         this._cacheLocationArea = value;
         this._localStorageSetItem(LocalStorage.cacheLocationAreaKey, value);
     }
-
 
     _localStorageGetItem(key) {
         try {
@@ -46,7 +42,6 @@ export class LocalStorage extends Service {
             throw new Error(`Could not get localStorage item as ${key}: ${error.stack}`);
         }
     }
-
 
     _localStorageSetItem(key, value) {
         try {

@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -16,7 +16,7 @@ import { Service } from "../../../packages/app-creator/src/service.js";
  */
 export class YahooKmoni extends Service {
     /**
-     * @param {App} app 
+     * @param {App} app
      */
     constructor(app) {
         super(app, {
@@ -28,15 +28,12 @@ export class YahooKmoni extends Service {
         });
     }
 
-
     static #STATUS_LAMP_ELEMENT = document.getElementById("statusLamp");
-
 
     static #STATUS_LAMP_COLORS = {
         error: "#ff4040",
         success: "#40ff40"
     };
-
 
     /**
      * 緊急地震速報が発表されているかどうか
@@ -44,13 +41,11 @@ export class YahooKmoni extends Service {
      */
     isEew = null;
 
-
     /**
      * 最後のフェッチの状態
      * @type {boolean | null}
      */
     fetchLastStatus = null;
-
 
     #kmoniUrl() {
         const KMONI_DATETIME = this.makeKmoniDatetime();
@@ -68,10 +63,9 @@ export class YahooKmoni extends Service {
         // ---
     }
 
-
     /**
      * フェッチする
-     * 
+     *
      * @returns {Promise<{string: any} | null>}
      */
     async get() {
@@ -252,10 +246,9 @@ export class YahooKmoni extends Service {
         }
     }
 
-
     /**
      * フェッチエラー時の処理
-     * 
+     *
      * @param {Error} error
      * @returns {void}
      */
@@ -287,10 +280,9 @@ export class YahooKmoni extends Service {
         this.fetchLastStatus = false;
     }
 
-
     /**
      * Yahoo! 強震モニタの日時を生成する
-     * 
+     *
      * @returns {string | null}
      */
     makeKmoniDatetime() {
@@ -314,10 +306,9 @@ export class YahooKmoni extends Service {
         return kmoniDatetime;
     }
 
-
     /**
      * 数値を二桁揃えする
-     * 
+     *
      * @param {number} value
      * @returns {string}
      */

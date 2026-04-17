@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -16,7 +16,6 @@ import { Service } from "../../../packages/app-creator/src/service.js";
  */
 export class JmaDataFeed extends Service {
     url = "https://www.data.jma.go.jp/developer/xml/feed/eqvol.xml";
-
 
     constructor(app) {
         super(app, {
@@ -50,7 +49,6 @@ export class JmaDataFeed extends Service {
         this.eqvolList = $("#jmaDataFeedEqvolList");
         this.eqvolLongList = $("#jmaDataFeedEqvolLongList");
     }
-
 
     /**
      * 気象庁防災情報電文を更新する。

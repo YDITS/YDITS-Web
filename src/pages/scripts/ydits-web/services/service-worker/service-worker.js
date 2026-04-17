@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -30,12 +30,10 @@ export class ServiceWorker extends Service {
         this.#register();
     }
 
-
     /**
      * @type {ServiceWorkerRegistration | null}
      */
     registration = null;
-
 
     /**
      * サービスワーカーがサポートされているかどうか
@@ -49,14 +47,12 @@ export class ServiceWorker extends Service {
         return this.#isSupported;
     }
 
-
     /**
-     * Cache: サービスワーカーがサポートされているかどうか  
+     * Cache: サービスワーカーがサポートされているかどうか
      * サポートされている場合は true とする。
      * @type {boolean | null}
      */
     #isSupported = null;
-
 
     /**
      * サービスワーカを登録する
@@ -88,7 +84,6 @@ export class ServiceWorker extends Service {
         }
     }
 
-
     /**
      * サービスワーカーがインストール中のときの処理
      * @returns {Promise<void>}
@@ -96,7 +91,6 @@ export class ServiceWorker extends Service {
     async #onServiceWorkerInstalling() {
         this.app.services.debugLogs.add("info", `[${this.name}]`, "Service Worker is being installed.");
     }
-
 
     /**
      * サービスワーカーがインストールされたときの処理
@@ -106,7 +100,6 @@ export class ServiceWorker extends Service {
         this.app.services.debugLogs.add("info", `[${this.name}]`, "Service worker has been installed.");
     }
 
-
     /**
      * サービスワーカーがアクティブなときの処理
      * @returns {Promise<void>}
@@ -114,7 +107,6 @@ export class ServiceWorker extends Service {
     async #onServiceWorkerActive() {
         this.app.services.debugLogs.add("info", `[${this.name}]`, "Service Worker has been activated.");
     }
-
 
     /**
      * サービスワーカーの登録に失敗したときの処理

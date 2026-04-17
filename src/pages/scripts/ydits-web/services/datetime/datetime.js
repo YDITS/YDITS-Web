@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -27,7 +27,6 @@ export class Datetime extends Service {
         this._gmt = new Date();
     }
 
-
     get gmt() {
         if (!this._gmt) {
             return new Date();
@@ -36,14 +35,12 @@ export class Datetime extends Service {
         return this._gmt;
     }
 
-
     get fullYear() { return this.gmt.getFullYear(); }
     get month() { return this.gmt.getMonth() + 1; }
     get date() { return this.gmt.getDate(); }
     get hours() { return this.gmt.getHours(); }
     get minutes() { return this.gmt.getMinutes(); }
     get seconds() { return this.gmt.getSeconds(); }
-
 
     /**
      * 現在時刻を更新する。
@@ -63,7 +60,6 @@ export class Datetime extends Service {
             );
         }
     }
-
 
     /**
      * サーバーヘッダーから現在時刻を取得する。

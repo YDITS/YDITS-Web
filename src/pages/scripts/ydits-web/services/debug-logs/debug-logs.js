@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -16,7 +16,6 @@ import { Service } from "../../../packages/app-creator/src/service.js";
  */
 export class DebugLogs extends Service {
     debugLogs = [];
-
 
     constructor(app) {
         super(app, {
@@ -75,7 +74,6 @@ export class DebugLogs extends Service {
         }
     }
 
-
     /**
      * ログを追加する。
      */
@@ -128,7 +126,6 @@ export class DebugLogs extends Service {
         localStorage.setItem("debugLogs", JSON.stringify(this.debugLogs));
     }
 
-
     /**
      * ログをページに追加する。
      */
@@ -165,7 +162,6 @@ export class DebugLogs extends Service {
         ` + this.debugLogListsElement.innerHTML;
     }
 
-
     /**
      * ログをすべて削除する。
      */
@@ -174,7 +170,6 @@ export class DebugLogs extends Service {
         this.debugLogListsElement.innerHTML = "";
         localStorage.removeItem("debugLogs");
     }
-
 
     /**
      * 指定の数値までのログを残す。

@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -16,7 +16,7 @@ import { Service } from "../../../packages/app-creator/src/service.js";
  */
 export class P2pquake extends Service {
     /**
-     * @param {App} app 
+     * @param {App} app
      */
     constructor(app) {
         super(app, {
@@ -30,13 +30,11 @@ export class P2pquake extends Service {
         this.startSocket();
     }
 
-
     /**
      * 保持している地震情報の数
      * @type {number}
      */
     eqinfoNum = 0;
-
 
     /**
      * 地震情報のID
@@ -51,42 +49,37 @@ export class P2pquake extends Service {
         lastSerial: null,
     }
 
-
     /**
      * WebSocket インスタンス
-     * 
+     *
      * @type {WebSocket | null}
      */
     socket = null;
 
-
     /**
      * WebSocket の再接続試行回数
-     * 
+     *
      * @type {number}
      */
     socketRetryCount = 0;
 
-
     /**
      * エラーが発生しているかどうか
-     * 
+     *
      * @type {boolean}
      */
     isError = false;
 
-
     /**
      * キープアライブの間隔
-     * 
+     *
      * @type {number}
      */
     static KEEP_ALIVE_INTERVAL = 20 * 1000;
 
-
     /**
      * 緊急地震速報のURL
-     * 
+     *
      * @type {URL}
      */
     static urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1");
@@ -94,10 +87,9 @@ export class P2pquake extends Service {
     // DEBUG
     // static urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1&offset=16");
 
-
     /**
      * 地震情報のURL
-     * 
+     *
      * @type {URL}
      */
     static urlRestEqinfo = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
@@ -115,10 +107,9 @@ export class P2pquake extends Service {
     // DEBUG
     // static urlSocket = new URL("wss://api-realtime-sandbox.p2pquake.net/v2/ws");
 
-
     /**
      * 最大震度をテキストに変換するオブジェクト
-     * 
+     *
      * @type {Object<string, string>}
      */
     static maxScaleToText = {
@@ -135,10 +126,9 @@ export class P2pquake extends Service {
         "70": "7"
     }
 
-
     /**
      * 地震情報の種類を日本語に変換するオブジェクト
-     * 
+     *
      * @type {Object<string, string>}
      */
     static typeToJp = {
@@ -150,10 +140,9 @@ export class P2pquake extends Service {
         "Other": "地震情報"
     }
 
-
     /**
      * 津波情報をテキストに変換するオブジェクト
-     * 
+     *
      * @type {Object<string, string>}
      */
     static tsunamiLevels = {
@@ -165,10 +154,9 @@ export class P2pquake extends Service {
         'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表'
     };
 
-
     /**
      * 震度をコードに変換するオブジェクト
-     * 
+     *
      * @type {Object<string, Object<string, string>>}
      */
     static scaleToColors = {
@@ -218,42 +206,39 @@ export class P2pquake extends Service {
         }
     }
 
-
     /**
      * 地震情報のリストを管理するクラス
      */
     List = class {
         /**
          * 地震情報のID
-         * 
+         *
          * @type {string | null}
          */
         id = null;
 
         /**
          * 地震情報の種類
-         * 
+         *
          * @type {string | null}
          */
         type = null;
     }
 
-
     /**
      * 数値を2桁にパディングする
-     * 
-     * @param {number} value 
+     *
+     * @param {number} value
      * @returns {string}
      */
     #zeroPadding(value) {
         return String(value).padStart(2, '0');
     }
 
-
     /**
      * 地震情報をプッシュする
-     * 
-     * @param {number} code 
+     *
+     * @param {number} code
      * @returns {void}
      */
     push(code) {
@@ -346,10 +331,9 @@ export class P2pquake extends Service {
         }
     }
 
-
     /**
      * 初期化する
-     * 
+     *
      * @returns {void}
      */
     initialize() {
@@ -570,10 +554,9 @@ export class P2pquake extends Service {
             });
     }
 
-
     /**
      * WebSocket を開始する
-     * 
+     *
      * @returns {void}
      */
     startSocket() {
@@ -587,11 +570,10 @@ export class P2pquake extends Service {
         this.socket.addEventListener("error", (event) => this.#socketError(event));
     }
 
-
     /**
      * WebSocket に接続したときの処理
-     * 
-     * @param {Event} event 
+     *
+     * @param {Event} event
      * @returns {void}
      */
     #socketOpened(event) {
@@ -615,11 +597,10 @@ export class P2pquake extends Service {
         this.socketRetryCount = 0;
     }
 
-
     /**
      * WebSocket が切断されたときの処理
-     * 
-     * @param {CloseEvent} event 
+     *
+     * @param {CloseEvent} event
      * @returns {void}
      */
     #socketClosed(event) {
@@ -654,11 +635,10 @@ export class P2pquake extends Service {
         // clearTimeout(this.retryTimeout);
     }
 
-
     /**
      * WebSocket のメッセージを受信したときの処理
-     * 
-     * @param {MessageEvent<any>} message 
+     *
+     * @param {MessageEvent<any>} message
      * @returns {void}
      */
     #socketGotMessage(message) {
@@ -686,11 +666,10 @@ export class P2pquake extends Service {
         }
     }
 
-
     /**
      * EEW 情報を処理する
-     * 
-     * @param {Object} data 
+     *
+     * @param {Object} data
      * @returns {void}
      */
     #whenEew(data) {
@@ -786,11 +765,10 @@ export class P2pquake extends Service {
         this.push(556);
     }
 
-
     /**
      * 地震情報を処理する
-     * 
-     * @param {Object} data 
+     *
+     * @param {Object} data
      * @returns {void}
      */
     #whenEqinfo(data) {
@@ -877,11 +855,10 @@ export class P2pquake extends Service {
         this.push(551);
     }
 
-
     /**
      * WebSocket のエラーが発生した場合の処理
-     * 
-     * @param {Event} event 
+     *
+     * @param {Event} event
      * @returns {void}
      */
     #socketError(event) {
@@ -910,10 +887,9 @@ export class P2pquake extends Service {
         this.socket = null;
     }
 
-
     /**
      * キープアライブのタイマーを開始する
-     * 
+     *
      * @returns {void}
      */
     #startKeepAliveTimer() {
@@ -923,11 +899,10 @@ export class P2pquake extends Service {
         );
     }
 
-
     /**
      * キープアライブを行う
-     * 
-     * @param {number} intervalId 
+     *
+     * @param {number} intervalId
      * @returns {void}
      */
     #keepAlive(intervalId) {

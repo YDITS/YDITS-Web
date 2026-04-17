@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -22,7 +22,7 @@ import { WolfxJmaEewSocket } from "./jma-eew-websocket.js";
  */
 export class Wolfx extends Service {
     /**
-     * @param {App} app 
+     * @param {App} app
      */
     constructor(app) {
         super(app, {
@@ -44,13 +44,11 @@ export class Wolfx extends Service {
         );
     }
 
-
     /**
      * 最後のイベントID
      * @type {number | null}
      */
     lastEventId = null;
-
 
     /**
      * 最後の最大震度
@@ -58,17 +56,15 @@ export class Wolfx extends Service {
      */
     lastMaxIntensity = null;
 
-
     /**
      * 最後のシリアル
      * @type {number | null}
      */
     lastSerial = null;
 
-
     /**
      * Elements をイニシャライズする
-     * 
+     *
      * @returns {void}
      */
     initializeElements() {
@@ -82,10 +78,9 @@ export class Wolfx extends Service {
         this.eewDepthElement = document.getElementById("eewDepth");
     }
 
-
     /**
      * JMA EEW をRESTから取得する
-     * 
+     *
      * @returns {Promise<void>}
      */
     async fetch() {
@@ -94,10 +89,9 @@ export class Wolfx extends Service {
         this.update(this.jmaEewData);
     }
 
-
     /**
      * JMA EEW Socket に接続する
-     * 
+     *
      * @returns {void}
      */
     connect() {
@@ -116,10 +110,9 @@ export class Wolfx extends Service {
         }
     }
 
-
     /**
      * JMA EEW Socket から切断する
-     * 
+     *
      * @returns {void}
      */
     disconnect() {
@@ -130,12 +123,11 @@ export class Wolfx extends Service {
         }
     }
 
-
     /**
      * JMA EEW Socket オープン時の処理
-     * 
+     *
      * @param {Event} event
-     * @param {boolean} isRetried 
+     * @param {boolean} isRetried
      * @returns {void}
      */
     onJmaEewSocketOpened(event, isRetried) {
@@ -154,10 +146,9 @@ export class Wolfx extends Service {
         }
     }
 
-
     /**
      * JMA EEW Socket クローズ時の処理
-     * 
+     *
      * @param {CloseEvent} event
      * @returns {void}
      */
@@ -177,12 +168,11 @@ export class Wolfx extends Service {
         );
     }
 
-
     /**
     * JMA EEW Socket 情報更新時の処理
-    * 
+    *
     * @param {MessageEvent<any>} event
-    * @param {WolfxJmaEewData} data 
+    * @param {WolfxJmaEewData} data
     * @returns {void}
     */
     onJmaEewSocketUpdated(event, data) {
@@ -190,10 +180,9 @@ export class Wolfx extends Service {
         this.jmaEewData = data;
     }
 
-
     /**
      * JMA EEW Socket エラー時の処理
-     * 
+     *
      * @param {Event} event
      * @returns {void}
      */
@@ -205,11 +194,10 @@ export class Wolfx extends Service {
         );
     }
 
-
     /**
      * 表示更新
-     * 
-     * @param {WolfxJmaEewData} data 
+     *
+     * @param {WolfxJmaEewData} data
      * @returns {void}
      */
     update(data) {
@@ -225,10 +213,9 @@ export class Wolfx extends Service {
         }
     }
 
-
     /**
      * EEW発表時
-     * 
+     *
      * @returns {void}
      */
     onEew() {
@@ -260,10 +247,9 @@ export class Wolfx extends Service {
         this.lastMaxIntensity = this.jmaEewData.maxIntensity;
     }
 
-
     /**
      * EEW未発表時
-     * 
+     *
      * @returns {void}
      */
     onNotEew() {
@@ -281,10 +267,9 @@ export class Wolfx extends Service {
         this.eewFieldElement.ariaLabel = "";
     }
 
-
     /**
      * サウンドを再生する
-     * 
+     *
      * @returns {void}
      */
     sound() {
@@ -352,10 +337,9 @@ export class Wolfx extends Service {
     }
 
 
-
     /**
      * プッシュ通知を送信する
-     * 
+     *
      * @returns {void}
      */
     push() {

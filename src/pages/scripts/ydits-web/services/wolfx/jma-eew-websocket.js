@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -59,13 +59,11 @@ export class WolfxJmaEewSocket {
         }
     }
 
-
     /**
      * エンドポイント
      * @type {URL}
      */
     endpoint = new URL("wss://ws-api.wolfx.jp/jma_eew");
-
 
     /**
      * 接続中に取得したデータリスト
@@ -73,10 +71,9 @@ export class WolfxJmaEewSocket {
      */
     data = [];
 
-
     /**
      * エンドポイントへWebSocket接続を開始する
-     * 
+     *
      * @param {URL} endpoint
      * @returns {Promise<void>}
      */
@@ -120,20 +117,18 @@ export class WolfxJmaEewSocket {
         );
     }
 
-
     /**
      * WebSocket接続を切断する
-     * 
+     *
      * @returns {void}
      */
     disconnect() {
         this.socket.close();
     }
 
-
     /**
      * WebSocket接続がオープンした時の処理
-     * 
+     *
      * @param {Event} event
      * @param {(event: Event, isRetried: boolean) => void} callback - コールバック関数
      * @returns {void}
@@ -148,10 +143,9 @@ export class WolfxJmaEewSocket {
         this.socketRetryCount = 0;
     }
 
-
     /**
      * WebSocket接続がクローズした時の処理
-     * 
+     *
      * @param {CloseEvent} event
      * @param {(event: Event) => void} callback - コールバック関数
      * @returns {void}
@@ -175,10 +169,9 @@ export class WolfxJmaEewSocket {
         callback(event);
     }
 
-
     /**
      * WebSocket接続でメッセージを受け取った時の処理
-     * 
+     *
      * @param {MessageEvent<any>} event
      * @param {(event: Event, data: WolfxJmaEewData | WolfxHeartbeatData) => void} callback - コールバック関数
      * @returns {void}
@@ -213,10 +206,9 @@ export class WolfxJmaEewSocket {
         }
     }
 
-
     /**
      * WebSocket接続でエラーが発生した時の処理
-     * 
+     *
      * @param {Event} event
      * @param {(event: Event) => void} callback - コールバック関数
      * @returns {void}
@@ -225,10 +217,9 @@ export class WolfxJmaEewSocket {
         callback(event);
     }
 
-
     /**
      * ハートビートパケットを受け取った時の処理
-     * 
+     *
      * @param {WolfxHeartbeatData} data
      * @returns {void}
      */

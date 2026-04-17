@@ -4,7 +4,7 @@
 *
 * Copyright (C) よね/Yone
 * Licensed under the Apache License 2.0.
-* 
+*
 * https://github.com/YDITS/YDITS-Web
 *
 */
@@ -46,7 +46,6 @@ export class YditsWeb extends FirebaseApp {
         debuglog: "debuglog",
     });
 
-
     constructor() {
         super({
             name: "YDITS for Web",
@@ -58,14 +57,12 @@ export class YditsWeb extends FirebaseApp {
         });
     }
 
-
     /**
      * @type {string | null}
      */
     get mode() {
         return this.#mode;
     }
-
 
     /**
      * @type {Object<string, (self: YditsWeb) => void>}
@@ -75,12 +72,10 @@ export class YditsWeb extends FirebaseApp {
         "/debug-logs/": (self) => self.#debugLogsMode(),
     }
 
-
     /**
      * @type {string | null}
      */
     #mode = null;
-
 
     /**
      * イニシャライズ開始時の `performance.now()` 値
@@ -88,13 +83,11 @@ export class YditsWeb extends FirebaseApp {
      */
     #initializeStarteFrame = null;
 
-
     /**
      * イニシャライズ所要時間
      * @type {number | null}
      */
     #initializeTime = null;
-
 
     /**
      * アニメーションメインループのFPS値
@@ -102,13 +95,11 @@ export class YditsWeb extends FirebaseApp {
      */
     #fps = -1;
 
-
     /**
      * アニメーションメインループのフレーム数
      * @type {number}
      */
     #frames = 0;
-
 
     /**
      * 最後にFPS値を更新したDate
@@ -116,13 +107,11 @@ export class YditsWeb extends FirebaseApp {
      */
     #lastFpsUpdateTime = -1;
 
-
     /**
      * 最後に計測した `performance.now()` 値
      * @type {number}
      */
     #lastFrame = -1;
-
 
     /**
      * @returns {Promise<void>}
@@ -141,7 +130,6 @@ export class YditsWeb extends FirebaseApp {
         this.#registerServices();
         this.#initializeUI();
     }
-
 
     /**
      * イベントリスナーを設定する
@@ -163,7 +151,6 @@ export class YditsWeb extends FirebaseApp {
             () => this.#onNetworkDisconnected()
         );
     }
-
 
     /**
      * ネットワーク接続時の処理
@@ -189,7 +176,6 @@ export class YditsWeb extends FirebaseApp {
         }, 1000);
     }
 
-
     /**
      * ネットワーク切断時の処理
      * @returns {void}
@@ -212,7 +198,6 @@ export class YditsWeb extends FirebaseApp {
         this.services.api.wolfx.disconnect();
         this.services.eqinfo.disconnect();
     }
-
 
     /**
      * ハンドルされない例外の処理
@@ -240,7 +225,6 @@ export class YditsWeb extends FirebaseApp {
         });
     }
 
-
     /**
      * コアサービスを初期化する
      * @returns {void}
@@ -251,7 +235,6 @@ export class YditsWeb extends FirebaseApp {
         this.registerService(DebugLogs);
         this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
     }
-
 
     /**
      * サービスを登録する
@@ -309,7 +292,6 @@ export class YditsWeb extends FirebaseApp {
         }
     }
 
-
     /**
      * イニシャライズ中の例外処理
      * @param {Error | unknown} error
@@ -347,7 +329,6 @@ export class YditsWeb extends FirebaseApp {
         });
     }
 
-
     /**
      * ビルド完了時の処理
      * @returns {Promise<void>}
@@ -375,7 +356,6 @@ export class YditsWeb extends FirebaseApp {
         requestAnimationFrame(() => this.#mainloop());
     }
 
-
     /**
      * 初期化する
      * @returns {Promise<void>}
@@ -389,7 +369,6 @@ export class YditsWeb extends FirebaseApp {
         await this.services.map.initialize();
     }
 
-
     /**
      * インターバルを開始する
      * @returns {void}
@@ -402,7 +381,6 @@ export class YditsWeb extends FirebaseApp {
         setInterval(async () => await this.#updateTyphoon(), 1000 * 300);
         setInterval(async () => await this.#updateDebugOutput(), 1000);
     }
-
 
     /**
      * UIをイニシャライズする
@@ -466,7 +444,6 @@ export class YditsWeb extends FirebaseApp {
         this.services.elementsManager.getElementById("clock").textContent = "----/--/-- --:--:--";
     }
 
-
     /**
      * アニメーションメインループ
      * @returns {void}
@@ -481,7 +458,6 @@ export class YditsWeb extends FirebaseApp {
 
         requestAnimationFrame(() => this.#mainloop());
     }
-
 
     /**
      * FPSを計算する
@@ -499,7 +475,6 @@ export class YditsWeb extends FirebaseApp {
         }
     }
 
-
     /**
      * FPSを表示する
      * @param {number} timeNow
@@ -514,17 +489,14 @@ export class YditsWeb extends FirebaseApp {
         }
     }
 
-
     async #updateNtp() {
         this.services.datetime.update();
     }
-
 
     async #updateEew() {
         this.services.eew.updateWarn();
         this.services.api.yahooKmoni.get();
     }
-
 
     async #updateHrpns() {
         if (!this.services.api.yahooKmoni.isEew) {
@@ -532,13 +504,11 @@ export class YditsWeb extends FirebaseApp {
         }
     }
 
-
     async #updateTyphoon() {
         if (!this.services.api.yahooKmoni.isEew) {
             this.services.map.updateTyphoon();
         }
     }
-
 
     async #updateDebugOutput() {
         if (!this.services.settings.debug.output) return;
@@ -561,7 +531,6 @@ export class YditsWeb extends FirebaseApp {
         this.services.elementsManager.getElementById("debugOutputWolfxJmaEewData").textContent = `Wolfx Jma EEW Data: ${JSON.stringify(this.services.api.wolfx.jmaEewData)}`;
     }
 
-
     /**
      * クロックの表示を更新する
      * @param {Datetime} time
@@ -577,7 +546,6 @@ export class YditsWeb extends FirebaseApp {
         this.services.elementsManager.getElementById("clock").textContent = clockText;
     }
 
-
     /**
      * イニシャライズの完了を通知する
      * @returns {void}
@@ -585,7 +553,6 @@ export class YditsWeb extends FirebaseApp {
     #displayInitializedNotify() {
         this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
     }
-
 
     /**
      * 地震履歴ウィンドウ
@@ -604,7 +571,6 @@ export class YditsWeb extends FirebaseApp {
         this.#displayInitializedNotify();
     }
 
-
     /**
      * デバッグログウィンドウ
      * @returns {void}
@@ -618,7 +584,6 @@ export class YditsWeb extends FirebaseApp {
 
         this.#displayInitializedNotify();
     }
-
 
     /**
      * 日時を表示用の文字列にフォーマットする
@@ -636,7 +601,6 @@ export class YditsWeb extends FirebaseApp {
             this.#zeroPadding(time.seconds)
         ].join(':');
     }
-
 
     /**
      * 数値を二桁揃えする

@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -24,7 +24,6 @@ export class WolfxJmaEewWarnArea {
         this.type = typeof area["Type"] === "string" ? area["Type"] : "";
         this.arrive = area["Arrive"] || null;
     }
-
 
     /**
      * 警報かどうか

@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -46,7 +46,6 @@ export class GeoLocation extends Service {
         this.getLocation();
     }
 
-
     updateDisplay() {
         this.$locationStatus.textContent = this.locationStatusText;
         this.$locationArea.textContent = this.isGot ? this.area : `${this.area} (キャッシュ)`;
@@ -57,7 +56,6 @@ export class GeoLocation extends Service {
             this.$locationAccuracy.textContent = "";
         }
     }
-
 
     /**
      * 現在位置を取得する。
@@ -73,7 +71,6 @@ export class GeoLocation extends Service {
             this.options
         );
     }
-
 
     /**
      * 取得した現在位置情報から市区町村または都道府県を取得する。
@@ -188,8 +185,6 @@ export class GeoLocation extends Service {
         // document.dispatchEvent(this.app.buildEvent);
     }
 
-
-
     /**
      * 位置情報を取得できない際の処理を行う。
      */
@@ -228,7 +223,6 @@ export class GeoLocation extends Service {
         this.updateDisplay();
     }
 
-
     /**
     * 取得した市区町村から、気象庁 緊急地震速報/地方予報区 を取得する。
     */
@@ -262,7 +256,6 @@ export class GeoLocation extends Service {
         }
     }
 
-
     /**
      * @returns {string} 現在地の地区予報区
      */
@@ -275,11 +268,9 @@ export class GeoLocation extends Service {
         return this._area;
     }
 
-
     set area(value) {
         this._area = value;
     }
-
 
     /**
      * @returns {string} キャッシュされた地区予報区
@@ -292,11 +283,9 @@ export class GeoLocation extends Service {
         return this._cacheLocationArea;
     }
 
-
     get locationStatusText() {
         return this.isGot ? "有効" : "無効";
     }
-
 
     /**
      * 位置情報に対応しているかどうか。
@@ -310,7 +299,6 @@ export class GeoLocation extends Service {
         return this._isSupported;
     }
 
-
     /**
      * 位置情報を取得したかどうか。
      * @returns {boolean} 位置情報を取得済みの場合は true を返す。
@@ -319,11 +307,9 @@ export class GeoLocation extends Service {
         return this._isGot;
     }
 
-
     set isGot(value) {
         this._isGot = value;
     }
-
 
     /**
      * 現在地の緯度
@@ -332,11 +318,9 @@ export class GeoLocation extends Service {
         return this.isSupported ? this._latitude : null;
     }
 
-
     set latitude(value) {
         this._latitude = value;
     }
-
 
     /**
      * 現在地の経度
@@ -345,11 +329,9 @@ export class GeoLocation extends Service {
         return this.isSupported ? this._longitude : null;
     }
 
-
     set longitude(value) {
         this._longitude = value;
     }
-
 
     get _getLocationEvent() {
         if (this.__getLocationEvent === null) {
@@ -359,7 +341,6 @@ export class GeoLocation extends Service {
         return this.__getLocationEvent;
     }
 
-
     get _localStorage() {
         if (this.__localStorage === null) {
             this.__localStorage = new LocalStorage(this.app);
@@ -367,7 +348,6 @@ export class GeoLocation extends Service {
 
         return this.__localStorage;
     }
-
 
     /* Elements */
 

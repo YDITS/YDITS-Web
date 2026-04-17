@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -32,13 +32,11 @@ export class Map extends Service {
         this.typhoonMarkers = [];
     }
 
-
     static DEFAULT_CENTER = [137.5930000, 36.0047000];
     static DEFAULT_ZOOM = 4;
     static HRPNS_TIMES_URI = "https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json";
     static TROPICAL_CYCLONE_TARGET_URI = "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json";
     static DEFAULT_CIRCLE_OPTIONS = { steps: 64, units: "meters", propreties: { foo: "bar" } };
-
 
     /**
      * Element: 雨雲レーダー時刻
@@ -52,7 +50,6 @@ export class Map extends Service {
         return this.#_$hrpnsTime;
     }
 
-
     /**
      * Element: 雨雲レーダー時刻テキスト
      * @type {HTMLElement}
@@ -64,7 +61,6 @@ export class Map extends Service {
 
         return this.#_$hrpnsTimeText;
     }
-
 
     /**
      * 位置情報サービスがサポートされているかどうか
@@ -78,27 +74,24 @@ export class Map extends Service {
         return this.#_$isGeolocationSupported;
     }
 
-
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）の画像URLを取得する
-     * @param {string} baseTime 
-     * @param {string} validTime 
+     * @param {string} baseTime
+     * @param {string} validTime
      * @returns {string}
      */
     hrpnsImageUri(baseTime, validTime) {
         return `https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`;
     }
 
-
     /**
      * 台風予想進路図のURLを取得する
-     * @param {*} tropicalCycloneNumber 
+     * @param {*} tropicalCycloneNumber
      * @returns {string}
      */
     tropicalCycloneForecastUrl(tropicalCycloneNumber) {
         return `https://www.jma.go.jp/bosai/typhoon/data/${tropicalCycloneNumber}/forecast.json`;
     }
-
 
     /**
      * 初期化する
@@ -128,7 +121,6 @@ export class Map extends Service {
 
         this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
     }
-
 
     /**
      * ユーザーポイントの表示を更新する
@@ -172,7 +164,6 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * ユーザーポイントのソースとレイヤーを作成する
      * @param {*} lngLat - ユーザーポイントの緯度経度
@@ -201,7 +192,6 @@ export class Map extends Service {
         });
     }
 
-
     /**
      * ユーザーポイントのソースとレイヤーを削除する
      * @param {any} userPointSource - ユーザーポイントのソース
@@ -212,7 +202,6 @@ export class Map extends Service {
         await this.map.removeLayer("userPoint");
         await this.map.removeSource("userPointSource");
     }
-
 
     /**
      * 日時文字列をフォーマットする
@@ -229,7 +218,6 @@ export class Map extends Service {
         return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     }
 
-
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を更新する
      * @returns {Promise<void>}
@@ -241,7 +229,6 @@ export class Map extends Service {
 
         this.showHrpns();
     }
-
 
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を表示する
@@ -312,7 +299,6 @@ export class Map extends Service {
         this.$hrpnsTime.classList.add("show");
     }
 
-
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を非表示する
      * @returns {Promise<void>}
@@ -335,7 +321,6 @@ export class Map extends Service {
         this.$hrpnsTimeText.textContent = "";
     }
 
-
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）の最新URLを返す
      * @returns {Promise<any>}
@@ -345,7 +330,6 @@ export class Map extends Service {
         const latestData = time[time.length - 1];
         return latestData;
     }
-
 
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）のターゲットURLを取得する
@@ -364,7 +348,6 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * 台風情報（予想進路図）を更新する
      * @returns {Promise<void>}
@@ -373,7 +356,6 @@ export class Map extends Service {
         await this.removeTyphoon();
         await this.displayTyphoon();
     }
-
 
     /**
      * 台風情報（予想進路図）を表示する
@@ -503,7 +485,6 @@ export class Map extends Service {
         });
     }
 
-
     /**
      * 予報円を追加する
      * @param {Object} forecast - 予報円の情報
@@ -619,9 +600,9 @@ export class Map extends Service {
     /**
      * 台風番号を追加する
      * @param {string} typhoonId - 台風のユニークID
-     * @param {*} galeWarningAreaCenter 
-     * @param {*} typhoonCenter 
-     * @param {number} typhoonNumber 
+     * @param {*} galeWarningAreaCenter
+     * @param {*} typhoonCenter
+     * @param {number} typhoonNumber
      */
     async addTyphoonNumber(typhoonId, galeWarningAreaCenter, typhoonCenter, typhoonNumber) {
         const center = galeWarningAreaCenter ?? typhoonCenter;
@@ -660,7 +641,6 @@ export class Map extends Service {
         this.typhoonSourceIds.push(numberSourceId);
         this.typhoonLayerIds.push(numberLayerId);
     }
-
 
     /**
      * 暴風域と強風域を追加する
@@ -744,7 +724,6 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * 台風情報（予想進路図）を非表示する
      * @returns {Promise<void>}
@@ -766,8 +745,7 @@ export class Map extends Service {
         this.typhoonSourceIds = [];
         this.typhoonMarkers = [];
         this.isDisplayTyphoon = false;
-    } 
-
+    }
 
     /**
      * 台風情報（予想進路図）の最新URLを返す
@@ -787,7 +765,6 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * 台風情報（予想進路図）のターゲットURLを取得する
      * @returns {Promise<any>}
@@ -805,7 +782,6 @@ export class Map extends Service {
             return null;
         }
     }
-
 
     /**
      * マップの描画を更新する
@@ -911,7 +887,6 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * マップを自動で移動する
      * @param {number} dateNow - 現在の日時
@@ -928,7 +903,6 @@ export class Map extends Service {
             this.#autoMoveCount = dateNow;
         }
     }
-
 
     /**
      * 緊急地震速報（EEW）のレイヤーを追加する
@@ -1002,7 +976,6 @@ export class Map extends Service {
         this.app.services.eew.reports[id].isMapInitialized = true;
     }
 
-
     /**
      * 緊急地震速報（EEW）のレイヤーをクリアする
      * @returns {void}
@@ -1021,7 +994,6 @@ export class Map extends Service {
         });
     }
 
-
     /**
      * マップを移動する
      * @param {L.LatLng} latLng - 移動先の緯度経度
@@ -1039,7 +1011,6 @@ export class Map extends Service {
         });
     }
 
-
     /**
      * マップを初期位置に移動する
      * @returns {Promise<void>}
@@ -1047,7 +1018,6 @@ export class Map extends Service {
     async setViewHome() {
         await this.setView(Map.DEFAULT_CENTER, Map.DEFAULT_ZOOM);
     }
-
 
     /**
      * マップインスタンスを初期化する
@@ -1072,13 +1042,11 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * MapTiler APIキー
      * @type {string}
      */
     static #MAPTILER_API_KEY = "3ft2uVdfAwtgfKQGIT8U";
-
 
     /**
      * マップのループカウント
@@ -1086,13 +1054,11 @@ export class Map extends Service {
      */
     #loopCount = -1;
 
-
     /**
      * マップ自動移動のカウント
      * @type {number | null}
      */
     #autoMoveCount = null;
-
 
     /**
      * Element: 雨雲レーダー時刻
@@ -1100,13 +1066,11 @@ export class Map extends Service {
      */
     #_$hrpnsTime;
 
-
     /**
      * Element: 雨雲レーダー時刻テキスト
      * @type {HTMLElement}
      */
     #_$hrpnsTimeText;
-
 
     /**
      * 位置情報サービスがサポートされているかどうか

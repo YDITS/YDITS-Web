@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -17,7 +17,7 @@ import { PopupDialog } from "../../../packages/popup-dialog/src/popup-dialog.js"
  */
 export class Dmdata extends Service {
     /**
-     * @param {App} app 
+     * @param {App} app
      */
     constructor(app) {
         super(app, {
@@ -29,30 +29,26 @@ export class Dmdata extends Service {
         });
     }
 
-
     /**
      * アクセストークン
-     * 
+     *
      * @type {string | null}
      */
     #accessToken = null;
 
-
     /**
      * 認証のステート
-     * 
+     *
      * @type {string}
      */
     static #STATE = "h352ly";
 
-
     /**
      * クライアントID
-     * 
+     *
      * @type {string}
      */
     static #CLIENT_ID = 'CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV';
-
 
     static #GET_TOKEN_URI = "https://manager.dmdata.jp/account/oauth2/v1/token";
     static #OAUTH_BASE_URI = "https://manager.dmdata.jp/account/oauth2/v1/auth";
@@ -60,11 +56,10 @@ export class Dmdata extends Service {
     static #OAUTH_REDIRECT_URI = "https://webapp.ydits.net/";
     static #OAUTH_SCOPE = "socket.start socket.list socket.close eew.get.warning eew.get.forecast";
 
-
     /**
      * メッセージEEW受信時の処理
-     * 
-     * @param {string} data 
+     *
+     * @param {string} data
      * @returns {Promise<void>}
      */
     async #whenEew(data) {
@@ -72,10 +67,9 @@ export class Dmdata extends Service {
         console.log(document);
     }
 
-
     /**
      * WebSocket接続を開始する
-     * 
+     *
      * @returns {Promise<void>}
      */
     async #startSocket() {
@@ -172,10 +166,9 @@ export class Dmdata extends Service {
         }
     }
 
-
     /**
      * 初期化する
-     * 
+     *
      * @returns {Promise<void>}
      */
     async initialize() {
@@ -192,10 +185,9 @@ export class Dmdata extends Service {
         }
     }
 
-
     /**
      * アカウントを認証する
-     * 
+     *
      * @returns {void}
      */
     connect() {
@@ -209,10 +201,9 @@ export class Dmdata extends Service {
         window.open(url.toString(), '_blank');
     }
 
-
     /**
      * 認証のセットアップを行う
-     * 
+     *
      * @returns {Promise<void>}
      */
     async #setup() {
@@ -229,10 +220,9 @@ export class Dmdata extends Service {
         }
     }
 
-
     /**
      * アクセストークンを取得する
-     * 
+     *
      * @returns {Promise<void>}
      */
     async #getAccessToken() {
@@ -332,10 +322,9 @@ export class Dmdata extends Service {
         }
     }
 
-
     /**
      * 認証エラー時の処理
-     * 
+     *
      * @returns {Promise<void>}
      */
     async #onSetupError() {
@@ -361,12 +350,11 @@ export class Dmdata extends Service {
         });
     }
 
-
     /**
      * URLからパラメーターを取得する
-     * 
-     * @param {string} name 
-     * @param {URL | string} url 
+     *
+     * @param {string} name
+     * @param {URL | string} url
      * @returns {string | null}
      */
     #getParam(name, url) {
@@ -380,11 +368,10 @@ export class Dmdata extends Service {
         return value;
     }
 
-
     /**
      * XMLをパースする
-     * 
-     * @param {string} data 
+     *
+     * @param {string} data
      * @returns {Document}
      */
     async #xmlParseToDocument(data) {

@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -31,20 +31,17 @@ export class Notify extends Service {
         this.eewNotifyElement = document.getElementById("eewNotify");
     }
 
-
     /**
      * 最後の通知ID
      * @type {*}
      */
     lastNotifyId = null;
 
-    
     /**
      * 最後の緊急地震速報通知ID
      * @type {*}
      */
     lastEewNotifyId = null;
-
 
     /**
      * 通知を表示する。
@@ -107,7 +104,6 @@ export class Notify extends Service {
             }, hideAfter);
         }
     }
-
 
     /**
      * 通知を非表示にする。

@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -27,7 +27,6 @@ export class Sounds extends Service {
             copyright: "Copyright © よね/Yone"
         });
     }
-
 
     notify = new Audio("./sounds/notify-sound.m4a");
     eew = new Audio("./sounds/eew.wav");

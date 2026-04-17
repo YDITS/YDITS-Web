@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -48,18 +48,16 @@ export class WolfxJmaEewData {
         this.originalText = data["OriginalText"];
     }
 
-
     /**
      * 緊急地震速報が有効な時間
      * @type {number}
      */
     static VALID_EEW_DURATION_SECONDS = 180;
 
-
     /**
      * 渡された日時において、緊急地震速報が有効かどうか
      * 発表から3分以上経過している場合は無効とする。
-     * 
+     *
      * @param {Datetime} nowTime - 検証対象の Datetime クラス
      * @return {bool} - 緊急地震速報が有効かどうか
      */
@@ -69,7 +67,6 @@ export class WolfxJmaEewData {
         return WolfxJmaEewData.VALID_EEW_DURATION_SECONDS >= ((_nowTime - announcedTime) / 1000)
     }
 
-
     /**
      * 警報のテキスト
      * @return {string}
@@ -78,7 +75,6 @@ export class WolfxJmaEewData {
         return this.isWarning ? "警報" : "予報";
     }
 
-
     /**
      * 報数のテキスト
      * @return {string}
@@ -86,7 +82,6 @@ export class WolfxJmaEewData {
     get serialText() {
         return `第${this.serial}報`;
     }
-
 
     /**
      * 震源の規模のテキスト
