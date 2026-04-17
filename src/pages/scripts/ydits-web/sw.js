@@ -91,7 +91,6 @@ class ServiceWorkerBackground {
 
     /**
      * バックグラウンド同期を取得したときの処理
-     *
      * @param {SyncEvent} event
      * @returns {Promise<void>}
      */
