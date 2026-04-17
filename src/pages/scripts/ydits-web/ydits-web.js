@@ -9,7 +9,7 @@
 *
 */
 
-import { Version } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
+import { Version, VersionLevel } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
 import { FirebaseApp } from "../packages/firebase-app-creator/src/app.js";
 import { safecall } from "../packages/safecaller/src/safecaller.js";
 import { PopupDialog } from "../packages/popup-dialog/src/popup-dialog.js";
@@ -50,7 +50,7 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "防災情報をすぐに確認できるWebアプリケーション。",
-            version: new Version(3, 18, 3, Version.levels.stable),
+            version: new Version(3, 19, 0, VersionLevel.dev),
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: firebaseConfig,
