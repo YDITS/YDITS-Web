@@ -11,6 +11,7 @@
 
 import { Service } from "../../../packages/app-creator/src/service.js";
 
+import { YditsWeb } from "../../ydits-web.js";
 import { YahooKmoni } from "./yahoo-kmoni.js";
 import { P2pquake } from "./p2pquake.js";
 import { Dmdata } from "./dmdata.js";
@@ -21,7 +22,7 @@ import { Wolfx } from "../wolfx/wolfx.js";
  */
 export class Api extends Service {
     /**
-     * @param {App} app 
+     * @param {YditsWeb} app 
      */
     constructor(app) {
         super(app, {
@@ -33,7 +34,10 @@ export class Api extends Service {
         });
 
         this.p2pquake = new P2pquake(app);
-        if (app.isEqhistoryMode) return;
+
+        if (app.mode === YditsWeb.modes.eqhistory) {
+            return;
+        }
 
         this.wolfx = new Wolfx(app);
         this.yahooKmoni = new YahooKmoni(app);
