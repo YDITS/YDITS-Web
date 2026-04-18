@@ -414,9 +414,9 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * UIをイニシャライズする
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    #initializeUI() {
+    async #initializeUI() {
         this.services.elementsManager.getElementById("menuVersion").textContent = `Ver ${this.version.string}`;
 
         this.services.elementsManager.getElementById("menuOpenEqhistory").addEventListener("click", () => {
