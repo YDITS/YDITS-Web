@@ -4,7 +4,7 @@
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
@@ -22,7 +22,7 @@ import { Wolfx } from "../wolfx/wolfx.js";
  */
 export class Api extends Service {
     /**
-     * @param {YditsWeb} app 
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -30,7 +30,7 @@ export class Api extends Service {
             description: "APIを扱うサービス。",
             version: "0.0.0",
             author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
+            copyright: "Copyright © よね/Yone",
         });
 
         this.p2pquake = new P2pquake(app);
@@ -43,4 +43,28 @@ export class Api extends Service {
         this.yahooKmoni = new YahooKmoni(app);
         this.dmdata = new Dmdata(app);
     }
+
+    /**
+     * P2P地震情報のインスタンス
+     * @type {P2pquake}
+     */
+    p2pquake;
+
+    /**
+     * Wolfx APIのインスタンス
+     * @type {Wolfx?}
+     */
+    wolfx = null;
+
+    /**
+     * Yahoo強震モニタのインスタンス
+     * @type {YahooKmoni?}
+     */
+    yahooKmoni = null;
+
+    /**
+     * Project DM-D.S.S のインスタンス
+     * @type {Dmdata?}
+     */
+    dmdata = null;
 }
