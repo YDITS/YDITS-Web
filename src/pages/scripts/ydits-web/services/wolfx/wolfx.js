@@ -70,6 +70,18 @@ export class Wolfx extends Service {
     lastSerial = null;
 
     /**
+     * キャンセル報を受信した場合に、それを通知したかのフラグ
+     * @type {boolean}
+     */
+    hasCancelNotified = false;
+
+    /**
+     * 警報を受信した場合に、それを通知したかのフラグ
+     * @type {boolean}
+     */
+    hasWarningNotified = false;
+
+    /**
      * Elements をイニシャライズする
      * @returns {void}
      */
@@ -267,6 +279,9 @@ export class Wolfx extends Service {
 
         this.eewFieldElement.ariaLabel = "緊急地震速報は発表されていません";
         this.eewFieldElement.ariaLabel = "";
+
+        this.hasCancelNotified = false;
+        this.hasWarningNotified = false;
     }
 
     /**
@@ -274,20 +289,21 @@ export class Wolfx extends Service {
      * @returns {void}
      */
     sound() {
-        if (this.jmaEewData.isCancel || this.jmaEewData.eventId !== this.lastEventId) {
+        if (this.jmaEewData.isCancel && !this.hasCancelNotified) {
             if (this.app.services.settings.sound.eewCancel == true) {
                 this.app.services.sounds.eewVoiceCancel.play();
+                this.hasCancelNotified = true;
             }
             return;
         }
 
-        // ----- //
-
         if (!this.app.services.settings.sound.eewAny) { return }
 
-        if (this.jmaEewData.isWarning && this.jmaEewData.eventId !== this.lastEventId) {
+        if (this.jmaEewData.isWarning && !this.hasWarningNotified) {
             this.app.services.sounds.eew.play();
             this.app.services.sounds.eewWarnVoice.play();
+            this.hasWarningNotified = true;
+            return;
         }
 
         if (
