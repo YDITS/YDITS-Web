@@ -13,16 +13,18 @@ import { Service } from "../../../packages/app-creator/src/service.js";
 import { Intensity } from "../intensity/intensity.js";
 import { Colors } from "../colors/colors.js";
 
+import { YditsWeb } from "../../ydits-web.js";
 import { WolfxJmaEewData } from "./data/jma-eew.js";
 import { WolfxJmaEewRest } from "./jma-eew-rest.js";
 import { WolfxJmaEewSocket } from "./jma-eew-websocket.js";
+import { WolfxHeartbeatData } from "./data/heart-beat.js";
 
 /**
  * Wolfx API
  */
 export class Wolfx extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -45,6 +47,11 @@ export class Wolfx extends Service {
     }
 
     /**
+     * @type {WolfxJmaEewData?}
+     */
+    jmaEewData = null;
+
+    /**
      * 最後のイベントID
      * @type {number | null}
      */
@@ -64,7 +71,6 @@ export class Wolfx extends Service {
 
     /**
      * Elements をイニシャライズする
-     *
      * @returns {void}
      */
     initializeElements() {
@@ -80,7 +86,6 @@ export class Wolfx extends Service {
 
     /**
      * JMA EEW をRESTから取得する
-     *
      * @returns {Promise<void>}
      */
     async fetch() {
@@ -91,18 +96,21 @@ export class Wolfx extends Service {
 
     /**
      * JMA EEW Socket に接続する
-     *
      * @returns {void}
      */
     connect() {
+        if (this.jmaEewSocket?.socket?.readyState === WebSocket.OPEN) {
+            return;
+        }
+
         try {
             this.jmaEewSocket = new WolfxJmaEewSocket(
                 { autoReconnect: true },
                 {
-                    onOpened: (isRetried) => this.onJmaEewSocketOpened(isRetried),
-                    onClosed: () => this.onJmaEewSocketClosed(),
+                    onOpened: (event, isRetried) => this.onJmaEewSocketOpened(event, isRetried),
+                    onClosed: (event) => this.onJmaEewSocketClosed(event),
                     onUpdated: (event, data) => this.onJmaEewSocketUpdated(event, data),
-                    onError: () => this.onJmaEewSocketError(),
+                    onError: (event) => this.onJmaEewSocketError(event),
                 }
             );
         } catch (error) {
@@ -112,12 +120,13 @@ export class Wolfx extends Service {
 
     /**
      * JMA EEW Socket から切断する
-     *
      * @returns {void}
      */
     disconnect() {
         try {
-            this.jmaEewSocket.disconnect();
+            if (this.jmaEewSocket?.socket?.readyState === WebSocket.OPEN) {
+                this.jmaEewSocket.disconnect();
+            }
         } catch (error) {
             throw new Error(`Failed to start connection to Wolfx JMA EEW WebSocket: ${error}`);
         }
@@ -125,7 +134,6 @@ export class Wolfx extends Service {
 
     /**
      * JMA EEW Socket オープン時の処理
-     *
      * @param {Event} event
      * @param {boolean} isRetried
      * @returns {void}
@@ -148,7 +156,6 @@ export class Wolfx extends Service {
 
     /**
      * JMA EEW Socket クローズ時の処理
-     *
      * @param {CloseEvent} event
      * @returns {void}
      */
@@ -170,9 +177,8 @@ export class Wolfx extends Service {
 
     /**
     * JMA EEW Socket 情報更新時の処理
-    *
     * @param {MessageEvent<any>} event
-    * @param {WolfxJmaEewData} data
+    * @param {WolfxJmaEewData | WolfxHeartbeatData} data
     * @returns {void}
     */
     onJmaEewSocketUpdated(event, data) {
@@ -182,7 +188,6 @@ export class Wolfx extends Service {
 
     /**
      * JMA EEW Socket エラー時の処理
-     *
      * @param {Event} event
      * @returns {void}
      */
@@ -196,8 +201,7 @@ export class Wolfx extends Service {
 
     /**
      * 表示更新
-     *
-     * @param {WolfxJmaEewData} data
+     * @param {WolfxJmaEewData?} data
      * @returns {void}
      */
     update(data) {
@@ -215,11 +219,10 @@ export class Wolfx extends Service {
 
     /**
      * EEW発表時
-     *
      * @returns {void}
      */
     onEew() {
-        const scale = Intensity.wolfxToYdits[this.jmaEewData.maxIntensity];
+        const scale = Intensity.wolfxToYdits[this.jmaEewData?.maxIntensity];
         const bgcolorInt = Colors.scaleToColor[scale];
         const fontColorInt = Colors.scaleToFontColor[scale];
         const bgcolor = Colors.parseToCssColor(bgcolorInt);
@@ -249,7 +252,6 @@ export class Wolfx extends Service {
 
     /**
      * EEW未発表時
-     *
      * @returns {void}
      */
     onNotEew() {
@@ -269,7 +271,6 @@ export class Wolfx extends Service {
 
     /**
      * サウンドを再生する
-     *
      * @returns {void}
      */
     sound() {
@@ -339,7 +340,6 @@ export class Wolfx extends Service {
 
     /**
      * プッシュ通知を送信する
-     *
      * @returns {void}
      */
     push() {

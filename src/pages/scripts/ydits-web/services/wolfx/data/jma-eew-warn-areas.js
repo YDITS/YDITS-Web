@@ -20,11 +20,21 @@ export class WolfxJmaEewWarnAreas {
      */
     areas = [];
 
-
     /**
-     * @param {[Object<string, string|number|Date>]} areas - Wolfx JMA EEW 警報地域のJSONデータクラス
+     * @param {Array<{
+     *     "Chiiki": string?,
+     *     "Shindo1": number?,
+     *     "Shindo2": number?,
+     *     "Time": string?,
+     *     "Type": string?,
+     *     "Arrive": string?,
+     * }>?} areas - Wolfx JMA EEW 警報地域のJSONデータクラス
      */
     constructor(areas = []) {
+        if (!Array.isArray(areas)) {
+            return;
+        }
+
         areas.forEach(area => {
             this.areas.push(
                 new WolfxJmaEewWarnArea(area)

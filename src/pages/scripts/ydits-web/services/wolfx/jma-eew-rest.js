@@ -22,7 +22,7 @@ export class WolfxJmaEewRest {
      * @returns {Promise<WolfxJmaEewData>} - 取得した Wolfx JMA EEW のデータクラス
      */
     async fetch() {
-        this.endpoint.searchParams.set("nocache", Date.now());
+        this.endpoint.searchParams.set("nocache", String(Date.now()));
         const response = await fetch(this.endpoint);
 
         if (!response.ok) {

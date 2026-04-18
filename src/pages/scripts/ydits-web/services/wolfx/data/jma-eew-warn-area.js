@@ -14,9 +14,16 @@
 */
 export class WolfxJmaEewWarnArea {
     /**
-     * @param {Object<string, string|number|Date>} area - Wolfx JMA EEW 警報地域のJSONデータクラス
+     * @param {{
+     *     "Chiiki": string?,
+     *     "Shindo1": number?,
+     *     "Shindo2": number?,
+     *     "Time": string?,
+     *     "Type": string?,
+     *     "Arrive": string?,
+     * }} area - Wolfx JMA EEW 警報地域のJSONデータクラス
      */
-    constructor(area = {}) {
+    constructor(area) {
         this.name = typeof area["Chiiki"] === "string" ? area["Chiiki"] : "";
         this.intUpper = Number.isInteger(area["Shindo1"]) ? area["Shindo1"] : null;
         this.intLower = Number.isInteger(area["Shindo2"]) ? area["Shindo2"] : null;
@@ -27,9 +34,9 @@ export class WolfxJmaEewWarnArea {
 
     /**
      * 警報かどうか
-     * @return {bool}
+     * @return {boolean}
      */
     get isWarn() {
-        if (this.type === "警報") { return true } else { return false };
+        return this.type === "警報";
     }
 }
