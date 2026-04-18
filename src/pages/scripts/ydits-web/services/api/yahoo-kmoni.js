@@ -10,13 +10,14 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * Yahoo! 強震モニタを扱う
  */
 export class YahooKmoni extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -28,28 +29,36 @@ export class YahooKmoni extends Service {
         });
     }
 
-    static #STATUS_LAMP_ELEMENT = document.getElementById("statusLamp");
-
-    static #STATUS_LAMP_COLORS = {
-        error: "#ff4040",
-        success: "#40ff40"
-    };
-
     /**
      * 緊急地震速報が発表されているかどうか
-     * @type {boolean | null}
+     * @type {boolean?}
      */
     isEew = null;
 
     /**
-     * 最後のフェッチの状態
-     * @type {boolean | null}
+     * 最後のfetchの状態
+     * @type {boolean?}
      */
-    fetchLastStatus = null;
+    #fetchLastStatus = null;
 
-    #kmoniUrl() {
+    get fetchLastStatus() {
+        return this.#fetchLastStatus;
+    }
+
+    set fetchLastStatus(value) {
+        this.#fetchLastStatus = value;
+        this.app.renderStatusLamp();
+    }
+
+    /**
+     * URLを生成する
+     * @returns {URL?}
+     */
+    #generateUrl() {
         const KMONI_DATETIME = this.makeKmoniDatetime();
-        if (KMONI_DATETIME === null) return null;
+        if (!KMONI_DATETIME) {
+            return null;
+        }
 
         return new URL(`https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/${KMONI_DATETIME}.json`);
 
@@ -65,15 +74,18 @@ export class YahooKmoni extends Service {
 
     /**
      * フェッチする
-     *
-     * @returns {Promise<{string: any} | null>}
+     * @returns {Promise<null>}
      */
     async get() {
-        if (this.app.services.settings.connect.eew !== 'yahoo-kmoni') return;
-        if (!navigator.onLine) return;
+        if (this.app.services.settings.connect.eew !== 'yahoo-kmoni' || !navigator.onLine) {
+            return null;
+        }
 
-        const URL = this.#kmoniUrl();
-        if (URL === null) return;
+        const URL = this.#generateUrl();
+
+        if (!URL) {
+            return null;
+        }
 
         try {
             const response = await fetch(URL);
@@ -85,9 +97,10 @@ export class YahooKmoni extends Service {
 
             const data = await response.json();
 
-            if (data === null) return;
+            if (!data) {
+                return null;
+            }
 
-            YahooKmoni.#STATUS_LAMP_ELEMENT.style.backgroundColor = YahooKmoni.#STATUS_LAMP_COLORS.success;
             this.fetchLastStatus = true;
 
             const HYPOCENTER = data.hypoInfo;
@@ -96,7 +109,7 @@ export class YahooKmoni extends Service {
                 this.app.services.eew.isEew = false;
                 this.isEew = false;
                 // this.app.services.eew.updateField();
-                return;
+                return null;
             }
 
             try {
@@ -119,7 +132,7 @@ export class YahooKmoni extends Service {
                     this.app.services.eew.reports[DATA.reportId].currentId !== null &&
                     this.app.services.eew.reports[DATA.reportId].reportNum !== this.app.services.eew.reports[DATA.reportId].reportNumLast
                 ) {
-                    return
+                    return null;
                 }
 
                 this.app.services.eew.reports[DATA.reportId].originTime = new Date(DATA.originTime);
@@ -244,27 +257,28 @@ export class YahooKmoni extends Service {
         } catch (error) {
             this.#onFetchError(error);
         }
+
+        return null;
     }
 
     /**
      * フェッチエラー時の処理
-     *
-     * @param {Error} error
+     * @param {*} error
      * @returns {void}
      */
     #onFetchError(error) {
-        if (this.app.services.settings.connect.eew !== 'yahoo-kmoni') return;
-
-        YahooKmoni.#STATUS_LAMP_ELEMENT.style.backgroundColor = YahooKmoni.#STATUS_LAMP_COLORS.error;
-
-        if (!navigator.onLine) return;
-
-        if (!this.fetchLastStatus) return;
+        if (
+            this.app.services.settings.connect.eew !== 'yahoo-kmoni' ||
+            !navigator.onLine ||
+            !this.fetchLastStatus
+        ) {
+            return;
+        }
 
         this.app.services.debugLogs.add(
             "error",
             `[${this.name}]`,
-            `Failed to fetch from yahooKmoni: ${error}`
+            `Failed to fetch from yahooKmoni: ${error?.stack ?? error}`
         );
 
         this.app.services.notify.show(
@@ -282,8 +296,7 @@ export class YahooKmoni extends Service {
 
     /**
      * Yahoo! 強震モニタの日時を生成する
-     *
-     * @returns {string | null}
+     * @returns {string?}
      */
     makeKmoniDatetime() {
         let kmoniDatetime = new Date(this.app.services.datetime.gmt);
@@ -308,11 +321,10 @@ export class YahooKmoni extends Service {
 
     /**
      * 数値を二桁揃えする
-     *
      * @param {number} value
      * @returns {string}
      */
     #zeroPadding(value) {
-        return ("0" + value).slice(-2);
+        return String(value).padStart(2, "0");
     }
 }

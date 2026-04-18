@@ -47,6 +47,11 @@ export class YditsWeb extends FirebaseApp {
         debuglog: "debuglog",
     });
 
+    static #statusLampColors = {
+        error: "#ff4040",
+        success: "#40ff40"
+    };
+
     constructor() {
         super({
             name: "YDITS for Web",
@@ -116,6 +121,20 @@ export class YditsWeb extends FirebaseApp {
      * @type {number}
      */
     #lastFrame = -1;
+
+    /**
+     * Status lamp color の State
+     * @returns {string}
+     */
+    get statusLampColorState() {
+        if (
+            this.services.api.yahooKmoni.fetchLastStatus === true
+        ) {
+            return YditsWeb.#statusLampColors.success;
+        }
+
+        return YditsWeb.#statusLampColors.error;
+    }
 
     /**
      * アプリケーションを実行する
@@ -446,6 +465,13 @@ export class YditsWeb extends FirebaseApp {
         });
 
         this.services.elementsManager.getElementById("clock").textContent = "----/--/-- --:--:--";
+    }
+
+    /**
+     * Status lamp をレンダリングする
+     */
+    renderStatusLamp() {
+        this.services.elementsManager.getElementById("statusLamp").style.backgroundColor = this.statusLampColorState;
     }
 
     /**
