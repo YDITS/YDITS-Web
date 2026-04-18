@@ -1,13 +1,13 @@
 /**!
-*
-* YDITS for Web
-*
-* Copyright (C) よね/Yone
-* Licensed under the Apache License 2.0.
-*
-* https://github.com/YDITS/YDITS-Web
-*
-*/
+ *
+ * YDITS for Web
+ *
+ * Copyright (C) よね/Yone
+ * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
+ *
+ */
 
 import { Version, VersionLevel } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
 import { FirebaseApp } from "../packages/firebase-app-creator/src/app.js";
