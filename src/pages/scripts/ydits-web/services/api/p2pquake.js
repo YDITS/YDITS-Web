@@ -10,76 +10,20 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * P2P地震情報 APIを扱う。
  */
 export class P2pquake extends Service {
     /**
-     * @param {App} app
-     */
-    constructor(app) {
-        super(app, {
-            name: "p2pquake",
-            description: "P2P地震情報 APIを扱うサービス。",
-            version: "0.0.0",
-            author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
-        });
-
-        this.startSocket();
-    }
-
-    /**
-     * 保持している地震情報の数
-     * @type {number}
-     */
-    eqinfoNum = 0;
-
-    /**
-     * 地震情報のID
-     * @type {Object<string, string>}
-     */
-    id = {
-        id: null,
-        lastId: null,
-        eventId: null,
-        lastEvengId: null,
-        serial: null,
-        lastSerial: null,
-    }
-
-    /**
-     * WebSocket インスタンス
-     *
-     * @type {WebSocket | null}
-     */
-    socket = null;
-
-    /**
-     * WebSocket の再接続試行回数
-     *
-     * @type {number}
-     */
-    socketRetryCount = 0;
-
-    /**
-     * エラーが発生しているかどうか
-     *
-     * @type {boolean}
-     */
-    isError = false;
-
-    /**
      * キープアライブの間隔
-     *
      * @type {number}
      */
     static KEEP_ALIVE_INTERVAL = 20 * 1000;
 
     /**
      * 緊急地震速報のURL
-     *
      * @type {URL}
      */
     static urlRestEew = new URL("https://api.p2pquake.net/v2/history?codes=556&limit=1");
@@ -207,7 +151,66 @@ export class P2pquake extends Service {
     }
 
     /**
-     * 地震情報のリストを管理するクラス
+     * @param {YditsWeb} app
+     */
+    constructor(app) {
+        super(app, {
+            name: "p2pquake",
+            description: "P2P地震情報 APIを扱うサービス。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        });
+
+        this.startSocket();
+    }
+
+    /**
+     * 保持している地震情報の数
+     * @type {number}
+     */
+    eqinfoNum = 0;
+
+    /**
+     * 地震情報のID
+     * @type {{
+     *     id: string?,
+     *     lastId: string?,
+     *     eventId: string?,
+     *     lastEventId: string?,
+     *     serial: string?,
+     *     lastSerial: string?,
+     * }}
+     */
+    id = {
+        id: null,
+        lastId: null,
+        eventId: null,
+        lastEventId: null,
+        serial: null,
+        lastSerial: null,
+    }
+
+    /**
+     * WebSocketインスタンス
+     * @type {WebSocket?}
+     */
+    socket = null;
+
+    /**
+     * WebSocketの再接続試行回数
+     * @type {number}
+     */
+    socketRetryCount = 0;
+
+    /**
+     * エラーが発生しているかどうか
+     * @type {boolean}
+     */
+    isError = false;
+
+    /**
+     * 地震情報のリストクラス
      */
     List = class {
         /**
@@ -227,7 +230,6 @@ export class P2pquake extends Service {
 
     /**
      * 数値を2桁にパディングする
-     *
      * @param {number} value
      * @returns {string}
      */
@@ -237,7 +239,6 @@ export class P2pquake extends Service {
 
     /**
      * 地震情報をプッシュする
-     *
      * @param {number} code
      * @returns {void}
      */
@@ -333,13 +334,12 @@ export class P2pquake extends Service {
 
     /**
      * 初期化する
-     *
      * @returns {void}
      */
     initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
-        if (!this.app.isEqhistoryMode) {
+        if (this.app.mode !== YditsWeb.modes.eqhistory) {
             fetch(P2pquake.urlRestEew)
                 .then((response) => response.json())
                 .then((data) => {
@@ -542,7 +542,7 @@ export class P2pquake extends Service {
             .catch((error) => {
                 console.error(error);
                 if (error != 'TypeError: Failed to fetch') {
-                    this.notify.show(
+                    this.app.services.notify.show(
                         "error",
                         "エラー",
                         `
@@ -556,7 +556,6 @@ export class P2pquake extends Service {
 
     /**
      * WebSocket を開始する
-     *
      * @returns {void}
      */
     startSocket() {
@@ -571,8 +570,7 @@ export class P2pquake extends Service {
     }
 
     /**
-     * WebSocket に接続したときの処理
-     *
+     * WebSocketに接続したときの処理
      * @param {Event} event
      * @returns {void}
      */
@@ -583,7 +581,7 @@ export class P2pquake extends Service {
             "Connected to p2pquake WebSocket."
         );
 
-        this.#startKeepAliveTimer();
+        this.#startKeepAliveInterval();
 
         if (this.socketRetryCount > 0) {
             this.app.services.notify.show(
@@ -598,8 +596,7 @@ export class P2pquake extends Service {
     }
 
     /**
-     * WebSocket が切断されたときの処理
-     *
+     * WebSocketが切断されたときの処理
      * @param {CloseEvent} event
      * @returns {void}
      */
@@ -636,8 +633,7 @@ export class P2pquake extends Service {
     }
 
     /**
-     * WebSocket のメッセージを受信したときの処理
-     *
+     * WebSocketのメッセージを受信したときの処理
      * @param {MessageEvent<any>} message
      * @returns {void}
      */
@@ -667,9 +663,8 @@ export class P2pquake extends Service {
     }
 
     /**
-     * EEW 情報を処理する
-     *
-     * @param {Object} data
+     * EEWを処理する
+     * @param {*} data
      * @returns {void}
      */
     #whenEew(data) {
@@ -767,8 +762,7 @@ export class P2pquake extends Service {
 
     /**
      * 地震情報を処理する
-     *
-     * @param {Object} data
+     * @param {*} data
      * @returns {void}
      */
     #whenEqinfo(data) {
@@ -856,8 +850,7 @@ export class P2pquake extends Service {
     }
 
     /**
-     * WebSocket のエラーが発生した場合の処理
-     *
+     * WebSocketのエラーが発生した場合の処理
      * @param {Event} event
      * @returns {void}
      */
@@ -888,11 +881,10 @@ export class P2pquake extends Service {
     }
 
     /**
-     * キープアライブのタイマーを開始する
-     *
+     * KeepAliveのインターバルを開始する
      * @returns {void}
      */
-    #startKeepAliveTimer() {
+    #startKeepAliveInterval() {
         const INTERVAL_ID = setInterval(
             () => this.#keepAlive(INTERVAL_ID),
             P2pquake.KEEP_ALIVE_INTERVAL
@@ -900,8 +892,7 @@ export class P2pquake extends Service {
     }
 
     /**
-     * キープアライブを行う
-     *
+     * KeepAliveを送信する
      * @param {number} intervalId
      * @returns {void}
      */
