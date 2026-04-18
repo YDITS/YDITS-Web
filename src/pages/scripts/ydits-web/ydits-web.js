@@ -9,8 +9,8 @@
 *
 */
 
+import { Version, VersionLevel } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
 import { FirebaseApp } from "../packages/firebase-app-creator/src/app.js";
-import { Version } from "https://cdn.yoneyo.com/scripts/version/version-v1.0.0.mjs";
 import { safecall } from "../packages/safecaller/src/safecaller.js";
 import { PopupDialog } from "../packages/popup-dialog/src/popup-dialog.js";
 
@@ -35,6 +35,7 @@ import { Map } from "./services/map/map.js";
  */
 export class YditsWeb extends FirebaseApp {
     /**
+     * アプリケーションの起動モードのオブジェクト (enumの代替)
      * @type {{
      *     eqhistory: string,
      *     debuglog: string,
@@ -50,7 +51,7 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "防災情報をすぐに確認できるWebアプリケーション。",
-            version: new Version(3, 18, 3, Version.levels.stable),
+            version: new Version(3, 19, 0, VersionLevel.dev),
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: firebaseConfig,
@@ -58,6 +59,7 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
+     * アプリケーションの起動モード
      * @type {string | null}
      */
     get mode() {
@@ -65,6 +67,7 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
+     * locationパスから実行する関数
      * @type {Object<string, (self: YditsWeb) => void>}
      */
     locationToExecute = {
@@ -73,6 +76,7 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
+     * アプリケーションの起動モード
      * @type {string | null}
      */
     #mode = null;
@@ -102,7 +106,7 @@ export class YditsWeb extends FirebaseApp {
     #frames = 0;
 
     /**
-     * 最後にFPS値を更新したDate
+     * 最後にFPS値を更新したDatetime
      * @type {number}
      */
     #lastFpsUpdateTime = -1;
@@ -114,6 +118,7 @@ export class YditsWeb extends FirebaseApp {
     #lastFrame = -1;
 
     /**
+     * アプリケーションを実行する
      * @returns {Promise<void>}
      */
     async run() {
@@ -124,7 +129,7 @@ export class YditsWeb extends FirebaseApp {
         this.#setupEventListeners();
 
         this.buildEvent = new Event("build");
-        document.addEventListener("build", async () => await this.#onBuild());
+        document.addEventListener("build", () => this.#onBuild());
 
         this.#initializeCoreServices();
         this.#registerServices();
@@ -132,10 +137,10 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
-     * イベントリスナーを設定する
-     * @returns {Promise<void>}
+     * イベントリスナーをセットアップする
+     * @returns {void}
      */
-    async #setupEventListeners() {
+    #setupEventListeners() {
         window.addEventListener(
             "error",
             (event) => this.#onUnhandledError(event.error)
@@ -153,7 +158,7 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
-     * ネットワーク接続時の処理
+     * ネットワーク再接続時の処理
      * @returns {void}
      */
     #onNetworkConnected() {
@@ -202,9 +207,9 @@ export class YditsWeb extends FirebaseApp {
     /**
      * ハンドルされない例外の処理
      * @param {Error} error
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    async #onUnhandledError(error) {
+    #onUnhandledError(error) {
         console.error(error);
 
         this.services.debugLogs.add(
@@ -295,9 +300,9 @@ export class YditsWeb extends FirebaseApp {
     /**
      * イニシャライズ中の例外処理
      * @param {Error | unknown} error
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    async #onInitializeError(error) {
+    #onInitializeError(error) {
         const stack = error instanceof Error ? error.stack : null;
 
         console.error(error);
@@ -336,7 +341,7 @@ export class YditsWeb extends FirebaseApp {
     async #onBuild() {
         await this.#initialize();
 
-        if (this.version.level === Version.levels.beta) {
+        if (this.version.level === VersionLevel.beta) {
             this.services.elementsManager.getElementById("betaBanner").classList.add("active");
         }
 
@@ -369,23 +374,23 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
-     * インターバルを開始する
+     * 各インターバルを開始する
      * @returns {void}
      */
     #startIntervals() {
-        setInterval(async () => await this.#updateNtp(), 1000);
-        setInterval(async () => await this.#updateClock(this.services.datetime), 1000);
-        setInterval(async () => await this.#updateEew(), 1000);
-        setInterval(async () => await this.#updateHrpns(), 1000 * 60);
-        setInterval(async () => await this.#updateTyphoon(), 1000 * 300);
-        setInterval(async () => await this.#updateDebugOutput(), 1000);
+        setInterval(() => this.#updateNtp(), 1000);
+        setInterval(() => this.#updateClock(this.services.datetime), 1000);
+        setInterval(() => this.#updateEew(), 1000);
+        setInterval(() => this.#updateHrpns(), 1000 * 60);
+        setInterval(() => this.#updateTyphoon(), 1000 * 300);
+        setInterval(() => this.#updateDebugOutput(), 1000);
     }
 
     /**
      * UIをイニシャライズする
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    async #initializeUI() {
+    #initializeUI() {
         this.services.elementsManager.getElementById("menuVersion").textContent = `Ver ${this.version.string}`;
 
         this.services.elementsManager.getElementById("menuOpenEqhistory").addEventListener("click", () => {
@@ -452,7 +457,7 @@ export class YditsWeb extends FirebaseApp {
         const timeNowMs = performance.now();
 
         this.#calcFps(timeNowMs);
-        this.#displayFps(timeNowMs);
+        this.#renderFps(timeNowMs);
         this.services.map.update(timeNow, this.#fps);
 
         requestAnimationFrame(() => this.#mainloop());
@@ -475,11 +480,11 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
-     * FPSを表示する
+     * FPSをレンダリングする
      * @param {number} timeNow
      * @returns {void}
      */
-    #displayFps(timeNow) {
+    #renderFps(timeNow) {
         if (timeNow - this.#lastFpsUpdateTime >= this.services.settings.debug.fpsMs) {
             const color = this.#fps <= 15 ? "#ff4040ff" : "#202020ff";
             this.services.elementsManager.getElementById("fps").textContent = `${Math.round(this.#fps)}FPS`;
@@ -488,28 +493,48 @@ export class YditsWeb extends FirebaseApp {
         }
     }
 
-    async #updateNtp() {
+    /**
+     * 現在時刻を更新する
+     * @returns {void}
+     */
+    #updateNtp() {
         this.services.datetime.update();
     }
 
-    async #updateEew() {
+    /**
+     * 緊急地震速報関連を更新する
+     * @returns {void}
+     */
+    #updateEew() {
         this.services.eew.updateWarn();
         this.services.api.yahooKmoni.get();
     }
 
-    async #updateHrpns() {
+    /**
+     * 雨雲レーダー(高解像度降水ナウキャスト/HRPNS) を更新する
+     * @returns {void}
+     */
+    #updateHrpns() {
         if (!this.services.api.yahooKmoni.isEew) {
             this.services.map.updateHrpns();
         }
     }
 
-    async #updateTyphoon() {
+    /**
+     * 台風予想進路図を更新する
+     * @returns {void}
+     */
+    #updateTyphoon() {
         if (!this.services.api.yahooKmoni.isEew) {
             this.services.map.updateTyphoon();
         }
     }
 
-    async #updateDebugOutput() {
+    /**
+     * デバッグオーバーレイを更新する
+     * @returns {void}
+     */
+    #updateDebugOutput() {
         if (!this.services.settings.debug.output) return;
 
         this.services.elementsManager.getElementById("debugOutputAppName").textContent = `${this.name} Version ${this.version.string}`;
@@ -531,11 +556,11 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
-     * クロックの表示を更新する
+     * 時刻表示を更新する
      * @param {Datetime} time
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    async #updateClock(time) {
+    #updateClock(time) {
         const isValidTime = time instanceof Datetime && time.gmt instanceof Date;
 
         const clockText = isValidTime
@@ -546,7 +571,7 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
-     * イニシャライズの完了を通知する
+     * イニシャライズ完了を通知する
      * @returns {void}
      */
     #displayInitializedNotify() {
