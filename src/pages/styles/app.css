@@ -570,7 +570,6 @@ main {
     /* border-radius: 2rem; */
     padding: 1.2rem 2rem;
     background-color: rgba(127, 127, 127, 0.3);
-    transition: background-color 0.3s;
 }
 
 .window .lists .list.top {
