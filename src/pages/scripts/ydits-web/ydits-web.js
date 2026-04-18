@@ -37,6 +37,7 @@ export class YditsWeb extends FirebaseApp {
     /**
      * アプリケーションの起動モードのオブジェクト (enumの代替)
      * @type {{
+     *     default: string,
      *     eqhistory: string,
      *     debuglog: string,
      * }}
@@ -146,7 +147,10 @@ export class YditsWeb extends FirebaseApp {
     async run() {
         this.#initializeStartFrame = performance.now();
 
-        this.locationToExecute[location.pathname]?.(this);
+        if (this.locationToExecute[location.pathname]) {
+            this.locationToExecute[location.pathname](this);
+            return;
+        }
 
         this.#setupEventListeners();
 
