@@ -47,6 +47,9 @@ export class YditsWeb extends FirebaseApp {
         debuglog: "debuglog",
     });
 
+    /**
+     * Status lamp の色リスト
+     */
     static #statusLampColors = {
         error: "#ff4040",
         success: "#40ff40"
@@ -90,7 +93,7 @@ export class YditsWeb extends FirebaseApp {
      * イニシャライズ開始時の `performance.now()` 値
      * @type {number | null}
      */
-    #initializeStarteFrame = null;
+    #initializeStartFrame = null;
 
     /**
      * イニシャライズ所要時間
@@ -141,7 +144,7 @@ export class YditsWeb extends FirebaseApp {
      * @returns {Promise<void>}
      */
     async run() {
-        this.#initializeStarteFrame = performance.now();
+        this.#initializeStartFrame = performance.now();
 
         this.locationToExecute[location.pathname]?.(this);
 
@@ -367,8 +370,8 @@ export class YditsWeb extends FirebaseApp {
         this.upTime = performance.now();
         this.startupTime = this.services.datetime.gmt.getTime();
 
-        if (typeof this.#initializeStarteFrame === "number") {
-            this.#initializeTime = this.upTime - this.#initializeStarteFrame;
+        if (typeof this.#initializeStartFrame === "number") {
+            this.#initializeTime = this.upTime - this.#initializeStartFrame;
             this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version.string}. Initialize time: ${Math.round(this.#initializeTime)}ms.`);
             this.#displayInitializedNotify();
             this.services.elementsManager.getElementById("initializeTime").textContent = `${Math.round(this.#initializeTime)}ms`;
@@ -469,6 +472,7 @@ export class YditsWeb extends FirebaseApp {
 
     /**
      * Status lamp をレンダリングする
+     * @returns {void}
      */
     renderStatusLamp() {
         this.services.elementsManager.getElementById("statusLamp").style.backgroundColor = this.statusLampColorState;
