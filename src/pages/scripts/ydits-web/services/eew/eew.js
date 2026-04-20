@@ -421,7 +421,7 @@ export class Eew extends Service {
      */
     displayWarn() {
         if (!this.app.services.settings.display.showWarn) { return; }
-        if (!this.app.services.geoLocation.isSupport) { return; }
+        if (!this.app.services.geoLocation.isSupported) { return; }
         this.warnElement.classList.add("active");
     }
 
