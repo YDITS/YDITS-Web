@@ -64,7 +64,7 @@ export class GeoLocation extends Service {
          * }}
          */
         this.services = {
-            debugLogs: this.app.services.debugLog,
+            debugLogs: this.app.services.debugLogs,
             notify: this.app.services.notify,
             elementsManager: this.app.services.elementsManager,
             eew: this.app.services.eew,
