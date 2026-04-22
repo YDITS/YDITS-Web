@@ -366,10 +366,10 @@ export class Map extends Service {
 
         if (this.app.services.api.yahooKmoni.isEew) return;
 
+        this.isDisplayTyphoon = true;
         this.tropicalCycloneLatestTarget = await this.getTropicalCycloneTarget();
         if (!this.tropicalCycloneLatestTarget) return;
 
-        this.isDisplayTyphoon = true;
 
         this.tropicalCycloneLatestTarget.forEach(async (target) => {
             const url = this.tropicalCycloneForecastUrl(target);
@@ -842,7 +842,9 @@ export class Map extends Service {
                         this.app.services.eew.reports[id].lastSWave = this.app.services.eew.reports[id].sRadius;
                         this.app.services.eew.reports[id].sWavePut = this.app.services.eew.reports[id].sRadius;
                     } else if (this.app.services.eew.reports[id].sRadius == this.app.services.eew.reports[id].lastSWave) {
-                        this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
+                        if (this.app.services.eew.reports[id].sWaveInterval < 150 && this.app.services.eew.reports[id].sWaveInterval > 0) {
+                            this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
+                        }
                     }
 
                     if (this.app.services.eew.reports[id].pRadius != this.app.services.eew.reports[id].lastPWave) {
@@ -851,11 +853,18 @@ export class Map extends Service {
                         this.app.services.eew.reports[id].pWavePut = this.app.services.eew.reports[id].pRadius;
                         this.#loopCount = dateNow;
                     } else if (this.app.services.eew.reports[id].pRadius == this.app.services.eew.reports[id].lastPWave) {
-                        this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                        if (this.app.services.eew.reports[id].pWaveInterval < 300 && this.app.services.eew.reports[id].pWaveInterval > 0) {
+                            this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                        }
                     }
                 } else {
-                    this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
-                    this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                    if (this.app.services.eew.reports[id].sWaveInterval < 150 && this.app.services.eew.reports[id].sWaveInterval > 0) {
+                        this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
+                    }
+
+                    if (this.app.services.eew.reports[id].pWaveInterval < 300 && this.app.services.eew.reports[id].pWaveInterval > 0) {
+                        this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                    }
                 }
 
                 const REGION_LNGLAT = [this.app.services.eew.reports[id].longitude, this.app.services.eew.reports[id].latitude];
