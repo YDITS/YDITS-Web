@@ -11,7 +11,8 @@ Introduction website: https://www.ydits.net/apps/web/
 
 ## Usage
 
-Deploy the `src/pages/` directory.
+Deploy the `src/pages/` directory.  
+Since it has a serverless architecture, it can be deployed using any method you prefer.
 
 ## License
 
