@@ -583,7 +583,7 @@ export class YditsWeb extends FirebaseApp {
             Object.keys(this.services.eew.reports[this.services.eew.currentId]).forEach(key => {
                 reports += `${key}: ${this.services.eew.reports[this.services.eew.currentId][key]}, `;
             });
-            this.services.elementsManager.textContent = `Current EEW Data: ${reports}`;
+            this.services.elementsManager.getElementById("debugOutputEewData").textContent = `Current EEW Data: ${reports}`;
         });
 
         this.services.elementsManager.getElementById("debugOutputWolfxJmaEewData").textContent = `Wolfx Jma EEW Data: ${JSON.stringify(this.services.api.wolfx.jmaEewData)}`;
