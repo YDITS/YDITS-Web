@@ -11,18 +11,18 @@
 
 */
 
-main {
-    box-sizing: border-box;
-    width: 100%;
-    min-height: calc(100dvh - var(--header-height));
-    padding: 2rem 10vw;
-    text-align: center;
-}
-
 .error-page {
     display: flex;
+
+    box-sizing: border-box;
+    width: 100%;
+    min-height: calc(100dvh - var(--header-height) - var(--footer-height));
+    text-align: center;
+    
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    align-items: center;    
+    padding: 2rem 1rem;
 
     gap: 2rem;
 }
@@ -32,7 +32,9 @@ main {
 }
 
 .error-button {
-    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: unset;
 
     &:hover {

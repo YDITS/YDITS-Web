@@ -78,6 +78,7 @@ header {
     justify-content: center;
     align-items: center;
 
+    box-sizing: border-box;
     width: var(--header-width);
     height: var(--header-height);
     overflow: hidden;
