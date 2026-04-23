@@ -23,8 +23,8 @@ class ServiceWorkerBackground {
      */
     #setupEventListeners() {
         self.addEventListener("install", async (event) => await this.#onInstall(event));
-        self.addEventListener('push', async (event) => await this.#onPush(event));
-        self.addEventListener('sync', async (event) => await this.#onSync(event));
+        self.addEventListener("push", async (event) => await this.#onPush(event));
+        self.addEventListener("sync", async (event) => await this.#onSync(event));
     }
 
 
