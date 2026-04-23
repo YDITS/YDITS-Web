@@ -31,18 +31,32 @@ import { Settings } from "./services/settings/settings.js";
 import { Map } from "./services/map/map.js";
 
 /**
+ * @typedef {{
+ *     datetime: Datetime,
+ *     debugLogs: DebugLogs,
+ *     elementsManager: ElementsManager,
+ *     notify: Notify,
+ *     geoLocation: GeoLocation,
+ *     eew: Eew,
+ *     eqinfo: Eqinfo,
+ *     jmaDataFeed: JmaDataFeed,
+ *     serviceWorker: ServiceWorker,
+ *     pushNotify: PushNotify,
+ *     sounds: Sounds,
+ *     api: Api,
+ *     settings: Settings,
+ *     map: Map,
+ * }} YditsWebServices
+ */
+
+/**
  * YDITS for Web
  */
 export class YditsWeb extends FirebaseApp {
     /**
      * アプリケーションの起動モードのオブジェクト (enumの代替)
-     * @type {{
-     *     default: string,
-     *     eqhistory: string,
-     *     debuglog: string,
-     * }}
      */
-    static modes = Object.freeze({
+    static MODES = Object.freeze({
         default: "default",
         eqhistory: "eqhistory",
         debuglog: "debuglog",
@@ -51,7 +65,7 @@ export class YditsWeb extends FirebaseApp {
     /**
      * Status lamp の色リスト
      */
-    static #statusLampColors = {
+    static #STATUS_LAMP_COLORS = {
         error: "#ff4040",
         success: "#40ff40"
     };
@@ -83,6 +97,13 @@ export class YditsWeb extends FirebaseApp {
         "/eqhistory/": (self) => self.#eqhistoryMode(),
         "/debug-logs/": (self) => self.#debugLogsMode(),
     }
+
+    /**
+     * @type {YditsWebServices}
+     * @override
+     */
+    // @ts-ignore
+    services = {};
 
     /**
      * アプリケーションの起動モード
@@ -132,12 +153,12 @@ export class YditsWeb extends FirebaseApp {
      */
     get statusLampColorState() {
         if (
-            this.services.api.yahooKmoni.fetchLastStatus === true
+            this.services.api.yahooKmoni?.fetchLastStatus === true
         ) {
-            return YditsWeb.#statusLampColors.success;
+            return YditsWeb.#STATUS_LAMP_COLORS.success;
         }
 
-        return YditsWeb.#statusLampColors.error;
+        return YditsWeb.#STATUS_LAMP_COLORS.error;
     }
 
     /**
@@ -201,7 +222,7 @@ export class YditsWeb extends FirebaseApp {
         );
 
         setTimeout(() => {
-            this.services.api.wolfx.connect();
+            this.services.api.wolfx?.connect();
             this.services.eqinfo.reconnect();
             this.services.map.updateHrpns();
         }, 1000);
@@ -226,7 +247,7 @@ export class YditsWeb extends FirebaseApp {
             "ネットワークが切断されました。"
         );
 
-        this.services.api.wolfx.disconnect();
+        this.services.api.wolfx?.disconnect();
         this.services.eqinfo.disconnect();
     }
 
@@ -261,9 +282,9 @@ export class YditsWeb extends FirebaseApp {
      * @returns {void}
      */
     #initializeCoreServices() {
-        this.registerService(Datetime);
+        this.services.datetime = new Datetime(this);
         this.services.datetime.update();
-        this.registerService(DebugLogs);
+        this.services.debugLogs = new DebugLogs(this);
         this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
     }
 
@@ -273,7 +294,7 @@ export class YditsWeb extends FirebaseApp {
      */
     #registerServices() {
         try {
-            this.registerService(ElementsManager);
+            this.services.elementsManager = new ElementsManager(this);
             this.services.elementsManager.addElementsById([
                 "clock",
                 "statusLamp",
@@ -300,24 +321,24 @@ export class YditsWeb extends FirebaseApp {
                 "licenseCloseButton",
             ]);
 
-            this.registerService(Notify);
-            this.registerService(Eew);
-            this.registerService(Eqinfo);
-            this.registerService(JmaDataFeed);
-            this.registerService(ServiceWorker);
-            this.registerService(Sounds);
-            this.registerService(Api);
-            this.registerService(Settings);
-            this.registerService(Map);
+            this.services.notify = new Notify(this);
+            this.services.eew = new Eew(this);
+            this.services.eqinfo = new Eqinfo(this);
+            this.services.jmaDataFeed = new JmaDataFeed(this);
+            this.services.serviceWorker = new ServiceWorker(this);
+            this.services.sounds = new Sounds(this);
+            this.services.api = new Api(this);
+            this.services.settings = new Settings(this);
+            this.services.map = new Map(this);
 
             try {
-                this.registerService(PushNotify);
+                this.services.pushNotify = new PushNotify(this);
             } catch (error) {
                 console.error(error);
                 this.services.debugLogs.add("error", `[${this.name}]`, error);
             }
 
-            this.registerService(GeoLocation);
+            this.services.geoLocation = new GeoLocation(this);
         } catch (error) {
             this.#onInitializeError(error);
         }
@@ -392,7 +413,7 @@ export class YditsWeb extends FirebaseApp {
      */
     async #initialize() {
         this.services.settings.initialize();
-        await this.services.api.dmdata.initialize();
+        await this.services.api.dmdata?.initialize();
         this.services.api.p2pquake.initialize();
         this.services.eew.initialize();
         this.services.eqinfo.initialize();
@@ -541,7 +562,7 @@ export class YditsWeb extends FirebaseApp {
      */
     #updateEew() {
         this.services.eew.updateWarn();
-        this.services.api.yahooKmoni.get();
+        this.services.api.yahooKmoni?.get();
     }
 
     /**
@@ -549,7 +570,7 @@ export class YditsWeb extends FirebaseApp {
      * @returns {void}
      */
     #updateHrpns() {
-        if (!this.services.api.yahooKmoni.isEew) {
+        if (!this.services.api.yahooKmoni?.isEew) {
             this.services.map.updateHrpns();
         }
     }
@@ -559,10 +580,17 @@ export class YditsWeb extends FirebaseApp {
      * @returns {void}
      */
     #updateTyphoon() {
-        if (!this.services.api.yahooKmoni.isEew) {
+        if (!this.services.api.yahooKmoni?.isEew) {
             this.services.map.updateTyphoon();
         }
     }
+
+    #webSocketReadyStateToText = {
+        0: "Connecting",
+        1: "Connected",
+        2: "Closing",
+        3: "Closed",
+    };
 
     /**
      * デバッグオーバーレイを更新する
@@ -575,14 +603,14 @@ export class YditsWeb extends FirebaseApp {
         this.services.elementsManager.getElementById("debugOutputUserAgent").textContent = `User Agent: ${navigator.userAgent}`;
         this.services.elementsManager.getElementById("debugOutputLanguage").textContent = `Client Language: ${navigator.language}`;
         this.services.elementsManager.getElementById("debugOutputDisplay").textContent = `Display: ${screen.width} x ${screen.height}`;
-        this.services.elementsManager.getElementById("debugOutputWolfxJmaEewSocket").textContent = `Wolfx JMA EEW WebSocket: ${this.services.api.wolfx.jmaEewSocket.socket ? "Connected" : "Disconnected"}`;
-        this.services.elementsManager.getElementById("debugOutputP2pquakeSocket").textContent = `P2P地震情報 WebSocket: ${this.services.api.p2pquake.socket ? "Connected" : "Disconnected"}`;
+        this.services.elementsManager.getElementById("debugOutputWolfxJmaEewSocket").textContent = `Wolfx JMA EEW WebSocket: ${this.services.api.wolfx.jmaEewSocket.socket?.readyState ? this.#webSocketReadyStateToText[this.services.api.wolfx.jmaEewSocket.socket?.readyState] : "Disconnected"}`;
+        this.services.elementsManager.getElementById("debugOutputP2pquakeSocket").textContent = `P2P地震情報 WebSocket: ${this.services.api.p2pquake.socket?.readyState ? this.#webSocketReadyStateToText[this.services.api.p2pquake.socket?.readyState] : "Disconnected"}`;
 
         safecall(() => {
             let reports = "";
-            Object.keys(this.services.eew.reports[this.services.eew.currentId]).forEach(key => {
-                reports += `${key}: ${this.services.eew.reports[this.services.eew.currentId][key]}, `;
-            });
+            for (const [key, value] of Object.keys(this.services.eew.reports[this.services.eew.currentId])) {
+                reports += `${key}: ${value}, `;
+            }
             this.services.elementsManager.getElementById("debugOutputEewData").textContent = `Current EEW Data: ${reports}`;
         });
 
@@ -617,13 +645,15 @@ export class YditsWeb extends FirebaseApp {
      * @returns {void}
      */
     #eqhistoryMode() {
-        this.#mode = YditsWeb.modes.eqhistory;
+        this.#mode = YditsWeb.MODES.eqhistory;
 
-        this.registerService(Datetime);
-        this.registerService(DebugLogs);
-        this.registerService(Api);
-        this.registerService(Notify);
-        this.registerService(Eqinfo);
+        this.services.datetime = new Datetime(this);
+        this.services.datetime.update();
+        this.services.debugLogs = new DebugLogs(this);
+        this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
+        this.services.api = new Api(this);
+        this.services.notify = new Notify(this);
+        this.services.eqinfo = new Eqinfo(this);
 
         this.services.api.p2pquake.initialize();
         this.#displayInitializedNotify();
@@ -634,11 +664,13 @@ export class YditsWeb extends FirebaseApp {
      * @returns {void}
      */
     #debugLogsMode() {
-        this.#mode = YditsWeb.modes.debuglog;
+        this.#mode = YditsWeb.MODES.debuglog;
 
-        this.registerService(Datetime);
-        this.registerService(DebugLogs);
-        this.registerService(Notify);
+        this.services.datetime = new Datetime(this);
+        this.services.datetime.update();
+        this.services.debugLogs = new DebugLogs(this);
+        this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
+        this.services.notify = new Notify(this);
 
         this.#displayInitializedNotify();
     }

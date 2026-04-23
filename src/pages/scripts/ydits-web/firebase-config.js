@@ -16,5 +16,5 @@ export default {
     "storageBucket": "ydits-for-web.appspot.com",
     "messagingSenderId": "177926103278",
     "appId": "1:177926103278:web:da2bdcadb1d47b9ae653ff",
-    "measurementId": "G-SYYZ9EM05T"
+    "measurementId": "G-SYYZ9EM05T",
 }
