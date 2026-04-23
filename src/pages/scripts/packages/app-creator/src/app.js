@@ -8,7 +8,7 @@
  *
  */
 
-import { ServiceManager } from "./service-manager.js";
+import { Version } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
 
 /**
  * アプリケーションを作成する
@@ -30,12 +30,12 @@ export class App {
         author,
         copyright
     }) {
+        this.services = {};
         this.#name = name;
         this.#description = description;
         this.#version = version;
         this.#author = author;
         this.#copyright = copyright;
-        this.#serviceManager = new ServiceManager({ app: this });
     }
 
 
@@ -43,9 +43,7 @@ export class App {
      * このアプリのサービス
      * @returns {Object<string, Service>}
      */
-    get services() {
-        return this.#serviceManager.services;
-    }
+    services;
 
 
     /**
@@ -94,16 +92,6 @@ export class App {
 
 
     /**
-     * サービスを登録する
-     * @param {class<Service>} NewService
-     * @returns {void}
-     */
-    registerService(NewService) {
-        this.#serviceManager.register(NewService);
-    }
-
-
-    /**
      * アプリの名前
      * @type {string}
      */
@@ -136,11 +124,4 @@ export class App {
      * @type {string}
      */
     #copyright = "";
-
-
-    /**
-     * サービスマネージャーインスタンス
-     * @type {ServiceManager | null}
-     */
-    #serviceManager = null;
 }

@@ -8,6 +8,7 @@
  *
  */
 
+import { Version } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
 import { App } from "./app.js";
 
 /**
@@ -21,7 +22,7 @@ export class Service {
      *     description: string,
      *     version: typeof Version,
      *     author: string,
-     *     copyright: string
+     *     copyright: string,
      * }} config 
      */
     constructor(
@@ -34,7 +35,7 @@ export class Service {
             copyright
         }
     ) {
-        this.#app = app;
+        this.app = app;
         this.#name = name;
         this.#description = description;
         this.#version = version;
@@ -45,11 +46,10 @@ export class Service {
 
     /**
      * アプリケーションインスタンス
-     * @returns {App | null}
+     * @type {App}
      */
-    get app() {
-        return this.#app;
-    }
+    app;
+
 
     /**
      * サービスの名前
@@ -94,13 +94,6 @@ export class Service {
     get copyright() {
         return this.#copyright;
     }
-
-
-    /**
-     * アプリケーションインスタンス
-     * @type {App | null}
-     */
-    #app = null;
 
 
     /**
