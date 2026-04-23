@@ -10,8 +10,12 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 export class LocalStorage extends Service {
+    /**
+     * @param {YditsWeb} app
+     */
     constructor(app) {
         super(app, {
             name: "localStorage",
@@ -21,8 +25,17 @@ export class LocalStorage extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        this.app = app;
+
         this._cacheLocationArea = this._localStorageGetItem(LocalStorage.cacheLocationAreaKey);
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     static cacheLocationAreaKey = "cacheLocationArea";
 

@@ -10,13 +10,14 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * サービスワーカーを管理する
  */
 export class ServiceWorker extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -27,8 +28,17 @@ export class ServiceWorker extends Service {
             copyright: "Copyright © よね/Yone",
         });
 
+        this.app = app;
+
         this.#register();
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * @type {ServiceWorkerRegistration | null}

@@ -10,13 +10,14 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * マップを扱う。
  */
 export class Map extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -27,10 +28,19 @@ export class Map extends Service {
             copyright: "Copyright © よね/Yone",
         });
 
+        this.app = app;
+
         this.typhoonLayerIds = [];
         this.typhoonSourceIds = [];
         this.typhoonMarkers = [];
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     static DEFAULT_CENTER = [137.5930000, 36.0047000];
     static DEFAULT_ZOOM = 4;

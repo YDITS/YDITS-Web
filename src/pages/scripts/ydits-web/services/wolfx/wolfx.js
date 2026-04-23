@@ -35,6 +35,8 @@ export class Wolfx extends Service {
             copyright: "Copyright © よね/Yone",
         });
 
+        this.app = app;
+
         this.initializeElements();
 
         this.fetch();
@@ -45,6 +47,13 @@ export class Wolfx extends Service {
             1000
         );
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * @type {WolfxJmaEewData?}

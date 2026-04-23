@@ -10,6 +10,7 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 気象庁防災情報電文を扱う。
@@ -17,6 +18,9 @@ import { Service } from "../../../packages/app-creator/src/service.js";
 export class JmaDataFeed extends Service {
     url = "https://www.data.jma.go.jp/developer/xml/feed/eqvol.xml";
 
+    /**
+     * @param {YditsWeb} app
+     */
     constructor(app) {
         super(app, {
             name: "jmaDataFeed",
@@ -25,6 +29,8 @@ export class JmaDataFeed extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+
+        this.app = app;
 
         return; // Developing
 
@@ -49,6 +55,13 @@ export class JmaDataFeed extends Service {
         this.eqvolList = $("#jmaDataFeedEqvolList");
         this.eqvolLongList = $("#jmaDataFeedEqvolLongList");
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 気象庁防災情報電文を更新する。

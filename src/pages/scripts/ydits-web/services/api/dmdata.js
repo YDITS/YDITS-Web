@@ -63,7 +63,16 @@ export class Dmdata extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+
+        this.app = app;
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * アクセストークン

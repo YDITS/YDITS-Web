@@ -11,12 +11,7 @@
 
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { YditsWeb } from "../../ydits-web.js";
-import { DebugLogs } from "../debug-logs/debug-logs.js";
-import { Notify } from "../notify/notify.js";
-import { ElementsManager } from "../elements/elements.js";
 import { LocalStorage } from "../local-storage/local-storage.js";
-import { Eew } from "../eew/eew.js";
-import { Map } from "../map/map.js";
 
 /**
  * 位置情報を管理する。
@@ -54,24 +49,9 @@ export class GeoLocation extends Service {
             copyright: "Copyright © よね/Yone"
         })
 
-        /**
-         * @type {{
-         *     debugLogs: DebugLogs,
-         *     notify: Notify,
-         *     elementsManager: ElementsManager,
-         *     eew: Eew,
-         *     map: Map,
-         * }}
-         */
-        this.services = {
-            debugLogs: this.app.services.debugLogs,
-            notify: this.app.services.notify,
-            elementsManager: this.app.services.elementsManager,
-            eew: this.app.services.eew,
-            map: this.app.services.map,
-        }
+        this.app = app;
 
-        this.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
+        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
         this.#getLocationEvent = new Event("getLocation");
         this.#cacheLocationArea = this.#localStorage.cacheLocationArea;
@@ -82,6 +62,13 @@ export class GeoLocation extends Service {
 
         this.#getLocation();
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * @returns {string} 現在地の地区予報区
@@ -247,9 +234,9 @@ export class GeoLocation extends Service {
         if (!this.#renderQueued) {
             this.#renderQueued = true;
             requestAnimationFrame(() => {
-                const $locationStatus = this.services.elementsManager.getElementById("locationStatus");
-                const $locationArea = this.services.elementsManager.getElementById("locationArea");
-                const $locationAccuracy = this.services.elementsManager.getElementById("locationAccuracy");
+                const $locationStatus = this.app.services.elementsManager.getElementById("locationStatus");
+                const $locationArea = this.app.services.elementsManager.getElementById("locationArea");
+                const $locationAccuracy = this.app.services.elementsManager.getElementById("locationAccuracy");
                 $locationStatus.textContent = this.#locationStatusText;
                 $locationArea.textContent = this.#locationAreaText;
                 $locationAccuracy.textContent = this.#locationAccuracyText;
@@ -266,7 +253,7 @@ export class GeoLocation extends Service {
             return;
         }
 
-        this.services.notify.show(
+        this.app.services.notify.show(
             "message",
             "",
             "位置情報を取得しています…"
@@ -311,7 +298,7 @@ export class GeoLocation extends Service {
         const data = await response.json();
 
         if (data === null || data?.["address"] == null) {
-            this.services.debugLogs.add(
+            this.app.services.debugLogs.add(
                 "error",
                 `[${this.name}]`,
                 `Could not find current location area: the response is invaild.`
@@ -322,7 +309,7 @@ export class GeoLocation extends Service {
         const countryCode = data?.["address"]?.["country_code"];
 
         if (countryCode !== "jp") {
-            this.services.debugLogs.add(
+            this.app.services.debugLogs.add(
                 "info",
                 `[${this.name}]`,
                 `Current location is outside of Japan.`
@@ -341,7 +328,7 @@ export class GeoLocation extends Service {
                 typeof this.suburb === "string" &&
                 this.suburb.includes("区")
             ) {
-                this.city = this.services.eew.removeCity(this.city) + this.suburb;
+                this.city = this.app.services.eew.removeCity(this.city) + this.suburb;
             }
 
             if (typeof this.city !== "string") {
@@ -387,7 +374,7 @@ export class GeoLocation extends Service {
 
             if (["北区", "南区", "西区"].includes(this.city)) {
                 this.province = data?.["address"]?.["province"];
-                this.area = this.services.eew.removePref(this.province) + this.city;
+                this.area = this.app.services.eew.removePref(this.province) + this.city;
             }
         } else if (data.address.town) {
             // 町村
@@ -401,7 +388,7 @@ export class GeoLocation extends Service {
         await this.#getJmaForecastArea(this.city);
 
         this.isGot = true;
-        await this.services.map.updateUserPoint();
+        await this.app.services.map.updateUserPoint();
         // document.dispatchEvent(this.app.buildEvent);
     }
 
@@ -412,7 +399,7 @@ export class GeoLocation extends Service {
     #onError(error) {
         let errorMessage = `Could not get the current user location: ${error.message}`;
 
-        this.services.debugLogs.add(
+        this.app.services.debugLogs.add(
             "error",
             `[${this.name}]`,
             errorMessage
@@ -442,11 +429,11 @@ export class GeoLocation extends Service {
 
             document.dispatchEvent(this.#getLocationEvent);
 
-            this.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
+            this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
         } catch (error) {
             console.error(error);
 
-            this.services.debugLogs.add(
+            this.app.services.debugLogs.add(
                 "error",
                 `[${this.name}]`,
                 `Could not get jma forecast area of the current user location: ${error.stack}`

@@ -33,9 +33,11 @@ export class Api extends Service {
             copyright: "Copyright © よね/Yone",
         });
 
+        this.app = app;
+
         this.p2pquake = new P2pquake(app);
 
-        if (app.mode === YditsWeb.modes.eqhistory) {
+        if (app.mode === YditsWeb.MODES.eqhistory) {
             return;
         }
 
@@ -43,6 +45,13 @@ export class Api extends Service {
         this.yahooKmoni = new YahooKmoni(app);
         this.dmdata = new Dmdata(app);
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * P2P地震情報のインスタンス

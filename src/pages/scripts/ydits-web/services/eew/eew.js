@@ -10,13 +10,14 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 緊急地震速報を扱う。
  */
 export class Eew extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -27,12 +28,21 @@ export class Eew extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        this.app = app;
+
         this.datetime = app.services.datetime;
         this.geolocation = app.services.geoLocation;
 
         this.#initializeElements();
         this.#setupEventListeners();
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 要素を初期化する。

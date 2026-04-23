@@ -11,13 +11,14 @@
 
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { PopupDialog } from "../../../packages/popup-dialog/src/popup-dialog.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 設定を扱う。
  */
 export class Settings extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -27,7 +28,16 @@ export class Settings extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
         });
+
+        this.app = app;
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 接続関連

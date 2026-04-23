@@ -10,11 +10,15 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 現在時刻を管理する。
  */
 export class Datetime extends Service {
+    /**
+     * @param {YditsWeb} app
+     */
     constructor(app) {
         super(app, {
             name: "datetime",
@@ -24,8 +28,17 @@ export class Datetime extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        this.app = app;
+
         this._gmt = new Date();
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     get gmt() {
         if (!this._gmt) {

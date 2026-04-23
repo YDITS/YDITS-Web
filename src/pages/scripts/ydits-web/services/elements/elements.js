@@ -11,13 +11,14 @@
 
 import { App } from "../../../packages/app-creator/src/app.js";
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 要素を管理する
  */
 export class ElementsManager extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -27,7 +28,16 @@ export class ElementsManager extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
         });
+
+        this.app = app;
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * @type {Object<string, HTMLElement>}

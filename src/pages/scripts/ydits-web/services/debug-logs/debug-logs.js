@@ -10,6 +10,7 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * デバッグログを管理する。
@@ -17,6 +18,9 @@ import { Service } from "../../../packages/app-creator/src/service.js";
 export class DebugLogs extends Service {
     debugLogs = [];
 
+    /**
+     * @param {YditsWeb} app
+     */
     constructor(app) {
         super(app, {
             name: "debugLogs",
@@ -25,6 +29,8 @@ export class DebugLogs extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+
+        this.app = app;
 
         this.debugLogListsElement = document.getElementById("debugLogLists");
 
@@ -73,6 +79,13 @@ export class DebugLogs extends Service {
             )
         }
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * ログを追加する。

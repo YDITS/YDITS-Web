@@ -10,13 +10,14 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * プッシュ通知を扱う。
  */
 export class PushNotify extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -27,8 +28,17 @@ export class PushNotify extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        this.app = app;
+
         this.initialize();
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 初期化する。

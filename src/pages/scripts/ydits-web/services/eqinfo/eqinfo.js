@@ -10,6 +10,7 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 地震情報を扱う。
@@ -29,6 +30,9 @@ export class Eqinfo extends Service {
     tsunami = null;
     tsunamiText = null;
 
+    /**
+     * @param {YditsWeb} app
+     */
     constructor(app) {
         super(app, {
             name: "eqinfo",
@@ -37,7 +41,16 @@ export class Eqinfo extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+
+        this.app = app;
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 震度をコードに変換するオブジェクト

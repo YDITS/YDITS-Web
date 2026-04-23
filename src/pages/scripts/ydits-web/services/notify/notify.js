@@ -10,13 +10,14 @@
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * ページ内通知を扱う。
  */
 export class Notify extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -27,9 +28,18 @@ export class Notify extends Service {
             copyright: "Copyright © よね/Yone",
         });
 
+        this.app = app;
+
         this.notifyElement = document.getElementById("notify");
         this.eewNotifyElement = document.getElementById("eewNotify");
     }
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 最後の通知ID
