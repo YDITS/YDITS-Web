@@ -1,15 +1,14 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
  * Licensed under the Apache License 2.0.
- * 
+ *
  * https://github.com/YDITS/YDITS-Web
  *
  */
 
-import { App } from "../../../packages/app-creator/src/app.js";
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { YditsWeb } from "../../ydits-web.js";
 

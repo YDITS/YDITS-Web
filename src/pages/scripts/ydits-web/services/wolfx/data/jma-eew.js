@@ -1,4 +1,4 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
@@ -9,7 +9,6 @@
  *
  */
 
-import { Datetime } from "../../datetime/datetime.js";
 import { WolfxJmaEewWarnAreas } from "./jma-eew-warn-areas.js";
 
 /**

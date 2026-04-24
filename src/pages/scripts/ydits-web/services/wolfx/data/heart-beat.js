@@ -1,4 +1,4 @@
-/**!
+/*!
  *
  * YDITS for Web
  *

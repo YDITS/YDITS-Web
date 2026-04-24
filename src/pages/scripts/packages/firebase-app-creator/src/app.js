@@ -1,4 +1,4 @@
-/**!
+/*!
  *
  * Firebase App Creater
  *
