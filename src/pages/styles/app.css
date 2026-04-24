@@ -13,12 +13,22 @@
 
 :root {
     /* main */
-    --main-height: calc(
-        100svh - var(--header-height) - var(--header-border-weight)
-    );
+    --main-height: calc(100svh - var(--header-height) - var(--header-border-weight));
 
     --control-width: 32rem;
+
+    @media (max-width: 769px) {
+        --control-width: 30rem;
+    }
 }
+
+html,
+body {
+    @media (max-width: 384px) {
+        font-size: 11px;
+    }
+}
+
 
 main {
     position: relative;
@@ -81,8 +91,16 @@ main {
     padding: 8px 0;
 }
 
-#list ul li:active {
-    background-color: rgba(255, 255, 255, 0.5);
+#list ul li {
+    @media(hover: hover) {
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+    }
+
+    &:active {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
 }
 
 #eqHistoryBtn {
@@ -200,7 +218,7 @@ main {
     overflow: auto;
 }
 
-.eq-history-field > .list {
+.eq-history-field>.list {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -216,6 +234,18 @@ main {
         padding-bottom 0.3s,
         font-size 0.3s;
     cursor: pointer;
+
+    @media(hover: hover) {
+        &:hover {
+            background-color: #ffffff40;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+
+            .hypocenter {
+                font-size: 1.3rem;
+            }
+        }
+    }
 
     &:active {
         background-color: #ffffff40;
@@ -340,11 +370,11 @@ main {
     display: flex;
 }
 
-#hrpnsTime > .title {
+#hrpnsTime>.title {
     font-size: 0.7rem;
 }
 
-#hrpnsTime > .text {
+#hrpnsTime>.text {
     font-size: 1.5rem;
 }
 
@@ -365,23 +395,30 @@ main {
     background-color: #101010;
     cursor: pointer;
     z-index: 1;
+
+    @media(hover: hover) {
+        &:hover {
+            background-color: #303030;
+        }
+    }
+
+    &:active {
+        background-color: #303030;
+    }
+
+    & .close {
+        display: none;
+    }
+
+    &.active .open {
+        display: none;
+    }
+
+    &.active .close {
+        display: block;
+    }
 }
 
-#mapLayersButton:active {
-    background-color: #303030;
-}
-
-#mapLayersButton .close {
-    display: none;
-}
-
-#mapLayersButton.active .open {
-    display: none;
-}
-
-#mapLayersButton.active .close {
-    display: block;
-}
 
 #mapLayersMenu {
     visibility: hidden;
@@ -395,7 +432,7 @@ main {
     background-color: #202020e0;
 }
 
-#mapLayersMenu > .content {
+#mapLayersMenu>.content {
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -507,13 +544,20 @@ main {
     height: 2.5rem;
     border-radius: 100%;
     font-size: 1.75rem;
+
+    @media(hover: hover) {
+        &:hover {
+            background-color: rgba(127, 127, 127, 0.9);
+        }
+    }
+
+    &:active {
+        background-color: rgba(127, 127, 127, 0.9);
+    }
 }
 
-.window .closeBtn:active {
-    background-color: rgba(127, 127, 127, 0.9);
-}
 
-.window > .titleBar {
+.window>.titleBar {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -521,7 +565,7 @@ main {
     height: 4rem;
 }
 
-.window > .titleBar > .wrapper {
+.window>.titleBar>.wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -536,7 +580,7 @@ main {
     font-size: 1.3rem;
 }
 
-.window > .content {
+.window>.content {
     height: calc(100svh - 4rem - 4rem - 4rem);
     padding: 2rem 5%;
     overflow: auto;
@@ -570,26 +614,33 @@ main {
     /* border-radius: 2rem; */
     padding: 1.2rem 2rem;
     background-color: rgba(127, 127, 127, 0.3);
+
+    &.top {
+        border-top-left-radius: 2rem;
+        border-top-right-radius: 2rem;
+    }
+
+    &.bottom {
+        border: none;
+        border-bottom-left-radius: 2rem;
+        border-bottom-right-radius: 2rem;
+    }
+
+    @media(hover: hover) {
+        &:hover {
+            background-color: rgba(127, 127, 127, 0.9);
+        }
+    }
+
+    &:active {
+        background-color: rgba(127, 127, 127, 0.9);
+    }
+
+    & span {
+        margin-right: 2rem;
+    }
 }
 
-.window .lists .list.top {
-    border-top-left-radius: 2rem;
-    border-top-right-radius: 2rem;
-}
-
-.window .lists .list.bottom {
-    border: none;
-    border-bottom-left-radius: 2rem;
-    border-bottom-right-radius: 2rem;
-}
-
-.window .lists .list:active {
-    background-color: rgba(127, 127, 127, 0.9);
-}
-
-.window .lists .list span {
-    margin-right: 2rem;
-}
 
 #jmaDataFeed {
     top: calc(env(titlebar-area-height, 2rem) + 1rem);
@@ -621,8 +672,8 @@ main {
     left: 0;
 }
 
-#jmaDataFeedEqvol > .titleBar > .title,
-#jmaDataFeedEqvolLong > .titleBar > .title {
+#jmaDataFeedEqvol>.titleBar>.title,
+#jmaDataFeedEqvolLong>.titleBar>.title {
     font-size: 1rem;
 }
 
@@ -651,11 +702,11 @@ main {
     overflow: hidden;
 }
 
-.window.settings_list > label {
+.window.settings_list>label {
     font-size: 1.3em;
 }
 
-.window.settings_list .list > label {
+.window.settings_list .list>label {
     font-size: 1rem;
 }
 
@@ -674,7 +725,7 @@ main {
     font-size: 1.2rem;
 }
 
-.window.settings_list .item > .content {
+.window.settings_list .item>.content {
     display: flex;
     padding: 0 1rem;
 }
@@ -700,11 +751,18 @@ main {
     color: #ffffffff;
 
     cursor: pointer;
+
+    @media(hover: hover) {
+        &:hover {
+            background-color: #707070ff;
+        }
+    }
+
+    &:active {
+        background-color: #707070ff;
+    }
 }
 
-.window button:active {
-    background-color: #707070ff;
-}
 
 .window select {
     display: block;
@@ -751,7 +809,7 @@ main {
     list-style: none;
 }
 
-#debugLogLists > li {
+#debugLogLists>li {
     margin-bottom: 1rem;
 }
 
@@ -774,7 +832,7 @@ main {
     top: calc(env(titlebar-area-height, 2rem) + 1rem);
 }
 
-#license > .content a {
+#license>.content a {
     color: #a0f0a0ff;
     text-decoration: underline;
 }
@@ -853,14 +911,8 @@ main {
     display: flex;
 }
 
-#debugOutput > * {
+#debugOutput>* {
     background-color: #00000040;
-}
-
-@media (max-width: 769px) {
-    :root {
-        --control-width: 30rem;
-    }
 }
 
 @media (max-width: 640px) {
@@ -902,7 +954,7 @@ main {
         display: none;
     }
 
-    #settings > .wrapper {
+    #settings>.wrapper {
         flex-direction: column;
     }
 
@@ -923,12 +975,5 @@ main {
     #settings_lists li {
         width: 15%;
         text-align: center;
-    }
-}
-
-@media (max-width: 384px) {
-    html,
-    body {
-        font-size: 11px;
     }
 }
