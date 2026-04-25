@@ -92,14 +92,14 @@ main {
 }
 
 #list ul li {
-    @media(hover: hover) {
+    &:active {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
         &:hover {
             background-color: rgba(255, 255, 255, 0.5);
         }
-    }
-
-    &:active {
-        background-color: rgba(255, 255, 255, 0.5);
     }
 }
 
@@ -235,18 +235,6 @@ main {
         font-size 0.3s;
     cursor: pointer;
 
-    @media(hover: hover) {
-        &:hover {
-            background-color: #ffffff40;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-
-            .hypocenter {
-                font-size: 1.3rem;
-            }
-        }
-    }
-
     &:active {
         background-color: #ffffff40;
         padding-top: 1rem;
@@ -286,6 +274,18 @@ main {
 
         p {
             margin-right: 2em;
+        }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background-color: #ffffff40;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+
+            .hypocenter {
+                font-size: 1.3rem;
+            }
         }
     }
 }
@@ -396,18 +396,8 @@ main {
     cursor: pointer;
     z-index: 1;
 
-    @media(hover: hover) {
-        &:hover {
-            background-color: #303030;
-        }
-    }
-
     &:active {
         background-color: #303030;
-    }
-
-    & .close {
-        display: none;
     }
 
     &.active .open {
@@ -416,6 +406,16 @@ main {
 
     &.active .close {
         display: block;
+    }
+
+    .close {
+        display: none;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background-color: #303030;
+        }
     }
 }
 
@@ -545,14 +545,14 @@ main {
     border-radius: 100%;
     font-size: 1.75rem;
 
-    @media(hover: hover) {
+    &:active {
+        background-color: rgba(127, 127, 127, 0.9);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
         &:hover {
             background-color: rgba(127, 127, 127, 0.9);
         }
-    }
-
-    &:active {
-        background-color: rgba(127, 127, 127, 0.9);
     }
 }
 
@@ -626,17 +626,17 @@ main {
         border-bottom-right-radius: 2rem;
     }
 
-    @media(hover: hover) {
+    &:active {
+        background-color: rgba(127, 127, 127, 0.9);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
         &:hover {
             background-color: rgba(127, 127, 127, 0.9);
         }
     }
 
-    &:active {
-        background-color: rgba(127, 127, 127, 0.9);
-    }
-
-    & span {
+    span {
         margin-right: 2rem;
     }
 }
@@ -752,14 +752,14 @@ main {
 
     cursor: pointer;
 
-    @media(hover: hover) {
+    &:active {
+        background-color: #707070ff;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
         &:hover {
             background-color: #707070ff;
         }
-    }
-
-    &:active {
-        background-color: #707070ff;
     }
 }
 
