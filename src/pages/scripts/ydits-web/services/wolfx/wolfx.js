@@ -56,7 +56,7 @@ export class Wolfx extends Service {
     app;
 
     /**
-     * @type {WolfxJmaEewData?}
+     * @type {WolfxJmaEewData | null}
      */
     jmaEewData = null;
 
@@ -222,7 +222,7 @@ export class Wolfx extends Service {
 
     /**
      * 表示更新
-     * @param {WolfxJmaEewData?} data
+     * @param {WolfxJmaEewData | null} data
      * @returns {void}
      */
     update(data) {

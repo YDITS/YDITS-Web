@@ -76,13 +76,13 @@ export class Dmdata extends Service {
 
     /**
      * アクセストークン
-     * @type {string?}
+     * @type {string | null}
      */
     #accessToken = null;
 
     /**
      * WebSocketインスタンス
-     * @type {WebSocket?}
+     * @type {WebSocket | null}
      */
     #socket = null;
 
@@ -390,7 +390,7 @@ export class Dmdata extends Service {
      *     name: string,
      *     url: URL | string,
      * }} _
-     * @returns {string?}
+     * @returns {string | null}
      */
     #getParam({ name, url }) {
         if (typeof url === "string") {

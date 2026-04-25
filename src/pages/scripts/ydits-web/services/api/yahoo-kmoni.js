@@ -40,13 +40,13 @@ export class YahooKmoni extends Service {
 
     /**
      * 緊急地震速報が発表されているかどうか
-     * @type {boolean?}
+     * @type {boolean | null}
      */
     isEew = null;
 
     /**
      * 最後のfetchの状態
-     * @type {boolean?}
+     * @type {boolean | null}
      */
     #fetchLastStatus = null;
 
@@ -61,7 +61,7 @@ export class YahooKmoni extends Service {
 
     /**
      * URLを生成する
-     * @returns {URL?}
+     * @returns {URL | null}
      */
     #generateUrl() {
         const KMONI_DATETIME = this.makeKmoniDatetime();
@@ -272,7 +272,7 @@ export class YahooKmoni extends Service {
 
     /**
      * フェッチエラー時の処理
-     * @param {any} error
+     * @param {unknown} error
      * @returns {void}
      */
     #onFetchError(error) {
@@ -287,7 +287,7 @@ export class YahooKmoni extends Service {
         this.app.services.debugLogs.add(
             "error",
             `[${this.name}]`,
-            `Failed to fetch from yahooKmoni: ${error?.stack ?? error}`
+            `Failed to fetch from yahooKmoni: ${error instanceof Error ? error.stack : error}`
         );
 
         this.app.services.notify.show(
@@ -305,7 +305,7 @@ export class YahooKmoni extends Service {
 
     /**
      * Yahoo! 強震モニタの日時を生成する
-     * @returns {string?}
+     * @returns {string | null}
      */
     makeKmoniDatetime() {
         let kmoniDatetime = new Date(this.app.services.datetime.gmt);

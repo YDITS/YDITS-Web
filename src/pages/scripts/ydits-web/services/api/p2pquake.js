@@ -169,13 +169,13 @@ export class P2pquake extends Service {
 
     /**
      * キーアライブのInterval
-     * @type {number?}
+     * @type {number | null}
      */
     socketKeepAliveInterval = null;
 
     /**
      * 再接続用のTimeout ID
-     * @type {number?}
+     * @type {number | null}
      */
     retryTimeout = null;
 
@@ -213,7 +213,7 @@ export class P2pquake extends Service {
 
     /**
      * WebSocketインスタンス
-     * @type {WebSocket?}
+     * @type {WebSocket | null}
      */
     socket = null;
 

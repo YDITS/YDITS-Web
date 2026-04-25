@@ -11,7 +11,8 @@
 
 */
 
-/* ----- Button ----- */
+/* button */
+
 .button {
     display: inline-block;
     border: solid 1px #ffffffff;
@@ -19,15 +20,16 @@
     padding: 1rem;
     background-color: #00000000;
     font-size: 1rem;
-    transition: all .3s;
+    transition: background-color .3s;
+
+    &:hover {
+        background-color: #fff;
+        color: #404040;
+    }
 }
 
-.button:hover {
-    background-color: #ffffff;
-    color: #404040ff;
-}
+/* dialog */
 
-/* ----- Dialog ----- */
 .dialog {
     position: fixed;
     top: calc(50vh - 14rem);
@@ -46,60 +48,58 @@
     color: #ffffffff;
 
     z-index: 10;
-}
 
-.dialog .navBar {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    .navBar {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-    height: 2rem;
+        height: 2rem;
 
-    overflow: hidden;
-    background-color: #404040ff;
-}
+        overflow: hidden;
+        background-color: #404040ff;
+    }
 
-.dialog .navBar .title {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    .navBar .title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-    height: 2rem;
+        height: 2rem;
 
-    overflow: hidden;
-}
+        overflow: hidden;
+    }
 
-.dialog .navBar .close {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    .navBar .close {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-    position: absolute;
-    top: 0;
-    right: 0;
+        position: absolute;
+        top: 0;
+        right: 0;
 
-    width: 3rem;
-    height: 2rem;
-    overflow: hidden;
+        width: 3rem;
+        height: 2rem;
+        overflow: hidden;
 
-    cursor: pointer
-}
+        cursor: pointer
+    }
 
-.dialog .navBar .close:hover {
-    background-color: rgba(0, 0, 0, .2);
-}
+    .navBar .close:hover {
+        background-color: rgba(0, 0, 0, .2);
+    }
 
-.dialog .content {
-    padding: 1rem;
-    overflow: auto;
-    font-size: 12px;
-}
+    .content {
+        padding: 1rem;
+        overflow: auto;
+        font-size: 12px;
+    }
 
-@media (max-width: 769px) {
-    .dialog {
+    @media (max-width: 769px) {
         position: fixed;
         top: 8vh;
         left: 8vw;
@@ -109,7 +109,8 @@
     }
 }
 
-/* ----- Toggle switch ----- */
+/* toggle-swtich */
+
 .toggle-switch {
     display: inline-flex;
     align-items: center;
@@ -124,32 +125,33 @@
     cursor: pointer;
 
     transition: all .2s;
+
+    &>.span {
+        position: relative;
+        left: 0px;
+
+        display: inline-block;
+
+        height: 30px;
+        width: 30px;
+        border-radius: 15px;
+
+        background-color: #fff;
+
+        transition: all .2s;
+    }
+
+    &.on {
+        background-color: #4040ffff;
+    }
+
+    &.on>.span {
+        left: 22px;
+    }
 }
 
-.toggle-switch>.span {
-    position: relative;
-    left: 0px;
+/* notify */
 
-    display: inline-block;
-
-    height: 30px;
-    width: 30px;
-    border-radius: 15px;
-
-    background-color: #fff;
-
-    transition: all .2s;
-}
-
-.toggle-switch.on {
-    background-color: #4040ffff;
-}
-
-.toggle-switch.on>.span {
-    left: 22px;
-}
-
-/* ----- Notifycation ----- */
 #notify {
     visibility: hidden;
     display: inline-block;
@@ -170,15 +172,15 @@
 
     z-index: 2;
     transition: all .4s;
+
+    &.active {
+        visibility: visible;
+        right: 2rem;
+    }
 }
 
-#notify.active {
-    visibility: visible;
-    right: 2rem;
-}
+/* eew-notify */
 
-
-/* ----- EEW Notify ----- */
 #eewNotify {
     visibility: hidden;
     display: block;
@@ -201,91 +203,89 @@
     z-index: 3;
     cursor: pointer;
     transition: all .4s;
-}
 
-#eewNotify.active {
-    visibility: visible;
-    left: 2rem;
-}
-
-#eewNotify:hover {
-    background-color: #f01010ff;
-}
-
-@media (max-width: 768px) {
-    #eewNotify {
+    @media (max-width: 768px) {
         padding: 1rem 1rem;
         font-size: 1.1rem;
     }
+
+    &.active {
+        visibility: visible;
+        left: 2rem;
+    }
+
+    &:hover {
+        background-color: #f01010ff;
+    }
 }
 
+/* eew-warn */
 
-/* ---------- EEW Warn ---------- */
 #eewWarn {
     visibility: hidden;
     z-index: 4;
-}
 
-#eewWarn.active {
-    visibility: visible;
-    top: calc(env(titlebar-area-height, 2rem) + 1rem);
-}
+    &.active {
+        visibility: visible;
+        top: calc(env(titlebar-area-height, 2rem) + 1rem);
+    }
 
-#eewWarn .closeBtn {
-    left: unset;
-    right: 1.5rem;
-}
+    .closeBtn {
+        left: unset;
+        right: 1.5rem;
+    }
 
-#eewWarn .warn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: calc(100% - 4rem);
-    padding: 2rem;
-    background-color: #f05050ff;
-}
+    .warn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: calc(100% - 4rem);
+        padding: 2rem;
+        background-color: #f05050ff;
+    }
 
-#eewWarn .warn>.icon {
-    margin-bottom: 2rem;
-    font-size: 7.5rem;
-}
+    .warn>.icon {
+        margin-bottom: 2rem;
+        font-size: 7.5rem;
+    }
 
-#eewWarn .warn span:not(.icon) {
-    display: inline-block;
-    margin-bottom: .175em;
-    font-size: 2.5rem;
-    font-weight: bold;
+    .warn span:not(.icon) {
+        display: inline-block;
+        margin-bottom: .175em;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
 }
 
 #eewAreas {
     width: calc(100% - 10vw);
     padding: 2rem 5vw;
     font-size: 1.3rem;
-}
 
-#eewAreas>.label {
-    display: block;
+    &>.label {
+        display: block;
+    }
 }
 
 #eewForecast {
     display: flex;
     justify-content: center;
     margin-top: 1.5rem;
-}
 
-#eewForecast>.item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-    text-align: center;
-}
+    &>.item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        text-align: center;
+    }
 
-#eewForecast .value {
-    font-size: 4rem;
-    font-weight: bold;
+    .value {
+        font-size: 4rem;
+        font-weight: bold;
+    }
 }
 
 #eewForecastDes {

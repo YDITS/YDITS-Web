@@ -61,19 +61,19 @@ export class Api extends Service {
 
     /**
      * Wolfx APIのインスタンス
-     * @type {Wolfx?}
+     * @type {Wolfx | null}
      */
     wolfx = null;
 
     /**
      * Yahoo強震モニタのインスタンス
-     * @type {YahooKmoni?}
+     * @type {YahooKmoni | null}
      */
     yahooKmoni = null;
 
     /**
      * Project DM-D.S.S のインスタンス
-     * @type {Dmdata?}
+     * @type {Dmdata | null}
      */
     dmdata = null;
 }

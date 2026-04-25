@@ -43,13 +43,13 @@ export class Notify extends Service {
 
     /**
      * 最後の通知ID
-     * @type {any}
+     * @type {string | null}
      */
     lastNotifyId = null;
 
     /**
      * 最後の緊急地震速報通知ID
-     * @type {any}
+     * @type {string | null}
      */
     lastEewNotifyId = null;
 

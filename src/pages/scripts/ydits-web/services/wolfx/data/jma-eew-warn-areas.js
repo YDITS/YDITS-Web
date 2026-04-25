@@ -28,7 +28,7 @@ export class WolfxJmaEewWarnAreas {
      *     "Time": string?,
      *     "Type": string?,
      *     "Arrive": string?,
-     * }>?} areas - Wolfx JMA EEW 警報地域のJSONデータクラス
+     * }> | null} areas - Wolfx JMA EEW 警報地域のJSONデータクラス
      */
     constructor(areas = []) {
         if (!Array.isArray(areas)) {

@@ -93,7 +93,7 @@ export class GeoLocation extends Service {
     #renderQueued = false;
 
     /**
-     * @returns {string?} キャッシュされた地区予報区
+     * @returns {string | null} キャッシュされた地区予報区
      */
     #cacheLocationArea;
 
@@ -122,19 +122,19 @@ export class GeoLocation extends Service {
 
     /**
      * 現在地の緯度
-     * @type {number?}
+     * @type {number | null}
      */
     latitude = null;
 
     /**
      * 現在地の経度
-     * @type {number?}
+     * @type {number | null}
      */
     longitude = null;
 
     /**
      * 位置情報の精度
-     * @type {number?}
+     * @type {number | null}
      */
     #_accuracy = null;
 
@@ -149,7 +149,7 @@ export class GeoLocation extends Service {
 
     /**
      * 現在地の市区町村
-     * @type {string?}
+     * @type {string | null}
      */
     city = null;
 
