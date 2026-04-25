@@ -74,7 +74,7 @@ export class YditsWeb extends FirebaseApp {
         super({
             name: "YDITS for Web",
             description: "防災情報をすぐに確認できるWebアプリケーション。",
-            version: new Version(3, 19, 0, VersionLevel.dev),
+            version: new Version(3, 19, 0, VersionLevel.stable),
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
             firebase: firebaseConfig,
