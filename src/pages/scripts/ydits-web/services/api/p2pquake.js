@@ -712,7 +712,7 @@ export class P2pquake extends Service {
 
     /**
      * EEWを処理する
-     * @param {*} data
+     * @param {any} data
      * @returns {void}
      */
     #whenEew(data) {
@@ -810,7 +810,7 @@ export class P2pquake extends Service {
 
     /**
      * 地震情報を処理する
-     * @param {*} data
+     * @param {any} data
      * @returns {void}
      */
     #whenEqinfo(data) {

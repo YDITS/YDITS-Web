@@ -96,7 +96,7 @@ export class Map extends Service {
 
     /**
      * 台風予想進路図のURLを取得する
-     * @param {*} tropicalCycloneNumber
+     * @param {any} tropicalCycloneNumber
      * @returns {string}
      */
     tropicalCycloneForecastUrl(tropicalCycloneNumber) {
@@ -176,7 +176,7 @@ export class Map extends Service {
 
     /**
      * ユーザーポイントのソースとレイヤーを作成する
-     * @param {*} lngLat - ユーザーポイントの緯度経度
+     * @param {any} lngLat - ユーザーポイントの緯度経度
      * @returns {Promise<void>}
      */
     async #createUserPoint(lngLat) {
@@ -497,7 +497,7 @@ export class Map extends Service {
 
     /**
      * 予報円を追加する
-     * @param {Object} forecast - 予報円の情報
+     * @param {object} forecast - 予報円の情報
      * @param {string} forecastId - 予報のユニークID
      * @return {Promise<void>}
      */
@@ -610,8 +610,8 @@ export class Map extends Service {
     /**
      * 台風番号を追加する
      * @param {string} typhoonId - 台風のユニークID
-     * @param {*} galeWarningAreaCenter
-     * @param {*} typhoonCenter
+     * @param {any} galeWarningAreaCenter
+     * @param {any} typhoonCenter
      * @param {number} typhoonNumber
      */
     async addTyphoonNumber(typhoonId, galeWarningAreaCenter, typhoonCenter, typhoonNumber) {
@@ -654,7 +654,7 @@ export class Map extends Service {
 
     /**
      * 暴風域と強風域を追加する
-     * @param {Object} galeWarningArea - 強風域の情報
+     * @param {object} galeWarningArea - 強風域の情報
      * @param {string} typhoonId - 台風のユニークID
      * @return {Promise<void>}
      */
@@ -795,7 +795,7 @@ export class Map extends Service {
 
     /**
      * マップの描画を更新する
-     * @param {*} dateNow
+     * @param {any} dateNow
      * @returns {void}
      */
     update(dateNow, fps) {

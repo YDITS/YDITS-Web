@@ -200,7 +200,7 @@ export class Eew extends Service {
     /**
      * 緊急地震速報（警報）発表時の処理
      *
-     * @param {Object} data
+     * @param {object} data
      * @returns {void}
      */
     warning(data) {

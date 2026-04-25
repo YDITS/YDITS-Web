@@ -272,7 +272,7 @@ export class YahooKmoni extends Service {
 
     /**
      * フェッチエラー時の処理
-     * @param {*} error
+     * @param {any} error
      * @returns {void}
      */
     #onFetchError(error) {

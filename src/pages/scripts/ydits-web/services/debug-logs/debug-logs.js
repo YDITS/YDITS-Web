@@ -16,8 +16,6 @@ import { YditsWeb } from "../../ydits-web.js";
  * デバッグログを管理する。
  */
 export class DebugLogs extends Service {
-    debugLogs = [];
-
     /**
      * @param {YditsWeb} app
      */
@@ -79,6 +77,11 @@ export class DebugLogs extends Service {
             )
         }
     }
+
+    /**
+     * @type {Array<any>}
+     */
+    debugLogs = [];
 
     /**
      * アプリケーションインスタンス

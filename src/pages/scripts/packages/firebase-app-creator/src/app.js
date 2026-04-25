@@ -44,14 +44,14 @@ export class FirebaseApp extends App {
 
     /**
      * Firebaseアプリケーションインスタンス
-     * @type {*}
+     * @type {any}
      */
     #firebase = null;
 
 
     /**
      * Firebaseアナリティクスインスタンス
-     * @type {*}
+     * @type {any}
      */
     #firebaseAnalytics = null;
 }
