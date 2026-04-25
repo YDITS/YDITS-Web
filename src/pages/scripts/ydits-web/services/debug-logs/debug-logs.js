@@ -50,7 +50,7 @@ export class DebugLogs extends Service {
             });
         }
 
-        if (this.app.isDebugLogsMode) {
+        if (this.app.mode === YditsWeb.MODES.debuglogs) {
             this.lastDebugLogs = [];
 
             setInterval(

@@ -59,7 +59,7 @@ export class YditsWeb extends FirebaseApp {
     static MODES = Object.freeze({
         default: "default",
         eqhistory: "eqhistory",
-        debuglog: "debuglog",
+        debuglogs: "debuglogs",
     });
 
     /**
@@ -664,7 +664,7 @@ export class YditsWeb extends FirebaseApp {
      * @returns {void}
      */
     #debugLogsMode() {
-        this.#mode = YditsWeb.MODES.debuglog;
+        this.#mode = YditsWeb.MODES.debuglogs;
 
         this.services.datetime = new Datetime(this);
         this.services.datetime.update();
