@@ -71,7 +71,7 @@ export class GeoLocation extends Service {
     app;
 
     /**
-     * @returns {string} 現在地の地区予報区
+     * @returns {string} 現在地の地方予報区
      */
     get area() {
         /* 位置情報を取得できない場合はキャッシュを代入し、キャッシュがない場合は仮値を代入する。 */

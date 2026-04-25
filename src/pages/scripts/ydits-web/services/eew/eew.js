@@ -385,19 +385,19 @@ export class Eew extends Service {
         this.warnAreas.forEach(area => {
             if (area.name === this.app.services.geoLocation.area) {
                 this.isUserAreaWarn = true;
-                this.errorElement.hide();
+                this.errorElement.style.display = "none";
 
                 if (area.scaleTo === 99) {
                     this.scale = this.parseScale(area.scaleFrom);
-                    this.scaleAboutElement.text("程度以上");
+                    this.scaleAboutElement.textContent = "程度以上";
                 } else {
                     this.scale = this.parseScale(area.scaleTo);
-                    this.scaleAboutElement.text("程度");
+                    this.scaleAboutElement.textContent = "程度";
                 }
 
                 if (area.arrivalTime === null) {
                     this.arrivalTime = "到達と推測";
-                    this.arrivalTimeAboudElement.text("");
+                    this.arrivalTimeAboudElement.textContent = "";
                 } else {
                     let dateNow = this.app.services.datetime.gmt.getTime();
                     let arrivalTime = new Date(area.arrivalTime).getTime();
@@ -406,16 +406,16 @@ export class Eew extends Service {
 
                     if (this.arrivalTime <= 0) {
                         this.arrivalTime = "到達と推測";
-                        this.arrivalTimeAboudElement.text("");
+                        this.arrivalTimeAboudElement.textContent = "";
                     } else {
                         this.arrivalTime = `${this.arrivalTime}秒`;
-                        this.arrivalTimeAboudElement.text("およそ");
+                        this.arrivalTimeAboudElement.textContent = "およそ";
                     }
                 }
 
-                this.scaleElement.text(this.scale);
-                this.arrivalTimeElement.text(this.arrivalTime);
-                this.locateElement.text(this.app.services.geoLocation.area);
+                this.scaleElement.textContent = this.scale;
+                this.arrivalTimeElement.textContent = this.arrivalTime;
+                this.locateElement.textContent = this.app.services.geoLocation.area;
             }
         });
 
@@ -549,7 +549,7 @@ export class Eew extends Service {
             case 55: return "6弱";
             case 60: return "6強";
             case 70: return "7";
-            case 99: return;
+            case 99: return "";
             default: return "e";
         }
     }
