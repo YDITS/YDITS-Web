@@ -919,6 +919,14 @@ main {
 @media (max-width: 640px) {
     main {
         flex-direction: column;
+
+        &.control-right {
+            flex-direction: column;
+
+            #control {
+                flex-direction: row-reverse;
+            }
+        }
     }
 
     /* #eqHistoryBtn {
