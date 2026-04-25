@@ -1,14 +1,15 @@
-<!-- 
+<!--!
 
     YDITS for Web
 
     Copyright (C) よね/Yone
-
     Licensed under the Apache License 2.0.
+
+    https://github.com/YDITS/YDITS-Web
 
 -->
 <!DOCTYPE html>
-<html lang="ja-jp">
+<html lang="ja-JP">
 
 <head>
     <meta charset="UTF-8">
@@ -17,36 +18,45 @@
     <title>ページが見つかりません | YDITS for Web</title>
     <meta name="application-name" content="YDITS for Web">
     <meta name="description" content="リクエストされたページが見つかりません | 『YDITS for Web』は防災情報をすぐに確認できるWebアプリケーションです。">
-    <meta name="keywords" content="YDITS for Web, YDITS-Web, YDITS, よね/Yone, よね, Yone">
-    <meta name="color-scheme" content="dark light">
+    <meta name="color-scheme" content="dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <noscript>
+        <meta http-equiv="refresh" content="0; URL=/noscript/">
+    </noscript>
 
     <!-- OGP -->
     <meta property="og:url" content="https://webapp.ydits.net/404.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="YDITS for Web">
-    <meta property="og:title" content="ページが見つかりません">
-    <meta property="og:description" content="リクエストされたページが見つかりません | 『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。">
     <meta property="og:image" content="https://webapp.ydits.net/images/icon.png">
+    <meta property="og:title" content="Not Found">
+    <meta property="og:description" content="リクエストされたページが見つかりません | 『YDITS for Web』は、防災情報をすぐに確認できるWebアプリケーションです。">
     <meta name="twitter:site" content="@YDITS_JP">
     <meta name="twitter:card" content="summary">
 
+    <!-- Preconnects -->
+    <link rel="preconnect" href="https://cdn.yoneyo.com">
+    <link rel="preconnect" href="https://cdn.ydits.net">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <!-- Icons -->
-    <link rel="shortcut icon" type="image/x-icon" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png">
+    <link rel="shortcut icon" type="image/png" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png">
     <link rel="apple-touch-icon-precomposed" type="image/png"
         href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png">
     <link rel="fluid-icon" href="https://cdn.ydits.net/images/ydits_logos/ydits_icon.png" title="YDITS for Web">
 
+    <!-- Manifest -->
+    <link rel="manifest" href="./ydits-web.webmanifest">
+
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&family=Noto+Serif+JP:wght@300&family=Roboto:wght@300&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.yoneyo.com/styles/local-noto-sans-jp.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0">
 
     <!-- Styles -->
     <link rel="stylesheet" href="/styles/common.css">
@@ -55,9 +65,6 @@
 
     <!-- Scripts -->
     <script src="/scripts/common.js" type="module"></script>
-    <noscript>
-        <meta http-equiv="refresh" content="0; URL=/noscript/">
-    </noscript>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TWBJ0TEFRJ"></script>
@@ -74,11 +81,18 @@
     <header></header>
 
     <main class="error-page">
-        <h2 class="error-title">404 Not found</h2>
+        <h2 class="error-title">404 Not Found</h2>
+        
         <div class="error-description">
             <p>リクエストされたページが見つかりません。</p>
         </div>
-        <a class="button error-button" href="/">ホームへ</a>
+        
+        <a class="button error-button" href="/">
+            アプリに戻る
+            <span class="material-symbols-outlined">
+                chevron_right
+            </span>
+        </a>
     </main>
 
     <footer></footer>

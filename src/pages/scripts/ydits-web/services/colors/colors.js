@@ -1,10 +1,11 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
@@ -23,7 +24,6 @@ export class Colors {
         "7": 0x804080,
     }
 
-
     static scaleToFontColor = {
         "unknown": 0xffffff,
         "0": 0xffffff,
@@ -37,7 +37,6 @@ export class Colors {
         "6+": 0xffffff,
         "7": 0xffffff,
     }
-
 
     static parseToCssColor(colorInt) {
         return `#${colorInt.toString(16).padStart(6, "0")}`;

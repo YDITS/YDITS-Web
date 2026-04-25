@@ -1,40 +1,85 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
-import { Render } from "https://cdn.yoneyo.com/scripts/render/render-v1.0.0.mjs";
-import { DomLoader } from "./components/loader.js";
-import { Header } from "./components/header.js";
-import { Footer } from "./components/footer.js";
+import { Render } from "https://cdn.yoneyo.com/scripts/render@1.0.0/render.js";
 
 const render = new Render();
-const header = new Header({ render });
-const footer = new Footer({ render });
 
-/** @type {LoadItem[]} */
-const loaderConfig = [
-    {
-        component: header,
-        targetSelector: "header",
-    },
-    {
-        component: footer,
-        targetSelector: "footer",
-        condition: (location) => !["/", "/eqhistory/", "/debug-logs/"].includes(location.pathname),
-    },
-];
+loadCommonComponents();
 
-const domLoader = new DomLoader({
-    render: render,
-    items: loaderConfig
-});
+/**
+ * 共通コンポーネントを読み込む
+ * @returns {void}
+ */
+function loadCommonComponents() {
+    const $headerWrapper = document.querySelector("header");
+    const $footerWrapper = document.querySelector("footer");
 
-document.addEventListener("DOMContentLoaded", () => {
-    domLoader.load();
-});
+    render.build({
+        target: $headerWrapper,
+        children: $header("YDITS for Web"),
+    });
+
+    if (shouldLoadFooter(location)) {
+        render.build({
+            target: $footerWrapper,
+            children: $footer("© よね/Yone"),
+        });
+    }
+}
+
+/**
+ * フッター表示の判定
+ * @param {Location} _location
+ * @returns {boolean}
+ */
+function shouldLoadFooter(_location) {
+    return !["/", "/eqhistory/", "/debug-logs/"].includes(_location.pathname);
+}
+
+/**
+ * ヘッダー
+ * @param {string} title
+ * @returns {Array<HTMLElement>}
+ */
+function $header(title) {
+    return [
+        render.$div({
+            className: "wrapper",
+            children: [
+                render.$h2({
+                    id: "headerTitle",
+                    className: "header__title",
+                    textContent: title,
+                }),
+            ],
+        }),
+    ];
+}
+
+/**
+ * フッター
+ * @param {string} copyright
+ * @returns {Array<HTMLElement>}
+ */
+function $footer(copyright) {
+    return [
+        render.$div({
+            className: "wrapper",
+            children: [
+                render.$p({
+                    id: "footerCopyright",
+                    textContent: copyright,
+                }),
+            ],
+        }),
+    ];
+}

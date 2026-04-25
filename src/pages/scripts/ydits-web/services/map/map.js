@@ -1,21 +1,23 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * マップを扱う。
  */
 export class Map extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -25,15 +27,26 @@ export class Map extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
         });
+
+        this.app = app;
+
+        this.typhoonLayerIds = [];
+        this.typhoonSourceIds = [];
+        this.typhoonMarkers = [];
     }
 
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     static DEFAULT_CENTER = [137.5930000, 36.0047000];
     static DEFAULT_ZOOM = 4;
     static HRPNS_TIMES_URI = "https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_jp.json";
     static TROPICAL_CYCLONE_TARGET_URI = "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json";
     static DEFAULT_CIRCLE_OPTIONS = { steps: 64, units: "meters", propreties: { foo: "bar" } };
-
 
     /**
      * Element: 雨雲レーダー時刻
@@ -47,7 +60,6 @@ export class Map extends Service {
         return this.#_$hrpnsTime;
     }
 
-
     /**
      * Element: 雨雲レーダー時刻テキスト
      * @type {HTMLElement}
@@ -59,7 +71,6 @@ export class Map extends Service {
 
         return this.#_$hrpnsTimeText;
     }
-
 
     /**
      * 位置情報サービスがサポートされているかどうか
@@ -73,27 +84,24 @@ export class Map extends Service {
         return this.#_$isGeolocationSupported;
     }
 
-
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）の画像URLを取得する
-     * @param {string} baseTime 
-     * @param {string} validTime 
+     * @param {string} baseTime
+     * @param {string} validTime
      * @returns {string}
-     */    
+     */
     hrpnsImageUri(baseTime, validTime) {
         return `https://www.jma.go.jp/bosai/jmatile/data/nowc/${baseTime}/none/${validTime}/surf/hrpns/{z}/{x}/{y}.png`;
     }
 
-
     /**
      * 台風予想進路図のURLを取得する
-     * @param {*} tropicalCycloneNumber 
+     * @param {any} tropicalCycloneNumber
      * @returns {string}
      */
     tropicalCycloneForecastUrl(tropicalCycloneNumber) {
         return `https://www.jma.go.jp/bosai/typhoon/data/${tropicalCycloneNumber}/forecast.json`;
     }
-
 
     /**
      * 初期化する
@@ -107,12 +115,14 @@ export class Map extends Service {
         this.map.once("load", async () => {
             this.userPointImage = await this.map.loadImage('/images/user_point.png');
             this.regionImage = await this.map.loadImage('/images/hypocenter.png');
+            this.typhoonCenterImage = await this.map.loadImage('/images/typhoon_center.png');
 
             await this.map.addImage(`userPointImage`, this.userPointImage.data);
             await this.map.addImage(`eewRedionImage`, this.regionImage.data);
+            await this.map.addImage(`typhoonCenterImage`, this.typhoonCenterImage.data);
 
             await this.showHrpns();
-            await this.showTyphoon();
+            await this.displayTyphoon();
         });
 
         if (!this.isGeolocationSupported) { return }
@@ -121,7 +131,6 @@ export class Map extends Service {
 
         this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
     }
-
 
     /**
      * ユーザーポイントの表示を更新する
@@ -165,26 +174,20 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * ユーザーポイントのソースとレイヤーを作成する
-     * @param {*} lngLat - ユーザーポイントの緯度経度
+     * @param {any} lngLat - ユーザーポイントの緯度経度
      * @returns {Promise<void>}
      */
     async #createUserPoint(lngLat) {
         await this.map.addSource(`userPointSource`, {
             type: 'geojson',
             data: {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: lngLat,
-                        },
-                    },
-                ],
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: lngLat,
+                },
             },
         });
 
@@ -199,7 +202,6 @@ export class Map extends Service {
         });
     }
 
-
     /**
      * ユーザーポイントのソースとレイヤーを削除する
      * @param {any} userPointSource - ユーザーポイントのソース
@@ -210,7 +212,6 @@ export class Map extends Service {
         await this.map.removeLayer("userPoint");
         await this.map.removeSource("userPointSource");
     }
-
 
     /**
      * 日時文字列をフォーマットする
@@ -227,7 +228,6 @@ export class Map extends Service {
         return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     }
 
-
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を更新する
      * @returns {Promise<void>}
@@ -240,41 +240,74 @@ export class Map extends Service {
         this.showHrpns();
     }
 
-
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を表示する
      * @returns {Promise<void>}
      */
     async showHrpns() {
+        await this.hideHrpns();
+
+        if (this.app.services.api.yahooKmoni.isEew) return;
+
         this.isDisplayHrpns = true;
 
         this.hrpnsLatestTargetTime = await this.getHrpnsTargetTime();
         const url = this.hrpnsImageUri(this.hrpnsLatestTargetTime.basetime, this.hrpnsLatestTargetTime.validtime);
 
-        if (this.map.getSource("hrpns-source")) {
-            this.map.removeLayer("hrpns");
-            this.map.removeSource("hrpns-source");
+        const zoomPairs = [2, 4, 6, 8, 10];
+
+        for (const z of zoomPairs) {
+            const sIdOdd = `hrpns-source-${z}-o`;
+            const lIdOdd = `hrpns-${z}-o`;
+            const sIdEven = `hrpns-source-${z}-e`;
+            const lIdEven = `hrpns-${z}-e`;
+
+            await this.map.addSource(sIdOdd, {
+                'type': 'raster',
+                'tiles': [url],
+                'tileSize': 64, // Display tiles map zoom level +2 (×4)
+                'minzoom': z,
+                'maxzoom': z
+            });
+
+            await this.map.addLayer({
+                id: lIdOdd,
+                source: sIdOdd,
+                type: "raster",
+                minzoom: z - 2,
+                maxzoom: z - 1,
+                paint: {
+                    "raster-opacity": 0.7,
+                    "raster-resampling": "nearest",
+                    "raster-fade-duration": 0
+                },
+            });
+
+            await this.map.addSource(sIdEven, {
+                'type': 'raster',
+                'tiles': [url],
+                'tileSize': 128, // Display tiles map zoom level +1 (×2)
+                'minzoom': z,
+                'maxzoom': z
+            });
+
+            await this.map.addLayer({
+                id: lIdEven,
+                source: sIdEven,
+                type: "raster",
+                minzoom: z - 1,
+                maxzoom: z,
+                paint: {
+                    "raster-opacity": 0.7,
+                    "raster-resampling": "nearest",
+                    "raster-fade-duration": 0
+                },
+            });
         }
-
-        await this.map.addSource('hrpns-source', {
-            'type': 'raster',
-            'tiles': [url],
-            'tileSize': 256,
-        });
-
-        await this.map.addLayer({
-            id: "hrpns",
-            source: "hrpns-source",
-            type: "raster",
-            paint: {
-                "raster-opacity": 0.7,
-            },
-        });
 
         this.$hrpnsTimeText.textContent = this.#formatDatetime(this.hrpnsLatestTargetTime.validtime);
         this.$hrpnsTime.classList.add("show");
     }
-
 
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）を非表示する
@@ -282,11 +315,21 @@ export class Map extends Service {
      */
     async hideHrpns() {
         this.isDisplayHrpns = false;
-        this.map.removeLayer("hrpns");
+
+        const zoomPairs = [2, 4, 6, 8, 10];
+        for (const z of zoomPairs) {
+            const suffixes = ['o', 'e'];
+            for (const s of suffixes) {
+                const layerId = `hrpns-${z}-${s}`;
+                const sourceId = `hrpns-source-${z}-${s}`;
+                if (this.map.getLayer(layerId)) this.map.removeLayer(layerId);
+                if (this.map.getSource(sourceId)) this.map.removeSource(sourceId);
+            }
+        }
+
         this.$hrpnsTime.classList.remove("show");
         this.$hrpnsTimeText.textContent = "";
     }
-
 
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）の最新URLを返す
@@ -297,7 +340,6 @@ export class Map extends Service {
         const latestData = time[time.length - 1];
         return latestData;
     }
-
 
     /**
      * 雨雲レーダー（高解像度降水ナウキャスト/HRPNS）のターゲットURLを取得する
@@ -316,189 +358,404 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * 台風情報（予想進路図）を更新する
      * @returns {Promise<void>}
      */
     async updateTyphoon() {
-        if (!this.typhoon) {
-            this.hideTyphoon();
-        }
-        await this.showTyphoon();
+        await this.removeTyphoon();
+        await this.displayTyphoon();
     }
-
 
     /**
      * 台風情報（予想進路図）を表示する
      * @returns {Promise<void>}
      */
-    async showTyphoon() {
+    async displayTyphoon() {
+        this.removeTyphoon();
+
+        if (this.app.services.api.yahooKmoni.isEew) return;
+
+        this.isDisplayTyphoon = true;
         this.tropicalCycloneLatestTarget = await this.getTropicalCycloneTarget();
         if (!this.tropicalCycloneLatestTarget) return;
 
-        this.tropicalCycloneLatestTarget.forEach(async target => {
+
+        this.tropicalCycloneLatestTarget.forEach(async (target) => {
             const url = this.tropicalCycloneForecastUrl(target);
+            const typhoonId = target;
 
             let data = await fetch(url);
             data = await data.json();
 
             if (Array.isArray(data)) {
-                let titleData = data.find(item => item.part && item.part === "title");
-                let analysisData = data.find(item => item.part && item.part.en === "Analysis");
-                let forecast12h = data.find(item => item.part && item.part.en === "Forecast for 12 hours ahead");
-                let forecast24h = data.find(item => item.part && item.part.en === "Forecast for 24 hours ahead");
-                let forecast45h = data.find(item => item.part && item.part.en === "Forecast for 45 hours ahead");
-                let forecast48h = data.find(item => item.part && item.part.en === "Forecast for 48 hours ahead");
-                let forecast72h = data.find(item => item.part && item.part.en === "Forecast for 72 hours ahead");
-                let forecast96h = data.find(item => item.part && item.part.en === "Forecast for 96 hours ahead");
-                let forecast120h = data.find(item => item.part && item.part.en === "Forecast for 120 hours ahead");
+                const titleData = data.find(item => item.part && item.part === "title");
+                const analysisData = data.find(item => item.part && item.part.en === "Analysis");
+                const forecasts = data.filter(item => item.part && item.part.en && item.part.en.startsWith("Forecast for"));
 
-                if (analysisData && analysisData.track && analysisData.track.typhoon) {
-                    // 台風進路の座標を抽出
-                    const typhoonTrack = analysisData.track.typhoon.map(point => [point[0], point[1]]);
-
-                    // 進路ポリラインを追加
-                    const polyline = L.polyline(typhoonTrack, { color: '#ffffff', weight: 1 }).addTo(this.typhoon);
-
-                    // 台風の中心位置にマーカーを追加
-                    if (analysisData.center) {
-                        L.marker([analysisData.center[0], analysisData.center[1]], {
-                            icon: L.icon({
-                                iconUrl: "./images/close_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg",
-                                iconSize: [24, 24]
-                            })
-                        })
-                            .bindPopup(`台風中心: [${analysisData.center[0]}, ${analysisData.center[1]}]`)
-                            .addTo(this.typhoon);
-                    }
+                if (analysisData && analysisData.galeWarningArea) {
+                    const typhoonNumber = titleData.typhoonNumber.slice(-2).replace(/^0+/, '');
+                    this.addWarningAreas(analysisData.stormWarningArea, analysisData.galeWarningArea, typhoonId);
+                    this.addTyphoonNumber(
+                        typhoonId,
+                        [analysisData.galeWarningArea.center?.[1], analysisData.galeWarningArea.center?.[0]],
+                        analysisData.center,
+                        typhoonNumber
+                    );
                 }
 
-                // 予報円と強風域を追加
-                this.addForecastCircle(forecast12h);
-                this.addForecastCircle(forecast24h);
-                this.addForecastCircle(forecast45h);
-                this.addForecastCircle(forecast48h);
-                this.addForecastCircle(forecast72h);
-                this.addForecastCircle(forecast96h);
-                this.addForecastCircle(forecast120h);
+                forecasts.forEach((forecast, index) => this.addForecastCircles(forecast, `${typhoonId}_${index}`));
 
-                // 強風域を表示
-                if (analysisData && analysisData.galeWarningArea) {
-                    this.addGaleWarningArea(analysisData.galeWarningArea, titleData.typhoonNumber.slice(-2).replace(/^0+/, ''));
+                if (analysisData && analysisData.track && analysisData.track.typhoon) {
+                    if (analysisData.center) {
+                        const centerSourceId = `typhoonCenterSource_${typhoonId}`;
+                        this.map.addSource(centerSourceId, {
+                            type: "geojson",
+                            data: {
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [analysisData.center[1], analysisData.center[0]],
+                                },
+                            },
+                        });
+                        this.typhoonSourceIds.push(centerSourceId);
+
+                        const centerLayerId = `typhoonCenterLayer_${typhoonId}`;
+                        this.map.addLayer({
+                            id: centerLayerId,
+                            type: 'symbol',
+                            source: centerSourceId,
+                            layout: {
+                                "symbol-sort-key": 1,
+                                "icon-image": `typhoonCenterImage`,
+                                "icon-size": 1,
+                            },
+                        });
+                        this.typhoonLayerIds.push(centerLayerId);
+                    }
+
+                    const preTyphoonTrackCoords = analysisData.track.preTyphoon.map(point => [point[1], point[0]]);
+                    const typhoonTrackCoords = analysisData.track.typhoon.map(point => [point[1], point[0]]);
+
+                    const trackPreSourceId = `preTyphoonTrackSource_${typhoonId}`;
+                    this.map.addSource(trackPreSourceId, {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: preTyphoonTrackCoords,
+                            },
+                        },
+                    });
+                    const trackPreLayerId = `preTyphoonTrackLayer_${typhoonId}`;
+                    this.map.addLayer({
+                        id: trackPreLayerId,
+                        type: 'line',
+                        source: trackPreSourceId,
+                        paint: {
+                            'line-color': '#ffffff',
+                            'line-width': 0.5,
+                            'line-dasharray': [5, 5],
+                            'line-opacity': 0.5,
+                        },
+                    });
+                    this.typhoonSourceIds.push(trackPreSourceId);
+                    this.typhoonLayerIds.push(trackPreLayerId);
+
+                    const trackSourceId = `typhoonTrackSource_${typhoonId}`;
+                    this.map.addSource(trackSourceId, {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: typhoonTrackCoords,
+                            },
+                        },
+                    });
+                    const trackLayerId = `typhoonTrackLayer_${typhoonId}`;
+                    this.map.addLayer({
+                        id: trackLayerId,
+                        type: 'line',
+                        source: trackSourceId,
+                        paint: {
+                            'line-color': '#ffffff',
+                            'line-width': 0.5,
+                            'line-opacity': 0.5,
+                        },
+                    });
+                    this.typhoonSourceIds.push(trackSourceId);
+                    this.typhoonLayerIds.push(trackLayerId);
                 }
             } else {
                 console.error('Error: Data is not an array.');
             }
-
-            this.$hrpnsTime.text(this.#formatDatetime(this.hrpnsLatestTargetTime["validtime"]));
         });
     }
 
-
     /**
      * 予報円を追加する
-     * @param {Object} forecast - 予報円の情報
-     * @param {Array} forecast.center - 予報円の中心座標
-     * @param {Object} forecast.probabilityCircle - 予報円の情報
-     * @param {number} forecast.probabilityCircle.radius - 予報円の半径
-     * @param {Array} forecast.probabilityCircle.tangent - 予報円の接線座標
-     * @param {string} forecast.validtime - 予報の時刻
+     * @param {object} forecast - 予報円の情報
+     * @param {string} forecastId - 予報のユニークID
      * @return {Promise<void>}
      */
-    async addForecastCircle(forecast) {
+    async addForecastCircles(forecast, forecastId) {
         if (forecast && forecast.center && forecast.probabilityCircle) {
-            const center = forecast.center;
+            const center = [forecast.center[1], forecast.center[0]];
             const radius = forecast.probabilityCircle.radius;
-            const validtime = new Date(forecast.validtime["JST"]); // 予報の時刻
+            const validtime = new Date(forecast.validtime["JST"]);
 
-            const circleJSON = turf.circle([center[1], center[0]], (radius * 2), Map.DEFAULT_CIRCLE_OPTIONS);
+            const circleJSON = turf.circle(center, radius, Map.DEFAULT_CIRCLE_OPTIONS);
 
-            this.map.addSource("typhoonForecastCircleSource", {
+            const circleSourceId = `typhoonForecastCircleSource_${forecastId}`;
+            this.map.addSource(circleSourceId, {
                 type: "geojson",
                 data: circleJSON,
             });
+            this.typhoonSourceIds.push(circleSourceId);
 
+            const circleLayerId = `typhoonForecastCircleLayer_${forecastId}`;
             this.map.addLayer({
-                id: "typhoonForecastCirle",
-                type: "circle",
-                source: "typhoonForecastCircleSource",
-                "source-layer": "typhoonForecastCircleSource",
+                id: circleLayerId,
+                type: "fill",
+                source: circleSourceId,
                 paint: {
-                    "circle-color": "#ffffff",
-                    "circle-opacity": 0.2,
-                    "circle-stroke-width": 1,
-                    "circle-stroke-color": "#ffffff"
+                    "fill-color": "#ffffff",
+                    "fill-opacity": 0.2,
                 }
             });
+            this.typhoonLayerIds.push(circleLayerId);
 
-            // 予報円の接線をラインで表示
-            forecast.probabilityCircle.tangent.forEach(tangent => {
-                const line = tangent.map(point => [point[0], point[1]]);
-                this.map.addLayer({
-                    id: "typhoonForecastLine",
-                    type: "line",
-                    paint: {
-                        "line-color": "#ffffff",
-                        "line-translate": line,
-                        "line-dasharray": [5, 5],
-                        "line-width": 1,
-                    },
-                })
-            });
-
+            const circleStrokeLayerId = `typhoonForecastCircleStrokeLayer_${forecastId}`;
             this.map.addLayer({
-                id: "typhoonForecastTime",
-                type: "symbol",
-                minzoom: 5,
+                id: circleStrokeLayerId,
+                type: "line",
+                source: circleSourceId,
                 paint: {
-                    "text-field": `${validtime.getDate()}日${validtime.getHours()}時`,
-                    "text-size": 16,
-                    "text-color": "#ffffff",
+                    "line-color": "#ffffff",
+                    "line-width": 0.5,
+                }
+            });
+            this.typhoonLayerIds.push(circleStrokeLayerId);
+
+            if (forecast.probabilityCircle.tangent) {
+                forecast.probabilityCircle.tangent.forEach((tangent, index) => {
+                    const lineCoords = tangent.map(point => [point[1], point[0]]);
+                    const tangentId = `${forecastId}_${index}`;
+                    const tangentSourceId = `typhoonTangentSource_${tangentId}`;
+                    this.map.addSource(tangentSourceId, {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: lineCoords,
+                            },
+                        },
+                    });
+                    const tangentLayerId = `typhoonTangentLayer_${tangentId}`;
+                    this.map.addLayer({
+                        id: tangentLayerId,
+                        type: 'line',
+                        source: tangentSourceId,
+                        paint: {
+                            'line-color': '#ffffff',
+                            'line-dasharray': [5, 5],
+                            'line-width': 0.5,
+                        },
+                    });
+                    this.typhoonSourceIds.push(tangentSourceId);
+                    this.typhoonLayerIds.push(tangentLayerId);
+                });
+            }
+
+            const timeSourceId = `typhoonForecastTimeSource_${forecastId}`;
+            this.map.addSource(timeSourceId, {
+                type: 'geojson',
+                data: {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: center,
+                    },
                 },
             });
+            const timeLayerId = `typhoonForecastTimeLayer_${forecastId}`;
+            this.map.addLayer({
+                id: timeLayerId,
+                type: "symbol",
+                source: timeSourceId,
+                layout: {
+                    "symbol-sort-key": 0,
+                    "text-field": `${validtime.getDate()}日${validtime.getHours()}時`,
+                    "text-size": 14,
+                    "text-font": ["Noto Sans JP Regular"],
+                    "text-allow-overlap": true,
+                    "text-anchor": "top",
+                    "text-offset": [0, 0.5],
+                },
+                paint: {
+                    "text-color": "#ffffff",
+                    "text-halo-width": 2,
+                    "text-halo-color": "rgba(0, 0, 0, 0.4)",
+                },
+            });
+            this.typhoonSourceIds.push(timeSourceId);
+            this.typhoonLayerIds.push(timeLayerId);
         }
     }
 
-
     /**
-     * 強風域を追加する
-     * @param {Object} galeWarningArea - 強風域の情報
-     * @param {string} typhoonNumber - 台風番号
-     * @return {Promise<void>}
+     * 台風番号を追加する
+     * @param {string} typhoonId - 台風のユニークID
+     * @param {any} galeWarningAreaCenter
+     * @param {any} typhoonCenter
+     * @param {number} typhoonNumber
      */
-    async addGaleWarningArea(galeWarningArea, typhoonNumber) {
-        const center = galeWarningArea.center;
-        const radius = galeWarningArea.radius;
-        L.circle([center[0], center[1]], {
-            color: '#ffee00',
-            fillColor: '#ffee00',
-            fillOpacity: 0.3,
-            radius: radius,
-            weight: 1
-        }).addTo(this.typhoon);
+    async addTyphoonNumber(typhoonId, galeWarningAreaCenter, typhoonCenter, typhoonNumber) {
+        const center = galeWarningAreaCenter ?? typhoonCenter;
 
-        L.marker([center[0], center[1]], {
-            icon: L.divIcon({
-                className: 'warning-icon',
-                html: `<div class="warning-time">${typhoonNumber}号</div>`,
-                iconSize: [100, 40],
-                minZoom: 6
-            })
-        }).addTo(this.typhoon);
+        const numberSourceId = `typhoonNumberSource_${typhoonId}`;
+        this.map.addSource(numberSourceId, {
+            type: 'geojson',
+            data: {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: center,
+                },
+            },
+        });
+        const numberLayerId = `typhoonNumberLayer_${typhoonId}`;
+        this.map.addLayer({
+            id: numberLayerId,
+            type: "symbol",
+            source: numberSourceId,
+            layout: {
+                "symbol-sort-key": 0,
+                "text-field": `${typhoonNumber}号`,
+                "text-size": 14,
+                "text-font": ["Noto Sans JP Regular"],
+                "text-allow-overlap": true,
+                "text-anchor": "top",
+                "text-offset": [0, 0.5]
+            },
+            paint: {
+                "text-color": "#ffffff",
+                "text-halo-width": 2,
+                "text-halo-color": "rgba(0, 0, 0, 0.4)",
+            },
+        });
+        this.typhoonSourceIds.push(numberSourceId);
+        this.typhoonLayerIds.push(numberLayerId);
     }
 
+    /**
+     * 暴風域と強風域を追加する
+     * @param {object} galeWarningArea - 強風域の情報
+     * @param {string} typhoonId - 台風のユニークID
+     * @return {Promise<void>}
+     */
+    async addWarningAreas(stormWarningArea, galeWarningArea, typhoonId) {
+        if (galeWarningArea) {
+            const galeWarningAreaCenter = [galeWarningArea.center?.[1], galeWarningArea.center?.[0]];
+            const galeWarningAreaRadius = galeWarningArea.radius;
+            const galeWarningAreaCircleJSON = turf.circle(galeWarningAreaCenter, galeWarningAreaRadius, Map.DEFAULT_CIRCLE_OPTIONS);
+
+            const galeSourceId = `typhoonGaleSource_${typhoonId}`;
+            this.map.addSource(galeSourceId, {
+                type: "geojson",
+                data: galeWarningAreaCircleJSON,
+            });
+            this.typhoonSourceIds.push(galeSourceId);
+
+            const galeLayerId = `typhoonGaleLayer_${typhoonId}`;
+            this.map.addLayer({
+                id: galeLayerId,
+                type: "fill",
+                source: galeSourceId,
+                paint: {
+                    "fill-color": '#e0e000',
+                    "fill-opacity": 0.3,
+                }
+            });
+            this.typhoonLayerIds.push(galeLayerId);
+
+            const galeStrokeLayerId = `typhoonGaleStrokeLayer_${typhoonId}`;
+            this.map.addLayer({
+                id: galeStrokeLayerId,
+                type: "line",
+                source: galeSourceId,
+                paint: {
+                    "line-color": '#e0e000',
+                    "line-width": 0.5,
+                }
+            });
+            this.typhoonLayerIds.push(galeStrokeLayerId);
+        }
+
+        if (stormWarningArea) {
+            const stormWarningAreaCenter = [stormWarningArea.arc?.[0]?.[0]?.[1], stormWarningArea.arc?.[0]?.[0]?.[0]];
+            const stormWarningAreaRadius = stormWarningArea.arc?.[0]?.[1];
+            const stormWarningAreaCircleJSON = turf.circle(stormWarningAreaCenter, stormWarningAreaRadius, Map.DEFAULT_CIRCLE_OPTIONS);
+
+            const stormSourceId = `typhoonStormSouce_${typhoonId}`;
+            this.map.addSource(stormSourceId, {
+                type: "geojson",
+                data: stormWarningAreaCircleJSON,
+            });
+            this.typhoonSourceIds.push(stormSourceId);
+
+            const stormLayerId = `typhoonStormLayer_${typhoonId}`;
+            this.map.addLayer({
+                id: stormLayerId,
+                type: "fill",
+                source: stormSourceId,
+                paint: {
+                    "fill-color": '#e04000',
+                    "fill-opacity": 0.5,
+                }
+            });
+            this.typhoonLayerIds.push(stormLayerId);
+
+            const stormStrokeLayerId = `typhoonStormStrokeLayer_${typhoonId}`;
+            this.map.addLayer({
+                id: stormStrokeLayerId,
+                type: "line",
+                source: stormSourceId,
+                paint: {
+                    "line-color": '#e04000',
+                    "line-width": 1 ^ 0.5,
+                }
+            });
+            this.typhoonLayerIds.push(stormStrokeLayerId);
+        }
+    }
 
     /**
      * 台風情報（予想進路図）を非表示する
      * @returns {Promise<void>}
      */
-    async hideTyphoon() {
-        this.map.removeLayer(this.typhoon);
-        this.typhoon = null;
-        // this.updateLayers();
-    }
+    async removeTyphoon() {
+        this.typhoonLayerIds.forEach(id => {
+            if (this.map.getLayer(id)) {
+                this.map.removeLayer(id);
+            }
+        });
+        this.typhoonSourceIds.forEach(id => {
+            if (this.map.getSource(id)) {
+                this.map.removeSource(id);
+            }
+        });
+        this.typhoonMarkers.forEach(marker => marker.remove());
 
+        this.typhoonLayerIds = [];
+        this.typhoonSourceIds = [];
+        this.typhoonMarkers = [];
+        this.isDisplayTyphoon = false;
+    }
 
     /**
      * 台風情報（予想進路図）の最新URLを返す
@@ -518,7 +775,6 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * 台風情報（予想進路図）のターゲットURLを取得する
      * @returns {Promise<any>}
@@ -537,25 +793,51 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * マップの描画を更新する
-     * @param {*} dateNow
+     * @param {any} dateNow
      * @returns {void}
      */
-    update(dateNow) {
-        try {
-            if (!this.app.services.api.yahooKmoni.isEew) {
-                if (!this.isDisplayHrpns) this.showHrpns();
-                this.#clearEewLayers();
-                return;
+    update(dateNow, fps) {
+        const isEewOnYahooKmoni = this.app.services.api.yahooKmoni.isEew;
+        const eewReports = this.app.services.eew.reports;
+        const currentEewId = this.app.services.eew.currentId
+
+        if (!isEewOnYahooKmoni) {
+            if (!this.isDisplayHrpns) {
+                this.showHrpns();
             }
 
-            Object.keys(this.app.services.eew.reports).forEach((id) => {
-                if (id === "undefined" || this.app.services.eew.reports[id].isWarning) return;
+            if (!this.isDisplayTyphoon) {
+                this.displayTyphoon();
+            }
 
-                if (this.app.services.eew.currentId === id) {
-                    if (!this.app.services.eew.reports[id].isMapInitialized) {
+            this.#clearEewLayers();
+            return;
+        }
+
+        try {
+            this.hideHrpns();
+            this.removeTyphoon();
+
+            Object.keys(eewReports).forEach((id) => {
+                const report = this.app.services.eew.reports[id];
+
+                if (
+                    typeof id !== "string" ||
+                    report.isWarning ||
+                    !report.latitude ||
+                    !report.longitude ||
+                    !report.psWave
+                ) {
+                    return;
+                }
+
+                if (currentEewId === id) {
+                    if (!report.isMapInitialized) {
+                        if (!this.map.hasImage('eewRedionImage')) {
+                            return;
+                        }
                         this.#addEewLayers(id);
                     }
 
@@ -566,24 +848,33 @@ export class Map extends Service {
                     this.app.services.eew.reports[id].pRadius = this.app.services.eew.reports[id].psWave.pRadius * 1000;
 
                     if (this.app.services.eew.reports[id].sRadius != this.app.services.eew.reports[id].lastSWave) {
-                        this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / 60;
+                        this.app.services.eew.reports[id].sWaveInterval = (this.app.services.eew.reports[id].sRadius - this.app.services.eew.reports[id].lastSWave) / fps;
                         this.app.services.eew.reports[id].lastSWave = this.app.services.eew.reports[id].sRadius;
                         this.app.services.eew.reports[id].sWavePut = this.app.services.eew.reports[id].sRadius;
                     } else if (this.app.services.eew.reports[id].sRadius == this.app.services.eew.reports[id].lastSWave) {
-                        this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
+                        if (this.app.services.eew.reports[id].sWaveInterval < 150 && this.app.services.eew.reports[id].sWaveInterval > 0) {
+                            this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
+                        }
                     }
 
                     if (this.app.services.eew.reports[id].pRadius != this.app.services.eew.reports[id].lastPWave) {
-                        this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / 60;
+                        this.app.services.eew.reports[id].pWaveInterval = (this.app.services.eew.reports[id].pRadius - this.app.services.eew.reports[id].lastPWave) / fps;
                         this.app.services.eew.reports[id].lastPWave = this.app.services.eew.reports[id].pRadius;
                         this.app.services.eew.reports[id].pWavePut = this.app.services.eew.reports[id].pRadius;
                         this.#loopCount = dateNow;
                     } else if (this.app.services.eew.reports[id].pRadius == this.app.services.eew.reports[id].lastPWave) {
-                        this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                        if (this.app.services.eew.reports[id].pWaveInterval < 300 && this.app.services.eew.reports[id].pWaveInterval > 0) {
+                            this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                        }
                     }
                 } else {
-                    this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
-                    this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                    if (this.app.services.eew.reports[id].sWaveInterval < 150 && this.app.services.eew.reports[id].sWaveInterval > 0) {
+                        this.app.services.eew.reports[id].sWavePut += this.app.services.eew.reports[id].sWaveInterval;
+                    }
+
+                    if (this.app.services.eew.reports[id].pWaveInterval < 300 && this.app.services.eew.reports[id].pWaveInterval > 0) {
+                        this.app.services.eew.reports[id].pWavePut += this.app.services.eew.reports[id].pWaveInterval;
+                    }
                 }
 
                 const REGION_LNGLAT = [this.app.services.eew.reports[id].longitude, this.app.services.eew.reports[id].latitude];
@@ -611,10 +902,9 @@ export class Map extends Service {
             }
         } catch (error) {
             console.error(error);
-            this.app.services.debugLogs.add("error", `[${this.name}]`, `EEW Map update error: ${error.stack}`);
+            // this.app.services.debugLogs.add("error", `[${this.name}]`, `EEW Map update error: ${error.stack}`);
         }
     }
-
 
     /**
      * マップを自動で移動する
@@ -624,25 +914,23 @@ export class Map extends Service {
     #autoMoveMap(dateNow) {
         if (dateNow - this.#autoMoveCount >= 3000) {
             const report = this.app.services.eew.reports[this.app.services.eew.currentId];
-            if (report.pWavePut >= 560000) {
-                this.setView([report.longitude, report.latitude], 5);
-            } else if (report.pWavePut >= 280000) {
-                this.setView([report.longitude, report.latitude], 6);
+            if (report.pWavePut >= 300000) {
+                this.setView([report.longitude, report.latitude], 4);
             } else if (report.pWavePut > 0) {
-                this.setView([report.longitude, report.latitude], 7);
+                this.setView([report.longitude, report.latitude], 5);
             }
             this.#autoMoveCount = dateNow;
         }
     }
-
 
     /**
      * 緊急地震速報（EEW）のレイヤーを追加する
      * @param {string} id - EEWのID
      * @returns {void}
      */
-    #addEewLayers(id) {
-        this.hideHrpns();
+    async #addEewLayers(id) {
+        await this.hideHrpns();
+        await this.removeTyphoon();
 
         const sWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
         const pWaveCircleJSON = turf.circle([0, 0], 0, Map.DEFAULT_CIRCLE_OPTIONS);
@@ -670,6 +958,7 @@ export class Map extends Service {
             layout: {
                 "icon-image": `eewRedionImage`,
                 "icon-size": 0.25,
+                "icon-allow-overlap": true,
             },
         });
 
@@ -706,7 +995,6 @@ export class Map extends Service {
         this.app.services.eew.reports[id].isMapInitialized = true;
     }
 
-
     /**
      * 緊急地震速報（EEW）のレイヤーをクリアする
      * @returns {void}
@@ -725,7 +1013,6 @@ export class Map extends Service {
         });
     }
 
-
     /**
      * マップを移動する
      * @param {L.LatLng} latLng - 移動先の緯度経度
@@ -743,7 +1030,6 @@ export class Map extends Service {
         });
     }
 
-
     /**
      * マップを初期位置に移動する
      * @returns {Promise<void>}
@@ -751,7 +1037,6 @@ export class Map extends Service {
     async setViewHome() {
         await this.setView(Map.DEFAULT_CENTER, Map.DEFAULT_ZOOM);
     }
-
 
     /**
      * マップインスタンスを初期化する
@@ -776,13 +1061,11 @@ export class Map extends Service {
         }
     }
 
-
     /**
      * MapTiler APIキー
      * @type {string}
      */
     static #MAPTILER_API_KEY = "3ft2uVdfAwtgfKQGIT8U";
-
 
     /**
      * マップのループカウント
@@ -790,13 +1073,11 @@ export class Map extends Service {
      */
     #loopCount = -1;
 
-
     /**
      * マップ自動移動のカウント
      * @type {number | null}
      */
     #autoMoveCount = null;
-
 
     /**
      * Element: 雨雲レーダー時刻
@@ -804,13 +1085,11 @@ export class Map extends Service {
      */
     #_$hrpnsTime;
 
-    
     /**
      * Element: 雨雲レーダー時刻テキスト
      * @type {HTMLElement}
      */
     #_$hrpnsTimeText;
-
 
     /**
      * 位置情報サービスがサポートされているかどうか

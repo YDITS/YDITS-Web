@@ -1,22 +1,59 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { PopupDialog } from "../../../packages/popup-dialog/src/popup-dialog.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * Project DM-D.S.S (dmdata.jp) APIを扱う
  */
 export class Dmdata extends Service {
     /**
-     * @param {App} app 
+     * 認証のステート
+     */
+    static #STATE = "h352ly";
+
+    /**
+     * クライアントID
+     */
+    static #CLIENT_ID = "CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV";
+
+    /**
+     * トークン取得のURI
+     */
+    static #GET_TOKEN_URI = "https://manager.dmdata.jp/account/oauth2/v1/token";
+
+    /**
+     * アカウント認証のベースURL
+     */
+    static #OAUTH_BASE_URI = "https://manager.dmdata.jp/account/oauth2/v1/auth";
+
+    /**
+     * WebSocket接続のエントリーURI
+     */
+    static #SOCKET_URI = "https://api.dmdata.jp/v2/socket";
+
+    /**
+     * アカウント認証後のリダイレクト先URI
+     */
+    static #OAUTH_REDIRECT_URI = "https://webapp.ydits.net/";
+
+    /**
+     * 認証で要求するスコープ(権限)
+     */
+    static #OAUTH_SCOPE = "socket.start socket.list socket.close eew.get.warning eew.get.forecast";
+
+    /**
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -26,44 +63,32 @@ export class Dmdata extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+
+        this.app = app;
     }
 
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * アクセストークン
-     * 
      * @type {string | null}
      */
     #accessToken = null;
 
-
     /**
-     * 認証のステート
-     * 
-     * @type {string}
+     * WebSocketインスタンス
+     * @type {WebSocket | null}
      */
-    static #STATE = "h352ly";
-
-
-    /**
-     * クライアントID
-     * 
-     * @type {string}
-     */
-    static #CLIENT_ID = 'CId.M7sB113X43c8dDZ6SgEWXOa0gMm4S7tlh0fCM-IEJ5VV';
-
-
-    static #GET_TOKEN_URI = "https://manager.dmdata.jp/account/oauth2/v1/token";
-    static #OAUTH_BASE_URI = "https://manager.dmdata.jp/account/oauth2/v1/auth";
-    static #SOCKET_URI = "https://api.dmdata.jp/v2/socket";
-    static #OAUTH_REDIRECT_URI = "https://webapp.ydits.net/";
-    static #OAUTH_SCOPE = "socket.start socket.list socket.close eew.get.warning eew.get.forecast";
-
+    #socket = null;
 
     /**
      * メッセージEEW受信時の処理
-     * 
-     * @param {string} data 
+     * @param {string} data
      * @returns {Promise<void>}
      */
     async #whenEew(data) {
@@ -71,52 +96,50 @@ export class Dmdata extends Service {
         console.log(document);
     }
 
-
     /**
      * WebSocket接続を開始する
-     * 
      * @returns {Promise<void>}
      */
     async #startSocket() {
-        const dmdataGetClassifications = ['socket.start', 'socket.list', 'socket.close', 'eew.forecast'];
+        const dmdataGetClassifications = ["socket.start", "socket.list", "socket.close", "eew.forecast"];
 
         try {
             const response = await fetch(
                 Dmdata.#SOCKET_URI,
                 {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + this.#accessToken },
-                    body: JSON.stringify({ classifications: dmdataGetClassifications, test: 'including' })
+                    method: "POST",
+                    headers: { "Authorization": "Bearer " + this.#accessToken },
+                    body: JSON.stringify({ classifications: dmdataGetClassifications, test: "including" })
                 }
             );
 
             const data = await response.json();
 
             if (data.error === undefined) {
-                dmdataSocket = new WebSocket(data.websocket.url, ['dmdata.v2']);
+                this.#socket = new WebSocket(data.websocket.url, ["dmdata.v2"]);
 
-                dmdataSocket.addEventListener('open', () => {
+                this.#socket.addEventListener("open", () => {
                     this.app.services.debugLogs.add("network", `[NETWORK]`, "Successfully connected to dmdata.jp and WebSocket opened.");
                     document.getElementById("statusLamp").style.backgroundColor = "#4040ff";
                 });
 
-                dmdataSocket.addEventListener('close', (event) => {
+                this.#socket.addEventListener("close", (event) => {
                     this.app.services.debugLogs.add("network", `[NETWORK]`, "Successfully disconnected from dmdata.jp and WebSocket closed.");
                     this.app.services.settings.connect.eew = "yahoo-kmoni";
                 });
 
-                dmdataSocket.addEventListener('message', async (event) => {
+                this.#socket.addEventListener("message", async (event) => {
                     const message = JSON.parse(event.data);
 
-                    if (message.type === 'ping') {
-                        dmdataSocket.send(JSON.stringify({ type: 'pong', pingId: message.pingId }));
+                    if (message.type === "ping") {
+                        this.#socket.send(JSON.stringify({ type: "pong", pingId: message.pingId }));
                     }
-                    if (message.type === 'data' && message.format === 'xml') {
+                    if (message.type === "data" && message.format === "xml") {
                         await this.#whenEew(message.body);
                     }
                 });
 
-                dmdataSocket.onerror(event => {
+                this.#socket.addEventListener("error", event => {
                     this.app.services.debugLogs.add(
                         "error",
                         `[NETWORK]`,
@@ -141,7 +164,7 @@ export class Dmdata extends Service {
                     this.app.services.settings.connect.eew = "yahoo-kmoni";
                 });
             } else {
-                if (document.getElementById('win_dmdata_oauth_error') === null) {
+                if (document.getElementById("win_dmdata_oauth_error") === null) {
                     this.app.services.debugLogs.add(
                         "error",
                         `[NETWORK]`,
@@ -171,18 +194,16 @@ export class Dmdata extends Service {
         }
     }
 
-
     /**
      * 初期化する
-     * 
      * @returns {Promise<void>}
      */
     async initialize() {
         this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
 
-        if (this.app.services.settings.connect.eew !== 'dmdata') return;
+        if (this.app.services.settings.connect.eew !== "dmdata") return;
 
-        this.#accessToken = localStorage.getItem('settings-dmdata-access-token');
+        this.#accessToken = localStorage.getItem("settings-dmdata-access-token");
 
         if (typeof this.#accessToken === "string") {
             await this.#startSocket();
@@ -191,35 +212,39 @@ export class Dmdata extends Service {
         }
     }
 
-
     /**
      * アカウントを認証する
-     * 
      * @returns {void}
      */
     connect() {
         let url = new URL(Dmdata.#OAUTH_BASE_URI);
-        url.searchParams.set('client_id', Dmdata.#CLIENT_ID);
-        url.searchParams.set('response_type', 'code');
-        url.searchParams.set('redirect_uri', Dmdata.#OAUTH_REDIRECT_URI);
-        url.searchParams.set('scope', Dmdata.#OAUTH_SCOPE);
-        url.searchParams.set('state', Dmdata.#STATE);
+        url.searchParams.set("client_id", Dmdata.#CLIENT_ID);
+        url.searchParams.set("response_type", "code");
+        url.searchParams.set("redirect_uri", Dmdata.#OAUTH_REDIRECT_URI);
+        url.searchParams.set("scope", Dmdata.#OAUTH_SCOPE);
+        url.searchParams.set("state", Dmdata.#STATE);
 
-        window.open(url.toString(), '_blank');
+        window.open(url.toString(), "_blank");
     }
 
-
     /**
-     * 認証のセットアップを行う
-     * 
+     * 認証をセットアップする
      * @returns {Promise<void>}
      */
     async #setup() {
-        const responseState = this.#getParam('state', location.href);
+        const responseState = this.#getParam({
+            name: "state",
+            url: location.href,
+        });
 
-        if (responseState !== Dmdata.#STATE) return;
+        if (responseState !== Dmdata.#STATE) {
+            return;
+        }
 
-        const responseError = this.#getParam('error', location.href);
+        const responseError = this.#getParam({
+            name: "error",
+            url: location.href,
+        });
 
         if (responseError === null) {
             await this.#getAccessToken();
@@ -228,29 +253,30 @@ export class Dmdata extends Service {
         }
     }
 
-
     /**
      * アクセストークンを取得する
-     * 
      * @returns {Promise<void>}
      */
     async #getAccessToken() {
-        const responseCode = this.#getParam('code', location.href);
+        const responseCode = this.#getParam({
+            name: "code",
+            url: location.href,
+        });
 
         const dmdataFormBody = new URLSearchParams({
-            'client_id': Dmdata.#CLIENT_ID,
-            'grant_type': 'authorization_code',
-            'code': responseCode
+            "client_id": Dmdata.#CLIENT_ID,
+            "grant_type": "authorization_code",
+            "code": responseCode,
         }).toString();
 
         try {
             const response = await fetch(
                 Dmdata.#GET_TOKEN_URI,
                 {
-                    method: 'POST',
-                    Host: 'manager.dmdata.jp',
+                    method: "POST",
+                    Host: "manager.dmdata.jp",
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        "Content-Type": "application/x-www-form-urlencoded"
                     },
                     body: dmdataFormBody
                 }
@@ -258,12 +284,12 @@ export class Dmdata extends Service {
 
             const data = await response.json();
 
-            if (data['error'] === undefined) {
-                this.#accessToken = data['access_token'];
-                localStorage.setItem('settings-dmdata-access-token', this.#accessToken);
+            if (data["error"] === undefined) {
+                this.#accessToken = data["access_token"];
+                localStorage.setItem("settings-dmdata-access-token", this.#accessToken);
                 await this.#startSocket();
                 return;
-            } else if (data['error'] === 'invalid_grant') {
+            } else if (data["error"] === "invalid_grant") {
                 this.app.services.debugLogs.add(
                     "error",
                     "[NETWORK]",
@@ -279,8 +305,8 @@ export class Dmdata extends Service {
                         <p>
                             dmdataとの接続を続行するにはDM-D.S.Sアカウントを再度連携をしてください。<br>
                             <code>
-                                ${data['error']}<br>
-                                ${data['error_description']}<br>
+                                ${data["error"]}<br>
+                                ${data["error_description"]}<br>
                             </code>
                         </p>
                     `,
@@ -302,8 +328,8 @@ export class Dmdata extends Service {
                             DM-D.S.S アカウント認証でエラーが発生しました。<br>
                             設定をリセットした場合は再度アカウント連携をしてください。<br>
                             <code>
-                                ${data['error']}<br>
-                                ${data['error_description']}<br>
+                                ${data["error"]}<br>
+                                ${data["error_description"]}<br>
                             </code>
                         </p>
                     `,
@@ -331,10 +357,8 @@ export class Dmdata extends Service {
         }
     }
 
-
     /**
      * 認証エラー時の処理
-     * 
      * @returns {Promise<void>}
      */
     async #onSetupError() {
@@ -344,7 +368,7 @@ export class Dmdata extends Service {
             "DM-D.S.S Account authentication failed."
         );
 
-        const responseErrorDescription = this.#getParam('error_description', location.href);
+        const responseErrorDescription = this.#getParam({ name: "error_description", url: location.href });
 
         new PopupDialog({
             type: PopupDialog.types.error,
@@ -360,15 +384,15 @@ export class Dmdata extends Service {
         });
     }
 
-
     /**
      * URLからパラメーターを取得する
-     * 
-     * @param {string} name 
-     * @param {URL | string} url 
+     * @param {{
+     *     name: string,
+     *     url: URL | string,
+     * }} _
      * @returns {string | null}
      */
-    #getParam(name, url) {
+    #getParam({ name, url }) {
         if (typeof url === "string") {
             url = new URL(url);
         }
@@ -379,23 +403,21 @@ export class Dmdata extends Service {
         return value;
     }
 
-
     /**
      * XMLをパースする
-     * 
-     * @param {string} data 
-     * @returns {Document}
+     * @param {string} data
+     * @returns {Promise<Document>}
      */
     async #xmlParseToDocument(data) {
         const buffer = new Uint8Array(
-            atob(data).split('').map((c) => c.charCodeAt(0))
+            atob(data).split("").map((c) => c.charCodeAt(0))
         );
         const textDecoder = new TextDecoder();
         const decompressor = new Zlib.Gunzip();
         const decompressed = textDecoder.decode(decompressor.decompress(buffer));
 
         const parser = new DOMParser();
-        const document = parser.parseFromString(decompressed, 'application/xml');
+        const document = parser.parseFromString(decompressed, "application/xml");
 
         return document;
     }

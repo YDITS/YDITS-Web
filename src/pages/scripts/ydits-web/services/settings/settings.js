@@ -1,22 +1,24 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { PopupDialog } from "../../../packages/popup-dialog/src/popup-dialog.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 設定を扱う。
  */
 export class Settings extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -26,8 +28,16 @@ export class Settings extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone",
         });
+
+        this.app = app;
     }
 
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 接続関連
@@ -47,7 +57,6 @@ export class Settings extends Service {
         civilProtection: null,
     }
 
-
     /**
      * マップ関連
      * @type {{
@@ -66,7 +75,6 @@ export class Settings extends Service {
         },
     }
 
-
     /**
      * 音声関連
      * @type {{
@@ -81,7 +89,6 @@ export class Settings extends Service {
         eqinfo: true,
     }
 
-
     /**
      * 表示関連
      * @type {{
@@ -93,7 +100,6 @@ export class Settings extends Service {
         showWarn: true,
         panelRight: false,
     }
-
 
     /**
      * デバッグ関連
@@ -108,7 +114,6 @@ export class Settings extends Service {
         fpsMs: 1000,
         output: false,
     }
-
 
     /**
      * イニシャライズする
@@ -598,7 +603,6 @@ export class Settings extends Service {
         );
     }
 
-
     /**
      * デバッグオーバーレイを表示する
      * @returns {void}
@@ -607,7 +611,6 @@ export class Settings extends Service {
         document.getElementById("debugOutput").classList.add("active");
     }
 
-
     /**
      * デバッグオーバーレイを非表示にする
      * @returns {void}
@@ -615,7 +618,6 @@ export class Settings extends Service {
     hideDebugOutput() {
         document.getElementById("debugOutput").classList.remove("active");
     }
-
 
     /**
      * デバッグレイアウトを表示する
@@ -627,7 +629,6 @@ export class Settings extends Service {
         });
     }
 
-
     /**
      * デバッグレイアウトを非表示にする
      * @returns {void}
@@ -638,11 +639,10 @@ export class Settings extends Service {
         });
     }
 
-
     /**
      * クリップボードにデバッグログを書き込む
-     * @param {Function} onCompleted 
-     * @param {Function} onError 
+     * @param {Function} onCompleted
+     * @param {Function} onError
      * @returns {void}
      */
     writeDebugLogsToClipboard(onCompleted, onError) {

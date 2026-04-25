@@ -1,10 +1,11 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
@@ -20,10 +21,10 @@ export class WolfxJmaEewSocket {
      *     autoReconnect: boolean,
      * }} options
      * @param {{
-     *     onOpened: (event) => void,
-     *     onClosed: (event) => void,
-     *     onUpdated: (event: Event, data: WolfxJmaEewData | WolfxHeartbeatData) => void,
-     *     onError: (event) => void,
+     *     onOpened: (event: Event, isRetried: boolean) => void,
+     *     onClosed: (event: CloseEvent) => void,
+     *     onUpdated: (event: MessageEvent<any>, data: WolfxJmaEewData | WolfxHeartbeatData) => void,
+     *     onError: (event: Event) => void,
      * }} callbacks - 各コールバック関数のオブジェクト
      */
     constructor(options, callbacks) {
@@ -47,7 +48,7 @@ export class WolfxJmaEewSocket {
 
         /**
          * WebSocketクローズ時に再接続するかどうか
-         * @type {bool}
+         * @type {boolean}
          */
         this.autoReconnect = typeof options.autoReconnect === "boolean" ? options.autoReconnect : true;
 
@@ -58,13 +59,11 @@ export class WolfxJmaEewSocket {
         }
     }
 
-
     /**
      * エンドポイント
      * @type {URL}
      */
     endpoint = new URL("wss://ws-api.wolfx.jp/jma_eew");
-
 
     /**
      * 接続中に取得したデータリスト
@@ -72,10 +71,15 @@ export class WolfxJmaEewSocket {
      */
     data = [];
 
+    /**
+     * WebSocket接続を試行した回数
+     * @type {number}
+     */
+    socketRetryCount = 0;
 
     /**
      * エンドポイントへWebSocket接続を開始する
-     * 
+     *
      * @param {URL} endpoint
      * @returns {Promise<void>}
      */
@@ -90,7 +94,7 @@ export class WolfxJmaEewSocket {
             "open",
             (event) => this.onOpened(
                 event,
-                (isRetried) => this.callbacks.onOpened(isRetried)
+                (event, isRetried) => this.callbacks.onOpened(event, isRetried)
             )
         );
 
@@ -119,40 +123,33 @@ export class WolfxJmaEewSocket {
         );
     }
 
-
     /**
      * WebSocket接続を切断する
-     * 
      * @returns {void}
      */
     disconnect() {
-        this.socket.close();
+        if (this.socket?.readyState === WebSocket.OPEN) {
+            this.socket.close();
+        }
     }
-
 
     /**
      * WebSocket接続がオープンした時の処理
-     * 
      * @param {Event} event
      * @param {(event: Event, isRetried: boolean) => void} callback - コールバック関数
      * @returns {void}
      */
     onOpened(event, callback) {
         let isRetried = false;
-
         if (this.socketRetryCount > 0) isRetried = true;
-
         callback(event, isRetried);
-
         this.socketRetryCount = 0;
     }
 
-
     /**
      * WebSocket接続がクローズした時の処理
-     * 
      * @param {CloseEvent} event
-     * @param {(event: Event) => void} callback - コールバック関数
+     * @param {(event: CloseEvent) => void} callback - コールバック関数
      * @returns {void}
      */
     onClosed(event, callback) {
@@ -162,8 +159,11 @@ export class WolfxJmaEewSocket {
 
         if (this.autoReconnect) {
             this.retryTimeout = setTimeout(
+                /**
+                 * @param {(event: CloseEvent) => void} callback 
+                 */
                 (callback) => {
-                    callback();
+                    callback(event);
                     this.socketRetryCount++;
                 },
                 10 * 1000,
@@ -174,12 +174,10 @@ export class WolfxJmaEewSocket {
         callback(event);
     }
 
-
     /**
      * WebSocket接続でメッセージを受け取った時の処理
-     * 
      * @param {MessageEvent<any>} event
-     * @param {(event: Event, data: WolfxJmaEewData | WolfxHeartbeatData) => void} callback - コールバック関数
+     * @param {(event: MessageEvent<any>, data: WolfxJmaEewData | WolfxHeartbeatData) => void} callback - コールバック関数
      * @returns {void}
      */
     onMessage(event, callback) {
@@ -203,7 +201,7 @@ export class WolfxJmaEewSocket {
                     throw new Error(`Failed to parse data of Wolfx JMA EEW JSON data: ${error}`);
                 }
             } else {
-                throw new Error(`Unknown data type was response: ${data.type}`);
+                throw new Error(`Unknown data type was response: ${raw?.type}`);
             }
 
             callback(event, data);
@@ -212,10 +210,8 @@ export class WolfxJmaEewSocket {
         }
     }
 
-
     /**
      * WebSocket接続でエラーが発生した時の処理
-     * 
      * @param {Event} event
      * @param {(event: Event) => void} callback - コールバック関数
      * @returns {void}
@@ -224,14 +220,16 @@ export class WolfxJmaEewSocket {
         callback(event);
     }
 
-
     /**
-     * ハートビートパケットを受け取った時の処理
-     * 
+     * ハートビートを受け取った時の処理
      * @param {WolfxHeartbeatData} data
      * @returns {void}
      */
     onGetHeartbeat(data) {
+        if (this.socket?.readyState !== WebSocket.OPEN) {
+            return;
+        }
+
         this.socket.send(JSON.stringify({
             type: "pong",
             timestamp: data.timestamp,

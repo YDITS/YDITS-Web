@@ -1,14 +1,16 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 地震情報を扱う。
@@ -28,7 +30,9 @@ export class Eqinfo extends Service {
     tsunami = null;
     tsunamiText = null;
 
-
+    /**
+     * @param {YditsWeb} app
+     */
     constructor(app) {
         super(app, {
             name: "eqinfo",
@@ -37,12 +41,20 @@ export class Eqinfo extends Service {
             author: "よね/Yone",
             copyright: "Copyright © よね/Yone"
         });
+
+        this.app = app;
     }
 
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 震度をコードに変換するオブジェクト
-     * 
+     *
      * @type {Object<string, Object<string, string>>}
      */
     static scaleToColors = {
@@ -92,7 +104,6 @@ export class Eqinfo extends Service {
         }
     }
 
-
     /**
      * 初期化する。
      */
@@ -107,7 +118,6 @@ export class Eqinfo extends Service {
         }
     }
 
-
     /**
      * 地震情報に関連するすべての通信を再接続する。
      */
@@ -115,14 +125,12 @@ export class Eqinfo extends Service {
         this.app.services.api.p2pquake.startSocket();
     }
 
-
     /**
      * 地震情報に関連するすべての接続を切断する。
      */
     disconnect() {
         this.app.services.api.p2pquake.socket?.close();
     }
-
 
     /**
      * 地震履歴に地震情報を追加する。
@@ -173,7 +181,6 @@ export class Eqinfo extends Service {
         document.querySelector(`#eqHistoryField>.list-${num}>.maxScale`).style.color = color;
     }
 
-
     convertDateFormat(dateString) {
         const regex = /(\d{4})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2})/;
         const match = dateString.match(regex);
@@ -191,10 +198,9 @@ export class Eqinfo extends Service {
         }
     }
 
-
     /**
      * 効果音を再生する。
-     * @returns 
+     * @returns
      */
     sound() {
         if (!(this.app.services.settings.sound.eqinfo)) { return }

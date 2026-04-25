@@ -1,4 +1,4 @@
-/**!
+/*!
  *
  * Firebase App Creater
  *
@@ -8,9 +8,10 @@
  *
  */
 
-import { App } from "../../app-creator/src/app.js";
+import { Version } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
+import { App } from "../../app-creator/src/app.js";
 
 /**
  * Firebaseアプリケーションを作成する
@@ -20,7 +21,7 @@ export class FirebaseApp extends App {
      * @param {{
      *     name: string,
      *     description: string,
-     *     version: typeof Version,
+     *     version: Version,
      *     author: string,
      *     copyright: string,
      *     firebase: {
@@ -43,14 +44,14 @@ export class FirebaseApp extends App {
 
     /**
      * Firebaseアプリケーションインスタンス
-     * @type {*}
+     * @type {any}
      */
     #firebase = null;
 
 
     /**
      * Firebaseアナリティクスインスタンス
-     * @type {*}
+     * @type {any}
      */
     #firebaseAnalytics = null;
 }

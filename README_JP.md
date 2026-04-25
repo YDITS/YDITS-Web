@@ -1,6 +1,6 @@
 # YDITS for Web
 
-[English →](./README.md)
+[Read in English >](./README.md)
 
 ## 概要
 
@@ -11,10 +11,11 @@ https://webapp.ydits.net/ で公開しています。
 
 ## 利用方法
 
-`src/pages/` ディレクトリをデプロイします。
+`src/pages/` ディレクトリをデプロイします。  
+サーバーレス構成のため、デプロイできる方法であればどのような方法でも利用可能です。
 
 ## ライセンス
 
 [Apache License 2.0](./LICENSE) のもとでライセンスされます。
 
-Copyright &copy; よね/Yone
+Copyright © よね/Yone

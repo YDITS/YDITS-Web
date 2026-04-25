@@ -1,10 +1,11 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
@@ -16,13 +17,12 @@ import { WolfxJmaEewData } from "./data/jma-eew.js";
 export class WolfxJmaEewRest {
     endpoint = new URL("https://api.wolfx.jp/jma_eew.json");
 
-
     /**
      * エンドポイントから情報を取得する
      * @returns {Promise<WolfxJmaEewData>} - 取得した Wolfx JMA EEW のデータクラス
      */
     async fetch() {
-        this.endpoint.searchParams.set("nocache", Date.now());
+        this.endpoint.searchParams.set("nocache", String(Date.now()));
         const response = await fetch(this.endpoint);
 
         if (!response.ok) {

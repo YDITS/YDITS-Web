@@ -1,22 +1,26 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * デバッグログを管理する。
  */
 export class DebugLogs extends Service {
-    debugLogs = [];
+    static MAX_LOGS = 200;
 
-
+    /**
+     * @param {YditsWeb} app
+     */
     constructor(app) {
         super(app, {
             name: "debugLogs",
@@ -26,14 +30,16 @@ export class DebugLogs extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        this.app = app;
+
         this.debugLogListsElement = document.getElementById("debugLogLists");
 
-        const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
+        const debugLogsData = localStorage.getItem("debugLogs");
 
-        if (DEBUG_LOGS_DATA === null) {
+        if (debugLogsData === null) {
             this.add("start", `[${this.name}]`, "- Start log -");
         } else {
-            this.debugLogs = JSON.parse(DEBUG_LOGS_DATA);
+            this.debugLogs = JSON.parse(debugLogsData);
             this.debugLogs = this.limitter(this.debugLogs, 200);
             this.saveLogsToLocalStorage();
             this.debugLogs.forEach(log => {
@@ -46,7 +52,7 @@ export class DebugLogs extends Service {
             });
         }
 
-        if (this.app.isDebugLogsMode) {
+        if (this.app.mode === YditsWeb.MODES.debuglogs) {
             this.lastDebugLogs = [];
 
             setInterval(
@@ -74,6 +80,17 @@ export class DebugLogs extends Service {
         }
     }
 
+    /**
+     * @type {Array<any>}
+     */
+    debugLogs = [];
+
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * ログを追加する。
@@ -82,14 +99,14 @@ export class DebugLogs extends Service {
         const time = this.formatDatetime(this.app.services.datetime);
 
         const logEntry = {
-            type: type,
-            time: time,
-            title: title,
+            type,
+            time,
+            title,
             text: text
         };
 
         this.debugLogs.push(logEntry);
-        this.debugLogs = this.limitter(this.debugLogs, 200);
+        this.debugLogs = this.limitter(this.debugLogs, DebugLogs.MAX_LOGS);
         this.saveLogsToLocalStorage();
         this.addDebugLogsHtml(logEntry);
     }
@@ -127,7 +144,6 @@ export class DebugLogs extends Service {
         localStorage.setItem("debugLogs", JSON.stringify(this.debugLogs));
     }
 
-
     /**
      * ログをページに追加する。
      */
@@ -156,14 +172,16 @@ export class DebugLogs extends Service {
                 break;
         }
 
-        this.debugLogListsElement.innerHTML = `
-            <li>
-                <h3 class="title" style="color: ${color};">${log.title} ${log.time}</h3>
-                <p class="text">${log.text}</p>
-            </li>
-        ` + this.debugLogListsElement.innerHTML;
+        this.debugLogListsElement.insertAdjacentHTML(
+            "afterbegin",
+            `
+                <li>
+                    <h3 class="title" style="color: ${color};">${log.title} ${log.time}</h3>
+                    <p class="text">${log.text}</p>
+                </li>
+            `
+        );
     }
-
 
     /**
      * ログをすべて削除する。
@@ -173,7 +191,6 @@ export class DebugLogs extends Service {
         this.debugLogListsElement.innerHTML = "";
         localStorage.removeItem("debugLogs");
     }
-
 
     /**
      * 指定の数値までのログを残す。

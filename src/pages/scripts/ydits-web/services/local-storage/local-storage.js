@@ -1,16 +1,21 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 export class LocalStorage extends Service {
+    /**
+     * @param {YditsWeb} app
+     */
     constructor(app) {
         super(app, {
             name: "localStorage",
@@ -20,23 +25,28 @@ export class LocalStorage extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        this.app = app;
+
         this._cacheLocationArea = this._localStorageGetItem(LocalStorage.cacheLocationAreaKey);
     }
 
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     static cacheLocationAreaKey = "cacheLocationArea";
-
 
     get cacheLocationArea() {
         return this._cacheLocationArea;
     }
 
-
     set cacheLocationArea(value) {
         this._cacheLocationArea = value;
         this._localStorageSetItem(LocalStorage.cacheLocationAreaKey, value);
     }
-
 
     _localStorageGetItem(key) {
         try {
@@ -45,7 +55,6 @@ export class LocalStorage extends Service {
             throw new Error(`Could not get localStorage item as ${key}: ${error.stack}`);
         }
     }
-
 
     _localStorageSetItem(key, value) {
         try {

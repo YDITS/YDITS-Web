@@ -1,10 +1,11 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
@@ -16,15 +17,14 @@ class ServiceWorkerBackground {
         this.#setupEventListeners();
     }
 
-
     /**
      * イベントリスナーをセットアップする
      * @returns {void}
      */
     #setupEventListeners() {
         self.addEventListener("install", async (event) => await this.#onInstall(event));
-        self.addEventListener('push', async (event) => await this.#onPush(event));
-        self.addEventListener('sync', async (event) => await this.#onSync(event));
+        self.addEventListener("push", async (event) => await this.#onPush(event));
+        self.addEventListener("sync", async (event) => await this.#onSync(event));
     }
 
 
@@ -38,19 +38,34 @@ class ServiceWorkerBackground {
         console.debug(this);
     }
 
-
     /**
      * プッシュ通知を取得したときの処理
      * @param {PushEvent} event
      * @returns {Promise<void>}
      */
     async #onPush(event) {
-        const data = event.data.json();
+        if (!event.data) {
+            return;
+        }
 
-        await this.#showNotification({
-            title: data.title,
-            message: data.title,
-        });
+        const data = event.data;
+
+        const pushPromise = (async () => {
+            /** @type {{title?: string, body?: string}} */
+            const parsedData = data.json();
+
+            if (typeof parsedData.title !== "string" || typeof parsedData.body !== "string") {
+                console.error("Invalid push data format:", parsedData);
+                return;
+            };
+
+            await this.#showNotification({
+                title: parsedData.title,
+                message: parsedData.body,
+            });
+        })();
+
+        event.waitUntil(pushPromise);
     }
 
 
@@ -74,7 +89,6 @@ class ServiceWorkerBackground {
         );
     }
 
-
     /**
      * バックグラウンド同期を取得したときの処理
      * @param {SyncEvent} event
@@ -82,6 +96,5 @@ class ServiceWorkerBackground {
      */
     async #onSync(event) { }
 }
-
 
 new ServiceWorkerBackground();

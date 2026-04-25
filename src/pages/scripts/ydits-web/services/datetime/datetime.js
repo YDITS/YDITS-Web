@@ -1,19 +1,24 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 現在時刻を管理する。
  */
 export class Datetime extends Service {
+    /**
+     * @param {YditsWeb} app
+     */
     constructor(app) {
         super(app, {
             name: "datetime",
@@ -23,9 +28,17 @@ export class Datetime extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        this.app = app;
+
         this._gmt = new Date();
     }
 
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     get gmt() {
         if (!this._gmt) {
@@ -35,14 +48,12 @@ export class Datetime extends Service {
         return this._gmt;
     }
 
-
     get fullYear() { return this.gmt.getFullYear(); }
     get month() { return this.gmt.getMonth() + 1; }
     get date() { return this.gmt.getDate(); }
     get hours() { return this.gmt.getHours(); }
     get minutes() { return this.gmt.getMinutes(); }
     get seconds() { return this.gmt.getSeconds(); }
-
 
     /**
      * 現在時刻を更新する。
@@ -62,7 +73,6 @@ export class Datetime extends Service {
             );
         }
     }
-
 
     /**
      * サーバーヘッダーから現在時刻を取得する。

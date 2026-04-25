@@ -1,21 +1,23 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * ページ内通知を扱う。
  */
 export class Notify extends Service {
     /**
-     * @param {App} app
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -26,24 +28,30 @@ export class Notify extends Service {
             copyright: "Copyright © よね/Yone",
         });
 
+        this.app = app;
+
         this.notifyElement = document.getElementById("notify");
         this.eewNotifyElement = document.getElementById("eewNotify");
     }
 
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 最後の通知ID
-     * @type {*}
+     * @type {string | null}
      */
     lastNotifyId = null;
 
-    
     /**
      * 最後の緊急地震速報通知ID
-     * @type {*}
+     * @type {string | null}
      */
     lastEewNotifyId = null;
-
 
     /**
      * 通知を表示する。
@@ -106,7 +114,6 @@ export class Notify extends Service {
             }, hideAfter);
         }
     }
-
 
     /**
      * 通知を非表示にする。

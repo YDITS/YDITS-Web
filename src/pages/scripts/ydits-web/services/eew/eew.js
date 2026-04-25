@@ -1,21 +1,23 @@
-/**!
+/*!
  *
  * YDITS for Web
  *
  * Copyright (C) よね/Yone
- *
  * Licensed under the Apache License 2.0.
+ *
+ * https://github.com/YDITS/YDITS-Web
  *
  */
 
 import { Service } from "../../../packages/app-creator/src/service.js";
+import { YditsWeb } from "../../ydits-web.js";
 
 /**
  * 緊急地震速報を扱う。
  */
 export class Eew extends Service {
     /**
-     * @param {App} app 
+     * @param {YditsWeb} app
      */
     constructor(app) {
         super(app, {
@@ -26,6 +28,8 @@ export class Eew extends Service {
             copyright: "Copyright © よね/Yone"
         });
 
+        this.app = app;
+
         this.datetime = app.services.datetime;
         this.geolocation = app.services.geoLocation;
 
@@ -33,10 +37,16 @@ export class Eew extends Service {
         this.#setupEventListeners();
     }
 
+    /**
+     * アプリケーションインスタンス
+     * @type {YditsWeb}
+     * @override
+     */
+    app;
 
     /**
      * 要素を初期化する。
-     * 
+     *
      * @returns {void}
      */
     #initializeElements() {
@@ -50,10 +60,9 @@ export class Eew extends Service {
         this.errorElement = document.getElementById("eewError");
     }
 
-
     /**
      * イベントリスナーを設定する。
-     * 
+     *
      * @returns {void}
      */
     #setupEventListeners() {
@@ -61,13 +70,11 @@ export class Eew extends Service {
         this.warnElement.querySelector(".closeBtn").addEventListener("click", () => this.hideWarn());
     }
 
-
     /**
      * 緊急地震速報が発表されているかどうか
      * @type {boolean}
      */
     isEew = false;
-
 
     /**
      * 現在の緊急地震速報のID
@@ -75,13 +82,11 @@ export class Eew extends Service {
      */
     currentId = null;
 
-
     /**
      * 前回の緊急地震速報のID
      * @type {string | null}
      */
     currentIdLast = null;
-
 
     /**
      * 緊急地震速報のレポート
@@ -89,13 +94,11 @@ export class Eew extends Service {
      */
     reports = {};
 
-
     /**
      * 警報地域のテキスト
      * @type {string}
      */
     warnAreasText = "";
-
 
     /**
      * 警報地域のリスト
@@ -103,13 +106,11 @@ export class Eew extends Service {
      */
     warnAreas = [];
 
-
     /**
      * ユーザーの地域が警報対象かどうか
      * @type {boolean}
      */
     isUserAreaWarn = false;
-
 
     /**
      * 震度のテキスト
@@ -128,7 +129,6 @@ export class Eew extends Service {
         "6+": "6強",
         "7": "7"
     }
-
 
     /**
      * 緊急地震速報のレポート
@@ -163,7 +163,6 @@ export class Eew extends Service {
         lastPWave = null;
     }
 
-
     /**
      * 緊急地震速報の警報地域
      */
@@ -184,10 +183,9 @@ export class Eew extends Service {
         }
     }
 
-
     /**
      * 初期化する
-     * 
+     *
      * @returns {void}
     */
     initialize() {
@@ -199,11 +197,10 @@ export class Eew extends Service {
         }
     }
 
-
     /**
      * 緊急地震速報（警報）発表時の処理
-     * 
-     * @param {Object} data
+     *
+     * @param {object} data
      * @returns {void}
      */
     warning(data) {
@@ -218,10 +215,9 @@ export class Eew extends Service {
         this.updateWarn(data);
     }
 
-
     /**
      * フィールドの表示を更新する
-     * 
+     *
      * @returns {void}
      */
     // updateField() {
@@ -315,7 +311,6 @@ export class Eew extends Service {
     //     }
     // }
 
-
     /**
      * 情報に応じてサウンドを再生する。
      */
@@ -381,29 +376,28 @@ export class Eew extends Service {
     //     }
     // }
 
-
     /**
      * 警報画面の表示を更新する
-     * 
+     *
      * @returns {void}
      */
     updateWarn() {
         this.warnAreas.forEach(area => {
             if (area.name === this.app.services.geoLocation.area) {
                 this.isUserAreaWarn = true;
-                this.errorElement.hide();
+                this.errorElement.style.display = "none";
 
                 if (area.scaleTo === 99) {
                     this.scale = this.parseScale(area.scaleFrom);
-                    this.scaleAboutElement.text("程度以上");
+                    this.scaleAboutElement.textContent = "程度以上";
                 } else {
                     this.scale = this.parseScale(area.scaleTo);
-                    this.scaleAboutElement.text("程度");
+                    this.scaleAboutElement.textContent = "程度";
                 }
 
                 if (area.arrivalTime === null) {
                     this.arrivalTime = "到達と推測";
-                    this.arrivalTimeAboudElement.text("");
+                    this.arrivalTimeAboudElement.textContent = "";
                 } else {
                     let dateNow = this.app.services.datetime.gmt.getTime();
                     let arrivalTime = new Date(area.arrivalTime).getTime();
@@ -412,16 +406,16 @@ export class Eew extends Service {
 
                     if (this.arrivalTime <= 0) {
                         this.arrivalTime = "到達と推測";
-                        this.arrivalTimeAboudElement.text("");
+                        this.arrivalTimeAboudElement.textContent = "";
                     } else {
                         this.arrivalTime = `${this.arrivalTime}秒`;
-                        this.arrivalTimeAboudElement.text("およそ");
+                        this.arrivalTimeAboudElement.textContent = "およそ";
                     }
                 }
 
-                this.scaleElement.text(this.scale);
-                this.arrivalTimeElement.text(this.arrivalTime);
-                this.locateElement.text(this.app.services.geoLocation.area);
+                this.scaleElement.textContent = this.scale;
+                this.arrivalTimeElement.textContent = this.arrivalTime;
+                this.locateElement.textContent = this.app.services.geoLocation.area;
             }
         });
 
@@ -430,32 +424,29 @@ export class Eew extends Service {
         }
     }
 
-
     /**
      * 警報画面を表示する
-     * 
+     *
      * @returns {void}
      */
     displayWarn() {
         if (!this.app.services.settings.display.showWarn) { return; }
-        if (!this.app.services.geoLocation.isSupport) { return; }
+        if (!this.app.services.geoLocation.isSupported) { return; }
         this.warnElement.classList.add("active");
     }
 
-
     /**
      * 警報画面を非表示する
-     * 
+     *
      * @returns {void}
      */
     hideWarn() {
         this.warnElement.classList.remove("active");
     }
 
-
     /**
      * すべての緊急地震速報イベントを終了する
-     * 
+     *
      * @returns {void}
      */
     end() {
@@ -466,7 +457,7 @@ export class Eew extends Service {
 
     /**
      * 緊急地震速報（警報）イベントを終了する
-     * 
+     *
      * @returns {void}
     */
     endWarn() {
@@ -475,10 +466,9 @@ export class Eew extends Service {
         this.updateWarn();
     }
 
-
     /**
      * 文字列の末尾に都府県を付与する
-     * 
+     *
      * @param {string} string
      * @returns {string}
      */
@@ -501,10 +491,9 @@ export class Eew extends Service {
         }
     }
 
-
     /**
      * 文字列の末尾から都府県を削除する
-     * 
+     *
      * @param {string} string
      * @returns {string}
      */
@@ -527,10 +516,9 @@ export class Eew extends Service {
         }
     }
 
-
     /**
      * 文字列の末尾から市区町村を削除する
-     * 
+     *
      * @param {string} string
      * @returns {string}
      */
@@ -542,10 +530,9 @@ export class Eew extends Service {
         return string;
     }
 
-
     /**
      * P2P地震情報の震度値を文字列に変換する
-     * 
+     *
      * @param {number} value
      * @returns {string}
      */
@@ -562,15 +549,14 @@ export class Eew extends Service {
             case 55: return "6弱";
             case 60: return "6強";
             case 70: return "7";
-            case 99: return;
+            case 99: return "";
             default: return "e";
         }
     }
 
-
     /**
      * プッシュ通知を送信する
-     * 
+     *
      * @returns {void}
      */
     // push() {

@@ -1,4 +1,4 @@
-/**
+/*!
  * 
  * Popup Dialog
  * 
@@ -55,23 +55,31 @@ export class PopupDialog {
 
 
     /**
-     * @type {Object<string, string>}
+     * @type {{
+     *     readonly message: string,
+     *     readonly error: string,
+     *     readonly default: string,
+     * }}
      */
-    static types = {
+    static types = Object.freeze({
         message: "message",
         error: "error",
         default: "message",
-    }
+    });
 
 
     /**
-     * @type {Object<string, string>}
+     * @type {{
+     *     readonly message: string,
+     *     readonly error: string,
+     *     readonly default: string,
+     * }}
      */
-    static windowTypeToColor = {
+    static windowTypeToColor = Object.freeze({
         message: "#404040ff",
         error: "#ff5050ff",
         default: "#404040ff",
-    }
+    });
 
 
     /**
