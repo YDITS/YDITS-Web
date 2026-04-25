@@ -667,8 +667,8 @@ export class YditsWeb extends FirebaseApp {
         this.#mode = YditsWeb.MODES.debuglogs;
 
         this.services.datetime = new Datetime(this);
-        this.services.datetime.update();
         this.services.debugLogs = new DebugLogs(this);
+        this.services.datetime.update();
         this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
         this.services.notify = new Notify(this);
 

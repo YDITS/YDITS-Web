@@ -16,6 +16,8 @@ import { YditsWeb } from "../../ydits-web.js";
  * デバッグログを管理する。
  */
 export class DebugLogs extends Service {
+    static MAX_LOGS = 200;
+
     /**
      * @param {YditsWeb} app
      */
@@ -32,12 +34,12 @@ export class DebugLogs extends Service {
 
         this.debugLogListsElement = document.getElementById("debugLogLists");
 
-        const DEBUG_LOGS_DATA = localStorage.getItem("debugLogs");
+        const debugLogsData = localStorage.getItem("debugLogs");
 
-        if (DEBUG_LOGS_DATA === null) {
+        if (debugLogsData === null) {
             this.add("start", `[${this.name}]`, "- Start log -");
         } else {
-            this.debugLogs = JSON.parse(DEBUG_LOGS_DATA);
+            this.debugLogs = JSON.parse(debugLogsData);
             this.debugLogs = this.limitter(this.debugLogs, 200);
             this.saveLogsToLocalStorage();
             this.debugLogs.forEach(log => {
@@ -97,14 +99,14 @@ export class DebugLogs extends Service {
         const time = this.formatDatetime(this.app.services.datetime);
 
         const logEntry = {
-            type: type,
-            time: time,
-            title: title,
+            type,
+            time,
+            title,
             text: text
         };
 
         this.debugLogs.push(logEntry);
-        this.debugLogs = this.limitter(this.debugLogs, 200);
+        this.debugLogs = this.limitter(this.debugLogs, DebugLogs.MAX_LOGS);
         this.saveLogsToLocalStorage();
         this.addDebugLogsHtml(logEntry);
     }
@@ -170,12 +172,15 @@ export class DebugLogs extends Service {
                 break;
         }
 
-        this.debugLogListsElement.innerHTML = `
-            <li>
-                <h3 class="title" style="color: ${color};">${log.title} ${log.time}</h3>
-                <p class="text">${log.text}</p>
-            </li>
-        ` + this.debugLogListsElement.innerHTML;
+        this.debugLogListsElement.insertAdjacentHTML(
+            "afterbegin",
+            `
+                <li>
+                    <h3 class="title" style="color: ${color};">${log.title} ${log.time}</h3>
+                    <p class="text">${log.text}</p>
+                </li>
+            `
+        );
     }
 
     /**
