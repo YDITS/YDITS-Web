@@ -43,12 +43,27 @@ export class ElementsManager extends Service {
      */
     #elements = {};
 
+
+    /**
+     * 要素を取得する
+     * @param {string} id 
+     * @returns {HTMLElement}
+     */
+    getElementById(id) {
+        if (!this.#elements[id]) {
+            this.#addElementById(id);
+        }
+
+        return this.#elements[id];
+    }
+
+
     /**
      * 要素を追加する
      * @param {string} id
      * @returns {void}
      */
-    addElementById(id) {
+    #addElementById(id) {
         if (this.#elements[id]) {
             return;
         }
@@ -60,29 +75,5 @@ export class ElementsManager extends Service {
         }
 
         this.#elements[id] = element;
-    }
-
-    /**
-     * 複数の要素を追加する
-     * @param {string[]} ids
-     * @returns {void}
-     */
-    addElementsById(ids) {
-        for (const id of ids) {
-            this.addElementById(id);
-        }
-    }
-
-    /**
-     * 要素を取得する
-     * @param {string} id 
-     * @returns {HTMLElement}
-     */
-    getElementById(id) {
-        if (!this.#elements[id]) {
-            this.addElementById(id);
-        }
-
-        return this.#elements[id];
     }
 }
