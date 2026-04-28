@@ -295,32 +295,6 @@ export class YditsWeb extends FirebaseApp {
     #registerServices() {
         try {
             this.services.elementsManager = new ElementsManager(this);
-            this.services.elementsManager.addElementsById([
-                "clock",
-                "statusLamp",
-                "fps",
-                "initializeTime",
-                "betaBanner",
-                "menuOpenEqhistory",
-                "menuBtn",
-                "eqHistoryBtn",
-                "homeBtn",
-                "popup",
-                "menu",
-                "menuCloseButton",
-                "menuVersion",
-                "menuJmaDataFeed",
-                "menuSettings",
-                "menuLicense",
-                "menuHelp",
-                "control",
-                "eqHistoryField",
-                "mapWrapper",
-                "settings",
-                "license",
-                "licenseCloseButton",
-            ]);
-
             this.services.notify = new Notify(this);
             this.services.eew = new Eew(this);
             this.services.eqinfo = new Eqinfo(this);
@@ -477,7 +451,7 @@ export class YditsWeb extends FirebaseApp {
         });
 
         this.services.elementsManager.getElementById("menuLicense").addEventListener("click", () => {
-            this.services.elementsManager.getElementById("license").classList.add("active");
+            this.services.elementsManager.getElementById("licensesWindow").classList.add("active");
         });
 
         this.services.elementsManager.getElementById("menuHelp").addEventListener("click", () => {
@@ -489,7 +463,7 @@ export class YditsWeb extends FirebaseApp {
         });
 
         this.services.elementsManager.getElementById("licenseCloseButton").addEventListener("click", () => {
-            this.services.elementsManager.getElementById("license").classList.remove("active");
+            this.services.elementsManager.getElementById("licensesWindow").classList.remove("active");
         });
 
         this.services.elementsManager.getElementById("clock").textContent = "----/--/-- --:--:--";

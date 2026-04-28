@@ -824,54 +824,60 @@ main {
     font-size: 0.9rem;
 }
 
-#license {
+#licenseWindow {
     line-height: 1.5rem;
 }
 
-#license.active {
+#licenseWindow.active {
     visibility: visible;
     top: calc(env(titlebar-area-height, 2rem) + 1rem);
 }
 
-#license>.content a {
+#licenseWindow>.content a {
     color: #a0f0a0ff;
     text-decoration: underline;
 }
 
-#copyrights {
+#licenses {
     padding-top: 4rem;
     padding-bottom: 4rem;
     height: calc(100svh - 8rem - 4rem - 4rem);
 }
 
-.qcnsjs {
+.licenses__name--self {
     font-size: 1.5rem;
     font-weight: 700;
 }
 
 .enwfew {
-    border-color: #a0a0a0ff;
+    border-color: #fff2;
     border-width: 1px;
     border-style: solid;
 }
 
-.rhkdmh {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.2em;
-}
-
-.qugesl {
+.licenses__list {
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 
-.srajis {
+.licenses__item {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 1rem;
+}
+
+.licenses__resource {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.licenses__license {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #betaBanner {
