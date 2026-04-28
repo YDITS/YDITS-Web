@@ -17,6 +17,36 @@ import { YditsWeb } from "../../ydits-web.js";
  */
 export class Notify extends Service {
     /**
+     * 通知の種類
+     */
+    static types = Object.freeze({
+        _default: "_default",
+        message: "message",
+        error: "error",
+        eew: "eew",
+    });
+
+    /**
+     * 通知の種類をカラーに変換するobject
+     */
+    static typeToColor = Object.freeze({
+        _default: "#404040",
+        message: "#404040",
+        error: "#ff5050",
+        eew: "#f04040ff",
+    });
+
+    /**
+     * 通知の種類をカラーに変換するobject
+     */
+    static typeToDefaultHideAfterMs = Object.freeze({
+        _default: 1000 * 5,
+        message: 1000 * 5,
+        error: 1000 * 5,
+        eew: 1000 * 180,
+    });
+
+    /**
      * @param {YditsWeb} app
      */
     constructor(app) {
@@ -29,9 +59,6 @@ export class Notify extends Service {
         });
 
         this.app = app;
-
-        this.notifyElement = document.getElementById("notify");
-        this.eewNotifyElement = document.getElementById("eewNotify");
     }
 
     /**
@@ -42,84 +69,104 @@ export class Notify extends Service {
     app;
 
     /**
-     * 最後の通知ID
-     * @type {string | null}
-     */
-    lastNotifyId = null;
-
-    /**
      * 最後の緊急地震速報通知ID
-     * @type {string | null}
+     * @type {number | undefined}
      */
-    lastEewNotifyId = null;
+    lastEewNotifyHideTimeoutId;
 
     /**
-     * 通知を表示する。
-     * @param {string} type - 通知の種類。'message'、'error'、'eew'のいずれか
-     * @param {string} title - 通知のタイトル
-     * @param {string} text - 通知の内容
+     * 最後の通知ID
+     * @type {number | undefined}
+     */
+    lastNotifyHideTimeoutId;
+
+    /**
+     * 緊急地震速報(警報)の通知を表示する
+     * @param {object} _
+     * @param {string} _.title - 通知のタイトル
+     * @param {string} _.body - 通知の内容
+     * @param {number | undefined} [_.hideAfterMs] - 通知を非表示するまでの時間[ms]
      * @returns {void}
      */
-    show(type, title, text) {
-        let color = null;
-        let hideAfter = null;
-        let eewHideAfter = null;
+    showEewNotify({
+        title,
+        body,
+        hideAfterMs = Notify.typeToDefaultHideAfterMs.eew,
+    }) {
+        const $eewNotify = this.app.services.elementsManager.getElementById("eewNotify");
+        const $eewNotifyTitle = this.app.services.elementsManager.getElementById("eewNotifyTitle");
+        const $eewNotifyBody = this.app.services.elementsManager.getElementById("eewNotifyBody");
 
-        switch (type) {
-            case "message":
-                color = "#404040ff";
-                hideAfter = 5000;
-                break;
+        $eewNotifyTitle.textContent = title;
+        $eewNotifyBody.innerHTML = `<p>${body}</p>`;
+        $eewNotify.style.backgroundColor = Notify.typeToColor.eew;
+        $eewNotify.classList.add("active");
 
-            case "error":
-                color = "#ff5050ff";
-                hideAfter = 5000;
-                break;
+        clearTimeout(this.lastEewNotifyHideTimeoutId);
 
-            case "eew":
-                color = "#f04040ff";
-                eewHideAfter = 180 * 1000;
-                break;
-
-            default:
-                color = "#404040ff";
-                hideAfter = 5000;
-                break;
-        }
-
-        if (type === "eew") {
-            this.eewNotifyElement.innerHTML = `
-                    <h3>${title}</h3>
-                    <p>${text}</p>
-                    <p style="margin-top: .5rem; font-size: .8rem;">ここをタップして警報画面を表示します。</p>
-                `;
-            this.eewNotifyElement.style.backgroundColor = color;
-            this.eewNotifyElement.classList.add("active");
-
-            clearTimeout(this.lastEewNotifyId);
-            this.lastEewNotifyId = setTimeout(() => {
-                this.hide(this.eewNotifyElement);
-            }, eewHideAfter);
-        } else {
-            this.notifyElement.innerHTML = `
-                    <h3>${title}</h3>
-                    <p>${text}</p>
-                `;
-            this.notifyElement.style.backgroundColor = color;
-            this.notifyElement.classList.add("active");
-
-            clearTimeout(this.lastNotifyId);
-            this.lastNotifyId = setTimeout(() => {
-                this.hide(this.notifyElement);
-            }, hideAfter);
-        }
+        this.lastEewNotifyHideTimeoutId = setTimeout(
+            () => {
+                this.hideEewNotify();
+            },
+            hideAfterMs
+        );
     }
 
     /**
-     * 通知を非表示にする。
+     * 通知を表示する。
+     * @param {object} _ - 通知の種類
+     * @param {keyof typeof Notify.types} [_.type] - 通知の種類
+     * @param {string} _.title - 通知のタイトル
+     * @param {string} _.body - 通知の内容
+     * @param {number} [_.hideAfterMs] - 通知を非表示するまでの時間[ms]
      * @returns {void}
      */
-    hide() {
-        this.notifyElement.classList.remove("active");
+    showNotify({
+        type = Notify.types._default,
+        title,
+        body,
+        hideAfterMs = Notify.typeToDefaultHideAfterMs._default
+    }) {
+        if (type === "eew") {
+            return this.showEewNotify({
+                title,
+                body,
+            });
+        }
+
+        const $notify = this.app.services.elementsManager.getElementById("notify");
+        const $notifyTitle = this.app.services.elementsManager.getElementById("notifyTitle");
+        const $notifyBody = this.app.services.elementsManager.getElementById("notifyBody");
+
+        const color = Notify.typeToColor[type] || Notify.typeToColor._default;
+        $notifyTitle.textContent = title;
+        $notifyBody.innerHTML = `<p>${body}</p>`;
+        $notify.style.backgroundColor = color;
+        $notify.classList.add("active");
+
+        clearTimeout(this.lastNotifyHideTimeoutId);
+
+        this.lastNotifyHideTimeoutId = setTimeout(
+            () => {
+                this.hideNotify();
+            },
+            hideAfterMs
+        );
+    }
+
+    /**
+     * 緊急地震速報(警報)の通知を非表示にする
+     * @returns {void}
+     */
+    hideEewNotify() {
+        this.app.services.elementsManager.getElementById("eewNotify").classList.remove("active");
+    }
+
+    /**
+     * 通知を非表示にする
+     * @returns {void}
+     */
+    hideNotify() {
+        this.app.services.elementsManager.getElementById("notify").classList.remove("active");
     }
 }

@@ -11,6 +11,7 @@
 
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { YditsWeb } from "../../ydits-web.js";
+import { Notify } from "../notify/notify.js";
 
 /**
  * P2P地震情報 APIを扱う。
@@ -270,15 +271,15 @@ export class P2pquake extends Service {
                                 }
                             );
 
-                            this.app.services.notify.show(
-                                "message",
-                                this.app.services.eqinfo.typeJp,
-                                `
+                            this.app.services.notify.showNotify({
+                                type: Notify.types.message,
+                                title: this.app.services.eqinfo.typeJp,
+                                body: `
                                     ${this.app.services.eqinfo.regionName}を震源とする、最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。<br>
                                     規模は${this.app.services.eqinfo.magnitudeText}、深さは${this.app.services.eqinfo.depthText}と推定されます。<br>
                                     ${this.app.services.eqinfo.tsunamiJp}
-                                `
-                            );
+                                `,
+                            });
                             break;
 
                         case "ScalePrompt":
@@ -289,14 +290,14 @@ export class P2pquake extends Service {
                                 }
                             );
 
-                            this.app.services.notify.show(
-                                "message",
-                                this.app.services.eqinfo.typeJp,
-                                `
+                            this.app.services.notify.showNotify({
+                                type: Notify.types.message,
+                                title: this.app.services.eqinfo.typeJp,
+                                body: `
                                     最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。<br>
                                     ${this.app.services.eqinfo.tsunamiJp}
-                                `
-                            );
+                                `,
+                            });
                             break;
 
                         default:
@@ -314,11 +315,10 @@ export class P2pquake extends Service {
                             }
                         );
 
-                        this.app.services.notify.show(
-                            "eew",
-                            "緊急地震速報 (取消)",
-                            "先程の緊急地震速報は取り消されました。"
-                        );
+                        this.app.services.notify.showEewNotify({
+                            title: "緊急地震速報 (取消)",
+                            body: "先程の緊急地震速報は取り消されました。",
+                        });
                     } else {
                         this.app.services.pushNotify.notify(
                             "緊急地震速報 (警報)",
@@ -327,14 +327,13 @@ export class P2pquake extends Service {
                             }
                         );
 
-                        this.app.services.notify.show(
-                            "eew",
-                            `緊急地震速報 (警報)`,
-                            `
+                        this.app.services.notify.showEewNotify({
+                            title: `緊急地震速報 (警報)`,
+                            body: `
                                 《次の地域では強い揺れに備えてください》<br>
                                 ${this.app.services.eew.warnAreasText}
                             `
-                        );
+                        });
                     }
                     break;
 
@@ -351,7 +350,11 @@ export class P2pquake extends Service {
      * @returns {void}
      */
     initialize() {
-        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
+        this.app.services.notify.showNotify({
+            type: Notify.types.message,
+            title: "",
+            body: `${this.name}をイニシャライズしています…`,
+        });
 
         if (this.app.mode !== YditsWeb.MODES.eqhistory) {
             fetch(P2pquake.REST_EEW_URL)
@@ -456,14 +459,14 @@ export class P2pquake extends Service {
                 .catch((error) => {
                     console.error(error);
                     if (error != 'TypeError: Failed to fetch') {
-                        this.app.services.notify.show(
-                            "error",
-                            "エラー",
-                            `
-                            P2P地震情報 (p2pquake.net) に接続できません。<br>
-                            <code>${error}</code>
-                        `
-                        );
+                        this.app.services.notify.showNotify({
+                            type: Notify.types.error,
+                            title: "エラー",
+                            body: `
+                                P2P地震情報 (p2pquake.net) に接続できません。<br>
+                                <code>${error}</code>
+                            `,
+                        });
                     }
                 });
         }
@@ -556,14 +559,14 @@ export class P2pquake extends Service {
             .catch((error) => {
                 console.error(error);
                 if (error != 'TypeError: Failed to fetch') {
-                    this.app.services.notify.show(
-                        "error",
-                        "エラー",
-                        `
+                    this.app.services.notify.showNotify({
+                        type: Notify.types.error,
+                        title: "エラー",
+                        body: `
                             P2P地震情報 (p2pquake.net) に接続できません。<br>
                             <code>${error}</code>
                         `
-                    );
+                    });
                 }
             });
     }
@@ -641,11 +644,11 @@ export class P2pquake extends Service {
         this.#startKeepAlive();
 
         if (this.reconnectIntervalMs > 0) {
-            this.app.services.notify.show(
-                "message",
-                "WebSocket再接続",
-                "P2P地震情報 WebSocket に再接続しました。"
-            );
+            this.app.services.notify.showNotify({
+                type: Notify.types.message,
+                title: "WebSocket再接続",
+                body: "P2P地震情報 WebSocket に再接続しました。",
+            });
         }
 
         this.retryTimeout = null;
@@ -671,11 +674,11 @@ export class P2pquake extends Service {
             return;
         }
 
-        this.app.services.notify.show(
-            "error",
-            "WebSocket切断",
-            "P2P地震情報 WebSocket 切断しました。再接続試行中…"
-        );
+        this.app.services.notify.showNotify({
+            type: Notify.types.error,
+            title: "WebSocket切断",
+            body: "P2P地震情報 WebSocket 切断しました。再接続試行中…",
+        });
 
         this.#reconnect();
     }
@@ -916,11 +919,11 @@ export class P2pquake extends Service {
             return;
         }
 
-        this.app.services.notify.show(
-            "error",
-            "エラー",
-            "P2P地震情報 WebSocket 接続エラー。再接続試行中…"
-        );
+        this.app.services.notify.showNotify({
+            type: Notify.types.error,
+            title: "エラー",
+            body: "P2P地震情報 WebSocket 接続エラー。再接続試行中…",
+        });
 
         this.#reconnect();
     }

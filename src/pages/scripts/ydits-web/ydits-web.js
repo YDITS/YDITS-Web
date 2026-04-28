@@ -184,6 +184,18 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
+     * イニシャライズ完了を通知する
+     * @returns {void}
+     */
+    displayInitializedNotify() {
+        this.services.notify.showNotify({
+            type: Notify.types.message,
+            title: `YDITS for Web Ver ${this.version.string}`,
+            body: "",
+        });
+    }
+
+    /**
      * イベントリスナーをセットアップする
      * @returns {void}
      */
@@ -215,11 +227,11 @@ export class YditsWeb extends FirebaseApp {
             "Network reconnected."
         );
 
-        this.services.notify.show(
-            "message",
-            "ネットワーク再接続",
-            "ネットワークに接続されました。"
-        );
+        this.services.notify.showNotify({
+            type: Notify.types.message,
+            title: "ネットワーク再接続",
+            body: "ネットワークに接続されました。",
+        });
 
         setTimeout(() => {
             this.services.api.wolfx?.connect();
@@ -241,11 +253,11 @@ export class YditsWeb extends FirebaseApp {
             "Network disconnected."
         );
 
-        this.services.notify.show(
-            "error",
-            "ネットワーク接続なし",
-            "ネットワークが切断されました。"
-        );
+        this.services.notify.showNotify({
+            type: Notify.types.error,
+            title: "ネットワーク接続なし",
+            body: "ネットワークが切断されました。",
+        });
 
         this.services.api.wolfx?.disconnect();
         this.services.eqinfo.disconnect();
@@ -334,14 +346,14 @@ export class YditsWeb extends FirebaseApp {
             `Failed Application initialization: ${stack ?? error}.`
         );
 
-        this.services.notify.show(
-            "error",
-            "エラー",
-            `
+        this.services.notify.showNotify({
+            type: Notify.types.error,
+            title: "エラー",
+            body: `
                 イニシャライズ中にエラーが発生しました。<br>
                 <code>${stack ?? error}</code>
-            `
-        );
+            `,
+        });
 
         new PopupDialog({
             type: PopupDialog.types.error,
@@ -372,7 +384,7 @@ export class YditsWeb extends FirebaseApp {
         if (typeof this.#initializeStartFrame === "number") {
             this.#initializeTime = this.upTime - this.#initializeStartFrame;
             this.services.debugLogs.add("info", `[${this.name}]`, `Application initialized with version ${this.version.string}. Initialize time: ${Math.round(this.#initializeTime)}ms.`);
-            this.#displayInitializedNotify();
+            this.displayInitializedNotify();
             this.services.elementsManager.getElementById("initializeTime").textContent = `${Math.round(this.#initializeTime)}ms`;
         }
 
@@ -607,14 +619,6 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
-     * イニシャライズ完了を通知する
-     * @returns {void}
-     */
-    #displayInitializedNotify() {
-        this.services.notify.show("message", `YDITS for Web Ver ${this.version.string}`, "");
-    }
-
-    /**
      * 地震履歴ウィンドウ
      * @returns {void}
      */
@@ -630,7 +634,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.eqinfo = new Eqinfo(this);
 
         this.services.api.p2pquake.initialize();
-        this.#displayInitializedNotify();
+        this.displayInitializedNotify();
     }
 
     /**
@@ -646,7 +650,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.debugLogs.add("info", `[${this.name}]`, "Initializing application.");
         this.services.notify = new Notify(this);
 
-        this.#displayInitializedNotify();
+        this.displayInitializedNotify();
     }
 
     /**
