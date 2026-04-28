@@ -11,6 +11,7 @@
 
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { YditsWeb } from "../../ydits-web.js";
+import { Notify } from "../notify/notify.js";
 
 /**
  * 地震情報を扱う。
@@ -108,7 +109,11 @@ export class Eqinfo extends Service {
      * 初期化する。
      */
     initialize() {
-        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
+        this.app.services.notify.showNotify({
+            type: Notify.types.message,
+            title: "",
+            body: `${this.name}をイニシャライズしています…`,
+        });
 
         this.eqHistoryFieldElement = document.getElementById("eqHistoryField");
 

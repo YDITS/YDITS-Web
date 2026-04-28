@@ -12,6 +12,7 @@
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { YditsWeb } from "../../ydits-web.js";
 import { LocalStorage } from "../local-storage/local-storage.js";
+import { Notify } from "../notify/notify.js";
 
 /**
  * 位置情報を管理する。
@@ -51,7 +52,11 @@ export class GeoLocation extends Service {
 
         this.app = app;
 
-        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
+        this.app.services.notify.showNotify({
+            type: Notify.types.message,
+            title: "",
+            body: `${this.name}をイニシャライズしています…`
+        });
 
         this.#getLocationEvent = new Event("getLocation");
         this.#cacheLocationArea = this.#localStorage.cacheLocationArea;
@@ -253,11 +258,11 @@ export class GeoLocation extends Service {
             return;
         }
 
-        this.app.services.notify.show(
-            "message",
-            "",
-            "位置情報を取得しています…"
-        );
+        this.app.services.notify.showNotify({
+            type: Notify.types.message,
+            title: "",
+            body: "位置情報を取得しています…",
+        });
 
         navigator.geolocation.getCurrentPosition(
             (position) => this.#onGet(position),
@@ -429,7 +434,11 @@ export class GeoLocation extends Service {
 
             document.dispatchEvent(this.#getLocationEvent);
 
-            this.app.services.notify.show("message", `${this.app.name} Ver ${this.app.version.string}`, "");
+            this.app.services.notify.showNotify({
+                type: Notify.types.message,
+                title: `${this.app.name} Ver ${this.app.version.string}`,
+                body: "",
+            });
         } catch (error) {
             console.error(error);
 

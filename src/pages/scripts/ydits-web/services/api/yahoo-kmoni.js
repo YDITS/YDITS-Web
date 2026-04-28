@@ -11,6 +11,7 @@
 
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { YditsWeb } from "../../ydits-web.js";
+import { Notify } from "../notify/notify.js";
 
 /**
  * Yahoo! 強震モニタを扱う
@@ -290,15 +291,15 @@ export class YahooKmoni extends Service {
             `Failed to fetch from yahooKmoni: ${error instanceof Error ? error.stack : error}`
         );
 
-        this.app.services.notify.show(
-            "error",
-            "エラー",
-            `
+        this.app.services.notify.showNotify({
+            type: Notify.types.error,
+            title: "エラー",
+            body: `
                 Yahoo! 強震モニタ 接続エラー<br>
                 強震モニタが一時的に利用できないか、ネットワークが低速な可能性があります。<br>
                 <code>${error}</code>
-            `
-        );
+            `,
+        });
 
         this.fetchLastStatus = false;
     }

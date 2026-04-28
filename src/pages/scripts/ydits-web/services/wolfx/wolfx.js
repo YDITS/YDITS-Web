@@ -18,6 +18,7 @@ import { WolfxJmaEewData } from "./data/jma-eew.js";
 import { WolfxJmaEewRest } from "./jma-eew-rest.js";
 import { WolfxJmaEewSocket } from "./jma-eew-websocket.js";
 import { WolfxHeartbeatData } from "./data/heart-beat.js";
+import { Notify } from "../notify/notify.js";
 
 /**
  * Wolfx API
@@ -167,11 +168,11 @@ export class Wolfx extends Service {
         );
 
         if (isRetried) {
-            this.app.services.notify.show(
-                "message",
-                "WebSocket再接続",
-                "Wolfx JMA EEW WebSocket に再接続しました。"
-            );
+            this.app.services.notify.showNotify({
+                type: Notify.types.message,
+                title: "WebSocket再接続",
+                body: "Wolfx JMA EEW WebSocket に再接続しました。",
+            });
         }
     }
 
@@ -189,11 +190,11 @@ export class Wolfx extends Service {
 
         if (!navigator.onLine) { return; }
 
-        this.app.services.notify.show(
-            "message",
-            "WebSocket切断",
-            "Wolfx JMA EEW WebSocket から切断しました。再接続試行中..."
-        );
+        this.app.services.notify.showNotify({
+            type: Notify.types.message,
+            title: "WebSocket切断",
+            body: "Wolfx JMA EEW WebSocket から切断しました。再接続試行中...",
+        });
     }
 
     /**

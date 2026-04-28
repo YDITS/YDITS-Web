@@ -12,6 +12,7 @@
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { PopupDialog } from "../../../packages/popup-dialog/src/popup-dialog.js";
 import { YditsWeb } from "../../ydits-web.js";
+import { Notify } from "../notify/notify.js";
 
 /**
  * 設定を扱う。
@@ -120,7 +121,11 @@ export class Settings extends Service {
      * @returns {void}
      */
     initialize() {
-        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
+        this.app.services.notify.showNotify({
+            type: Notify.types.message,
+            title: "",
+            body: `${this.name}をイニシャライズしています…`,
+        });
 
         let dmdata = this.app.services.api.dmdata;
         let debugLogs = this.app.services.debugLogs;
@@ -396,7 +401,12 @@ export class Settings extends Service {
             localStorage.setItem("debugLogs", JSON.stringify(debugLogs.debugLogs));
 
             sounds.notify.play();
-            notify.show("message", "設定のリセット", "設定をリセットしました。");
+            
+            notify.showNotify({
+                type: Notify.types.message,
+                title: "設定のリセット",
+                body: "設定をリセットしました。",
+            });
         });
 
 
@@ -417,7 +427,12 @@ export class Settings extends Service {
 
         document.getElementById("btn_push_chk").addEventListener("click", () => {
             sounds.notify.play();
-            notify.show("message", "プッシュ通知のテスト", "これはページ内通知です。プッシュ通知とは別に表示されます。");
+
+            notify.showNotify({
+                type: Notify.types.message,
+                title: "プッシュ通知のテスト",
+                body: "これはページ内通知です。プッシュ通知とは別に表示されます。",
+            });
 
             this.app.services.pushNotify.notify(
                 "プッシュ通知のテスト",
@@ -460,7 +475,12 @@ export class Settings extends Service {
             debugLogs.add("start", "[START]", "- Start log -");
 
             sounds.notify.play();
-            notify.show("message", "デバッグログの削除", "デバッグログを削除しました。");
+
+            notify.showNotify({
+                type: Notify.types.message,
+                title: "デバッグログの削除",
+                body: "デバッグログを削除しました。",
+            });
         });
 
         // ----- Debug Mode -----//

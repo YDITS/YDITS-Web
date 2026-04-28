@@ -11,6 +11,7 @@
 
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { YditsWeb } from "../../ydits-web.js";
+import { Notify } from "../notify/notify.js";
 
 /**
  * 緊急地震速報を扱う。
@@ -189,7 +190,11 @@ export class Eew extends Service {
      * @returns {void}
     */
     initialize() {
-        this.app.services.notify.show("message", "", `${this.name}をイニシャライズしています…`);
+        this.app.services.notify.showNotify({
+            type: Notify.types.message,
+            title: "",
+            body: `${this.name}をイニシャライズしています…`,
+        });
 
         switch (this.app.services.settings) {
             case "yahoo-kmoni":
