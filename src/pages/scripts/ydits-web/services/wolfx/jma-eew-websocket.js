@@ -72,10 +72,22 @@ export class WolfxJmaEewSocket {
     data = [];
 
     /**
-     * WebSocket接続を試行した回数
+     * WebSocketインスタンス
+     * @type {WebSocket | null}
+     */
+    socket = null;
+
+    /**
+     * 再接続用のTimeout ID
+     * @type {number | null}
+     */
+    retryTimeout = null;
+
+    /**
+     * WebSocketの再接続試行のインターバル[ms]
      * @type {number}
      */
-    socketRetryCount = 0;
+    reconnectIntervalMs = 0;
 
     /**
      * エンドポイントへWebSocket接続を開始する
@@ -84,6 +96,17 @@ export class WolfxJmaEewSocket {
      * @returns {Promise<void>}
      */
     async connect(endpoint) {
+        if (!navigator.onLine) {
+            return;
+        }
+
+        if (
+            this.socket?.readyState === WebSocket.OPEN ||
+            this.socket?.readyState === WebSocket.CONNECTING
+        ) {
+            return;
+        }
+
         try {
             this.socket = new WebSocket(endpoint);
         } catch (error) {
@@ -130,6 +153,29 @@ export class WolfxJmaEewSocket {
     disconnect() {
         if (this.socket?.readyState === WebSocket.OPEN) {
             this.socket.close();
+            this.socket = null;
+        }
+    }
+
+    /**
+     * WebSocketを再接続する
+     */
+    reconnect() {
+        if (this.retryTimeout) clearTimeout(this.retryTimeout);
+        this.retryTimeout = setTimeout(
+            () => this.connect(this.endpoint),
+            this.reconnectIntervalMs
+        );
+
+        if (this.reconnectIntervalMs === 0) {
+            // 再接続インターバルの初期値
+            this.reconnectIntervalMs = 2000;
+        } else if (this.reconnectIntervalMs >= 60000) {
+            // 再接続インターバルの最大値
+            this.reconnectIntervalMs = 60000;
+        } else {
+            // 指数関数的な再接続インターバル増加
+            this.reconnectIntervalMs *= 2;
         }
     }
 
@@ -140,10 +186,10 @@ export class WolfxJmaEewSocket {
      * @returns {void}
      */
     onOpened(event, callback) {
-        let isRetried = false;
-        if (this.socketRetryCount > 0) isRetried = true;
+        const isRetried = this.reconnectIntervalMs > 0 ? true : false;
         callback(event, isRetried);
-        this.socketRetryCount = 0;
+        this.retryTimeout = null;
+        this.reconnectIntervalMs = 0;
     }
 
     /**
@@ -155,23 +201,35 @@ export class WolfxJmaEewSocket {
     onClosed(event, callback) {
         this.socket = null;
 
-        clearTimeout(this.retryTimeout);
-
-        if (this.autoReconnect) {
-            this.retryTimeout = setTimeout(
-                /**
-                 * @param {(event: CloseEvent) => void} callback 
-                 */
-                (callback) => {
-                    callback(event);
-                    this.socketRetryCount++;
-                },
-                10 * 1000,
-                () => this.connect(this.endpoint)
-            );
+        if (!navigator.onLine) {
+            return;
         }
 
         callback(event);
+
+        if (this.autoReconnect) {
+            this.reconnect();
+        }
+    }
+
+    /**
+     * WebSocket接続でエラーが発生した時の処理
+     * @param {Event} event
+     * @param {(event: Event) => void} callback - コールバック関数
+     * @returns {void}
+     */
+    onError(event, callback) {
+        this.socket = null;
+
+        if (!navigator.onLine) {
+            return;
+        }
+
+        callback(event);
+
+        if (this.autoReconnect) {
+            this.reconnect();
+        }
     }
 
     /**
@@ -208,16 +266,6 @@ export class WolfxJmaEewSocket {
         } catch (error) {
             throw new Error(`Unhandled error at onMessage: ${error}`);
         }
-    }
-
-    /**
-     * WebSocket接続でエラーが発生した時の処理
-     * @param {Event} event
-     * @param {(event: Event) => void} callback - コールバック関数
-     * @returns {void}
-     */
-    onError(event, callback) {
-        callback(event);
     }
 
     /**
