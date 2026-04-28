@@ -630,7 +630,7 @@
                 </div>
             </div>
 
-            <div class="window settings_list" id="license">
+            <div id="licensesWindow" class="window settings_list">
                 <div class="titleBar">
                     <span id="licenseCloseButton" class="material-symbols-outlined closeBtn">
                         arrow_back
@@ -641,16 +641,16 @@
                     </span>
                 </div>
 
-                <div class="content" id="copyrights">
-                    <ul class="qugesl">
-                        <li class="rhkdmh srajis">
-                            <h3 class="qcnsjs">
+                <div id="licenses" class="content">
+                    <ul class="licenses__list">
+                        <li class="licenses__item">
+                            <h3 class="licenses__name--self">
                                 YDITS for Web
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__license">
                                 <p>
-                                    Licensed under the&NonBreakingSpace;
+                                    Licensed under the
 
                                     <a target="_blank"
                                         href="https://github.com/YDITS/YDITS-Web/blob/production/LICENSE">
@@ -663,19 +663,21 @@
                                 </p>
 
                                 <p>
-                                    &copy; よね/Yone
+                                    本サイト内のコンテンツの著作権は、その著作者に帰属します。
                                 </p>
+                            </div>
 
+                            <div class="licenses__copyright">
                                 <p>
-                                    本サイトのコンテンツの著作権は、その著作者に帰属します。
+                                    © よね/Yone
                                 </p>
                             </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://ondoku3.com/ja/about/">
                                     音読さん
 
@@ -685,35 +687,37 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
-                                    警報音声の提供<br>
+                                    各音声の提供<br>
                                 </p>
                             </div>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__copyright">
                                 <p>
-                                    &copy; Ondoku3
+                                    © Ondoku3
                                 </p>
                             </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
-                                MENqE721&NonBreakingSpace;様
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
+                                MENqE721 様
                             </h3>
 
-                            <p>
-                                緊急地震速報(警報)の効果音、地震情報発表時の効果音の提供
-                            </p>
+                            <div class="licenses__resource">
+                                <p>
+                                    緊急地震速報(警報)・地震情報発表時の効果音の提供
+                                </p>
+                            </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://www.jma.go.jp/jma/">
                                     国土交通省 気象庁
 
@@ -723,7 +727,7 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
                                     緊急地震速報、地震情報、高解像度降水ナウキャスト画像、台風予想進路データの提供
                                 </p>
@@ -741,9 +745,9 @@
                                 </p>
                             </div>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__license">
                                 <p>
-                                    Licensed under the&NonBreakingSpace;
+                                    Licensed under the
 
                                     <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.ja">
                                         CC BY 4.0
@@ -755,9 +759,18 @@
                                 </p>
 
                                 <p>
-                                    この情報の利用には，
+                                    この情報の利用には、
 
-                                    <a target="_blank" href="https://www.jma.go.jp/jma/kishou/info/coment.html">
+                                    <a href="https://www.digital.go.jp/resources/open_data/public_data_license_v1.0"
+                                        target="_blank">
+                                        公共データ利用規約（第1.0版）
+
+                                        <span class="material-symbols-outlined open-in-new">
+                                            open_in_new
+                                        </span>
+                                    </a>
+                                    、ならびに
+                                    <a href="https://www.jma.go.jp/jma/kishou/info/coment.html" target="_blank">
                                         気象庁ホームページの利用規約
 
                                         <span class="material-symbols-outlined open-in-new">
@@ -768,12 +781,18 @@
                                     が適用されます。
                                 </p>
                             </div>
+
+                            <div class="licenses__copyright">
+                                <p>
+                                    © 気象庁
+                                </p>
+                            </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://www.ydits.net/docs/dmdata/">
                                     Project DM-D.S.S
 
@@ -783,21 +802,23 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
                                     緊急地震速報データ WebSocket API の提供<br>
                                 </p>
+                            </div>
 
+                            <div class="licenses__copyright">
                                 <p>
-                                    &copy; dmdata.jp
+                                    © dmdata.jp
                                 </p>
                             </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://wolfx.jp/">
                                     Wolfx API
 
@@ -807,21 +828,23 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
                                     緊急地震速報データ WebSocket API の提供
                                 </p>
+                            </div>
 
+                            <div class="licenses__copyright">
                                 <p>
-                                    &copy; Wolfx Project
+                                    © Wolfx Project
                                 </p>
                             </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://typhoon.yahoo.co.jp/weather/jp/earthquake/kyoshin/">
                                     Yahoo!天気・災害 リアルタイム震度（強震モニタ）
 
@@ -831,13 +854,15 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
-                                    緊急地震速報JSONデータの提供<br>
+                                    緊急地震速報JSONデータの提供
                                 </p>
+                            </div>
 
+                            <div class="licenses__copyright">
                                 <a target="_blank" href="https://developer.yahoo.co.jp/">
-                                    &copy; LY Corporation
+                                    © LY Corporation
 
                                     <span class="material-symbols-outlined open-in-new">
                                         open_in_new
@@ -848,8 +873,8 @@
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://www.p2pquake.net/json_api_v2/">
                                     P2P地震情報 JSON API v2
 
@@ -859,13 +884,15 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
-                                    緊急地震速報（警報）、地震情報APIの提供
+                                    緊急地震速報(警報)・地震情報データ API の提供
                                 </p>
+                            </div>
 
+                            <div class="licenses__license">
                                 <p>
-                                    Licensed under the&NonBreakingSpace;
+                                    Licensed under the
 
                                     <a target="_blank" href="https://www.p2pquake.net/secondary_use/">
                                         CC BY 4.0
@@ -875,17 +902,19 @@
                                         </span>
                                     </a>
                                 </p>
+                            </div>
 
+                            <div class="licenses__copyright">
                                 <p>
-                                    &copy; P2P地震情報
+                                    © P2P地震情報
                                 </p>
                             </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://axios-http.com/">
                                     Axios
 
@@ -895,9 +924,9 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
-                                    HTTPクライアントの提供<br>
+                                    HTTPクライアント (CDN Module を利用) の提供
                                 </p>
 
                                 <p>
@@ -905,9 +934,9 @@
                                 </p>
                             </div>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__license">
                                 <p>
-                                    Licensed under the&NonBreakingSpace;
+                                    Licensed under the
 
                                     <a target="_blank"
                                         href="https://raw.githubusercontent.com/axios/axios-docs/refs/heads/master/LICENSE">
@@ -918,17 +947,19 @@
                                         </span>
                                     </a>
                                 </p>
+                            </div>
 
+                            <div class="licenses__copyright">
                                 <p>
-                                    &copy; Matt Zabriskie, Axios contributors
+                                    © Matt Zabriskie, Axios contributors
                                 </p>
                             </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://maplibre.org/">
                                     MapLibre GL JS
 
@@ -938,9 +969,9 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
-                                    マップ描画ライブラリの提供<br>
+                                    マップレンダリングライブラリ (CDN Module を利用) の提供<br>
                                 </p>
 
                                 <p>
@@ -948,9 +979,9 @@
                                 </p>
                             </div>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__license">
                                 <p>
-                                    Licensed under the&NonBreakingSpace;
+                                    Licensed under the
 
                                     <a target="_blank"
                                         href="https://raw.githubusercontent.com/maplibre/maplibre-gl-js/refs/heads/main/LICENSE.txt">
@@ -961,17 +992,19 @@
                                         </span>
                                     </a>
                                 </p>
+                            </div>
 
+                            <div class="licenses__copyright">
                                 <p>
-                                    &copy; MapLibre contributors
+                                    © MapLibre contributors
                                 </p>
                             </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://www.openstreetmap.org/copyright">
                                     OpenStreetMap&reg;
 
@@ -981,39 +1014,37 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
-                                    マップ画像の提供<br>
+                                    マップ画像の提供
                                 </p>
                             </div>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__license">
                                 <p>
-                                    Licensed under the&NonBreakingSpace;
+                                    Licensed under the
 
-                                    <a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">
-                                        CC BY-SA 2.0
+                                    <a href="https://www.openstreetmap.org/copyright" target="_blank">
+                                        Open Data Commons Open Database License (ODbL)
 
                                         <span class="material-symbols-outlined open-in-new">
                                             open_in_new
                                         </span>
                                     </a>
                                 </p>
+                            </div>
 
+                            <div class="licenses__copyright">
                                 <p>
-                                    OpenStreetMapならびに拡大鏡のロゴおよびState of the MapはOpenStreetMap財団の登録商標です。
-                                </p>
-
-                                <p>
-                                    &copy; OpenStreetMap contributors
+                                    © OpenStreetMap contributors
                                 </p>
                             </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://www.maptiler.com/">
                                     MapTiler
 
@@ -1023,23 +1054,53 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
-                                    マップ画像の提供<br>
+                                    マップ画像、
+                                    <a href="https://docs.maptiler.com/sdk-js/" target="_blank">
+                                        MapTiler SDK JS
+
+                                        <span class="material-symbols-outlined open-in-new">
+                                            open_in_new
+                                        </span>
+                                    </a>
+                                    (CDN Module を利用)、
+                                    <a href="https://github.com/maptiler/leaflet-maptilersdk" target="_blank">
+                                        MapTiler SDK Leaflet Module
+
+                                        <span class="material-symbols-outlined open-in-new">
+                                            open_in_new
+                                        </span>
+                                    </a>
+                                    (CDN Module を利用) の提供
                                 </p>
                             </div>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__license">
                                 <p>
-                                    &copy; MapTiler
+                                    Licensed under the
+                                    <a href="https://github.com/maptiler/maptiler-sdk-js/blob/main/LICENSE"
+                                        target="_blank">
+                                        BSD 3-Clause License
+
+                                        <span class="material-symbols-outlined open-in-new">
+                                            open_in_new
+                                        </span>
+                                    </a>
+                                </p>
+                            </div>
+
+                            <div class="licenses__copyright">
+                                <p>
+                                    © MapTiler
                                 </p>
                             </div>
                         </li>
 
                         <hr class="enwfew">
 
-                        <li class="rhkdmh srajis">
-                            <h3>
+                        <li class="licenses__item">
+                            <h3 class="licenses__name">
                                 <a target="_blank" href="https://nominatim.org/">
                                     Nominatim API
 
@@ -1049,15 +1110,33 @@
                                 </a>
                             </h3>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__resource">
                                 <p>
-                                    緯度経度からの市区町村の取得に利用
+                                    Geocoding API の提供
+                                </p>
+
+                                <p>
+                                    緯度・経度からの市区町村の取得に利用
                                 </p>
                             </div>
 
-                            <div class="rhkdmh">
+                            <div class="licenses__license">
                                 <p>
-                                    &copy; Nominatim developer community
+                                    Licensed under the
+
+                                    <a href="https://www.openstreetmap.org/copyright" target="_blank">
+                                        Open Data Commons Open Database License (ODbL)
+
+                                        <span class="material-symbols-outlined open-in-new">
+                                            open_in_new
+                                        </span>
+                                    </a>
+                                </p>
+                            </div>
+
+                            <div class="licenses__copyright">
+                                <p>
+                                    © Nominatim developer community
                                 </p>
                             </div>
                         </li>
