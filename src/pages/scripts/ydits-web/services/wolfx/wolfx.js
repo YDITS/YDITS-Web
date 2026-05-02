@@ -191,7 +191,7 @@ export class Wolfx extends Service {
         if (!navigator.onLine) { return; }
 
         this.app.services.notify.showNotify({
-            type: Notify.types.message,
+            type: Notify.types.error,
             title: "WebSocket切断",
             body: "Wolfx JMA EEW WebSocket から切断しました。再接続試行中...",
         });
