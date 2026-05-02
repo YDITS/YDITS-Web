@@ -27,17 +27,17 @@ main>.content>.content {
 }
 
 main>.content>.content>img {
-    width: 40vw;
+    width: 40dvw;
 }
 
 @media (max-width: 768px) {
     main {
-        width: calc(100% - 20vw);
-        padding-left: 10vw;
-        padding-right: 10vw;
+        width: calc(100% - 20dvw);
+        padding-left: 10dvw;
+        padding-right: 10dvw;
     }
 
     main>.content>.content>img {
-        width: 70vw;
+        width: 70dvw;
     }
 }
