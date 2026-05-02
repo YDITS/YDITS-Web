@@ -16,9 +16,9 @@ html {
 }
 
 main {
-    width: calc(100% - 20vw);
-    padding: 5rem 10vw;
-    min-height: 100vh;
+    width: calc(100% - 20dvw);
+    padding: 5rem 10dvw;
+    min-height: 100dvh;
     height: auto;
 }
 
@@ -61,10 +61,10 @@ main {
 
 @media (max-width: 768px) {
     main {
-        width: calc(100% - 4vw);
+        width: calc(100% - 4dvw);
 
-        padding-left: 2vw;
-        padding-right: 2vw;
+        padding-left: 2dvw;
+        padding-right: 2dvw;
     }
 
     #links .link {

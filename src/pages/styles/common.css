@@ -21,7 +21,7 @@
     --color-link: #33ffa0;
 
     /* header */
-    --header-width-default: 100vw;
+    --header-width-default: 100dvw;
     --header-height-default: 2rem;
     --header-width: env(titlebar-area-width, var(--header-width-default));
     --header-height: env(titlebar-area-height, var(--header-height-default));

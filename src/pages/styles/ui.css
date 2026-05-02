@@ -32,8 +32,8 @@
 
 .dialog {
     position: fixed;
-    top: calc(50vh - 14rem);
-    left: calc(50vw - 16rem);
+    top: calc(50dvh - 14rem);
+    left: calc(50dvw - 16rem);
     display: block;
 
     width: 32rem;
@@ -101,11 +101,11 @@
 
     @media (max-width: 769px) {
         position: fixed;
-        top: 8vh;
-        left: 8vw;
+        top: 8dvh;
+        left: 8dvw;
         margin: 0;
-        width: 84vw;
-        height: 84vh;
+        width: 84dvw;
+        height: 84dvh;
     }
 }
 
@@ -163,7 +163,7 @@
     margin-left: 2rem;
     border-radius: 1rem;
     box-shadow: 0 0 2px 2px #00000040;
-    max-width: calc(100vw - 4rem);
+    max-width: calc(100dvw - 4rem);
     overflow: auto;
     padding: 1rem 2rem;
     background-color: #404040ff;
@@ -192,7 +192,7 @@
     margin-right: 2rem;
     border-radius: 1rem;
     box-shadow: 0 0 2px 2px #00000040;
-    max-width: calc(100vw - 4rem);
+    max-width: calc(100dvw - 4rem);
     overflow: auto;
     padding: 1rem 2rem;
     background-color: #f04040ff;
@@ -259,8 +259,8 @@
 }
 
 #eewAreas {
-    width: calc(100% - 10vw);
-    padding: 2rem 5vw;
+    width: calc(100% - 10dvw);
+    padding: 2rem 5dvw;
     font-size: 1.3rem;
 
     &>.label {
