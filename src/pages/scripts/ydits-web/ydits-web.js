@@ -594,7 +594,7 @@ export class YditsWeb extends FirebaseApp {
 
         safecall(() => {
             let reports = "";
-            for (const [key, value] of Object.keys(this.services.eew.reports[this.services.eew.currentId])) {
+            for (const [key, value] of Object.entries(this.services.eew.reports[this.services.eew.currentId])) {
                 reports += `${key}: ${value}, `;
             }
             this.services.elementsManager.getElementById("debugOutputEewData").textContent = `Current EEW Data: ${reports}`;
