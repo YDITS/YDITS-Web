@@ -625,6 +625,7 @@ export class YditsWeb extends FirebaseApp {
     #eqhistoryMode() {
         this.#mode = YditsWeb.MODES.eqhistory;
 
+        this.services.elementsManager = new ElementsManager(this);
         this.services.datetime = new Datetime(this);
         this.services.datetime.update();
         this.services.debugLogs = new DebugLogs(this);
@@ -644,6 +645,7 @@ export class YditsWeb extends FirebaseApp {
     #debugLogsMode() {
         this.#mode = YditsWeb.MODES.debuglogs;
 
+        this.services.elementsManager = new ElementsManager(this);
         this.services.datetime = new Datetime(this);
         this.services.debugLogs = new DebugLogs(this);
         this.services.datetime.update();
