@@ -34,7 +34,6 @@ class MyService extends Service {
     }
 }
 
-
 // Create a App
 class NewApp extends App {
     constructor() {
@@ -47,7 +46,7 @@ class NewApp extends App {
         });
 
         // Register new service
-        this.registerService(MyService);
+        this.services.myservice = new MyService();
 
         // Use the service (reference from Service.name)
         this.services.myservice.hello();
