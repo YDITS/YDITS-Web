@@ -284,8 +284,6 @@ export class GeoLocation extends Service {
         this.longitude = position.coords.longitude;
         this.accuracy = Math.round(position.coords.accuracy);
 
-        // this.#render();
-
         const urlOfGetCity = this.generateNominatimUrlGetCity({
             latitude: this.latitude,
             longitude: this.longitude,
@@ -410,7 +408,7 @@ export class GeoLocation extends Service {
             errorMessage
         );
 
-        // this.#render();
+        this.isGot = false;
     }
 
     /**
