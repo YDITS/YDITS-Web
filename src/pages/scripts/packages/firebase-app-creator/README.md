@@ -22,7 +22,6 @@ A sample code:
 // Create a Service (Use Service class @/app-creator/service.js)
 class MyService extends Service { }
 
-
 // Create a Firebase App
 class MyApp extends FirebaseApp {
     constructor() {
@@ -35,7 +34,7 @@ class MyApp extends FirebaseApp {
         });
 
         // Register new service
-        this.registerService(MyService);
+        this.services.myservice = new MyService();
 
         // Use the service (reference from Service.name)
         this.services.myservice.hello();
