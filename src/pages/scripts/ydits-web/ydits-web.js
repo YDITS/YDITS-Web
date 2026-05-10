@@ -27,6 +27,7 @@ import { ServiceWorker } from "./services/service-worker/service-worker.js";
 import { PushNotify } from "./services/push-notify/push-notify.js";
 import { Sounds } from "./services/sounds/sounds.js";
 import { Api } from "./services/api/api.js";
+import { P2pquake } from "./services/p2pquake/p2pquake.js";
 import { Settings } from "./services/settings/settings.js";
 import { Map } from "./services/map/map.js";
 
@@ -44,6 +45,7 @@ import { Map } from "./services/map/map.js";
  *     pushNotify: PushNotify,
  *     sounds: Sounds,
  *     api: Api,
+ *     p2pquake: P2pquake,
  *     settings: Settings,
  *     map: Map,
  * }} YditsWebServices
@@ -314,6 +316,7 @@ export class YditsWeb extends FirebaseApp {
             this.services.serviceWorker = new ServiceWorker(this);
             this.services.sounds = new Sounds(this);
             this.services.api = new Api(this);
+            this.services.p2pquake = new P2pquake(this);
             this.services.settings = new Settings(this);
             this.services.map = new Map(this);
 
@@ -400,7 +403,7 @@ export class YditsWeb extends FirebaseApp {
     async #initialize() {
         this.services.settings.initialize();
         await this.services.api.dmdata?.initialize();
-        this.services.api.p2pquake.initialize();
+        this.services.p2pquake.initialize();
         this.services.eew.initialize();
         this.services.eqinfo.initialize();
         await this.services.map.initialize();
@@ -590,7 +593,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.elementsManager.getElementById("debugOutputLanguage").textContent = `Client Language: ${navigator.language}`;
         this.services.elementsManager.getElementById("debugOutputDisplay").textContent = `Display: ${screen.width} x ${screen.height}`;
         this.services.elementsManager.getElementById("debugOutputWolfxJmaEewSocket").textContent = `Wolfx JMA EEW WebSocket: ${this.services.api.wolfx.jmaEewSocket.socket?.readyState ? this.#webSocketReadyStateToText[this.services.api.wolfx.jmaEewSocket.socket?.readyState] : "Disconnected"}`;
-        this.services.elementsManager.getElementById("debugOutputP2pquakeSocket").textContent = `P2P地震情報 WebSocket: ${this.services.api.p2pquake.socket?.readyState ? this.#webSocketReadyStateToText[this.services.api.p2pquake.socket?.readyState] : "Disconnected"}`;
+        this.services.elementsManager.getElementById("debugOutputP2pquakeSocket").textContent = `P2P地震情報 WebSocket: ${this.services.p2pquake.socket?.readyState ? this.#webSocketReadyStateToText[this.services.p2pquake.socket?.readyState] : "Disconnected"}`;
 
         safecall(() => {
             let reports = "";
@@ -634,7 +637,7 @@ export class YditsWeb extends FirebaseApp {
         this.services.notify = new Notify(this);
         this.services.eqinfo = new Eqinfo(this);
 
-        this.services.api.p2pquake.initialize();
+        this.services.p2pquake.initialize();
         this.displayInitializedNotify();
     }
 
