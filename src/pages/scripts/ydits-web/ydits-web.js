@@ -31,25 +31,6 @@ import { Settings } from "./services/settings/settings.js";
 import { Map } from "./services/map/map.js";
 
 /**
- * @typedef {{
- *     datetime: Datetime,
- *     debugLogs: DebugLogs,
- *     elementsManager: ElementsManager,
- *     notify: Notify,
- *     geoLocation: GeoLocation,
- *     eew: Eew,
- *     eqinfo: Eqinfo,
- *     jmaDataFeed: JmaDataFeed,
- *     serviceWorker: ServiceWorker,
- *     pushNotify: PushNotify,
- *     sounds: Sounds,
- *     api: Api,
- *     settings: Settings,
- *     map: Map,
- * }} YditsWebServices
- */
-
-/**
  * YDITS for Web
  */
 export class YditsWeb extends FirebaseApp {
@@ -99,7 +80,7 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
-     * @type {YditsWebServices}
+     * @type {import("./core/types/ydits-web-services.js").YditsWebServices}
      * @override
      */
     // @ts-ignore
