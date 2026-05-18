@@ -13,7 +13,6 @@ import { Service } from "../../../packages/app-creator/src/service.js";
 
 import { YditsWeb } from "../../ydits-web.js";
 import { YahooKmoni } from "./yahoo-kmoni.js";
-import { P2pquake } from "./p2pquake.js";
 import { Dmdata } from "./dmdata.js";
 import { Wolfx } from "../wolfx/wolfx.js";
 
@@ -35,8 +34,6 @@ export class Api extends Service {
 
         this.app = app;
 
-        this.p2pquake = new P2pquake(app);
-
         if (app.mode === YditsWeb.MODES.eqhistory) {
             return;
         }
@@ -52,12 +49,6 @@ export class Api extends Service {
      * @override
      */
     app;
-
-    /**
-     * P2P地震情報のインスタンス
-     * @type {P2pquake}
-     */
-    p2pquake;
 
     /**
      * Wolfx APIのインスタンス
