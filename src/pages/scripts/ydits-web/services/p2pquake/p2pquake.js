@@ -13,7 +13,8 @@ import { Service } from "../../../packages/app-creator/src/service.js";
 import { YditsWeb } from "../../ydits-web.js";
 import { Notify } from "../notify/notify.js";
 import { p2pquakeScaleToTextJp } from "../../core/utils/p2pquake/p2pquake-scale-to-text-jp.js";
-import { p2pquakeTsunamiTypeToTextJp } from "../../core/utils/p2pquake/p2pquake-tsunami-type-to-text-jp.js";
+import { p2pquakeEqinfoTypeToTextJpShort } from "../../core/utils/p2pquake/p2pquake-eqinfo-type-to-text-jp.js";
+import { p2pquakeTsunamiTypeToTextJpShort } from "../../core/utils/p2pquake/p2pquake-tsunami-type-to-text-jp.js";
 import { p2pquakeScaleToYditsScaleColors } from "../../core/utils/p2pquake/p2pquake-scale-to-ydits-scale-colors.js";
 
 /**
@@ -42,7 +43,7 @@ export class P2pquake extends Service {
     static REST_EQINFO_URL = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100");
 
     // DEBUG:
-    // static REST_EQINFO_URL = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100&offset=16");
+    // static REST_EQINFO_URL = new URL("https://api.p2pquake.net/v2/history?codes=551&limit=100&offset=100");
 
     /**
      * WebSocketのURL
@@ -400,7 +401,7 @@ export class P2pquake extends Service {
                         return
                     }
 
-                    list["issue"]["typeJp"] = this.#typeToText(list["issue"]["type"]);
+                    list["issue"]["typeJp"] = p2pquakeEqinfoTypeToTextJpShort(list["issue"]["type"]);
 
                     this.app.services.eqinfo.originTime = new Date(list["earthquake"]["time"]);
 
@@ -417,7 +418,7 @@ export class P2pquake extends Service {
 
                     this.app.services.eqinfo.maxScale = list['earthquake']['maxScale'];
 
-                    this.app.services.eqinfo.maxScaleText = this.#scaleToText(list['earthquake']['maxScale']);
+                    this.app.services.eqinfo.maxScaleText = p2pquakeScaleToTextJp(list['earthquake']['maxScale']);
 
                     this.app.services.eqinfo.regionName = list['earthquake']['hypocenter']['name'];
 
@@ -445,12 +446,12 @@ export class P2pquake extends Service {
 
                     this.app.services.eqinfo.tsunami = list['earthquake']['domesticTsunami'];
 
-                    this.app.services.eqinfo.tsunamiJp = this.#tsunamiTypeToText(list['earthquake']['domesticTsunami']);
+                    this.app.services.eqinfo.tsunamiJp = p2pquakeTsunamiTypeToTextJpShort(list['earthquake']['domesticTsunami']);
 
                     let bgcolor;
                     let color;
 
-                    const colors = this.#scaleToYditsScaleColors(this.app.services.eqinfo.maxScale);
+                    const colors = p2pquakeScaleToYditsScaleColors(this.app.services.eqinfo.maxScale);
                     const backgroundColor = colors.background;
                     const foregroundColor = colors.foreground;
 
@@ -722,7 +723,7 @@ export class P2pquake extends Service {
     #whenEqinfo(data) {
         this.app.services.eqinfo.type = data['issue']['type'];
 
-        this.app.services.eqinfo.typeJp = this.#typeToText(data['issue']['type']);
+        this.app.services.eqinfo.typeJp = p2pquakeEqinfoTypeToTextJpShort(data['issue']['type']);
 
         this.app.services.eqinfo.originTime = new Date(data["earthquake"]["time"]);
 
@@ -739,7 +740,7 @@ export class P2pquake extends Service {
 
         this.app.services.eqinfo.maxScale = data['earthquake']['maxScale'];
 
-        this.app.services.eqinfo.maxScaleText = this.#scaleToText(data['earthquake']['maxScale']);
+        this.app.services.eqinfo.maxScaleText = p2pquakeScaleToTextJp(data['earthquake']['maxScale']);
 
         this.app.services.eqinfo.regionName = data['earthquake']['hypocenter']['name'];
 
@@ -767,9 +768,9 @@ export class P2pquake extends Service {
 
         this.app.services.eqinfo.tsunami = data['earthquake']['domesticTsunami'];
 
-        this.app.services.eqinfo.tsunamiJp = this.#tsunamiTypeToText(data['earthquake']['domesticTsunami']);
+        this.app.services.eqinfo.tsunamiJp = p2pquakeTsunamiTypeToTextJpShort(data['earthquake']['domesticTsunami']);
 
-        const colors = this.#scaleToYditsScaleColors(this.app.services.eqinfo.maxScale);
+        const colors = p2pquakeScaleToYditsScaleColors(this.app.services.eqinfo.maxScale);
         const backgroundColor = colors.background;
         const foregroundColor = colors.foreground;
 
