@@ -10,6 +10,7 @@
  */
 
 /**
+ * 震度配色の object
  * @typedef {{
  *     "unknown": {
  *         background: string,

@@ -12,13 +12,16 @@
 import { Service } from "../../../packages/app-creator/src/service.js";
 import { YditsWeb } from "../../ydits-web.js";
 import { Notify } from "../notify/notify.js";
+import { p2pquakeScaleToTextJp } from "../../core/utils/p2pquake/p2pquake-scale-to-text-jp.js";
+import { p2pquakeTsunamiTypeToTextJp } from "../../core/utils/p2pquake/p2pquake-tsunami-type-to-text-jp.js";
+import { p2pquakeScaleToYditsScaleColors } from "../../core/utils/p2pquake/p2pquake-scale-to-ydits-scale-colors.js";
 
 /**
- * P2P地震情報 APIを扱う。
+ * P2P地震情報 APIを扱う
  */
 export class P2pquake extends Service {
     /**
-     * キープアライブの間隔[ms]
+     * KeepAliveの間隔[ms]
      * @type {number}
      */
     static KEEP_ALIVE_INTERVAL_MS = 20 * 1000;
@@ -51,118 +54,6 @@ export class P2pquake extends Service {
     // static SOCKET_URL = new URL("wss://api-realtime-sandbox.p2pquake.net/v2/ws");
 
     /**
-     * 最大震度をテキストに変換するオブジェクト
-     * @type {Object<string, string>}
-     */
-    static maxScaleToText = {
-        "-1": "?",
-        "0": "0",
-        "10": "1",
-        "20": "2",
-        "30": "3",
-        "40": "4",
-        "45": "5弱",
-        "50": "5強",
-        "55": "6弱",
-        "60": "6強",
-        "70": "7"
-    }
-
-    /**
-     * 地震情報の種類を日本語に変換するオブジェクト
-     * @type {Object<string, string>}
-     */
-    static typeToJp = {
-        "ScalePrompt": "震度速報",
-        "Destination": "震源情報",
-        "ScaleAndDestination": "震源・震度情報",
-        "DetailScale": "各地の震度情報",
-        "Foreign": "遠地地震情報",
-        "Other": "地震情報"
-    }
-
-    /**
-     * 津波情報をテキストに変換するオブジェクト
-     * @type {Object<string, string>}
-     */
-    static tsunamiLevels = {
-        'None': '津波の心配なし',
-        'Unknown': '津波の影響は不明',
-        'Checking': '津波の影響を現在調査中',
-        'NonEffective': '若干の海面変動が予想されるが、被害の心配はなし',
-        'Watch': '津波注意報が発表',
-        'Warning': '津波警報等（大津波警報・津波警報あるいは津波注意報）が発表'
-    };
-
-    /**
-     * 震度をコードに変換するオブジェクト
-     * @type {Object<string, Object<string, string>>}
-     */
-    static scaleToColors = {
-        "-1": {
-            "bgcolor": "#8080c0",
-            "color": "#ffffff"
-        },
-        "0": {
-            "bgcolor": "#8080c0",
-            "color": "#ffffff"
-        },
-        "10": {
-            "bgcolor": "#808080",
-            "color": "#ffffff"
-        },
-        "20": {
-            "bgcolor": "#4040c0",
-            "color": "#ffffff"
-        },
-        "30": {
-            "bgcolor": "#40c040",
-            "color": "#ffffff"
-        },
-        "40": {
-            "bgcolor": "#c0c040",
-            "color": "#ffffff"
-        },
-        "45": {
-            "bgcolor": "#c0a040",
-            "color": "#ffffff"
-        },
-        "50": {
-            "bgcolor": "#c08040",
-            "color": "#ffffff"
-        },
-        "55": {
-            "bgcolor": "#c04040",
-            "color": "#ffffff"
-        },
-        "60": {
-            "bgcolor": "#a04040",
-            "color": "#ffffff"
-        },
-        "70": {
-            "bgcolor": "#804080",
-            "color": "#ffffff"
-        }
-    }
-
-    /**
-     * @param {YditsWeb} app
-     */
-    constructor(app) {
-        super(app, {
-            name: "p2pquake",
-            description: "P2P地震情報 APIを扱うサービス。",
-            version: "0.0.0",
-            author: "よね/Yone",
-            copyright: "Copyright © よね/Yone"
-        });
-
-        this.app = app;
-
-        this.startSocket();
-    }
-
-    /**
      * @type {YditsWeb}
      * @override
      */
@@ -181,10 +72,10 @@ export class P2pquake extends Service {
     retryTimeout = null;
 
     /**
-     * 最後にキープアライブを実行したDate
-     * @type {Date}
+     * 現在対象の緊急地震速報(警報)のID
+     * @type {string  | null}
      */
-    #lastRunKeepAliveDate = new Date();
+    currentEewId = null;
 
     /**
      * 保持している地震情報の数
@@ -244,12 +135,26 @@ export class P2pquake extends Service {
     }
 
     /**
-     * 数値を2桁にパディングする
-     * @param {number} value
-     * @returns {string}
+     * 最後にキープアライブを実行したDate
+     * @type {Date}
      */
-    #zeroPadding(value) {
-        return String(value).padStart(2, '0');
+    #lastRunKeepAliveDate = new Date();
+
+    /**
+     * @param {YditsWeb} app
+     */
+    constructor(app) {
+        super(app, {
+            name: "p2pquake",
+            description: "P2P地震情報 APIを扱うサービス。",
+            version: "0.0.0",
+            author: "よね/Yone",
+            copyright: "Copyright © よね/Yone"
+        });
+
+        this.app = app;
+
+        this.startSocket();
     }
 
     /**
@@ -262,42 +167,44 @@ export class P2pquake extends Service {
             switch (code) {
                 // eqinfo
                 case 551:
-                    switch (this.app.services.eqinfo.type) {
-                        case "DetailScale":
-                            this.app.services.pushNotify.notify(
-                                this.app.services.eqinfo.typeJp,
-                                {
-                                    body: `${this.app.services.eqinfo.regionName}を震源とする、最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。\n規模は${this.app.services.eqinfo.magnitudeText}、深さは${this.app.services.eqinfo.depthText}と推定されます。\n${this.app.services.eqinfo.tsunamiJp}`
-                                }
-                            );
+                    const eqinfo = this.app.services.eqinfo;
 
+                    switch (eqinfo.type) {
+                        case "DetailScale":
                             this.app.services.notify.showNotify({
                                 type: Notify.types.message,
-                                title: this.app.services.eqinfo.typeJp,
+                                title: eqinfo.typeJp,
                                 body: `
-                                    ${this.app.services.eqinfo.regionName}を震源とする、最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。<br>
-                                    規模は${this.app.services.eqinfo.magnitudeText}、深さは${this.app.services.eqinfo.depthText}と推定されます。<br>
-                                    ${this.app.services.eqinfo.tsunamiJp}
+                                    ${eqinfo.regionName}を震源とする、最大震度${eqinfo.maxScaleText}の地震がありました。<br>
+                                    規模は${eqinfo.magnitudeText}、深さは${eqinfo.depthText}と推定されます。<br>
+                                    ${eqinfo.tsunamiJp}
                                 `,
                             });
+
+                            this.app.services.pushNotify.notify(
+                                eqinfo.typeJp,
+                                {
+                                    body: `${eqinfo.regionName}を震源とする、最大震度${eqinfo.maxScaleText}の地震がありました。\n規模は${eqinfo.magnitudeText}、深さは${eqinfo.depthText}と推定されます。\n${eqinfo.tsunamiJp}`
+                                }
+                            );
                             break;
 
                         case "ScalePrompt":
-                            this.app.services.pushNotify.notify(
-                                this.app.services.eqinfo.typeJp,
-                                {
-                                    body: `最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。\n${this.app.services.eqinfo.tsunamiJp}`
-                                }
-                            );
-
                             this.app.services.notify.showNotify({
                                 type: Notify.types.message,
-                                title: this.app.services.eqinfo.typeJp,
+                                title: eqinfo.typeJp,
                                 body: `
-                                    最大震度${this.app.services.eqinfo.maxScaleText}の地震がありました。<br>
-                                    ${this.app.services.eqinfo.tsunamiJp}
+                                    最大震度${eqinfo.maxScaleText}の地震がありました。<br>
+                                    ${eqinfo.tsunamiJp}
                                 `,
                             });
+
+                            this.app.services.pushNotify.notify(
+                                eqinfo.typeJp,
+                                {
+                                    body: `最大震度${eqinfo.maxScaleText}の地震がありました。\n${eqinfo.tsunamiJp}`
+                                }
+                            );
                             break;
 
                         default:
@@ -307,33 +214,43 @@ export class P2pquake extends Service {
 
                 // EEW
                 case 556:
-                    if (this.app.services.eew.reports[this.app.services.eew.currentId].isCancel) {
+                    const eew = this.app.services.eew;
+                    const isCanceled = (
+                        typeof this.currentEewId === "string" &&
+                        Object.keys(eew.reports).includes(this.currentEewId)
+                    ) ? (
+                        eew.reports[this.currentEewId].isCancel
+                    ) : (
+                        false
+                    );
+
+                    if (isCanceled) {
+                        this.app.services.notify.showEewNotify({
+                            title: "緊急地震速報 (取消)",
+                            body: "先程の緊急地震速報は取り消されました。",
+                        });
+
                         this.app.services.pushNotify.notify(
                             "緊急地震速報 (取消)",
                             {
                                 body: "先程の緊急地震速報は取り消されました。"
                             }
                         );
-
-                        this.app.services.notify.showEewNotify({
-                            title: "緊急地震速報 (取消)",
-                            body: "先程の緊急地震速報は取り消されました。",
-                        });
                     } else {
-                        this.app.services.pushNotify.notify(
-                            "緊急地震速報 (警報)",
-                            {
-                                body: `《次の地域では強い揺れに備えてください》\n${this.app.services.eew.warnAreasText}`
-                            }
-                        );
-
                         this.app.services.notify.showEewNotify({
                             title: `緊急地震速報 (警報)`,
                             body: `
                                 《次の地域では強い揺れに備えてください》<br>
-                                ${this.app.services.eew.warnAreasText}
+                                ${eew.warnAreasText}
                             `
                         });
+
+                        this.app.services.pushNotify.notify(
+                            "緊急地震速報 (警報)",
+                            {
+                                body: `《次の地域では強い揺れに備えてください》\n${eew.warnAreasText}`
+                            }
+                        );
                     }
                     break;
 
@@ -369,6 +286,7 @@ export class P2pquake extends Service {
 
                         this.app.services.eew.currentIdLast = this.app.services.eew.currentId;
                         this.app.services.eew.currentId = DATA.id;
+                        this.currentEewId = DATA.id;
 
                         const NOW_TIME = this.app.services.datetime.gmt.getTime();
                         const ISSUE_TIME = new Date(DATA.issue.time).getTime();
@@ -482,11 +400,7 @@ export class P2pquake extends Service {
                         return
                     }
 
-                    if (list["issue"]["type"] in P2pquake.typeToJp) {
-                        list["issue"]["typeJp"] = P2pquake.typeToJp[list["issue"]["type"]];
-                    } else {
-                        list["issue"]["typeJp"] = "";
-                    }
+                    list["issue"]["typeJp"] = this.#typeToText(list["issue"]["type"]);
 
                     this.app.services.eqinfo.originTime = new Date(list["earthquake"]["time"]);
 
@@ -503,11 +417,7 @@ export class P2pquake extends Service {
 
                     this.app.services.eqinfo.maxScale = list['earthquake']['maxScale'];
 
-                    if (this.app.services.eqinfo.maxScale in P2pquake.maxScaleToText) {
-                        this.app.services.eqinfo.maxScaleText = P2pquake.maxScaleToText[String(this.app.services.eqinfo.maxScale)];
-                    } else {
-                        this.app.services.eqinfo.maxScaleText = "?";
-                    }
+                    this.app.services.eqinfo.maxScaleText = this.#scaleToText(list['earthquake']['maxScale']);
 
                     this.app.services.eqinfo.regionName = list['earthquake']['hypocenter']['name'];
 
@@ -518,7 +428,7 @@ export class P2pquake extends Service {
                     this.app.services.eqinfo.magnitude = list['earthquake']['hypocenter']['magnitude'];
 
                     if (this.app.services.eqinfo.magnitude == -1) {
-                        this.app.services.eqinfo.magnitudeText = 'M調査中または不明';
+                        this.app.services.eqinfo.magnitudeText = '調査中または不明';
                     } else {
                         this.app.services.eqinfo.magnitudeText = `M${this.app.services.eqinfo.magnitude}`;
                     }
@@ -535,22 +445,14 @@ export class P2pquake extends Service {
 
                     this.app.services.eqinfo.tsunami = list['earthquake']['domesticTsunami'];
 
-                    if (this.app.services.eqinfo.tsunami in P2pquake.tsunamiLevels) {
-                        this.app.services.eqinfo.tsunamiJp = P2pquake.tsunamiLevels[this.app.services.eqinfo.tsunami];
-                    } else {
-                        this.app.services.eqinfo.tsunamiJp = "津波の影響は不明";
-                    }
+                    this.app.services.eqinfo.tsunamiJp = this.#tsunamiTypeToText(list['earthquake']['domesticTsunami']);
 
                     let bgcolor;
                     let color;
 
-                    if (this.app.services.eqinfo.maxScale in P2pquake.scaleToColors) {
-                        bgcolor = P2pquake.scaleToColors[this.app.services.eqinfo.maxScale]["bgcolor"];
-                        color = P2pquake.scaleToColors[this.app.services.eqinfo.maxScale]["color"];
-                    } else {
-                        bgcolor = "#404040ff";
-                        color = "#ffffffff";
-                    }
+                    const colors = this.#scaleToYditsScaleColors(this.app.services.eqinfo.maxScale);
+                    const backgroundColor = colors.background;
+                    const foregroundColor = colors.foreground;
 
                     this.app.services.eqinfo.addToList(true, this.eqinfoNum)
                     this.eqinfoNum++;
@@ -726,6 +628,7 @@ export class P2pquake extends Service {
         }
 
         this.app.services.eew.currentId = data._id;
+        this.currentEewId = data._id;
 
         const NOW_TIME = this.app.services.datetime.gmt.getTime();
         const ISSUE_TIME = new Date(data.issue.time).getTime();
@@ -819,11 +722,7 @@ export class P2pquake extends Service {
     #whenEqinfo(data) {
         this.app.services.eqinfo.type = data['issue']['type'];
 
-        if (this.app.services.eqinfo.type in P2pquake.typeToJp) {
-            this.app.services.eqinfo.typeJp = P2pquake.typeToJp[this.app.services.eqinfo.type];
-        } else {
-            this.app.services.eqinfo.typeJp = "";
-        }
+        this.app.services.eqinfo.typeJp = this.#typeToText(data['issue']['type']);
 
         this.app.services.eqinfo.originTime = new Date(data["earthquake"]["time"]);
 
@@ -840,11 +739,7 @@ export class P2pquake extends Service {
 
         this.app.services.eqinfo.maxScale = data['earthquake']['maxScale'];
 
-        if (this.app.services.eqinfo.maxScale in P2pquake.maxScaleToText) {
-            this.app.services.eqinfo.maxScaleText = P2pquake.maxScaleToText[String(this.app.services.eqinfo.maxScale)];
-        } else {
-            this.app.services.eqinfo.maxScaleText = "?";
-        }
+        this.app.services.eqinfo.maxScaleText = this.#scaleToText(data['earthquake']['maxScale']);
 
         this.app.services.eqinfo.regionName = data['earthquake']['hypocenter']['name'];
 
@@ -872,22 +767,11 @@ export class P2pquake extends Service {
 
         this.app.services.eqinfo.tsunami = data['earthquake']['domesticTsunami'];
 
-        if (this.app.services.eqinfo.tsunami in P2pquake.tsunamiLevels) {
-            this.app.services.eqinfo.tsunamiJp = P2pquake.tsunamiLevels[this.app.services.eqinfo.tsunami];
-        } else {
-            this.app.services.eqinfo.tsunamiJp = "津波の影響は不明";
-        }
+        this.app.services.eqinfo.tsunamiJp = this.#tsunamiTypeToText(data['earthquake']['domesticTsunami']);
 
-        let bgcolor;
-        let color;
-
-        if (this.app.services.eqinfo.maxScale in P2pquake.scaleToColors) {
-            bgcolor = P2pquake.scaleToColors[this.app.services.eqinfo.maxScale]["bgcolor"];
-            color = P2pquake.scaleToColors[this.app.services.eqinfo.maxScale]["color"];
-        } else {
-            bgcolor = "#404040ff";
-            color = "#ffffffff";
-        }
+        const colors = this.#scaleToYditsScaleColors(this.app.services.eqinfo.maxScale);
+        const backgroundColor = colors.background;
+        const foregroundColor = colors.foreground;
 
         this.lastId = this.latestId;
 
@@ -966,5 +850,14 @@ export class P2pquake extends Service {
             this.socket.send("ping");
             this.#lastRunKeepAliveDate = nowDate;
         }
+    }
+
+    /**
+     * 数値を2桁にパディングする
+     * @param {number} value
+     * @returns {string}
+     */
+    #zeroPadding(value) {
+        return String(value).padStart(2, '0');
     }
 }

@@ -81,7 +81,7 @@ export class YditsWeb extends FirebaseApp {
     }
 
     /**
-     * @type {import("./core/types/ydits-web-services.js").YditsWebServices}
+     * @type {import("./core/types/services/ydits-web-services.js").YditsWebServices}
      * @override
      */
     // @ts-ignore
