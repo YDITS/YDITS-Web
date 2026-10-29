@@ -4,18 +4,19 @@
 
 ## Overview
 
-**YDITS for Web** is a web application that allows users to quickly get disaster prevention information.
+**YDITS for Web** is a web application that allows users to quickly get disaster information.
 
 Application Published at https://webapp.ydits.net/ .  
 Introduction website: https://www.ydits.net/apps/web/
 
 ## Usage
 
-Deploy the `src/pages/` directory.  
-Since it has a serverless architecture, it can be deployed using any method you prefer.
+Deploy directory `src/pages/`.
+
+Since it has a zero-build, no-framework, serverless architecture, it can be deployed in any way.
 
 ## License
 
 Licensed under the [Apache License 2.0](./LICENSE).
 
-Copyright © よね/Yone
+Copyright © 2022-2026 よね/Yone
