@@ -1,3 +1,4 @@
 {
-    "liveServer.settings.root": "/src/pages/"
+    "liveServer.settings.root": "src/pages/",
+    "livePreview.serverRoot": "src/pages/",
 }
