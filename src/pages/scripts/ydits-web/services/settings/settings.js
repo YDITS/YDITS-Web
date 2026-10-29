@@ -2,7 +2,7 @@
  *
  * YDITS for Web
  *
- * Copyright (C) よね/Yone
+ * Copyright (C) 2022-2026 よね/Yone
  * Licensed under the Apache License 2.0.
  *
  * https://github.com/YDITS/YDITS-Web
@@ -401,7 +401,7 @@ export class Settings extends Service {
             localStorage.setItem("debugLogs", JSON.stringify(debugLogs.debugLogs));
 
             sounds.notify.play();
-            
+
             notify.showNotify({
                 type: Notify.types.message,
                 title: "設定のリセット",

@@ -4,7 +4,7 @@
 
     YDITS for Web
 
-    Copyright (C) よね/Yone
+    Copyright (C) 2022-2026 よね/Yone
     Licensed under the Apache License 2.0.
 
     https://github.com/YDITS/YDITS-Web
@@ -18,10 +18,10 @@
     width: 100%;
     min-height: calc(100dvh - var(--header-height) - var(--footer-height));
     text-align: center;
-    
+
     flex-direction: column;
     justify-content: center;
-    align-items: center;    
+    align-items: center;
     padding: 2rem 1rem;
 
     gap: 2rem;
