@@ -9,7 +9,7 @@
  *
  */
 
-import { Version, VersionLevel } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
+import { Version, VersionLevel } from "https://cdn.yoneyo.com/scripts/version-js@1.1.0/version.js";
 import { FirebaseApp } from "../packages/firebase-app-creator/src/app.js";
 import { safecall } from "../packages/safecaller/src/safecaller.js";
 import { PopupDialog } from "../packages/popup-dialog/src/popup-dialog.js";

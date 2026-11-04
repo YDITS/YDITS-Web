@@ -8,7 +8,7 @@
  *
  */
 
-import { Version } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
+import { Version } from "https://cdn.yoneyo.com/scripts/version-js@1.1.0/version.js";
 
 /**
  * アプリケーションを作成する

@@ -14,12 +14,12 @@
     ],
     "icons": [
         {
-            "src": "https://cdn.ydits.net/images/ydits_logos/ydits_icon_512px.png",
+            "src": "https://cdn.ydits.net/images/ydits-logos/ydits_icon_512px.png",
             "type": "image/png",
             "sizes": "512x512"
         },
         {
-            "src": "https://cdn.ydits.net/images/ydits_logos/ydits_icon_192px.png",
+            "src": "https://cdn.ydits.net/images/ydits-logos/ydits_icon_192px.png",
             "type": "image/png",
             "sizes": "192x192"
         }
