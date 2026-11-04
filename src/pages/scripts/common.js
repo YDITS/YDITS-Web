@@ -9,7 +9,7 @@
  *
  */
 
-import { Render } from "https://cdn.yoneyo.com/scripts/render@1.0.0/render.js";
+import { Render } from "https://cdn.yoneyo.com/scripts/render-js@1.0.0-beta.2/dist/render.js";
 
 const render = new Render();
 

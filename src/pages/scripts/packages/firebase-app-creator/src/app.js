@@ -8,7 +8,7 @@
  *
  */
 
-import { Version } from "https://cdn.yoneyo.com/scripts/version@1.1.0/version.js";
+import { Version } from "https://cdn.yoneyo.com/scripts/version-js@1.1.0/version.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
 import { App } from "../../app-creator/src/app.js";
