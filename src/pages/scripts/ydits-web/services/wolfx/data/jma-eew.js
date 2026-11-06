@@ -30,7 +30,7 @@ export class WolfxJmaEewData {
      *     "Hypocenter": string?,
      *     "Latitude": number?,
      *     "Longitude": number?,
-     *     "Magunitude": number?,
+     *     "Magnitude": number?,
      *     "Depth": number?,
      *     "MaxIntensity": string?,
      *     "Accuracy": {
@@ -52,6 +52,7 @@ export class WolfxJmaEewData {
      *     }>?,
      *     "isSea": boolean?,
      *     "isTraining": boolean?,
+     *     "isAssumption": boolean?,
      *     "isWarn": boolean?,
      *     "isFinal": boolean?,
      *     "isCancel": boolean?,
@@ -71,7 +72,7 @@ export class WolfxJmaEewData {
         this.hypocenter = data["Hypocenter"] || null;
         this.latitude = data["Latitude"] || null;
         this.longitude = data["Longitude"] || null;
-        this.magnitude = data["Magunitude"] || null;
+        this.magnitude = data["Magnitude"] || null;
         this.depth = data["Depth"] || null;
         this.maxIntensity = data["MaxIntensity"] || null;
         this.accuracyEpicenter = data["Accuracy"]?.["Epicenter"] || null;
@@ -82,6 +83,7 @@ export class WolfxJmaEewData {
         this.warnAreas = new WolfxJmaEewWarnAreas(data["WarnArea"]);
         this.isSea = data["isSea"];
         this.isTraining = data["isTraining"];
+        this.isAssumption = data["isAssumption"];
         this.isWarning = data["isWarn"];
         this.isFinal = data["isFinal"];
         this.isCancel = data["isCancel"];
@@ -131,7 +133,17 @@ export class WolfxJmaEewData {
      * @return {string}
      */
     get magnitudeText() {
-        return `M ${this.magnitude}`;
+        const magnitude = this.magnitude;
+
+        if (this.isAssumption && magnitude === 1.0) {
+            return "仮定震源要素";
+        }
+
+        if (typeof magnitude === "number") {
+            return `M ${magnitude}`;
+        } else {
+            return "不明";
+        }
     }
 
 
@@ -140,10 +152,20 @@ export class WolfxJmaEewData {
      * @return {string}
      */
     get depthText() {
-        if (typeof this.depth === "number") {
+        const depth = this.depth;
+
+        if (this.isAssumption && depth === 10) {
+            return "仮定震源要素";
+        }
+
+        if (depth === 0) {
+            return "ごく浅い";
+        }
+
+        if (typeof depth === "number") {
             return `約${this.depth}km`;
         } else {
-            return "ごく浅い";
+            return "不明";
         }
     }
 }
