@@ -16,7 +16,7 @@ html {
 }
 
 main {
-    width: calc(100% - 20dvw);
+    width: 100%;
     padding: 5rem 10dvw;
     min-height: 100dvh;
     height: auto;
@@ -61,7 +61,7 @@ main {
 
 @media (max-width: 768px) {
     main {
-        width: calc(100% - 4dvw);
+        width: 100%;
 
         padding-left: 2dvw;
         padding-right: 2dvw;
