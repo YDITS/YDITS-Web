@@ -20,7 +20,7 @@
     padding: 1rem;
     background-color: #00000000;
     font-size: 1rem;
-    transition: background-color .3s;
+    transition: background-color var(--transition-duration);
 
     &:hover {
         background-color: #fff;
@@ -124,7 +124,7 @@
     background-color: #7f7f7f;
     cursor: pointer;
 
-    transition: all .2s;
+    transition: all var(--transition-duration);
 
     &>.span {
         position: relative;
@@ -138,7 +138,7 @@
 
         background-color: #fff;
 
-        transition: all .2s;
+        transition: all var(--transition-duration);
     }
 
     &.on {
@@ -171,7 +171,7 @@
     font-weight: bold;
 
     z-index: 2;
-    transition: all .4s;
+    transition: all var(--transition-duration);
 
     &.active {
         visibility: visible;
@@ -202,7 +202,7 @@
 
     z-index: 3;
     cursor: pointer;
-    transition: all .4s;
+    transition: all var(--transition-duration);
 
     @media (max-width: 768px) {
         padding: 1rem 1rem;
@@ -240,7 +240,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: calc(100% - 4rem);
+        width: 100%;
         padding: 2rem;
         background-color: #f05050ff;
     }
