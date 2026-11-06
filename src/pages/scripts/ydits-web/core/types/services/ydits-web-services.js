@@ -16,7 +16,6 @@ import { Notify } from "../../../services/notify/notify.js";
 import { GeoLocation } from "../../../services/geolocation/geolocation.js";
 import { Eew } from "../../../services/eew/eew.js";
 import { Eqinfo } from "../../../services/eqinfo/eqinfo.js";
-import { JmaDataFeed } from "../../../services/jma/jma-data-feed.js";
 import { ServiceWorker } from "../../../services/service-worker/service-worker.js";
 import { PushNotify } from "../../../services/push-notify/push-notify.js";
 import { Sounds } from "../../../services/sounds/sounds.js";
@@ -35,7 +34,6 @@ import { Map } from "../../../services/map/map.js";
  *     geoLocation: GeoLocation,
  *     eew: Eew,
  *     eqinfo: Eqinfo,
- *     jmaDataFeed: JmaDataFeed,
  *     serviceWorker: ServiceWorker,
  *     pushNotify: PushNotify,
  *     sounds: Sounds,

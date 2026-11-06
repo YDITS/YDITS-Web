@@ -22,7 +22,6 @@ import { Notify } from "./services/notify/notify.js";
 import { GeoLocation } from "./services/geolocation/geolocation.js";
 import { Eew } from "./services/eew/eew.js";
 import { Eqinfo } from "./services/eqinfo/eqinfo.js";
-import { JmaDataFeed } from "./services/jma/jma-data-feed.js";
 import { ServiceWorker } from "./services/service-worker/service-worker.js";
 import { PushNotify } from "./services/push-notify/push-notify.js";
 import { Sounds } from "./services/sounds/sounds.js";
@@ -292,7 +291,6 @@ export class YditsWeb extends FirebaseApp {
             this.services.notify = new Notify(this);
             this.services.eew = new Eew(this);
             this.services.eqinfo = new Eqinfo(this);
-            this.services.jmaDataFeed = new JmaDataFeed(this);
             this.services.serviceWorker = new ServiceWorker(this);
             this.services.sounds = new Sounds(this);
             this.services.api = new Api(this);
@@ -436,10 +434,6 @@ export class YditsWeb extends FirebaseApp {
         this.services.elementsManager.getElementById("homeBtn").addEventListener("click", () => {
             this.services.map.setViewHome();
         });
-
-        // document.getElementById("menuJmaDataFeed").addEventListener("click", () => {
-        //     document.getElementById("jmaDataFeed").classList.add("active");
-        // });
 
         this.services.elementsManager.getElementById("menuSettings").addEventListener("click", () => {
             this.services.elementsManager.getElementById("settings").classList.add("active");
