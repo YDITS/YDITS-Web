@@ -62,7 +62,8 @@
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdn.yoneyo.com/styles/local-noto-sans-jp.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&icon_names=arrow_back,article,bug_report,chevron_right,close,code,help,history,home_pin,info,location_on,mail,map,menu,monitor,notifications,open_in_new,policy,reset_wrench,settings,volume_up,warning&display=block">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&icon_names=arrow_back,article,bug_report,chevron_right,close,code,help,history,home_pin,info,location_on,mail,map,menu,monitor,notifications,open_in_new,policy,reset_wrench,settings,volume_up,warning&display=block">
 
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@^5.3.0/dist/maplibre-gl.css">
@@ -115,7 +116,6 @@
     <link rel="modulepreload" href="./scripts/ydits-web/services/eqinfo/eqinfo.js">
     <link rel="modulepreload" href="./scripts/ydits-web/services/geolocation/geolocation.js">
     <link rel="modulepreload" href="./scripts/ydits-web/services/intensity/intensity.js">
-    <link rel="modulepreload" href="./scripts/ydits-web/services/jma/jma-data-feed.js">
     <link rel="modulepreload" href="./scripts/ydits-web/services/local-storage/local-storage.js">
     <link rel="modulepreload" href="./scripts/ydits-web/services/map/map.js">
     <link rel="modulepreload" href="./scripts/ydits-web/services/notify/notify.js">
@@ -241,15 +241,6 @@
                         </div>
                     </div>
 
-                    <!-- <div class="lists">
-                        <div class="list top bottom" id="menuJmaDataFeed">
-                            <span class="material-symbols-outlined">
-                                database
-                            </span>
-                            気象庁 電文
-                        </div>
-                    </div> -->
-
                     <div class="lists">
                         <div class="list top" id="menuSettings" title="設定を開く" tabindex="0" role="button"
                             aria-label="設定を開く" aria-roledescription="クリックすると 設定 を開きます。">
@@ -306,50 +297,6 @@
                     </div>
 
                     <p id="menuVersion" class="version"></p>
-                </div>
-            </div>
-
-            <div class="window" id="jmaDataFeed">
-                <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
-                    <span class="title">気象庁防災情報電文</span>
-                </div>
-
-                <div class="content">
-                    <ul class="lists">
-                        <li class="list top active" id="openJmaDataFeedEqvol">
-                            高頻度フィード 地震火山
-                        </li>
-                        <li class="list bottom" id="openJmaDataFeedEqvolLong">
-                            長期フィード 地震火山
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="window" id="jmaDataFeedEqvol">
-                <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
-                    <span class="title">気象庁防災情報電文 &gt; 高頻度フィード 地震火山</span>
-                </div>
-
-                <div class="content">
-                    <ul id="jmaDataFeedEqvolList">
-                        <li>未実装</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="window" id="jmaDataFeedEqvolLong">
-                <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
-                    <span class="title">気象庁防災情報電文 &gt; 高頻度フィード 地震火山</span>
-                </div>
-
-                <div class="content">
-                    <ul id="jmaDataFeedEqvolLongList">
-                        <li>未実装</li>
-                    </ul>
                 </div>
             </div>
 
