@@ -162,17 +162,29 @@
         <div id="control" class="control">
             <div id="list" class="control-nav">
                 <ul class="control-nav__list">
-                    <li id="menuBtn" class="control-nav__item" title="メニューを開く" tabindex="0" role="button"
-                        aria-label="メニューを開く" aria-roledescription="クリックすると メニュー を開きます。" aria-disabled="false">
-                        <span class="material-symbols-outlined">menu</span>
+                    <li class="control-nav__item" title="メニューを開く" tabindex="0" role="button" aria-label="メニューを開く"
+                        aria-roledescription="クリックすると メニュー を開きます。" aria-disabled="false">
+                        <button id="menuBtn" class="control-nav__button">
+                            <span class="material-symbols-outlined">
+                                menu
+                            </span>
+                        </button>
                     </li>
-                    <li id="eqHistoryBtn" class="control-nav__item" title="地震履歴を開く" tabindex="0" role="button"
+                    <li class="control-nav__item control-nav__eqhistory" title="地震履歴を開く" tabindex="0" role="button"
                         aria-label="地震履歴を開く" aria-roledescription="クリックすると 地震履歴一覧 を 展開します。" aria-disabled="false">
-                        <span class="material-symbols-outlined">history</span>
+                        <button id="eqHistoryBtn" class="control-nav__button">
+                            <span class="material-symbols-outlined">
+                                history
+                            </span>
+                        </button>
                     </li>
-                    <li id="homeBtn" class="control-nav__item" title="マップを初期位置に移動する" tabindex="0" role="button"
+                    <li class="control-nav__item" title="マップを初期位置に移動する" tabindex="0" role="button"
                         aria-label="マップを初期位置に移動する" aria-roledescription="クリックすると マップを初期位置に移動します。" aria-disabled="false">
-                        <span class="material-symbols-outlined">home_pin</span>
+                        <button id="homeBtn" class="control-nav__button">
+                            <span class="material-symbols-outlined">
+                                home_pin
+                            </span>
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -222,49 +234,49 @@
         <div id="popup">
             <div class="window" id="menu">
                 <div class="titleBar">
-                    <span id="menuCloseButton" class="material-symbols-outlined closeBtn" title="メニューウィンドウを閉じる"
+                    <button id="menuCloseButton" class="material-symbols-outlined closeBtn" title="メニューウィンドウを閉じる"
                         tabindex="0" role="button" aria-label="メニューウィンドウを閉じる"
                         aria-roledescription="クリックすると メニューウィンドウ を閉じます。">
                         close
-                    </span>
+                    </button>
                     <span class="title">メニュー</span>
                 </div>
 
                 <div class="content">
                     <div class="lists">
-                        <div class="list top bottom" id="menuOpenEqhistory" title="地震履歴ウィンドウを開く" tabindex="0"
+                        <button class="list top bottom" id="menuOpenEqhistory" title="地震履歴ウィンドウを開く" tabindex="0"
                             role="button" aria-label="地震履歴ウィンドウを開く" aria-roledescription="クリックすると 地震履歴ウィンドウ を開きます。">
                             <span class="material-symbols-outlined">
                                 open_in_new
                             </span>
                             地震履歴ウィンドウ
-                        </div>
+                        </button>
                     </div>
 
                     <div class="lists">
-                        <div class="list top" id="menuSettings" title="設定を開く" tabindex="0" role="button"
+                        <button class="list top" id="menuSettings" title="設定を開く" tabindex="0" role="button"
                             aria-label="設定を開く" aria-roledescription="クリックすると 設定 を開きます。">
                             <span class="material-symbols-outlined">
                                 settings
                             </span>
                             設定
-                        </div>
+                        </button>
 
-                        <div class="list" id="menuHelp" title="ヘルプを開く" tabindex="0" role="button" aria-label="ヘルプを開く"
+                        <button class="list" id="menuHelp" title="ヘルプを開く" tabindex="0" role="button" aria-label="ヘルプを開く"
                             aria-roledescription="クリックすると ヘルプ を開きます。">
                             <span class="material-symbols-outlined">
                                 help
                             </span>
                             ヘルプ
-                        </div>
+                        </button>
 
-                        <div class="list" id="menuLicense" title="ライセンス情報に関するウィンドウを開く" tabindex="0" role="button"
+                        <button class="list" id="menuLicense" title="ライセンス情報に関するウィンドウを開く" tabindex="0" role="button"
                             aria-label="ライセンス情報に関するウィンドウを開く" aria-roledescription="クリックすると ライセンス情報に関するウィンドウ を開きます。">
                             <span class="material-symbols-outlined">
                                 info
                             </span>
                             ライセンス情報
-                        </div>
+                        </button>
 
                         <a class="list" id="menuGithub" target="_blank" href="https://github.com/YDITS/YDITS-Web/">
                             <span class="material-symbols-outlined">
@@ -302,76 +314,76 @@
 
             <div class="window" id="settings">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <button class="material-symbols-outlined closeBtn">arrow_back</button>
                     <span class="title">設定</span>
                 </div>
 
                 <div class="content">
-                    <ul class="lists">
-                        <li class="list top active" id="settings_list_sound">
+                    <div class="lists">
+                        <button class="list top active" id="settings_list_sound">
                             <span class="material-symbols-outlined">
                                 volume_up
                             </span>
                             音声と効果音
-                        </li>
+                        </button>
 
-                        <li class="list" id="settings_list_display">
+                        <button class="list" id="settings_list_display">
                             <span class="material-symbols-outlined">
                                 monitor
                             </span>
                             表示
-                        </li>
+                        </button>
 
-                        <li class="list" id="settings_list_map">
+                        <button class="list" id="settings_list_map">
                             <span class="material-symbols-outlined">
                                 map
                             </span>
                             マップ
-                        </li>
+                        </button>
 
-                        <li class="list" id="settings_list_location">
+                        <button class="list" id="settings_list_location">
                             <span class="material-symbols-outlined">
                                 location_on
                             </span>
                             位置情報
-                        </li>
+                        </button>
 
-                        <li class="list" id="settings_list_notify">
+                        <button class="list" id="settings_list_notify">
                             <span class="material-symbols-outlined">
                                 notifications
                             </span>
                             プッシュ通知
-                        </li>
+                        </button>
 
-                        <li class="list bottom" id="settings_list_other">
+                        <button class="list bottom" id="settings_list_other">
                             <span class="material-symbols-outlined">
                                 reset_wrench
                             </span>
                             リセット
-                        </li>
-                    </ul>
+                        </button>
+                    </div>
 
-                    <ul class="lists">
-                        <li class="list top" id="openDebugOptionButton">
+                    <div class="lists">
+                        <button class="list top" id="openDebugOptionButton">
                             <span class="material-symbols-outlined">
                                 bug_report
                             </span>
                             デバッグオプション
-                        </li>
+                        </button>
 
-                        <li class="list bottom" id="openDebugLogsButton">
+                        <button class="list bottom" id="openDebugLogsButton">
                             <span class="material-symbols-outlined">
                                 bug_report
                             </span>
                             デバッグログ
-                        </li>
-                    </ul>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div class="window settings_list" id="settings_sounds">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <button class="material-symbols-outlined closeBtn">arrow_back</button>
                     <span class="title">音声と効果音の設定</span>
                 </div>
 
@@ -420,7 +432,7 @@
 
             <div class="window settings_list" id="settings_display">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <button class="material-symbols-outlined closeBtn">arrow_back</button>
                     <span class="title">表示の設定</span>
                 </div>
 
@@ -454,7 +466,7 @@
 
             <div class="window settings_list" id="settings_map">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <button class="material-symbols-outlined closeBtn">arrow_back</button>
                     <span class="title">マップの設定</span>
                 </div>
 
@@ -490,7 +502,7 @@
 
             <div class="window settings_list" id="settings_location">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <button class="material-symbols-outlined closeBtn">arrow_back</button>
                     <span class="title">位置情報の設定</span>
                 </div>
 
@@ -530,7 +542,7 @@
 
             <div class="window settings_list" id="settings_notify">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <button class="material-symbols-outlined closeBtn">arrow_back</button>
                     <span class="title">プッシュ通知の設定</span>
                 </div>
 
@@ -543,7 +555,7 @@
 
             <div class="window settings_list" id="settings_other">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <button class="material-symbols-outlined closeBtn">arrow_back</button>
                     <span class="title">設定のリセット</span>
                 </div>
 
@@ -552,9 +564,6 @@
                         <p>
                             すべての設定をリセットします。
                         </p>
-                        <!-- <p>
-                            <span style="color: #ff6060;">DM-D.S.Sアカウントとの連携情報も削除され、再度dmdataと接続するには再連携が必要になります。</span>
-                        </p> -->
                         <button id="settings_resetSettingsBtn">設定をリセット</button>
                     </div>
                 </div>
@@ -562,7 +571,7 @@
 
             <div class="window settings_list" id="debugOptionWindow">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <button class="material-symbols-outlined closeBtn">arrow_back</button>
                     <span class="title">デバッグオプション</span>
                 </div>
 
@@ -634,7 +643,7 @@
 
             <div class="window settings_list" id="debugLogsWindow">
                 <div class="titleBar">
-                    <span class="material-symbols-outlined closeBtn">arrow_back</span>
+                    <button class="material-symbols-outlined closeBtn">arrow_back</button>
                     <span class="title">デバッグログ</span>
                 </div>
 
@@ -649,9 +658,9 @@
 
             <div id="licensesWindow" class="window settings_list">
                 <div class="titleBar">
-                    <span id="licenseCloseButton" class="material-symbols-outlined closeBtn">
+                    <button id="licenseCloseButton" class="material-symbols-outlined closeBtn">
                         arrow_back
-                    </span>
+                    </button>
 
                     <span class="title">
                         ライセンス情報
