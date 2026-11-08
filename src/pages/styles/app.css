@@ -82,17 +82,29 @@ main {
     width: 100%;
     height: 100%;
     gap: 0.6rem;
+    list-style: none;
 }
 
 .control-nav__item {
-    display: flex;
+    /* display: flex;
     justify-content: center;
     align-items: center;
+    padding: 8px 0; */
     width: 100%;
-    padding: 8px 0;
 }
 
-#list ul li {
+.control-nav__button {
+    display: flex;
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-radius: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+}
+
+.control-nav__button {
     &:active {
         background-color: rgba(255, 255, 255, 0.5);
     }
@@ -104,7 +116,7 @@ main {
     }
 }
 
-#eqHistoryBtn {
+.control-nav__eqhistory {
     display: none;
 
     @media (max-width: 640px) {
@@ -232,7 +244,6 @@ main {
         padding-top var(--transition-duration),
         padding-bottom var(--transition-duration),
         font-size var(--transition-duration);
-    cursor: pointer;
 
     &:active {
         background-color: #ffffff40;
@@ -392,7 +403,6 @@ main {
     width: 3.5rem;
     height: 3.5rem;
     background-color: #101010;
-    cursor: pointer;
     z-index: 1;
 
     &:active {
@@ -537,11 +547,13 @@ main {
     top: 0.75rem;
     left: 1.5rem;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    margin: 0;
     width: 2.5rem;
     height: 2.5rem;
+    justify-content: center;
+    align-items: center;
     border-radius: 100%;
+    background-color: transparent;
     font-size: 1.75rem;
 
     &:active {
@@ -608,9 +620,11 @@ main {
 .window .lists .list {
     display: flex;
     align-items: center;
+    margin: 0;
     /* margin-bottom: 2em; */
     width: 100%;
     border-bottom: solid 1px #505050ff;
+    border-radius: 0;
     /* border-radius: 2rem; */
     padding: 1.3rem 2rem;
     background-color: rgba(127, 127, 127, 0.3);
@@ -749,8 +763,6 @@ main {
     width: 100%;
     background-color: #404040ff;
     color: #ffffffff;
-
-    cursor: pointer;
 
     &:active {
         background-color: #707070ff;

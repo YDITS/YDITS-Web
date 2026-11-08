@@ -85,8 +85,6 @@
         width: 3rem;
         height: 2rem;
         overflow: hidden;
-
-        cursor: pointer
     }
 
     .navBar .close:hover {
