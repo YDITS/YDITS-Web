@@ -14,12 +14,26 @@
 :root {
     --max-width-large: 64rem;
     --max-width-medium: 48rem;
-    --font-family: "Local Noto Sans JP", "Noto Sans JP", "Roboto", sans-serif;
+    --max-width-small: 32rem;
+    --font-family:
+        "Local Noto Sans",
+        "Local Noto Sans CJK",
+        "Local Noto Sans SC",
+        "Local Noto Sans TC",
+        "Local Noto Sans JP",
+        "Local Noto Sans KR",
+        "Noto Sans",
+        "Noto Sans CJK",
+        "Noto Sans SC",
+        "Noto Sans TC",
+        "Noto Sans JP",
+        "Noto Sans KR",
+        "Roboto",
+        sans-serif;
     --font-size: 87.5%;
     --font-weight: 300;
-    --font-weight-semi-bold: 700;
-    --font-weight-bold: 900;
     --font-style: normal;
+    --line-height: 1.5;
 
     --primary-color: hsl(152, 100%, 60%);
     --primary-color-dim: hsl(from var(--primary-color) h s calc(l - 12));
@@ -52,12 +66,87 @@
     font-family: var(--font-family);
     font-size: var(--font-size);
     font-weight: var(--font-weight);
-    line-height: 1.5;
+    line-height: var(--line-height);
     color: var(--text-color);
 
     @media (prefers-reduced-motion: reduce) {
         --transition-duration: 0ms;
         scroll-behavior: revert;
+    }
+
+    &:lang(zh),
+    &:lang(zh-CN) {
+        --font-family:
+            "Local Noto Sans SC",
+            "Local Noto Sans TC",
+            "Local Noto Sans CJK",
+            "Local Noto Sans",
+            "Local Noto Sans JP",
+            "Local Noto Sans KR",
+            "Noto Sans SC",
+            "Noto Sans TC",
+            "Noto Sans CJK",
+            "Noto Sans",
+            "Noto Sans JP",
+            "Noto Sans KR",
+            "Roboto",
+            sans-serif;
+    }
+
+    &:lang(zh-TW) {
+        --font-family:
+            "Local Noto Sans TC",
+            "Local Noto Sans SC",
+            "Local Noto Sans CJK",
+            "Local Noto Sans",
+            "Local Noto Sans JP",
+            "Local Noto Sans KR",
+            "Noto Sans TC",
+            "Noto Sans SC",
+            "Noto Sans CJK",
+            "Noto Sans",
+            "Noto Sans JP",
+            "Noto Sans KR",
+            "Roboto",
+            sans-serif;
+    }
+
+    &:lang(ja),
+    &:lang(ja-JP) {
+        --font-family:
+            "Local Noto Sans JP",
+            "Local Noto Sans CJK",
+            "Local Noto Sans",
+            "Local Noto Sans SC",
+            "Local Noto Sans TC",
+            "Local Noto Sans KR",
+            "Noto Sans JP",
+            "Noto Sans CJK",
+            "Noto Sans",
+            "Noto Sans SC",
+            "Noto Sans TC",
+            "Noto Sans KR",
+            "Roboto",
+            sans-serif;
+    }
+
+    &:lang(ko),
+    &:lang(ko-KR) {
+        --font-family:
+            "Local Noto Sans KR",
+            "Local Noto Sans CJK",
+            "Local Noto Sans",
+            "Local Noto Sans SC",
+            "Local Noto Sans TC",
+            "Local Noto Sans JP",
+            "Noto Sans KR",
+            "Noto Sans CJK",
+            "Noto Sans",
+            "Noto Sans SC",
+            "Noto Sans TC",
+            "Noto Sans JP",
+            "Roboto",
+            sans-serif;
     }
 }
 
@@ -68,13 +157,11 @@
     padding: 0;
     box-sizing: border-box;
     font: inherit;
-    text-decoration: unset;
-    color: unset;
+}
 
-    &:focus-visible {
-        outline: 4px solid var(--focus-color);
-        outline-offset: 4px;
-    }
+*:focus-visible {
+    outline: 4px solid var(--focus-color);
+    outline-offset: 4px;
 }
 
 body {
@@ -90,17 +177,17 @@ body {
 
 h1 {
     font-size: 1.5rem;
-    font-weight: var(--font-weight-semi-bold);
+    font-weight: bold;
 }
 
 h2 {
     font-size: 1.2rem;
-    font-weight: var(--font-weight-semi-bold);
+    font-weight: bold;
 }
 
 h3 {
     font-size: 1rem;
-    font-weight: var(--font-weight-semi-bold);
+    font-weight: bold;
 }
 
 a {
@@ -185,12 +272,17 @@ h6 {
 /* .material-symbols-outlined */
 
 .material-symbols-outlined {
-    font-variation-settings:
-        'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 48;
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
     font-size: 1.7rem;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
 
     &.open-in-new {
         display: inline-block;
