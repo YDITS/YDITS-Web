@@ -17,18 +17,19 @@
     --max-width-small: 32rem;
     --font-family:
         "Local Noto Sans",
-        "Local Noto Sans CJK",
         "Local Noto Sans SC",
         "Local Noto Sans TC",
         "Local Noto Sans JP",
         "Local Noto Sans KR",
+        "Local Noto Sans CJK SC Static",
+        "Local Noto Sans CJK TC Static",
+        "Local Noto Sans CJK JP Static",
+        "Local Noto Sans CJK KR Static",
         "Noto Sans",
-        "Noto Sans CJK",
         "Noto Sans SC",
         "Noto Sans TC",
         "Noto Sans JP",
         "Noto Sans KR",
-        "Roboto",
         sans-serif;
     --font-size: 87.5%;
     --font-weight: 300;
@@ -79,17 +80,18 @@
         --font-family:
             "Local Noto Sans SC",
             "Local Noto Sans TC",
-            "Local Noto Sans CJK",
             "Local Noto Sans",
             "Local Noto Sans JP",
             "Local Noto Sans KR",
+            "Local Noto Sans CJK SC Static",
+            "Local Noto Sans CJK TC Static",
+            "Local Noto Sans CJK JP Static",
+            "Local Noto Sans CJK KR Static",
             "Noto Sans SC",
             "Noto Sans TC",
-            "Noto Sans CJK",
             "Noto Sans",
             "Noto Sans JP",
             "Noto Sans KR",
-            "Roboto",
             sans-serif;
     }
 
@@ -97,17 +99,18 @@
         --font-family:
             "Local Noto Sans TC",
             "Local Noto Sans SC",
-            "Local Noto Sans CJK",
             "Local Noto Sans",
             "Local Noto Sans JP",
             "Local Noto Sans KR",
+            "Local Noto Sans CJK TC Static",
+            "Local Noto Sans CJK SC Static",
+            "Local Noto Sans CJK JP Static",
+            "Local Noto Sans CJK KR Static",
             "Noto Sans TC",
             "Noto Sans SC",
-            "Noto Sans CJK",
             "Noto Sans",
             "Noto Sans JP",
             "Noto Sans KR",
-            "Roboto",
             sans-serif;
     }
 
@@ -115,18 +118,19 @@
     &:lang(ja-JP) {
         --font-family:
             "Local Noto Sans JP",
-            "Local Noto Sans CJK",
             "Local Noto Sans",
             "Local Noto Sans SC",
             "Local Noto Sans TC",
             "Local Noto Sans KR",
+            "Local Noto Sans CJK JP Static",
+            "Local Noto Sans CJK SC Static",
+            "Local Noto Sans CJK TC Static",
+            "Local Noto Sans CJK KR Static",
             "Noto Sans JP",
-            "Noto Sans CJK",
             "Noto Sans",
             "Noto Sans SC",
             "Noto Sans TC",
             "Noto Sans KR",
-            "Roboto",
             sans-serif;
     }
 
@@ -134,18 +138,19 @@
     &:lang(ko-KR) {
         --font-family:
             "Local Noto Sans KR",
-            "Local Noto Sans CJK",
             "Local Noto Sans",
             "Local Noto Sans SC",
             "Local Noto Sans TC",
             "Local Noto Sans JP",
+            "Local Noto Sans CJK KR Static",
+            "Local Noto Sans CJK SC Static",
+            "Local Noto Sans CJK TC Static",
+            "Local Noto Sans CJK JP Static",
             "Noto Sans KR",
-            "Noto Sans CJK",
             "Noto Sans",
             "Noto Sans SC",
             "Noto Sans TC",
             "Noto Sans JP",
-            "Roboto",
             sans-serif;
     }
 }
